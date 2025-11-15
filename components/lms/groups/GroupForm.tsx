@@ -58,8 +58,8 @@ export default function GroupForm({ title, onSubmit, group }: GroupFormProps) {
   } = useForm<FormValues>({
     defaultValues: {
       group_name: group?.group_name || "",
-      division_id: group?.branch?.division_id?.toString() || "",
-      district_id: group?.branch?.district_id?.toString() || "",
+      division_id: group?.division_id?.toString() || "",
+      district_id: group?.district_id?.toString() || "",
       branch_id: group?.branch?.id.toString() || "",
       lm_course_id: group?.course?.id.toString() || "",
       lm_batch_id: group?.batch?.id.toString() || "",
@@ -79,8 +79,8 @@ export default function GroupForm({ title, onSubmit, group }: GroupFormProps) {
     if (group) {
       reset({
         group_name: group.group_name,
-        division_id: group.branch.division_id?.toString(),
-        district_id: group.branch.district_id?.toString(),
+        division_id: group.division_id?.toString(),
+        district_id: group.district_id?.toString(),
         branch_id: group.branch.id.toString(),
         lm_course_id: group.course.id.toString(),
         lm_batch_id: group.batch.id.toString(),

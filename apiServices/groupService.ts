@@ -13,6 +13,8 @@ export interface Group {
   lm_batch_id: string;
   is_active: boolean;
   total_students: string;
+  division_id: number;
+  district_id: number;
   batch: {
     id: number;
     name: string;
