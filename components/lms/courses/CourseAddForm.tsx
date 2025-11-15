@@ -37,6 +37,8 @@ interface FormValues {
   status: string; // "0", "1", "2"
   is_default: boolean;
   branch_ids: number[];
+  price?: number;
+  discount?: number;
 }
 
 export default function CourseAddForm({
@@ -68,6 +70,8 @@ export default function CourseAddForm({
       status: initialData?.status || "1",
       is_default: initialData?.is_default || false,
       branch_ids: initialData?.branches?.map((b) => b.id) || [],
+      price: initialData?.price || 0,
+      discount: initialData?.discount || 0,
     },
   });
 
@@ -84,6 +88,8 @@ export default function CourseAddForm({
         status: initialData.status || "1",
         is_default: initialData.is_default || false,
         branch_ids: initialData.branches?.map((b) => b.id) || [],
+        price: initialData.price || 0,
+        discount: initialData.discount || 0,
       });
       if (initialData.featured_image) {
         setPreview(`http://127.0.0.1:8000/${initialData.featured_image}`);
@@ -146,6 +152,8 @@ export default function CourseAddForm({
     formData.append("status", data.status);
     formData.append("is_default", data.is_default ? "1" : "0");
     data.branch_ids.forEach((id) => formData.append("branch_ids[]", id.toString()));
+    if (data.price) formData.append("price", data.price.toString());
+    if (data.discount) formData.append("discount", data.discount.toString());
 
     await onSubmit(formData, setFormError, () => reset());
   };
@@ -196,6 +204,28 @@ export default function CourseAddForm({
             </div>
           </div>
 
+          {/* price and discount */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid gap-2">
+              <Label htmlFor="price">Price</Label>
+              <Input
+                id="price"
+                type="number"
+                placeholder="Price"
+                {...register("price")}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="discount">Discount</Label>
+              <Input
+                id="discount"
+                type="number"
+                placeholder="Discount"
+                {...register("discount")}
+              />
+            </div>
+          </div>
+
           {/* Sub Title and Level */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="grid gap-2">
@@ -227,7 +257,7 @@ export default function CourseAddForm({
           </div>
 
           {/* Short Description */}
-          <div className="grid gap-2">
+          {/* <div className="grid gap-2">
             <Label htmlFor="short_description">Short Description</Label>
             <Textarea
               id="short_description"
@@ -237,7 +267,7 @@ export default function CourseAddForm({
           {errors.short_description && (
               <span className="text-sm text-red-600">{errors.short_description.message}</span>
             )}
-          </div>
+          </div> */}
 
           {/* Description */}
           <div className="grid gap-2">
@@ -305,20 +335,20 @@ export default function CourseAddForm({
                 <span className="text-sm text-red-600">{errors.status.message}</span>
               )}
             </div>
-            <div className="flex items-center space-x-2 mt-6">
+            {/* <div className="flex items-center space-x-2 mt-6">
               <Checkbox
                 id="is_default"
                 {...register("is_default")}
               />
               <Label htmlFor="is_default">Mark as Default Course</Label>
-            {errors.is_default && (
+              {errors.is_default && (
                 <span className="text-sm text-red-600">{errors.is_default.message}</span>
               )}
-            </div>
+            </div> */}
           </div>
 
           {/* Branch IDs (Multi-select Checkboxes) */}
-          <div className="grid gap-2">
+          {/* <div className="grid gap-2">
             <Label>Branches</Label>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
               {branches.map((branch) => (
@@ -338,7 +368,7 @@ export default function CourseAddForm({
             {errors.branch_ids && (
               <span className="text-sm text-red-600">{errors.branch_ids.message}</span>
             )}
-          </div>
+          </div> */}
 
           {/* Submit */}
           <div className="flex justify-center">

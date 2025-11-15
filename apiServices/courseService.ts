@@ -44,6 +44,8 @@ export interface Course {
   batches: Batch[];
   branch_count: number;
   language: string;
+  price: number;
+  discount: number;
 }
 
 export interface CourseResponse {

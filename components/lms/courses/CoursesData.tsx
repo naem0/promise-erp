@@ -66,6 +66,7 @@ export default async function CoursesData({
               <TableHead>#</TableHead>
               <TableHead className="text-center">Action</TableHead>
               <TableHead>Course</TableHead>
+              <TableHead>Price</TableHead>
               <TableHead>Category</TableHead>
               <TableHead>Level</TableHead>
               <TableHead>Enrolled</TableHead>
@@ -142,6 +143,11 @@ export default async function CoursesData({
                       </p>
                     </div>
                   </div>
+                </TableCell>
+
+                <TableCell>
+                  <small><del>{course.price} ৳</del></small> <br />
+                  {course.price - course.discount} ৳
                 </TableCell>
 
                 <TableCell>{course.category?.name || "N/A"}</TableCell>
