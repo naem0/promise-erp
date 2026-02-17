@@ -1,4 +1,4 @@
-"use server"
+"use server";
 const API_BASE =
   process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
 import { PaginationType } from "@/types/pagination";
@@ -56,7 +56,7 @@ export async function getPublicBlogInfo({
 
     if (!res.ok) {
       throw new Error(
-        `fetchPublicBlogInfo API error: ${res.status} ${res.statusText}`
+        `fetchPublicBlogInfo API error: ${res.status} ${res.statusText}`,
       );
     }
 
@@ -79,7 +79,7 @@ export interface BlogCategory {
   slug?: string;
   image?: string | null;
   status?: number;
-  blog_count?: string; 
+  blog_count?: string;
   meta_title?: string;
   meta_description?: string;
   meta_keywords?: string[];
@@ -106,7 +106,7 @@ export async function getPublicBlogCategories(): Promise<BlogCategoryApiResponse
 
     if (!res.ok) {
       throw new Error(
-        `fetchPublicBlogCategories API error: ${res.status} ${res.statusText}`
+        `fetchPublicBlogCategories API error: ${res.status} ${res.statusText}`,
       );
     }
 
@@ -121,7 +121,6 @@ export async function getPublicBlogCategories(): Promise<BlogCategoryApiResponse
   }
 }
 // ******* End Blog Category API *******
-
 
 // ******* Start get Public Blog By Slug API *******
 
@@ -152,18 +151,15 @@ export interface BlogSlugDetails {
   meta_keywords: string[];
 }
 
-
 export async function getPublicBlogBySlug(
-  slug: string
+  slug: string,
 ): Promise<BlogSlugDetailsApiResponse> {
   try {
-    const res = await fetch(
-      `${API_BASE}/public/blogs/${slug}`
-    );
+    const res = await fetch(`${API_BASE}/public/blogs/${slug}`);
 
     if (!res.ok) {
       throw new Error(
-        `getPublicBlogBySlug API error: ${res.status} ${res.statusText}`
+        `getPublicBlogBySlug API error: ${res.status} ${res.statusText}`,
       );
     }
 
@@ -175,10 +171,49 @@ export async function getPublicBlogBySlug(
       throw new Error(error.message);
     }
 
-    throw new Error(
-      "Unknown error occurred while fetching blog details."
-    );
+    throw new Error("Unknown error occurred while fetching blog details.");
   }
 }
 // ******* End get Public Blog By Slug API *******
 
+// ******* Start get Public Blog Category Slug API *******
+
+export async function getPublicBlogsByCategorySlug({
+  slug,
+  params = {},
+}: {
+  slug: string;
+  params?: Record<string, unknown>;
+}): Promise<BlogInfoApiResponse> {
+  try {
+    const urlParams = new URLSearchParams();
+
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        urlParams.append(key, String(value));
+      }
+    });
+
+    const queryString = urlParams.toString();
+
+    const res = await fetch(
+      `${API_BASE}/public/blogs/category/${slug}?${queryString}`,
+    );
+
+    if (!res.ok) {
+      throw new Error(
+        `getPublicBlogsByCategorySlug API error: ${res.status} ${res.statusText}`,
+      );
+    }
+
+    const data: BlogInfoApiResponse = await res.json();
+    return data;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error fetching blogs by category:", error.message);
+      throw new Error(error.message);
+    }
+    throw new Error("Unknown error occurred while fetching blogs by category.");
+  }
+}
+// ******* End get Public Blog Category Slug API *******

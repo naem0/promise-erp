@@ -144,6 +144,11 @@ const data = {
           title: "Free Seminars",
           url: "/lms/free-seminars",
         },
+        {
+          title: "Branches",
+          url: "/lms/branches",
+          permissions: ["view-branches"],
+        },
       ],
     },
 
@@ -310,7 +315,6 @@ const data = {
           url: "/web-content/news-feeds",
           permissions: ["view-news-feeds"],
         },
-
       ],
     },
     {
@@ -1137,7 +1141,6 @@ const data = {
       ],
     },
   ],
-
 };
 
 export default function AppSidebar({
