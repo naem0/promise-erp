@@ -72,7 +72,6 @@ export async function getPublicBlogInfo({
 }
 // ******* End Blog Info API *******
 
-
 // ******* Start Blog Category API *******
 export interface BlogCategory {
   id: number;
@@ -122,4 +121,64 @@ export async function getPublicBlogCategories(): Promise<BlogCategoryApiResponse
   }
 }
 // ******* End Blog Category API *******
+
+
+// ******* Start get Public Blog By Slug API *******
+
+export interface BlogSlugDetailsApiResponse {
+  success: boolean;
+  message: string;
+  code: number;
+  data: BlogSlugDetails;
+}
+
+export interface BlogSlugDetails {
+  id: number;
+  category: {
+    id: number;
+    title: string;
+    slug: string;
+  };
+  title: string;
+  slug: string;
+  author: string;
+  short_description: string;
+  description: string;
+  thumbnail?: string;
+  status: number;
+  published_at: string;
+  meta_title: string;
+  meta_description: string;
+  meta_keywords: string[];
+}
+
+
+export async function getPublicBlogBySlug(
+  slug: string
+): Promise<BlogSlugDetailsApiResponse> {
+  try {
+    const res = await fetch(
+      `${API_BASE}/public/blogs/${slug}`
+    );
+
+    if (!res.ok) {
+      throw new Error(
+        `getPublicBlogBySlug API error: ${res.status} ${res.statusText}`
+      );
+    }
+
+    const data: BlogSlugDetailsApiResponse = await res.json();
+    return data;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error fetching blog details:", error.message);
+      throw new Error(error.message);
+    }
+
+    throw new Error(
+      "Unknown error occurred while fetching blog details."
+    );
+  }
+}
+// ******* End get Public Blog By Slug API *******
 

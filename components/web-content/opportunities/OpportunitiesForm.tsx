@@ -34,11 +34,6 @@ export default function OpportunitiesForm({ title, opportunity }: OpportunitiesF
   const [previewImage, setPreviewImage] = useState<string | null>(opportunity?.image || null);
   const [imageRemoved, setImageRemoved] = useState(false);
   const router = useRouter();
-  const toSelectString = (val: any) => {
-    if (val === 1 || val === "1" || val === true) return "1";
-    return "0";
-  };
-
   const {
     register,
     handleSubmit,
@@ -51,28 +46,22 @@ export default function OpportunitiesForm({ title, opportunity }: OpportunitiesF
     defaultValues: {
       title: opportunity?.title || "",
       sub_title: opportunity?.sub_title || "",
-      status: opportunity ? toSelectString(opportunity.status) : "1",
+      status: opportunity?.status.toString() || "1",
       image: undefined,
     },
   });
 
-  useEffect(() => {
-    if (opportunity) {
-      reset({
-        title: opportunity.title || "",
-        sub_title: opportunity.sub_title || "",
-        status: toSelectString(opportunity.status),
-      });
-      if (opportunity.image) {
-        setPreviewImage(opportunity.image);
-        setImageRemoved(false);
-      } else {
-        setPreviewImage(null);
-      }
-    }
-  }, [opportunity, reset]);
-
   const imageFile = watch("image");
+
+  // Update preview image when opportunity prop changes (for edit mode)
+  useEffect(() => {
+    if (opportunity?.image && opportunity.image.trim() !== "") {
+      setPreviewImage(opportunity.image);
+      setImageRemoved(false);
+    } else {
+      setPreviewImage(null);
+    }
+  }, [opportunity?.image]);
 
   useEffect(() => {
     if (imageFile && imageFile.length > 0) {

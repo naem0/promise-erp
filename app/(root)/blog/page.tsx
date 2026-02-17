@@ -3,11 +3,62 @@ import BloggWrapperBanner from "@/components/root/blog/BloggWrapperBanner";
 import BlogPostWrapper from "@/components/root/blog/BlogPostWrapper";
 import { Loader2 } from "lucide-react";
 import { Suspense } from "react";
+import { Metadata } from "next";
 
-interface BlogPageParams {
+interface BlogPageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
-const BlogPage = ({ searchParams }: BlogPageParams) => {
+
+/**** Dynamic Metadata ******/
+
+export async function generateMetadata({
+  searchParams,
+}: BlogPageProps): Promise<Metadata> {
+
+  const params = await searchParams;
+  const page = params.page;
+
+  let canonicalUrl = "/blog";
+
+  if (page && page !== "1") {
+    canonicalUrl = `/blog?page=${page}`;
+  }
+  return {
+    title: `Blog - Promise ERP ${page && page !== "1" ? ` - Page ${page}` : ""}`,
+    description:`Explore our latest articles, insights, and updates on Promise ERP and business management solutions. ${page && page !== "1" ? ` - Page ${page}` : ""}`,
+
+    alternates: {
+      canonical: canonicalUrl,
+    },
+
+
+    openGraph: {
+      title: "Blog - Promise ERP",
+      description:
+        "Explore our latest articles, insights, and updates on Promise ERP and business management solutions.",
+      url: canonicalUrl,
+      type: "website",
+      locale: "en_US",
+      images: [
+        {
+          url: "/images/home/hero-banner.png",
+          width: 1200,
+          height: 630,
+          alt: "Promise ERP Blog",
+        },
+      ],
+    },
+
+    twitter: {
+      card: "summary_large_image",
+      title: "Blog - Promise ERP",
+      description:
+        "Explore our latest articles, insights, and updates on Promise ERP and business management solutions.",
+      images: ["/images/home/hero-banner.png"],
+    },
+  };
+}
+const BlogPage = ({ searchParams }: BlogPageProps) => {
 
   return (
     <>

@@ -95,7 +95,7 @@ export interface FreeSeminar {
   seminar_type: number; // 0 | 1
   seminar_date: string; // YYYY-MM-DD
   seminar_time: string; // HH:mm:ss
-  seminar_time_formatted: string; // HH:mm
+  seminar_time_formatted?: string; // HH:mm
   image?: string | null;
 }
 
@@ -1177,17 +1177,27 @@ export interface FreeSeminar {
   about: string;
   class_topic: string;
   seminar_type: number;
-  seminar_type_text: string;
+  seminar_type_text?: string;
   description: string;
   location: string;
   seminar_date: string;
   seminar_time: string;
-  seminar_time_formatted: string;
+  seminar_time_formatted?: string;
   seminar_link: string | null;
   image?: string | null;
   branch: SeminarBranch;
   instructors: Instructor[];
+  course_category?: FreeSeminarCourseCategory;
 }
+interface FreeSeminarCourseCategory {
+  id?: number;
+  category_id: number;
+  category_name: string;
+  name?: string;
+  slug?: string;
+  bn_name?: string;
+}
+
 export interface SeminarBranch {
   id: number;
   name: string;
@@ -1249,6 +1259,154 @@ export async function getFreeSeminarBySlug(
 }
 // End get Free Seminar by Slug
 
+// Start Public get Free Seminar  by Slug
+export interface PublicFreeSeminar {
+  id: number;
+  title: string;
+  slug: string;
+  about: string;
+  class_topic: string;
+  seminar_type: number;
+  description: string;
+  location: string;
+  seminar_date: string;
+  seminar_time: string;
+  seminar_link: string | null;
+  image?: string | null;
+  branch: PublicSeminarBranch;
+  instructors: PublicInstructor[];
+  course_category?: PublicFreeSeminarCourseCategory;
+}
+
+export interface PublicFreeSeminarCourseCategory {
+  id: number;
+  name: string;
+  slug: string;
+  courses: PublicCourse[];
+}
+
+export interface PublicCourse {
+  id: number;
+  category_id: number;
+  title: string;
+  slug: string;
+  featured_image: string;
+  ratings: number;
+  total_live_class: number;
+  branches: PublicSeminarBranch[];
+  batch: PublicCourseBatch;
+}
+
+export interface PublicCourseBatch {
+  id: number;
+  price: number;
+  discount: number;
+  discount_type: string;
+  after_discount: number;
+  discount_percentage: number;
+  is_online: number;
+  start_date: string;
+  end_date: string;
+  apply_end_date: string;
+  status: number;
+  duration: string;
+  location: string;
+  seminar_type_text?: string;
+}
+
+export interface PublicSeminarBranch {
+  id: number;
+  name: string;
+}
+
+export interface PublicInstructor {
+  id: number;
+  name: string;
+  email: string;
+  designation: string;
+  experience: string;
+  profile_image?: string | null;
+  instructors_tools: PublicInstructorTool[];
+}
+
+export interface PublicInstructorTool {
+  id: number;
+  image?: string | null;
+}
+
+export interface PublicFreeSeminarBySlugResponse {
+  success: boolean;
+  message: string;
+  code: number;
+  data: PublicFreeSeminar;
+}
+export async function getPublicFreeSeminarBySlug(
+  slug: string,
+): Promise<PublicFreeSeminarBySlugResponse> {
+  try {
+    const response = await fetch(
+      `${API_BASE}/public/free-seminars/${slug}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(
+        `Failed to fetch public free seminar (${response.status} ${response.statusText})`
+      );
+    }
+
+    const data: PublicFreeSeminarBySlugResponse = await response.json();
+    return data;
+  } catch (error: unknown) {
+    console.error("getPublicFreeSeminarBySlug Error:", error);
+    if (error instanceof Error) {
+      throw new Error(`Error fetching public free seminar: ${error.message}`);
+    }
+    throw new Error("An unknown error occurred while fetching public free seminar");
+  }
+}
+
+// End Public get Free Seminar by Slug
+
+export async function getFreeSeminarByPublicPage({ params = {} }: { params?: Record<string, unknown> } = {}): Promise<FreeSeminarsApiResponse> {
+
+  try {
+    const urlParams = new URLSearchParams();
+
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== "") {
+        urlParams.append(key, String(value));
+      }
+    });
+
+    const queryString = urlParams.toString();
+    const url = `${API_BASE}/public/free-seminars?${queryString}`;
+    const response = await fetch(url,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const data: FreeSeminarsApiResponse = await response.json();
+    return data;
+  } catch (error: unknown) {
+    console.error("getFreeSeminarByPublicPage Error:", error);
+    if (error instanceof Error) {
+      throw new Error(`Error fetching free seminars: ${error.message}`);
+    }
+    throw new Error("An unknown error occurred while fetching free seminars");
+  }
+}
+
+
 // start get All Job Titles For Earning
 
 export interface JobTitleEarningItem {
@@ -1300,7 +1458,7 @@ export async function getAllJobTitlesForEarning(
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error("getAllJobTitlesForEarning Error:", error.message);
-      throw error;
+      throw new Error(`Error fetching job list: ${error.message}`);
     }
     throw new Error("An unknown error occurred while fetching job list");
   }
@@ -1350,7 +1508,7 @@ export async function addStudentEarning(
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error("addStudentEarning Error:", error.message);
-      throw error;
+      throw new Error(`Error adding job Earning: ${error.message}`);
     }
     throw new Error("An unknown error occurred while adding job Earning");
   }
@@ -1405,7 +1563,7 @@ export async function getStudentEarning(
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error("getStudentEarning Error:", error.message);
-      throw error;
+      throw new Error(`Error fetching student earning: ${error.message}`);
     }
     throw new Error("An unknown error occurred while fetching student earning");
   }
@@ -1455,7 +1613,7 @@ export async function updateStudentEarning(
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error("updateStudentEarning Error:", error.message);
-      throw error;
+      throw new Error(`Error updating student earning: ${error.message}`);
     }
     throw new Error("An unknown error occurred while updating student earning");
   }

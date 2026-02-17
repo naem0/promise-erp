@@ -51,7 +51,7 @@ const FreeClasseCard = ({ course }:FreeClasseCardProps ) => {
       </CardContent>
 
       <CardFooter className="p-4 pt-0 flex justify-center">
-        <Link href={`/student/freeseminar/${course.slug}`}>
+        <Link href={`/free-seminars/${course.slug}`}>
           <Button>Join Now</Button>
         </Link>
       </CardFooter>

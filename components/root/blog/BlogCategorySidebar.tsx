@@ -152,7 +152,6 @@ const BlogCategorySidebar = async () => {
         </CardHeader>
 
         <CardContent className="pt-0">
-          {/* 🔥 ScrollArea Added */}
           <ScrollArea className="h-[300px] pr-3">
             <ul className="space-y-2">
               {categories.map((category) => (
@@ -161,7 +160,7 @@ const BlogCategorySidebar = async () => {
                   className="group cursor-pointer capitalize bg-secondary/5 hover:bg-primary px-3 py-2 rounded-lg text-secondary hover:text-white transition-all duration-200"
                 >
                   <Link
-                    href={`/blog?blog_category_id=${category.id}`}
+                    href={`/blog/category/${category.slug}`}
                     className="w-full flex items-center justify-between"
                   >
                     <span className="font-bold text-base">

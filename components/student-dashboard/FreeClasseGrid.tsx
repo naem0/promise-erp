@@ -29,7 +29,7 @@ const FreeClasseGrid = async ({ searchParams }: FreeClassesParams) => {
             ))}
           </div>
         )}
-      </div>
+      </div> 
       {freeSeminars?.data?.pagination?.per_page > 16 && (
         <Pagination pagination={freeSeminars.data.pagination} />
       )}

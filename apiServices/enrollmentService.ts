@@ -91,6 +91,7 @@ export interface EnrollmentPaymentDetails {
   payment_status_name?: string;
   payment_type_name?: string;
   installment_type_name?: string;
+  comment?: string;
 }
 
 export interface EnrollmentPaymentHistory {
@@ -99,10 +100,6 @@ export interface EnrollmentPaymentHistory {
   organization_id?: string | number;
   payment_details?: EnrollmentPaymentDetails;
   approved_by?: number | null;
-  additional_info?: {
-    comment?: string;
-    [key: string]: unknown;
-  };
 }
 
 export interface EnrollmentDetail {

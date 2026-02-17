@@ -34,8 +34,6 @@ import {
 import { Loader2, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { handleFormErrors, handleFormSuccess } from "@/lib/formErrorHandler";
-import { ApiErrorResponse } from "@/lib/apiErrorHandler";
 
 interface Student {
   id: number;
@@ -104,6 +102,7 @@ export default function CreateEnrollmentForm({
     setValue,
     setError,
     watch,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
     defaultValues: {
@@ -185,7 +184,7 @@ export default function CreateEnrollmentForm({
   const handleCourseChange = (value: string) => {
     setCourseId(value);
     setValue("course_id", value);
-    setValue("batch_id", ""); // Reset batch when course changes
+    setValue("batch_id", "");
     setSelectedBatch(null);
   };
 
@@ -207,8 +206,9 @@ export default function CreateEnrollmentForm({
       });
 
       if (res.success) {
-        handleFormSuccess(res.message || "Enrollment created successfully!");
+        toast.success(res.message || "Enrollment created successfully!");
         router.push("/lms/enrollments");
+        reset();
       } else {
         toast.error(res.message || "Failed to create enrollment");
         if (res.errors) {

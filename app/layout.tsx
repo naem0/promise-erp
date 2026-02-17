@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://promise-erp-xi.vercel.app'),
   title: {
     default: 'Promise IT Ltd - Leading IT Solutions & Training',
-    template: '%s | Promise IT Ltd'
+    template: '%s'
   },
   description: 'Professional IT training, software development, and ERP solutions provider. Learn from industry experts and advance your career.',
   keywords: ['IT training', 'software development', 'ERP solutions', 'web development', 'programming courses'],
@@ -38,11 +38,11 @@ export const metadata: Metadata = {
     description: 'Professional IT training and enterprise solutions',
   },
   robots: {
-    index: true,
-    follow: true,
+    index: false,
+    follow: false,
     googleBot: {
-      index: true,
-      follow: true,
+      index: false,
+      follow: false,
       'max-video-preview': -1,
       'max-image-preview': 'large',
       'max-snippet': -1,

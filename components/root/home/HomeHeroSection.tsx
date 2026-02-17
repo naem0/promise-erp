@@ -63,8 +63,8 @@ const HomeHeroSection = ({ heroBannerData }: HeroVideoData) => {
                 variant="outline"
                 className="flex items-center gap-2"
               >
-                <Link href={sliderData?.button_link_two || "#"}>
-                  {sliderData?.button_text_two}
+                <Link href={sliderData?.button_link_two || "/free-seminars"}>
+                  {sliderData?.button_text_two || "Free Seminars"}
                   <MoveRight className="w-5 h-5 animate-bounce" />
                 </Link>
               </Button>

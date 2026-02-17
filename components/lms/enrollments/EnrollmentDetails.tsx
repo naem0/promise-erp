@@ -50,8 +50,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, Plus } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, useTransition } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
+import { useForm, Controller } from "react-hook-form";
 
 interface InfoRowProps {
     label: string;
@@ -73,6 +74,13 @@ interface EnrollmentDetailsProps {
     errorMessage?: string;
 }
 
+interface PaymentFormValues {
+    paid_amount: string;
+    payment_method: string;
+    payment_status: string;
+    comment: string;
+}
+
 const formatCurrency = (amount?: number | null) =>
     amount !== undefined && amount !== null
         ? `${Number(amount).toLocaleString("en-US", {
@@ -86,15 +94,24 @@ export default function EnrollmentDetails({
     errorMessage,
 }: EnrollmentDetailsProps) {
     const router = useRouter();
-    const [isPending, startTransition] = useTransition();
     const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false);
-    const [paymentFormData, setPaymentFormData] = useState({
-        paid_amount: "",
-        payment_method: PAYMENT_METHOD_BKASH.toString(),
-        payment_status: PAYMENT_STATUS_PAID.toString(),
-        comment: "",
+
+    const {
+        register,
+        handleSubmit,
+        control,
+        setValue,
+        setError,
+        reset,
+        formState: { errors: formErrors, isSubmitting },
+    } = useForm<PaymentFormValues>({
+        defaultValues: {
+            paid_amount: "",
+            payment_method: PAYMENT_METHOD_BKASH.toString(),
+            payment_status: PAYMENT_STATUS_PAID.toString(),
+            comment: "",
+        },
     });
-    const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
 
     if (errorMessage) {
         return <ErrorComponent message={errorMessage} />;
@@ -115,55 +132,47 @@ export default function EnrollmentDetails({
         Math.max((enrollment.final_price ?? 0) - totalPaid, 0);
 
 
-    const handleCreatePayment = () => {
-        setFieldErrors({});
-        if (!paymentFormData.paid_amount || Number(paymentFormData.paid_amount) <= 0) {
+    const onSubmit = async (values: PaymentFormValues) => {
+        if (!values.paid_amount || Number(values.paid_amount) <= 0) {
             toast.error("Please enter a valid payment amount");
             return;
         }
 
-        if (Number(paymentFormData.paid_amount) > dueAmount) {
+        if (Number(values.paid_amount) > dueAmount) {
             toast.error(`Payment amount cannot exceed due amount of ${formatCurrency(dueAmount)}`);
             return;
         }
 
-        startTransition(async () => {
-            try {
-                const paidAmount = Number(paymentFormData.paid_amount);
+        try {
+            const res = await createPayment({
+                enrollment_id: enrollment!.id,
+                paid_amount: Number(values.paid_amount),
+                payment_method: Number(values.payment_method),
+                payment_status: Number(values.payment_status),
+                comment: values.comment || undefined,
+            });
 
-                const res = await createPayment({
-                    enrollment_id: enrollment.id,
-                    paid_amount: paidAmount,
-                    payment_method: Number(paymentFormData.payment_method),
-                    payment_status: Number(paymentFormData.payment_status),
-                    comment: paymentFormData.comment || undefined,
-                });
-
-                if (res.success) {
-                    toast.success(res.message || "Payment created successfully");
-                    setIsPaymentDialogOpen(false);
-                    setPaymentFormData({
-                        paid_amount: "",
-                        payment_method: PAYMENT_METHOD_BKASH.toString(),
-                        payment_status: PAYMENT_STATUS_PAID.toString(),
-                        comment: "",
+            if (res.success) {
+                toast.success(res.message || "Payment created successfully");
+                setIsPaymentDialogOpen(false);
+                reset();
+                router.refresh();
+            } else {
+                toast.error(res.message || "Failed to create payment");
+                if (res.errors) {
+                    Object.entries(res.errors).forEach(([field, messages]) => {
+                        const errorMessage = Array.isArray(messages) ? messages[0] : messages;
+                        setError(field as keyof PaymentFormValues, { type: "server", message: errorMessage as string });
                     });
-                    setFieldErrors({});
-                    router.refresh();
-                } else {
-                    toast.error(res.message || "Failed to create payment");
-                    if (res.errors) {
-                        setFieldErrors(res.errors as Record<string, string[]>);
-                    }
-                }
-            } catch (error: unknown) {
-                if (error instanceof Error) {
-                    toast.error(error.message);
-                } else {
-                    toast.error("Failed to create payment");
                 }
             }
-        });
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                toast.error(error.message);
+            } else {
+                toast.error("Failed to create payment");
+            }
+        }
     };
 
     return (
@@ -243,14 +252,14 @@ export default function EnrollmentDetails({
                                         Add Payment
                                     </Button>
                                 </DialogTrigger>
-                                <DialogContent className="sm:max-w-[500px]" onPointerDownOutside={(e) => isPending && e.preventDefault()}>
+                                <DialogContent className="sm:max-w-[500px]" onPointerDownOutside={(e) => isSubmitting && e.preventDefault()}>
                                     <DialogHeader>
                                         <DialogTitle>Create New Payment</DialogTitle>
                                         <DialogDescription>
                                             Add a new payment record for this enrollment. Due amount: {formatCurrency(dueAmount)}
                                         </DialogDescription>
                                     </DialogHeader>
-                                    <div className="space-y-4 py-4">
+                                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 py-4">
                                         <div className="space-y-2">
                                             <Label htmlFor="paid_amount">Payment Amount *</Label>
                                             <Input
@@ -260,63 +269,64 @@ export default function EnrollmentDetails({
                                                 min="1"
                                                 max={dueAmount}
                                                 placeholder="Enter payment amount"
-                                                value={paymentFormData.paid_amount}
-                                                onChange={(e) =>
-                                                    setPaymentFormData({
-                                                        ...paymentFormData,
-                                                        paid_amount: e.target.value,
-                                                    })
-                                                }
-                                                disabled={isPending}
+                                                {...register("paid_amount")}
+                                                disabled={isSubmitting}
                                             />
-                                            {fieldErrors.paid_amount && (
-                                                <p className="text-sm text-red-500">{fieldErrors.paid_amount[0]}</p>
+                                            {formErrors.paid_amount && (
+                                                <p className="text-sm text-red-500">{formErrors.paid_amount.message}</p>
                                             )}
                                         </div>
                                         <div className="space-y-2">
                                             <Label htmlFor="payment_method">Payment Method *</Label>
-                                            <Select
-                                                value={paymentFormData.payment_method}
-                                                onValueChange={(value) =>
-                                                    setPaymentFormData({
-                                                        ...paymentFormData,
-                                                        payment_method: value,
-                                                    })
-                                                }
-                                                disabled={isPending}
-                                            >
-                                                <SelectTrigger id="payment_method" className="w-full">
-                                                    <SelectValue placeholder="Select payment method" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    <SelectItem value={PAYMENT_METHOD_BKASH.toString()}>bKash</SelectItem>
-                                                    <SelectItem value={PAYMENT_METHOD_ROCKET.toString()}>Rocket</SelectItem>
-                                                    <SelectItem value={PAYMENT_METHOD_NAGAD.toString()}>Nagad</SelectItem>
-                                                    <SelectItem value={PAYMENT_METHOD_CASH.toString()}>Cash</SelectItem>
-                                                </SelectContent>
-                                            </Select>
-                                            {fieldErrors.payment_method && (
-                                                <p className="text-sm text-red-500">{fieldErrors.payment_method[0]}</p>
+                                            <Controller
+                                                name="payment_method"
+                                                control={control}
+                                                render={({ field }) => (
+                                                    <Select
+                                                        value={field.value}
+                                                        onValueChange={field.onChange}
+                                                        disabled={isSubmitting}
+                                                    >
+                                                        <SelectTrigger id="payment_method" className="w-full">
+                                                            <SelectValue placeholder="Select payment method" />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            <SelectItem value={PAYMENT_METHOD_BKASH.toString()}>bKash</SelectItem>
+                                                            <SelectItem value={PAYMENT_METHOD_ROCKET.toString()}>Rocket</SelectItem>
+                                                            <SelectItem value={PAYMENT_METHOD_NAGAD.toString()}>Nagad</SelectItem>
+                                                            <SelectItem value={PAYMENT_METHOD_CASH.toString()}>Cash</SelectItem>
+                                                        </SelectContent>
+                                                    </Select>
+                                                )}
+                                            />
+                                            {formErrors.payment_method && (
+                                                <p className="text-sm text-red-500">{formErrors.payment_method.message}</p>
                                             )}
                                         </div>
                                         <div className="space-y-2">
                                             <Label htmlFor="payment_status">Payment Status *</Label>
-                                            <Select
-                                                value={paymentFormData.payment_status}
-                                                onValueChange={(value) => setPaymentFormData({ ...paymentFormData, payment_status: value })}
-                                                disabled={isPending}
-                                            >
-                                                <SelectTrigger id="payment_status" className="w-full">
-                                                    <SelectValue placeholder="Select payment status" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    <SelectItem value={PAYMENT_STATUS_PAID.toString()}>Paid</SelectItem>
-                                                    <SelectItem value={PAYMENT_STATUS_PENDING.toString()}>Pending</SelectItem>
-                                                    <SelectItem value={PAYMENT_STATUS_REFUNDED.toString()}>Refunded</SelectItem>
-                                                </SelectContent>
-                                            </Select>
-                                            {fieldErrors.payment_status && (
-                                                <p className="text-sm text-red-500">{fieldErrors.payment_status[0]}</p>
+                                            <Controller
+                                                name="payment_status"
+                                                control={control}
+                                                render={({ field }) => (
+                                                    <Select
+                                                        value={field.value}
+                                                        onValueChange={field.onChange}
+                                                        disabled={isSubmitting}
+                                                    >
+                                                        <SelectTrigger id="payment_status" className="w-full">
+                                                            <SelectValue placeholder="Select payment status" />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            <SelectItem value={PAYMENT_STATUS_PAID.toString()}>Paid</SelectItem>
+                                                            <SelectItem value={PAYMENT_STATUS_PENDING.toString()}>Pending</SelectItem>
+                                                            <SelectItem value={PAYMENT_STATUS_REFUNDED.toString()}>Refunded</SelectItem>
+                                                        </SelectContent>
+                                                    </Select>
+                                                )}
+                                            />
+                                            {formErrors.payment_status && (
+                                                <p className="text-sm text-red-500">{formErrors.payment_status.message}</p>
                                             )}
                                         </div>
                                         <div className="space-y-2">
@@ -324,28 +334,29 @@ export default function EnrollmentDetails({
                                             <Textarea
                                                 id="comment"
                                                 placeholder="Add any additional notes..."
-                                                value={paymentFormData.comment}
-                                                onChange={(e) => setPaymentFormData({ ...paymentFormData, comment: e.target.value })}
+                                                {...register("comment")}
                                                 rows={3}
-                                                disabled={isPending}
+                                                disabled={isSubmitting}
                                             />
-                                            {fieldErrors.comment && (
-                                                <p className="text-sm text-red-500">{fieldErrors.comment[0]}</p>
+                                            {formErrors.comment && (
+                                                <p className="text-sm text-red-500">{formErrors.comment.message}</p>
                                             )}
                                         </div>
-                                    </div>
-                                    <DialogFooter>
-                                        <Button
-                                            variant="outline"
-                                            onClick={() => setIsPaymentDialogOpen(false)}
-                                            disabled={isPending}
-                                        >
-                                            Cancel
-                                        </Button>
-                                        <Button onClick={handleCreatePayment} disabled={isPending}>
-                                            {isPending ? "Creating..." : "Create Payment"}
-                                        </Button>
-                                    </DialogFooter>
+
+                                        <DialogFooter className="pt-4">
+                                            <Button
+                                                type="button"
+                                                variant="outline"
+                                                onClick={() => setIsPaymentDialogOpen(false)}
+                                                disabled={isSubmitting}
+                                            >
+                                                Cancel
+                                            </Button>
+                                            <Button type="submit" disabled={isSubmitting}>
+                                                {isSubmitting ? "Creating..." : "Create Payment"}
+                                            </Button>
+                                        </DialogFooter>
+                                    </form>
                                 </DialogContent>
                             </Dialog>
                         )}
@@ -390,7 +401,7 @@ export default function EnrollmentDetails({
                                                     {formatCurrency(history.payment_details?.due_amount)}
                                                 </TableCell>
                                                 <TableCell className="max-w-[240px]">
-                                                    {history.additional_info?.comment ?? "N/A"}
+                                                    {history.payment_details?.comment ?? "N/A"}
                                                 </TableCell>
                                                 <TableCell>
                                                     {history.approved_by ?? "N/A"}
