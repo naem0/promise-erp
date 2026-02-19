@@ -63,7 +63,6 @@ export default async function BlogCategoryPage({
                 searchParams={searchParams}
               />
             </Suspense>
-
           </div>
         </div>
       </section>
