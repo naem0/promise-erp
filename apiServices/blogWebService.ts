@@ -1,12 +1,20 @@
 "use server";
 const API_BASE =
   process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
+import { authOptions } from "@/lib/auth";
 import { PaginationType } from "@/types/pagination";
+import { getServerSession } from "next-auth";
 
 // ******* Start Blog Info API *******
 export interface BlogInfoCategory {
   id: number;
   title: string;
+}
+export interface BlogAuthor {
+  id: number;
+  name: string;
+  image?: string;
+  designation?: string;
 }
 
 export interface BlogInfo {
@@ -15,7 +23,7 @@ export interface BlogInfo {
   title: string;
   short_description?: string;
   slug: string;
-  author?: string;
+  author?: BlogAuthor;
   thumbnail?: string;
   published_at: string;
   status?: number;
@@ -140,7 +148,7 @@ export interface BlogSlugDetails {
   };
   title: string;
   slug: string;
-  author: string;
+  author?: BlogAuthor;
   short_description: string;
   description: string;
   thumbnail?: string;
@@ -217,3 +225,86 @@ export async function getPublicBlogsByCategorySlug({
   }
 }
 // ******* End get Public Blog Category Slug API *******
+
+// ******* Start get Public getBlogDetailLikeCount API *******
+
+export interface BlogLikesData {
+  blog_id: number;
+  likes_count: number;
+}
+
+export interface BlogLikesApiResponse {
+  success: boolean;
+  message: string;
+  code: number;
+  data: BlogLikesData;
+}
+export async function getBlogDetailLikeCount(
+  blogId: number,
+): Promise<BlogLikesApiResponse> {
+  try {
+    const res = await fetch(`${API_BASE}/public/blogs/${blogId}/likes-count`);
+
+    if (!res.ok) {
+      throw new Error(
+        `getBlogDetailLikeCount API error: ${res.status} ${res.statusText}`,
+      );
+    }
+
+    const data: BlogLikesApiResponse = await res.json();
+    return data;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error fetching blog likes:", error.message);
+      throw new Error(error.message);
+    }
+
+    throw new Error("Unknown error occurred while fetching blog likes.");
+  }
+}
+// ******* End get Public getBlogDetailLikeCount API *******
+
+// ******* Start toggle Blog Detail Likes API *******
+
+export interface ToggleLikeResponseData {
+  is_liked: boolean;
+  likes_count: number;
+}
+
+export interface ToggleLikeApiResponse {
+  success: boolean;
+  message: string;
+  code: number;
+  data?: ToggleLikeResponseData;
+  errors?: Record<string, string[]>;
+}
+
+export async function toggleBlogDetailLikes(
+  blogId: number,
+): Promise<ToggleLikeApiResponse> {
+  try {
+    const session = await getServerSession(authOptions);
+    const token = session?.accessToken;
+
+    if (!token) {
+      throw new Error("No valid session or access token found.");
+    }
+    const res = await fetch(`${API_BASE}/blogs/${blogId}/toggle-like`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data: ToggleLikeApiResponse = await res.json();
+    return data;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error toggling blog like:", error.message);
+      throw new Error(error.message);
+    }
+    throw new Error("Unknown error occurred while toggling blog like.");
+  }
+}
+// ******* End toggle Blog Detail Likes API *******

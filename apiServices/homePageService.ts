@@ -3,6 +3,7 @@
 const API_BASE =
   process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
 import { PaginationType } from "@/types/pagination";
+import { BlogAuthor } from "./blogWebService";
 
 // ---Start Interfaces home page hero section ---
 export interface HeroSection {
@@ -322,7 +323,7 @@ export interface Blog {
   category: BlogCategory;
   title: string;
   slug: string;
-  author?: string;
+  author?: BlogAuthor;
   short_description?: string;
   thumbnail: string;
   published_at: string;

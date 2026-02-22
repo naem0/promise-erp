@@ -41,7 +41,7 @@ const BlogFeaturedPost = ({ blogInfoData }: BlogFeaturedPostProps) => {
             <div className="flex items-center gap-4 text-base text-secondary mb-4">
               <span className="flex items-center gap-1.5 font-medium ">
                 <User className="h-5 w-5" />
-                {blogInfoData[0]?.author}
+                { blogInfoData[0]?.author?.name}
               </span>
               <span className="flex items-center gap-1.5 font-medium ">
                 <Calendar className="h-5 w-5" />
