@@ -26,7 +26,7 @@ const MyCoursesGrid = async () => {
   }
 
   return (
-    <section className="py-4 px-4">
+    <section className="py-8 lg:py-14 px-4">
       <div className="grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-2 grid-cols-1 gap-4">
         {mockCourses?.map((course) => (
           <MyCourseCard key={course?.id} course={course} />

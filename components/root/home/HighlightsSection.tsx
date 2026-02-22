@@ -8,13 +8,16 @@ import { cacheTag } from "next/cache";
 const HighlightsSection = async () => {
   "use cache";
   cacheTag("stats-list");
-  let stats = [];
+  let stats;
   try {
   const countDownData = await getLatestCountDown();
   stats = countDownData?.data?.stats || [];
-  } catch (error) {
-    console.error("Error in getLatestCountDown:", error);
-    return <ErrorComponent message="An unexpected error occurred." />;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error fetching stats:", error.message);
+      return <ErrorComponent message={error.message} />;
+    }
+    throw new Error("Unknown error occurred while fetching stats");
   }
 
   return (

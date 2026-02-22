@@ -1,49 +1,71 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useForm } from "react-hook-form"
-import { signIn } from "next-auth/react"
-import { useRouter, useSearchParams } from "next/navigation"
-import { Eye, EyeOff } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Field, FieldGroup, FieldLabel, FieldDescription } from "@/components/ui/field"
-import Link from "next/link"
-import { toast } from "sonner"
-import { Spinner } from "@/components/ui/spinner"
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { signIn, useSession } from "next-auth/react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Eye, EyeOff } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+import {
+  Field,
+  FieldGroup,
+  FieldLabel,
+  FieldDescription,
+} from "@/components/ui/field";
+import Link from "next/link";
+import { toast } from "sonner";
+import { Spinner } from "@/components/ui/spinner";
+import { getSession } from "next-auth/react";
 
 export interface FormData {
-  email_or_phone: string
-  password: string
+  email_or_phone: string;
+  password: string;
 }
 
 const LoginForm = () => {
-  const [showPassword, setShowPassword] = useState(false)
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
-  const searchParams = useSearchParams()
-  const redirectPath = searchParams.get("redirect") || "/"
+  const searchParams = useSearchParams();
+  const redirectPath = searchParams.get("redirect") || "/";
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<FormData>({ mode: "onTouched" })
+  } = useForm<FormData>({ mode: "onTouched" });
 
   const onSubmit = async (data: FormData) => {
     const res = await signIn("credentials", {
       redirect: false,
       email_or_phone: data.email_or_phone,
       password: data.password,
-    })
+    });
 
     if (res?.ok) {
-      toast.success("Logged in successfully!")
-      router.push(redirectPath)
+      const updatedSession = await getSession();
+      const role = updatedSession?.user?.roles?.[0];
+      if (role === "super-admin") {
+        router.push("/dashboard");
+      } else if (role === "student") {
+        router.push("/student/dashboard");
+      } else if (role === "coordinator") {
+        router.push("/coordinator/dashboard");
+      } else {
+        router.push(redirectPath);
+      }
+      toast.success("Logged in successfully!");
     } else {
-      toast.error(res?.error || "Login failed! Please try again.")
+      toast.error(res?.error || "Login failed! Please try again.");
     }
-  }
+  };
 
   return (
     <div className="w-full">
@@ -58,27 +80,37 @@ const LoginForm = () => {
           <form onSubmit={handleSubmit(onSubmit)}>
             <FieldGroup>
               <Field>
-                <FieldLabel htmlFor="email_or_phone ">Email or Phone<span className="text-red-500">*</span></FieldLabel>
+                <FieldLabel htmlFor="email_or_phone ">
+                  Email or Phone<span className="text-red-500">*</span>
+                </FieldLabel>
                 <Input
                   id="email_or_phone"
                   type="string"
                   placeholder="Enter your email or phone"
-                  {...register("email_or_phone", { required: "email or  phone  is required" })}
+                  {...register("email_or_phone", {
+                    required: "email or  phone  is required",
+                  })}
                   defaultValue={process.env.NEXT_PUBLIC_ADMIN_EMAIL}
                 />
                 {errors.email_or_phone && (
-                  <FieldDescription className="text-red-500">{errors.email_or_phone.message}</FieldDescription>
+                  <FieldDescription className="text-red-500">
+                    {errors.email_or_phone.message}
+                  </FieldDescription>
                 )}
               </Field>
 
               <Field>
-                <FieldLabel htmlFor="password">Password<span className="text-red-500">*</span></FieldLabel>
+                <FieldLabel htmlFor="password">
+                  Password<span className="text-red-500">*</span>
+                </FieldLabel>
                 <div className="relative">
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter your password"
-                    {...register("password", { required: "Password is required" })}
+                    {...register("password", {
+                      required: "Password is required",
+                    })}
                     defaultValue={process.env.NEXT_PUBLIC_ADMIN_PASSWORD}
                   />
                   <span
@@ -89,10 +121,17 @@ const LoginForm = () => {
                   </span>
                 </div>
                 {errors.password && (
-                  <FieldDescription className="text-red-500">{errors.password.message}</FieldDescription>
+                  <FieldDescription className="text-red-500">
+                    {errors.password.message}
+                  </FieldDescription>
                 )}
                 <FieldDescription className="flex justify-end mt-1">
-                  <Link href="/forgot-password" className="text-blue-600 hover:underline">Forgot Password?</Link>
+                  <Link
+                    href="/forgot-password"
+                    className="text-blue-600 hover:underline"
+                  >
+                    Forgot Password?
+                  </Link>
                 </FieldDescription>
               </Field>
 
@@ -104,7 +143,13 @@ const LoginForm = () => {
                   type="submit"
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? <><Spinner /> Login...</> : "Login"}
+                  {isSubmitting ? (
+                    <>
+                      <Spinner /> Login...
+                    </>
+                  ) : (
+                    "Login"
+                  )}
                 </Button>
               </Field>
               <FieldDescription className="px-6 text-center">
@@ -121,7 +166,7 @@ const LoginForm = () => {
         </CardContent>
       </Card>
     </div>
-  )
-}
+  );
+};
 
-export default LoginForm
+export default LoginForm;

@@ -86,7 +86,7 @@ const HomeHeroSection = ({ heroBannerData }: HeroVideoData) => {
                 className="aspect-video"
                 src={videoUrl}
                 playing={isPlaying}
-                controls={isPlaying}
+                controls={true}
                 width="100%"
                 height="100%"
                 onPlay={() => setIsPlaying(true)}
@@ -95,8 +95,8 @@ const HomeHeroSection = ({ heroBannerData }: HeroVideoData) => {
 
               {!isPlaying && (
                 <div
-                  className="flex items-center justify-center cursor-pointer absolute inset-0"
-                  onClick={() => setIsPlaying(true)}
+                  className="flex items-center justify-center absolute inset-0"
+                  
                 >
                   <div className="relative w-full h-full">
                     <Image
@@ -110,6 +110,7 @@ const HomeHeroSection = ({ heroBannerData }: HeroVideoData) => {
                       <button
                         className="video-play-btn animate-pulse"
                         aria-label="Play video"
+                        onClick={() => setIsPlaying(true)}
                       >
                         <Play className="w-8 h-8 md:w-10 md:h-10" />
                       </button>

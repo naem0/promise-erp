@@ -24,6 +24,7 @@ const MyCourseBySlugWrapper = async ({
     : undefined;
   const queryParamsLessonId = {
     lesson_id: lessonId,
+    batch_id: queryParams?.batch_id ? Number(queryParams.batch_id) : undefined,
   };
 
   const response = await getStudentMyCoursesBySlug(slug, queryParamsLessonId);

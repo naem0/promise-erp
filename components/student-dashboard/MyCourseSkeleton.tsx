@@ -10,7 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 const MyCourseSkeleton = () => {
   return (
     <div className="container mx-auto">
-      <div className="grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-2 grid-cols-1 gap-4 px-4 py-4">
+      <div className="grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-2 grid-cols-1 gap-4 py-4">
         {Array.from({ length: 4 }).map((_, index) => (
           <Card
             key={index}

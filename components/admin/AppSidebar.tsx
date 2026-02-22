@@ -141,6 +141,11 @@ const data = {
           permissions: ["view-reviews"],
         },
         {
+          title: "Course Tools",
+          url: "/lms/tools",
+          permissions: ["view-course-tools"],
+        },
+        {
           title: "Free Seminars",
           url: "/lms/free-seminars",
         },

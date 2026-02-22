@@ -1,10 +1,21 @@
 import { getLatestHeroSection } from "@/apiServices/homePageService";
 import HomeHeroSection from "./HomeHeroSection";
 import { cacheTag } from "next/cache";
+import ErrorComponent from "@/components/common/ErrorComponent";
 const HomeHeroWrapper = async () => {
   "use cache";
   cacheTag("hero-sections-list");
-  const heroBannerData = await getLatestHeroSection();
+  let heroBannerData;
+  try {
+     heroBannerData = await getLatestHeroSection();
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error fetching hero banner:", error.message);
+      return (<ErrorComponent message={error.message} />);
+    }
+    throw new Error("Unknown error occurred while fetching hero banner");
+  }
+  
   return <HomeHeroSection heroBannerData={heroBannerData} />;
 };
 

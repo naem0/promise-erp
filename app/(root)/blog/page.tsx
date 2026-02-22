@@ -4,6 +4,7 @@ import BlogPostWrapper from "@/components/root/blog/BlogPostWrapper";
 import { Loader2 } from "lucide-react";
 import { Suspense } from "react";
 import { Metadata } from "next";
+import BlogSidebarSkeleton from "@/components/root/blog/BlogSidebarSkeleton";
 
 interface BlogPageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -14,7 +15,6 @@ interface BlogPageProps {
 export async function generateMetadata({
   searchParams,
 }: BlogPageProps): Promise<Metadata> {
-
   const params = await searchParams;
   const page = params.page;
 
@@ -25,12 +25,11 @@ export async function generateMetadata({
   }
   return {
     title: `Blog - Promise ERP ${page && page !== "1" ? ` - Page ${page}` : ""}`,
-    description:`Explore our latest articles, insights, and updates on Promise ERP and business management solutions. ${page && page !== "1" ? ` - Page ${page}` : ""}`,
+    description: `Explore our latest articles, insights, and updates on Promise ERP and business management solutions. ${page && page !== "1" ? ` - Page ${page}` : ""}`,
 
     alternates: {
       canonical: canonicalUrl,
     },
-
 
     openGraph: {
       title: "Blog - Promise ERP",
@@ -59,7 +58,6 @@ export async function generateMetadata({
   };
 }
 const BlogPage = ({ searchParams }: BlogPageProps) => {
-
   return (
     <>
       <BloggWrapperBanner />
@@ -69,14 +67,20 @@ const BlogPage = ({ searchParams }: BlogPageProps) => {
             {/* Sidebar */}
             <aside className="lg:col-span-4 xl:col-span-3">
               <div className="lg:sticky lg:top-24">
-                <Suspense fallback={<div className="flex items-center justify-center h-full"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
+                <Suspense fallback={<BlogSidebarSkeleton />}>
                   <BlogCategorySidebar />
                 </Suspense>
               </div>
             </aside>
 
             {/* Main Content */}
-            <Suspense fallback={<div className="lg:col-span-8 xl:col-span-9 flex items-center justify-center h-full"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
+            <Suspense
+              fallback={
+                <div className="lg:col-span-8 xl:col-span-9 flex items-center justify-center h-full">
+                  <Loader2 className="h-8 w-8 animate-spin" />
+                </div>
+              }
+            >
               <BlogPostWrapper searchParams={searchParams} />
             </Suspense>
           </div>
