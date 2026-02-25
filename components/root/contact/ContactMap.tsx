@@ -1,8 +1,17 @@
-
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { MapPin } from "lucide-react"
+import { getPublicContactPageInfo } from "@/apiServices/contactPageWeb";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { MapPin } from "lucide-react";
+import { use } from "react";
 
 const ContactMap = () => {
+  const contactInfo = use(getPublicContactPageInfo());
+
+  const address =
+    contactInfo?.data?.address ??
+    "Office Address Not Available. Please contact us for more information.";
+  const mapEmbedUrl =
+    contactInfo?.data?.google_map ??
+    "https://maps.app.goo.gl/gMaS3uUo2YVFA3eU7";
   return (
     <Card className="h-full py-0">
       <CardHeader className="pt-4">
@@ -18,8 +27,8 @@ const ContactMap = () => {
         {/* Map Container */}
         <div className="relative rounded-xl overflow-hidden h-64 md:h-80">
           <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3651.0!2d90.3654!3d23.7808!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjPCsDQ2JzUxLjAiTiA5MMKwMjEnNTUuNCJF!5e0!3m2!1sen!2sbd!4v1620000000000!5m2!1sen!2sbd"
-            className="w-full h-full border-0 grayscale-[20%]"
+            src={mapEmbedUrl}
+            className="w-full h-full border-0 grayscale-[22%]"
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
             title="Office Location"
@@ -35,24 +44,21 @@ const ContactMap = () => {
         </div>
 
         {/* Address Card */}
-        <div className="flex items-start gap-3 px-3 bg-muted rounded-xl">
+        <div className="flex items-start gap-3 p-3 bg-secondary/15 rounded-xl">
           <div className="bg-secondary rounded-full p-2 shrink-0">
             <MapPin className="w-4 h-4 text-white" />
           </div>
 
           <div>
-            <h3 className="font-semibold text-secondary text-sm mb-1">
+            <h3 className="font-semibold text-secondary text-base md:text-lg mb-1">
               E-Learning & Earning Ltd.
             </h3>
-            <p className="text-muted-secondary text-xs leading-relaxed">
-              Khaja IT Park, 2nd to 7th Floor,<br />
-              Kallyanpur Bus Stop, Mirpur Road,<br />
-              Dhaka-1207
+            <p className="text-muted-secondary text-base leading-relaxed">
+              {address}
             </p>
           </div>
         </div>
       </CardContent>
-
     </Card>
   );
 };

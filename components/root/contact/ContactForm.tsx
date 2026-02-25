@@ -1,5 +1,8 @@
+
+
 "use client";
-import { useState } from "react";
+
+import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -12,37 +15,66 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { submitContactForm } from "@/apiServices/contactPageWeb";
+import { toast } from "sonner";
+
+interface FormValues {
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string;
+  subject?: string;
+  message: string;
+}
 
 const ContactForm = () => {
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    subject: "",
-    message: "",
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm<FormValues>({
+    defaultValues: {
+      first_name: "",
+      last_name: "",
+      email: "",
+      phone: "",
+      subject: "",
+      message: "",
+    },
   });
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { id, value } = e.target;
-    const fieldName = id.replace("-", "");
-    setFormData((prev) => ({
-      ...prev,
-      [fieldName]: value,
-    }));
-  };
+  const onSubmit = async (data: FormValues) => {
+    try {
+      const response = await submitContactForm(data);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    console.log(formData);
+      if (!response.success) {
+        if (response.errors) {
+          Object.keys(response.errors).forEach((field) => {
+            setError(field as keyof FormValues, {
+              type: "server",
+              message: response.errors![field].join(", "),
+            });
+          });
+        }
+        toast.error(response.message || "Something went wrong!");
+      } else {
+        toast.success(response.message || "Message sent successfully!");
+        reset();
+      }
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error("Error submitting contact form:", error.message);
+      } else {
+        console.error("Unknown error occurred while submitting contact form.");
+      }
+    }
   };
 
   return (
     <Card className="h-full py-0">
-      <div className="h-2 bg-linear-to-r from-secondary via-primary to-secondary rounded-tl-xl rounded-tr-xl "></div>
+      <div className="h-2 bg-linear-to-r from-secondary via-primary to-secondary rounded-tl-xl rounded-tr-xl"></div>
       <CardHeader>
         <CardTitle className="text-2xl font-bold text-secondary">
           Send Us a Message
@@ -54,32 +86,45 @@ const ContactForm = () => {
       </CardHeader>
 
       <CardContent>
-        <form className="space-y-4" onSubmit={handleSubmit}>
+        <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
+          {/* Name Fields */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="first-name">
+              <Label htmlFor="first_name">
                 First Name <span className="text-red-500">*</span>
               </Label>
               <Input
-                id="first-name"
+                id="first_name"
                 placeholder="e.g. John"
-                value={formData.firstName}
-                onChange={handleChange}
+                {...register("first_name")}
+                className={errors.first_name ? "border-red-500" : ""}
               />
+              {errors.first_name && (
+                <p className="text-red-500 text-sm">
+                  {errors.first_name.message}
+                </p>
+              )}
             </div>
+
             <div className="space-y-2">
-              <Label htmlFor="last-name">
+              <Label htmlFor="last_name ">
                 Last Name <span className="text-red-500">*</span>
               </Label>
               <Input
-                id="last-name"
+                id="last_name"
                 placeholder="e.g. Doe"
-                value={formData.lastName}
-                onChange={handleChange}
+                {...register("last_name")}
+                className={errors.last_name ? "border-red-500" : ""}
               />
+              {errors.last_name && (
+                <p className="text-red-500 text-sm">
+                  {errors.last_name.message}
+                </p>
+              )}
             </div>
           </div>
 
+          {/* Contact Fields */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="email">
@@ -89,31 +134,39 @@ const ContactForm = () => {
                 id="email"
                 type="email"
                 placeholder="example@gmail.com"
-                value={formData.email}
-                onChange={handleChange}
+                {...register("email")}
+                className={errors.email ? "border-red-500" : ""}
               />
+              {errors.email && (
+                <p className="text-red-500 text-sm">{errors.email.message}</p>
+              )}
             </div>
+
             <div className="space-y-2">
-              <Label htmlFor="phone">Phone Number</Label>
+              <Label htmlFor="phone">Phone Number  <span className="text-red-500">*</span></Label>
               <Input
                 id="phone"
                 placeholder="+880 1XXXXXXXXX"
-                value={formData.phone}
-                onChange={handleChange}
+                {...register("phone")}
+                className={errors.phone ? "border-red-500" : ""}
               />
+              {errors.phone && (
+                <p className="text-red-500 text-sm">{errors.phone.message}</p>
+              )}
             </div>
           </div>
 
+          {/* Subject Field */}
           <div className="space-y-2">
             <Label htmlFor="subject">Subject</Label>
             <Input
               id="subject"
               placeholder="What's this about?"
-              value={formData.subject}
-              onChange={handleChange}
+              {...register("subject")}
             />
           </div>
 
+          {/* Message Field */}
           <div className="space-y-2">
             <Label htmlFor="message">
               Message <span className="text-red-500">*</span>
@@ -121,18 +174,22 @@ const ContactForm = () => {
             <Textarea
               id="message"
               placeholder="Tell us more about your inquiry..."
-              className="min-h-[150px]"
-              value={formData.message}
-              onChange={handleChange}
+              className={`min-h-[150px] ${errors.message ? "border-red-500" : ""}`}
+              {...register("message")}
             />
+            {errors.message && (
+              <p className="text-red-500 text-sm">{errors.message.message}</p>
+            )}
           </div>
+
+          {/* Submit Button */}
+          <CardFooter className="px-0 py-4">
+            <Button type="submit" className="w-full" disabled={isSubmitting}>
+              {isSubmitting ? "Sending..." : "Send Message"}
+            </Button>
+          </CardFooter>
         </form>
       </CardContent>
-      <CardFooter className="py-4">
-        <Button type="submit" className="w-full">
-          Send Message
-        </Button>
-      </CardFooter>
     </Card>
   );
 };

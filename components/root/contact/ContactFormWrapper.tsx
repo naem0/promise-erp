@@ -1,12 +1,7 @@
-"use client";
-
-import dynamic from 'next/dynamic'
-const ContactMap = dynamic(() => import("./ContactMap"), {
-  ssr: false,
-})
-const ContactForm = dynamic(() => import("./ContactForm"), {
-  ssr: false,
-})
+import { Suspense } from "react";
+import ContactMap from "./ContactMap";
+import ContactForm from "./ContactForm";
+import ContactMapSkeleton from "./ContactMapSkeleton";
 
 const ContactFormWrapper = () => {
   return (
@@ -14,7 +9,9 @@ const ContactFormWrapper = () => {
       <div className="container mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 items-start gap-4 lg:gap-8">
           <ContactForm />
-          <ContactMap />
+          <Suspense fallback={<ContactMapSkeleton />}>
+            <ContactMap />
+          </Suspense>
         </div>
       </div>
     </section>

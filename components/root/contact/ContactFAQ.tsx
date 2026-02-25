@@ -1,3 +1,6 @@
+import { getPublicContactFaqs } from "@/apiServices/contactPageWeb";
+import ErrorComponent from "@/components/common/ErrorComponent";
+import NotFoundComponent from "@/components/common/NotFoundComponent";
 import {
   Accordion,
   AccordionContent,
@@ -6,34 +9,26 @@ import {
 } from "@/components/ui/accordion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-const faqs = [
-  {
-    id: 1,
-    question: "How can I enroll in a course?",
-    answer:
-      "You can enroll in any of our courses through our website's enrollment portal or by visiting our office directly.",
-  },
-  {
-    id: 2,
-    question: "What payment methods do you accept?",
-    answer:
-      "We accept various payment methods including Credit/Debit cards, Mobile Banking (bKash, Nagad), and bank transfers.",
-  },
-  {
-    id: 3,
-    question: "Do you offer any discounts?",
-    answer:
-      "Yes, we offer early-bird discounts and group enrollment discounts. Keep an eye on our social media for seasonal promotions.",
-  },
-  {
-    id: 4,
-    question: "What support do you offer after enrollment?",
-    answer:
-      "Enrolled students get access to 24/7 online support, community forums, and direct mentorship from industry experts.",
-  },
-];
+const ContactFAQ = async () => {
+  let faqsData;
+  try {
+    faqsData = await getPublicContactFaqs();
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      return (
+        <div className="text-center py-8 md:py-12">
+          <ErrorComponent message={error.message} />
+        </div>
+      );
+    } else {
+      return (
+        <div className="text-center py-8 md:py-12">
+          <ErrorComponent message="An unknown error occurred while fetching FAQs." />
+        </div>
+      );
+    }
+  }
 
-const ContactFAQ = () => {
   return (
     <section className="py-8 md:py-12">
       <div className="container mx-auto">
@@ -50,20 +45,28 @@ const ContactFAQ = () => {
               className="w-full"
               defaultValue="item-1"
             >
-              {faqs.map((faq) => (
-                <AccordionItem
-                  key={faq.id}
-                  value={`item-${faq.id}`}
-                  className="border-b last:border-0"
-                >
-                  <AccordionTrigger className="text-left font-medium text-[#1a1c4e] hover:no-underline py-4">
-                    {faq.question}
-                  </AccordionTrigger>
-                  <AccordionContent className="text-muted-foreground pb-4">
-                    {faq.answer}
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
+              {faqsData?.data?.length === 0 ? (
+                <div className="text-center py-8 md:py-12">
+                  <NotFoundComponent
+                    message={faqsData?.message || "FAQs not found."}
+                  />
+                </div>
+              ) : (
+                faqsData?.data?.map((faq) => (
+                  <AccordionItem
+                    key={faq.id}
+                    value={`item-${faq.id}`}
+                    className="border-b last:border-0"
+                  >
+                    <AccordionTrigger className="text-left cursor-pointer font-semibold text-secondary text-lg md:text-xl hover:no-underline py-4">
+                      {faq.question}
+                    </AccordionTrigger>
+                    <AccordionContent className="text-black text-base py-4">
+                      {faq.answer}
+                    </AccordionContent>
+                  </AccordionItem>
+                ))
+              )}
             </Accordion>
           </CardContent>
         </Card>

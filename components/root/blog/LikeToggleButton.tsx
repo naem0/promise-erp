@@ -7,6 +7,7 @@ import {
   getBlogDetailLikeCount,
   toggleBlogDetailLikes,
 } from "@/apiServices/blogWebService";
+import { toast } from "sonner";
 
 interface LikeToggleButtonProps {
   blogId: number;
@@ -41,6 +42,7 @@ const LikeToggleButton = ({ blogId }: LikeToggleButtonProps) => {
         const res = await toggleBlogDetailLikes(blogId);
         if (res.success) {
           setIsLikedToggle(!isLikedToggle);
+          toast.success(res.message || "Like toggled successfully!");
         }
       } catch (error: unknown) {
         if (error instanceof Error) {

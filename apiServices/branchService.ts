@@ -3,7 +3,7 @@
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import { cacheTag, updateTag } from "next/cache";
-import { District } from "@/apiServices/districtService";
+import { District, Division } from "@/apiServices/districtService";
 import { handleApiError, processApiResponse } from "@/lib/apiErrorHandler";
 import { PaginationType } from "@/types/pagination";
 
@@ -87,7 +87,7 @@ async function getAuthToken(): Promise<string> {
    Add Branch
 ================================== */
 export async function addBranch(
-  branch: BranchCreate
+  branch: BranchCreate,
 ): Promise<BranchResponseType> {
   try {
     const token = await getAuthToken();
@@ -126,7 +126,7 @@ export async function addBranch(
 
 export async function getBranchesCached(
   token: string,
-  params: Record<string, unknown> = {}
+  params: Record<string, unknown> = {},
 ): Promise<BranchResponse> {
   const urlParams = new URLSearchParams();
 
@@ -153,13 +153,13 @@ export async function getBranchesCached(
     throw new Error(
       error instanceof Error
         ? error.message
-        : "Unknown error occurred while fetching branches"
+        : "Unknown error occurred while fetching branches",
     );
   }
 }
 
 export async function getBranches(
-  params: Record<string, unknown> = {}
+  params: Record<string, unknown> = {},
 ): Promise<BranchResponse> {
   const session = await getServerSession(authOptions);
   const token = session?.accessToken;
@@ -173,7 +173,7 @@ export async function getBranches(
   } catch (error) {
     console.error("Error in get branches:", error);
     throw new Error(
-      error instanceof Error ? error.message : "Failed to get branches"
+      error instanceof Error ? error.message : "Failed to get branches",
     );
   }
 }
@@ -204,7 +204,7 @@ export async function getBranchById(id: string): Promise<BranchSingleResponse> {
 
 export async function updateBranch(
   id: string,
-  data: Record<string, unknown>
+  data: Record<string, unknown>,
 ): Promise<BranchResponseType> {
   try {
     const session = await getServerSession(authOptions);
@@ -251,7 +251,7 @@ export async function updateBranch(
 ================================== */
 
 export async function deleteBranch(
-  id: number
+  id: number,
 ): Promise<{ success: boolean; message: string; code?: number }> {
   try {
     const session = await getServerSession(authOptions);
@@ -291,5 +291,139 @@ export async function deleteBranch(
       message: errorResult.message,
       code: errorResult.code,
     };
+  }
+}
+
+// ===============================Start web site Public Branch page API =============================
+
+export interface WebBranch {
+  id: number;
+  name: string;
+  address: string;
+  phone: string[];
+  email: string[];
+  google_map: string;
+}
+
+//
+export interface WebBranchData {
+  id: number;
+  name: string;
+  branches: WebBranch[];
+}
+
+// API Response Type
+export interface WebBranchApiResponse {
+  success: boolean;
+  message: string;
+  code: number;
+  data: WebBranchData[];
+  errors?: Record<string, string[]>;
+}
+
+export async function getPublicWebBranches(
+  params: Record<string, unknown> = {},
+): Promise<WebBranchApiResponse> {
+  try {
+    const urlParams = new URLSearchParams();
+
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        urlParams.append(key, String(value));
+      }
+    });
+
+    const queryString = urlParams.toString();
+    const res = await fetch(
+      `${API_BASE}/public/public-divisions?${queryString}`,
+    );
+
+    if (!res.ok) {
+      throw new Error(
+        `getPublicWebBranches API error: ${res.status} ${res.statusText}`,
+      );
+    }
+
+    const data: WebBranchApiResponse = await res.json();
+    return data;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error fetching public branches:", error.message);
+      throw new Error(error.message);
+    }
+    throw new Error("Unknown error occurred while fetching public branches.");
+  }
+}
+// ===============================End web site Public Branch page API ===============================
+
+// ===============================Start web site Public Division List API ===============================
+
+export interface PublicDivision {
+  id: number;
+  name: string;
+}
+
+export interface PublicDivisionApiResponse {
+  success: boolean;
+  message: string;
+  code: number;
+  data: PublicDivision[];
+  errors?: Record<string, string[]>;
+}
+
+export async function getPublicDivisionList(): Promise<PublicDivisionApiResponse> {
+  try {
+    const res = await fetch(`${API_BASE}/public/division-list`);
+
+    if (!res.ok) {
+      throw new Error(
+        `getPublicDivisionList API error: ${res.status} ${res.statusText}`,
+      );
+    }
+
+    const data: PublicDivisionApiResponse = await res.json();
+    return data;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error fetching public division list:", error.message);
+      throw new Error(error.message);
+    }
+    throw new Error("Unknown error occurred while fetching public division list.");
+  }
+}
+
+// ===============================End web site Public Division List API ===============================
+
+// ===============================Start web site Public Branch Statistics API =============================
+export interface BranchStatisticsData {
+  total_divisions: number;
+  total_districts: number;
+  total_branches: number;
+}
+
+export interface BranchStatisticsResponse {
+  success: boolean;
+  message: string;
+  code: number;
+  data: BranchStatisticsData;
+}
+export async function getPublicBranchStatistics(): Promise<BranchStatisticsResponse> {
+  try {
+    const res = await fetch(`${API_BASE}/public/geo-statistics`);
+
+    if (!res.ok) {
+      throw new Error(
+        `getPublicBranchStatistics API error: ${res.status} ${res.statusText}`,
+      );
+    }
+
+    const data: BranchStatisticsResponse = await res.json();
+    return data;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error fetching public branch statistics:", error.message);
+      throw new Error(error.message);
+    }
+    throw new Error("Unknown error occurred while fetching public branch statistics.");
   }
 }
