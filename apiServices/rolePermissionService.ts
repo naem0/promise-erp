@@ -84,6 +84,7 @@ export async function getAllPermissionsList({
 export interface Role {
   id: number;
   name: string;
+  guard_name?: string;
   permissions: string[];
   users_count: number;
   created_at: string;
@@ -101,6 +102,9 @@ export interface RolesApiResponse {
   data: RolesData;
   errors?: Record<string, string[]>;
 }
+
+
+// ======================= getAll Roles =======================
 export async function getAllRolesList({
   token,
   params = {},
@@ -122,9 +126,7 @@ export async function getAllRolesList({
     });
 
     const queryString = urlParams.toString();
-    const url = queryString
-      ? `${API_BASE}/roles?${queryString}`
-      : `${API_BASE}/roles`;
+    const url = `${API_BASE}/roles?${queryString}`;
 
     const res = await fetch(url, {
       method: "GET",
@@ -149,7 +151,54 @@ export async function getAllRolesList({
     throw new Error("Unknown error occurred while fetching permissions");
   }
 }
-// =======================End Roles =======================
+
+// ======================= General Roles =======================
+export async function getGeneralRolesList({
+  params = {},
+}: {
+  params?: Record<string, unknown>;
+} = {}): Promise<RolesApiResponse> {
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+  if (!token) {
+    throw new Error("Unauthorized: Access token not found");
+  }
+
+  try {
+    const urlParams = new URLSearchParams();
+
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        urlParams.append(key, String(value));
+      }
+    });
+
+    const queryString = urlParams.toString();
+    const url = `${API_BASE}/roles/general?${queryString}`;
+
+    const res = await fetch(url, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error(`roles API Error: ${res.status} ${res.statusText}`);
+    }
+
+    const data: RolesApiResponse = await res.json();
+    return data;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("getAllRolesList Error:", error.message);
+      throw error;
+    }
+
+    throw new Error("Unknown error occurred while fetching permissions");
+  }
+}
 
 // ======================= Role Permission List =======================
 export interface RolePermission {
