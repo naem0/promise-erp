@@ -7,15 +7,15 @@ const HomeHeroWrapper = async () => {
   cacheTag("hero-sections-list");
   let heroBannerData;
   try {
-     heroBannerData = await getLatestHeroSection();
+    heroBannerData = await getLatestHeroSection();
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error("Error fetching hero banner:", error.message);
-      return (<ErrorComponent message={error.message} />);
+      return <ErrorComponent message={error.message} />;
     }
-    throw new Error("Unknown error occurred while fetching hero banner");
+    return <ErrorComponent message="An unexpected error occurred." />;
   }
-  
+
   return <HomeHeroSection heroBannerData={heroBannerData} />;
 };
 

@@ -1,19 +1,29 @@
-import TrainerItemWrapper from "@/components/root/trainers/TrainerItemWrapper"
-import TrainerStates from "@/components/root/trainers/TrainerStates"
-import TrainerWrapperHeroBanner from "@/components/root/trainers/TrainerWrapperHeroBanner"
+import HighlightsSkeleton from "@/components/common/HighlightsSkeleton";
+import HighlightsSection from "@/components/root/home/HighlightsSection";
+import TrainerItemWrapper from "@/components/root/trainers/TrainerItemWrapper";
+import TrainerSkeletonGrid from "@/components/root/trainers/TrainerSkeletonGrid";
+// import TrainerStates from "@/components/root/trainers/TrainerStates";
+import TrainerWrapperHeroBanner from "@/components/root/trainers/TrainerWrapperHeroBanner";
+import { Suspense } from "react";
 
-
-const TrainersPage = () => {
+interface TrainersPageProps {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+const TrainersPage = ({ searchParams }: TrainersPageProps) => {
   return (
     <>
       <TrainerWrapperHeroBanner />
       <div className="container mx-auto px-4">
-        <TrainerStates />
-        <TrainerItemWrapper/>
-        <TrainerItemWrapper/>
+        {/* <TrainerStates /> */}
+        <Suspense fallback={<HighlightsSkeleton />}>
+          <HighlightsSection />
+        </Suspense>
+        <Suspense fallback={<TrainerSkeletonGrid />}>
+          <TrainerItemWrapper searchParams={searchParams} />
+        </Suspense>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default TrainersPage
+export default TrainersPage;

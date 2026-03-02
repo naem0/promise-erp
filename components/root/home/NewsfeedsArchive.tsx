@@ -1,5 +1,7 @@
-
-import {  fetchPublicNewsFeeds, NewsFeedItem } from "@/apiServices/homePageService";
+import {
+  fetchPublicNewsFeeds,
+  NewsFeedItem,
+} from "@/apiServices/homePageService";
 import SectionTitle from "@/components/common/SectionTitle";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Button } from "@/components/ui/button";
@@ -9,12 +11,12 @@ import { cacheTag } from "next/cache";
 import Image from "next/image";
 import Link from "next/link";
 
-
-const NewsfeedsArchive =  async() => {
+const NewsfeedsArchive = async () => {
   "use cache";
   cacheTag("public-news-feeds");
   const newsData = await fetchPublicNewsFeeds();
-  const newsItems : NewsFeedItem[] = newsData?.data?.news_feeds || [];
+  const newsItems: NewsFeedItem[] = newsData?.data?.news_feeds || [];
+
   return (
     <section className="py-8 md:py-14 bg-secondary/5">
       <div className="container mx-auto px-4">
@@ -26,12 +28,16 @@ const NewsfeedsArchive =  async() => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 h-full">
           {/* Main Featured News */}
-          <Link href={newsItems[0].news_link} className="group h-full " target="_blank">
+          <Link
+            href={newsItems[0].news_link || "#"}
+            className="group h-full "
+            target="_blank"
+          >
             <Card className="border border-secondary/30 py-0 overflow-hidden transition-transform duration-500 hover:-translate-y-1 hover:shadow-2xl">
               <AspectRatio ratio={1 / 1} className="w-full relative">
                 <Image
                   src={newsItems[0].image || "/images/placeholder_img.jpg"}
-                  alt={newsItems[0].news_link}
+                  alt={newsItems[0].news_link || "News Image"}
                   fill
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
                   sizes="(min-width: 1024px) 50vw, 100vw"
@@ -44,7 +50,12 @@ const NewsfeedsArchive =  async() => {
           {/* Other News Items */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 h-full">
             {newsItems.slice(1).map((item) => (
-              <Link key={item.id} href={item.news_link} className="group" target="_blank">
+              <Link
+                key={item.id}
+                href={item.news_link}
+                className="group"
+                target="_blank"
+              >
                 <Card className="border border-secondary/30 py-0 overflow-hidden transition-transform duration-500 hover:-translate-y-1 hover:shadow-2xl">
                   <AspectRatio ratio={1 / 1} className="w-full relative">
                     <Image
@@ -63,8 +74,8 @@ const NewsfeedsArchive =  async() => {
         </div>
         <div className="flex justify-center mt-8">
           <Button asChild className="cursor-pointer flex items-center gap-2">
-            <Link href="#">
-              আরও পড়ুন
+            <Link href="/news-feeds" prefetch={true}>
+              আরও পড়ুন
               <MoveRight className="w-5 h-5 animate-bounce" />
             </Link>
           </Button>

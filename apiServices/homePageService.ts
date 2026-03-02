@@ -334,7 +334,7 @@ export interface BlogApiData {
   section_subtitle?: string | null;
   total_blogs: number;
   blogs: Blog[] | null;
-  pagination:PaginationType;
+  pagination: PaginationType;
 }
 
 export interface BlogApiResponse {
@@ -397,7 +397,7 @@ export async function getLatestHeroSection(): Promise<HeroSectionResponse> {
 
     if (!res.ok) {
       throw new Error(
-        `Home Hero section API failed — HTTP ${res.status} (${res.statusText})`
+        `Home Hero section API failed — HTTP ${res.status} (${res.statusText})`,
       );
     }
 
@@ -435,12 +435,11 @@ export async function getLatestCountDown(): Promise<CountDownResponse> {
 // Home page Branches get API
 export async function fetchAllBranches(): Promise<BranchApiResponse | null> {
   try {
-
     const res = await fetch(`${API_BASE}/public/branch-list`);
 
     if (!res.ok) {
       throw new Error(
-        `fetchAllBranches API error: ${res.status} ${res.statusText}`
+        `fetchAllBranches API error: ${res.status} ${res.statusText}`,
       );
     }
 
@@ -459,12 +458,11 @@ export async function fetchAllBranches(): Promise<BranchApiResponse | null> {
 
 export async function getHomePageAllBranches(): Promise<BranchApiResponse | null> {
   try {
-
     const res = await fetch(`${API_BASE}/public/our-branches`);
 
     if (!res.ok) {
       throw new Error(
-        `fetchAllBranches API error: ${res.status} ${res.statusText}`
+        `fetchAllBranches API error: ${res.status} ${res.statusText}`,
       );
     }
 
@@ -486,7 +484,7 @@ export async function getPublicBranchList(): Promise<HeaderBranchListResponse> {
 
     if (!res.ok) {
       throw new Error(
-        `Branch List API failed — HTTP ${res.status} (${res.statusText})`
+        `Branch List API failed — HTTP ${res.status} (${res.statusText})`,
       );
     }
 
@@ -502,14 +500,13 @@ export async function getPublicBranchList(): Promise<HeaderBranchListResponse> {
 }
 //End Home page Branches get API --
 
-
 export async function fetchAllPublicTeachers(): Promise<TeacherApiResponse | null> {
   try {
     const res = await fetch(`${API_BASE}/public/teachers-list`);
 
     if (!res.ok) {
       throw new Error(
-        `fetchAllTeachers API error: ${res.status} ${res.statusText}`
+        `fetchAllTeachers API error: ${res.status} ${res.statusText}`,
       );
     }
 
@@ -525,13 +522,27 @@ export async function fetchAllPublicTeachers(): Promise<TeacherApiResponse | nul
 }
 
 // Home page Reviews get API
-export async function fetchPublicFeaturedReviews(): Promise<ReviewApiResponse | null> {
+export async function fetchPublicFeaturedReviews(
+  params: Record<string, unknown> = {},
+): Promise<ReviewApiResponse | null> {
   try {
-    const res = await fetch(`${API_BASE}/public/reviews-featured`);
+    const urlParams = new URLSearchParams();
+
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        urlParams.append(key, String(value));
+      }
+    });
+
+    const queryString = urlParams.toString();
+
+    const res = await fetch(
+      `${API_BASE}/public/reviews-featured?${queryString}`,
+    );
 
     if (!res.ok) {
       throw new Error(
-        `fetchPublicFeaturedReviews API error: ${res.status} ${res.statusText}`
+        `fetchPublicFeaturedReviews API error: ${res.status} ${res.statusText}`,
       );
     }
 
@@ -548,7 +559,7 @@ export async function fetchPublicFeaturedReviews(): Promise<ReviewApiResponse | 
 
 // Home Newsletter Subscription
 export async function SubscribeToNewsletter(
-  email: string
+  email: string,
 ): Promise<NewsletterApiResponse> {
   try {
     const res = await fetch(`${API_BASE}/public/newsletter-subscriptions`, {
@@ -600,7 +611,7 @@ export async function fetchPublicCompanyServices(): Promise<ServicesApiResponse 
 
     if (!res.ok) {
       throw new Error(
-        `fetchPublicCompanyServices API error: ${res.status} ${res.statusText}`
+        `fetchPublicCompanyServices API error: ${res.status} ${res.statusText}`,
       );
     }
 
@@ -624,7 +635,7 @@ export async function fetchPublicVideoGalleries(): Promise<SuccessStoryApiRespon
 
     if (!res.ok) {
       throw new Error(
-        `fetchPublicVideoGalleries API error: ${res.status} ${res.statusText}`
+        `fetchPublicVideoGalleries API error: ${res.status} ${res.statusText}`,
       );
     }
 
@@ -638,15 +649,66 @@ export async function fetchPublicVideoGalleries(): Promise<SuccessStoryApiRespon
     throw new Error("Unknown error occurred while fetching video galleries");
   }
 }
-// Home page News Feeds section get API
-export async function fetchPublicNewsFeeds(): Promise<NewsFeedApiResponse | null> {
-  try {
 
-    const res = await fetch(`${API_BASE}/public/news-feeds`);
+//**********Start Video Gallery page API **********//
+
+export async function fetchPublicVideoGalleriesPage({
+  params = {},
+}: {
+  params?: Record<string, unknown>;
+}): Promise<SuccessStoryApiResponse | null> {
+  try {
+    const urlParams = new URLSearchParams();
+
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        urlParams.append(key, String(value));
+      }
+    });
+
+    const queryString = urlParams.toString();
+
+    const res = await fetch(
+      `${API_BASE}/public/video-galleries?${queryString}`,
+    );
 
     if (!res.ok) {
       throw new Error(
-        `fetchPublicNewsFeeds API error: ${res.status} ${res.statusText}`
+        `fetchPublicVideoGalleriesPage API error: ${res.status} ${res.statusText}`,
+      );
+    }
+
+    const data: SuccessStoryApiResponse = await res.json();
+    return data;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error fetching video galleries:", error.message);
+      return null;
+    }
+    throw new Error("Unknown error occurred while fetching video galleries");
+  }
+}
+//**********End Video Gallery page API **********//
+
+// Home page News Feeds section get API
+export async function fetchPublicNewsFeeds(
+  params: Record<string, unknown> = {},
+): Promise<NewsFeedApiResponse | null> {
+  try {
+    const urlParams = new URLSearchParams();
+
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        urlParams.append(key, String(value));
+      }
+    });
+
+    const queryString = urlParams.toString();
+    const res = await fetch(`${API_BASE}/public/news-feeds?${queryString}`);
+
+    if (!res.ok) {
+      throw new Error(
+        `fetchPublicNewsFeeds API error: ${res.status} ${res.statusText}`,
       );
     }
 
@@ -668,7 +730,7 @@ export async function fetchPublicOpportunities(): Promise<OpportunityApiResponse
 
     if (!res.ok) {
       throw new Error(
-        `fetchPublicOpportunities API error: ${res.status} ${res.statusText}`
+        `fetchPublicOpportunities API error: ${res.status} ${res.statusText}`,
       );
     }
 
@@ -688,7 +750,7 @@ export async function fetchPublicHomeBlog(): Promise<BlogApiResponse | null> {
     const res = await fetch(`${API_BASE}/public/blogs`);
     if (!res.ok) {
       throw new Error(
-        `fetchPublicHomeBlog API error: ${res.status} ${res.statusText}`
+        `fetchPublicHomeBlog API error: ${res.status} ${res.statusText}`,
       );
     }
 
@@ -709,7 +771,7 @@ export async function getPublicGovtCourseSection(): Promise<GovtCourseResponse> 
     const res = await fetch(`${API_BASE}/public/govt-course-section`);
     if (!res.ok) {
       throw new Error(
-        `Govt Course Section API failed — HTTP ${res.status} (${res.statusText})`
+        `Govt Course Section API failed — HTTP ${res.status} (${res.statusText})`,
       );
     }
 
@@ -721,7 +783,7 @@ export async function getPublicGovtCourseSection(): Promise<GovtCourseResponse> 
       throw new Error("Error fetching govt course section");
     }
     throw new Error(
-      "Unknown error occurred while fetching govt course section"
+      "Unknown error occurred while fetching govt course section",
     );
   }
 }
@@ -732,7 +794,7 @@ export async function getPublicNewsletterSection(): Promise<getNewsletterItemRes
 
     if (!res.ok) {
       throw new Error(
-        `Newsletter Section API failed — HTTP ${res.status} (${res.statusText})`
+        `Newsletter Section API failed — HTTP ${res.status} (${res.statusText})`,
       );
     }
 
@@ -746,7 +808,6 @@ export async function getPublicNewsletterSection(): Promise<getNewsletterItemRes
     throw new Error("Unknown error occurred while fetching newsletter section");
   }
 }
-
 
 // Home page Course Search API
 export async function getPublicCourseSearch({
@@ -771,7 +832,7 @@ export async function getPublicCourseSearch({
 
     if (!res.ok) {
       throw new Error(
-        `fetchPublicCourseSearch API error: ${res.status} ${res.statusText}`
+        `fetchPublicCourseSearch API error: ${res.status} ${res.statusText}`,
       );
     }
 

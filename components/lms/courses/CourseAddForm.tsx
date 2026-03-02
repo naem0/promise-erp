@@ -59,6 +59,11 @@ interface FormValues {
   course_type: string;
   is_collaboration: string;
   ratings: number;
+  slug: string;
+  meta_title: string;
+  meta_description: string;
+  meta_tag: string;
+  schema: string;
 }
 
 const statusMap: Record<string, string> = {
@@ -120,6 +125,11 @@ export default function CourseAddForm({
       ratings: initialData?.ratings ? Number(initialData?.ratings) : 0,
       certificate_image: initialData?.certificate_image || "",
       featured_image: initialData?.featured_image || "",
+      slug: initialData?.slug || "",
+      meta_title: initialData?.meta_title || "",
+      meta_description: initialData?.meta_description || "",
+      meta_tag: initialData?.meta_tag || "",
+      schema: initialData?.schema || "",
     },
   });
 
@@ -234,7 +244,7 @@ export default function CourseAddForm({
     ) {
       formData.append("featured_image", data.featured_image[0]);
     } else if (data.featured_image === null) {
-      formData.append("featured_image", ""); 
+      formData.append("featured_image", "");
     }
 
     // Certificate Image Handling
@@ -266,6 +276,11 @@ export default function CourseAddForm({
     formData.append("course_type", data.course_type);
     formData.append("is_collaboration", data.is_collaboration);
     formData.append("ratings", data.ratings?.toString() || "0");
+    formData.append("slug", data.slug || "");
+    formData.append("meta_title", data.meta_title || "");
+    formData.append("meta_description", data.meta_description || "");
+    formData.append("meta_tag", data.meta_tag || "");
+    formData.append("schema", data.schema || "");
 
     await handleCourseSubmit(formData);
   };
@@ -830,6 +845,72 @@ export default function CourseAddForm({
                   </div>
                 )}
               />
+            </div>
+          </div>
+
+          {/* SEO Fields */}
+          <div className="grid gap-4 border rounded-lg p-4 bg-muted/30">
+            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">SEO &amp; Meta</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="slug">Slug <span className="text-red-500">*</span> </Label>
+                <Input
+                  id="slug"
+                  placeholder="e.g. my-course-name"
+                  {...register("slug")}
+                />
+           
+                <div className="min-h-5">
+                  {errors.slug && <p className="text-red-500 text-sm">{errors.slug.message}</p>}
+                </div>
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="meta_title">Meta Title</Label>
+                <Input
+                  id="meta_title"
+                  placeholder="e.g. Learn React – Best Course Online"
+                  {...register("meta_title")}
+                />
+                <div className="min-h-5">
+                  {errors.meta_title && <p className="text-red-500 text-sm">{errors.meta_title.message}</p>}
+                </div>
+              </div>
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="meta_description">Meta Description</Label>
+              <Textarea
+                id="meta_description"
+                placeholder="A brief SEO-friendly description (150–160 characters recommended)"
+                rows={3}
+                {...register("meta_description")}
+              />
+              <div className="min-h-5">
+                {errors.meta_description && <p className="text-red-500 text-sm">{errors.meta_description.message}</p>}
+              </div>
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="meta_tag">Meta Tags</Label>
+              <Input
+                id="meta_tag"
+                placeholder="e.g. react, nextjs, web development"
+                {...register("meta_tag")}
+              />
+              <div className="min-h-5">
+                {errors.meta_tag && <p className="text-red-500 text-sm">{errors.meta_tag.message}</p>}
+              </div>
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="schema">Schema (JSON-LD)</Label>
+              <Textarea
+                id="schema"
+                placeholder={`<script type="application/ld+json">\n{\n  "@context": "https://schema.org",\n  "@type": "Course",\n  "name": "Course Title",\n  ...\n}\n<\/script>`}
+                rows={5}
+                className="font-mono text-xs"
+                {...register("schema")}
+              />
+              <div className="min-h-5">
+                {errors.schema && <p className="text-red-500 text-sm">{errors.schema.message}</p>}
+              </div>
             </div>
           </div>
 

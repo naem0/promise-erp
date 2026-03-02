@@ -5,7 +5,10 @@ import {
 import SectionTitle from "@/components/common/SectionTitle";
 import { cacheTag } from "next/cache";
 import VideoStoriesCard from "./VideoStoriesCard";
-
+import Link from "next/link";
+import { MoveRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import NotFoundComponent from "@/components/common/NotFoundComponent";
 
 const VideoStories = async () => {
   "use cache";
@@ -13,8 +16,12 @@ const VideoStories = async () => {
   const storyData = await fetchPublicVideoGalleries();
   const stories: SuccessStoryItem[] = storyData?.data?.video_galleries || [];
 
-  if (stories.length === 0) {
-    return;
+  if (!stories.length) {
+    return (
+      <NotFoundComponent
+        message={storyData?.message || "No video galleries found"}
+      />
+    );
   }
 
   return (
@@ -26,6 +33,14 @@ const VideoStories = async () => {
           iswhite={false}
         />
         <VideoStoriesCard stories={stories} />
+        <div className="flex justify-center mt-8">
+          <Button asChild className="cursor-pointer flex items-center gap-2">
+            <Link href="/video-gellary" prefetch={true}>
+              আরও পড়ুন
+              <MoveRight className="w-5 h-5 animate-bounce" />
+            </Link>
+          </Button>
+        </div>
       </div>
     </section>
   );

@@ -63,6 +63,10 @@ export interface Course {
   facilities?: Facility[];
   joins?: JoinType[];
   faqs?: Faq[];
+  meta_title: string;
+  meta_description: string;
+  meta_tag: string;
+  schema: string;
 }
 
 export interface CourseResponse {
@@ -152,6 +156,14 @@ export interface AssignedJoinsResponse {
   message: string;
   code: number;
   data: JoinType[];
+  errors?: Record<string, string[] | string>;
+}
+
+export interface AssignedToolsResponse {
+  success: boolean;
+  message: string;
+  code: number;
+  data: CourseTool[];
   errors?: Record<string, string[] | string>;
 }
 
@@ -588,123 +600,9 @@ export async function assignFacilitiesToCourse(
     }
   }
 }
-// =======================
-// Create Course Tools (Bulk)
-// =======================
-export async function createCourseTools(
-  formData: FormData
-): Promise<CourseToolResponse> {
-  try {
-    const session = await getServerSession(authOptions);
-    const token = session?.accessToken;
 
-    if (!token) {
-      throw new Error("No valid session or access token found.");
-    }
 
-    const res = await fetch(`${API_BASE}/course-tools/bulk`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        contentType: "multipart/form-data",
-      },
-      body: formData,
-    });
 
-    const result = await res.json();
-
-    if (!result.success) {
-      throw new Error(result.message || "Failed to create course tools");
-    }
-
-    return result;
-  } catch (error: unknown) {
-    console.error("Error in createCourseTools:", error);
-    if (error instanceof Error) {
-      throw new Error(error.message);
-    } else {
-      throw new Error("Failed to create course tools.");
-    }
-  }
-}
-
-// =======================
-// Update Course Tools (Bulk)
-// =======================
-export async function updateCourseTools(
-  formData: FormData
-): Promise<CourseToolResponse> {
-  try {
-    const session = await getServerSession(authOptions);
-    const token = session?.accessToken;
-
-    if (!token) {
-      throw new Error("No valid session or access token found.");
-    }
-
-    // Attempting bulk update endpoint
-    const res = await fetch(`${API_BASE}/course-tools/bulk-update`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: formData,
-    });
-
-    const result = await res.json();
-
-    if (!result.success) {
-      throw new Error(result.message || "Failed to update course tools");
-    }
-
-    return result;
-  } catch (error: unknown) {
-    console.error("Error in updateCourseTools:", error);
-    if (error instanceof Error) {
-      throw new Error(error.message);
-    } else {
-      throw new Error("Failed to update course tools.");
-    }
-  }
-}
-
-// =======================
-// GET Course Tools 
-// =======================
-export async function getCourseTools(
-  courseId: number
-): Promise<CourseToolResponse> {
-  try {
-    const session = await getServerSession(authOptions);
-    const token = session?.accessToken;
-
-    if (!token) {
-      throw new Error("No valid session or access token found.");
-    }
-
-    const res = await fetch(`${API_BASE}/course-tools?course_id=${courseId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    });
-
-    const result = await res.json();
-
-    if (!result.success) {
-      throw new Error(result.message || "Failed to fetch course tools");
-    }
-
-    return result;
-  } catch (error: unknown) {
-    console.error("Error in getCourseTools:", error);
-    if (error instanceof Error) {
-      throw new Error(error.message);
-    } else {
-      throw new Error("Failed to fetch course tools.");
-    }
-  }
-}
 
 // =======================
 // Create Course Learnings
@@ -1025,6 +923,86 @@ export async function getCourseJoins(
       throw new Error(error.message);
     } else {
       throw new Error("Failed to fetch joins.");
+    }
+  }
+}
+
+// =======================
+// Assign Tools to Course
+// =======================
+export async function assignToolsToCourse(
+  courseId: number,
+  toolIds: number[]
+): Promise<CourseSingleResponse> {
+  try {
+    const session = await getServerSession(authOptions);
+    const token = session?.accessToken;
+
+    if (!token) {
+      throw new Error("No valid session or access token found.");
+    }
+
+    const response = await fetch(
+      `${API_BASE}/courses/${courseId}/tools/sync`,
+      {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ tool_ids: toolIds }),
+      }
+    );
+
+    
+
+    const result = await response.json();
+
+    return result;
+  } catch (error: unknown) {
+    console.error("Error in assignToolsToCourse:", error);
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    } else {
+      throw new Error("Failed to assign tools.");
+    }
+  }
+}
+
+// =======================
+// GET Course Assigned Tools (for edit mode)
+// =======================
+export async function getCourseAssignedTools(
+  courseId: number
+): Promise<AssignedToolsResponse> {
+  try {
+    const session = await getServerSession(authOptions);
+    const token = session?.accessToken;
+
+    if (!token) {
+      throw new Error("No valid session or access token found.");
+    }
+
+    const res = await fetch(`${API_BASE}/courses/${courseId}/tools`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error(`Server error: ${res.status} ${res.statusText}`);
+    }
+
+    const result = await res.json();
+
+    return result;
+  } catch (error: unknown) {
+    console.error("Error in getCourseAssignedTools:", error);
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    } else {
+      throw new Error("Failed to fetch course tools.");
     }
   }
 }

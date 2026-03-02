@@ -1,13 +1,13 @@
 import CommonHeroBanner from '@/components/common/CommonHeroBanner'
 
-const TrainerWrapperHeroBanner = () => {
+const NewsFeedsBannerWrapper = () => {
   return (
     <CommonHeroBanner
-      title="Expert Trainers"
+      title="News Feeds"
       subtitle="Dedicated professionals driving excellence in IT education and training across Bangladesh"
-      bgImage="/images/hero-banner/courselist.png"
+      bgImage="/images/hero-banner/VideoGallery.png"
     />
   )
 }
 
-export default TrainerWrapperHeroBanner
+export default NewsFeedsBannerWrapper

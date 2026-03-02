@@ -1,28 +1,33 @@
 "use client";
+import { useEffect, useState, useTransition } from "react";
+import { useForm } from "react-hook-form";
 
-import { useForm, useFieldArray, Controller, Path } from "react-hook-form";
-import { useEffect, useState } from "react";
+import { getTools, Tool } from "@/apiServices/toolsService";
+import {
+  assignToolsToCourse,
+  getCourseAssignedTools,
+  AssignedToolsResponse,
+  CourseTool,
+} from "@/apiServices/courseService";
+import { handleFormSuccess } from "@/lib/formErrorHandler";
 import { toast } from "sonner";
-import { Plus, Trash2, Wrench, UploadCloud } from "lucide-react";
 
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { createCourseTools, updateCourseTools, getCourseTools, CourseTool } from "@/apiServices/courseService";
+import NotFoundComponent from "@/components/common/NotFoundComponent";
 import Image from "next/image";
+import { Wrench } from "lucide-react";
 
-interface ToolFormInput {
-  id?: number;
-  title: string;
-  sub_title: string;
-  image: File | string | null;
-}
-
-interface FormValues {
-  course_id: number;
-  course_tools: ToolFormInput[];
-}
+/* =======================
+   Types & Interfaces
+======================= */
 
 interface CourseToolsAddFormProps {
   courseId: number;
@@ -30,276 +35,234 @@ interface CourseToolsAddFormProps {
   isEdit?: boolean;
 }
 
-export default function CourseToolsAddForm({ courseId, onSuccess, isEdit = false }: CourseToolsAddFormProps) {
-  const [loading, setLoading] = useState(isEdit);
+interface FormValues {
+  tools: number[];
+}
 
-  const {
-    register,
-    control,
-    handleSubmit,
-    setError,
-    formState: { isSubmitting, errors },
-    reset,
-  } = useForm<FormValues>({
-    defaultValues: {
-      course_id: courseId,
-      course_tools: [
-        {
-          title: "",
-          sub_title: "",
-          image: null,
-        },
-      ],
-    },
+/* =================== Component================ */
+
+export default function CourseToolsAddForm({
+  courseId,
+  onSuccess,
+  isEdit = false,
+}: CourseToolsAddFormProps) {
+  const [tools, setTools] = useState<Tool[]>([]);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
+
+  const { watch, setValue, handleSubmit, setError } = useForm<FormValues>({
+    defaultValues: { tools: [] },
   });
 
-  const { fields, append, remove, replace } = useFieldArray({
-    control,
-    name: "course_tools",
-  });
+  const selectedToolIds = watch("tools");
 
-  // Fetch existing tools in edit mode
-  useEffect(() => {
-    if (isEdit && courseId) {
-      const fetchTools = async () => {
-        try {
-          const res = await getCourseTools(courseId);
-          console.log("Fetched tools:", res);
-          if (res.success && res.data) {
-            const fetchedTools = Array.isArray(res.data) ? res.data : (res.data.course_tools || []);
+  /* =======================
+     Load all tools
+  ======================= */
+  const loadTools = () => {
+    setLoadError(null);
 
-            if (fetchedTools.length > 0) {
-              replace(fetchedTools.map((tool: CourseTool) => ({
-                id: tool.id,
-                title: tool.title || "",
-                sub_title: tool.sub_title || "",
-                image: tool.image || null,
-              })));
-            }
-          }
-        } catch (err: unknown) {
-          toast.error("Error loading course tools");
-          console.error("Error fetching course tools:", err);
-        } finally {
-          setLoading(false);
+    startTransition(async () => {
+      try {
+        const queryParams = {
+          per_page: "1000",
+          page: "1",
+          status: "1",
+        };
+
+        const response = await getTools(queryParams);
+
+        if (response?.data?.tools) {
+          setTools(response.data.tools);
+        } else {
+          throw new Error("Failed to load tools");
         }
-      };
-      fetchTools();
-    }
-  }, [isEdit, courseId, replace]);
-
-  const onSubmit = async (data: FormValues) => {
-    try {
-      const formData = new FormData();
-      formData.append("course_id", String(data.course_id));
-
-      data.course_tools.forEach((tool, index) => {
-        if (tool.id) formData.append(`course_tools[${index}][id]`, String(tool.id));
-        formData.append(`course_tools[${index}][title]`, tool.title);
-        formData.append(`course_tools[${index}][sub_title]`, tool.sub_title || "");
-        formData.append(`course_tools[${index}][status]`, "1");
-
-        if (tool.image instanceof File) {
-          formData.append(`course_tools[${index}][image]`, tool.image);
-        }
-      });
-
-      const apiCall = isEdit ? updateCourseTools : createCourseTools;
-      const res = await apiCall(formData);
-      if (res.success) {
-        toast.success(res.message || (isEdit ? "Course tools updated successfully!" : "Course tools created successfully!"));
-        onSuccess();
-      } else {
-        toast.error(res.message || "Failed to save course tools");
-        if (res.errors) {
-          Object.entries(res.errors).forEach(([key, error]) => {
-            const errorMessage = Array.isArray(error) ? error[0] : error;
-            setError(key as Path<FormValues>, { type: "server", message: errorMessage as string });
-          });
-        }
+      } catch (error: unknown) {
+        const errorMessage =
+          error instanceof Error ? error.message : "Failed to load tools";
+        setLoadError(errorMessage);
       }
-    } catch (error: unknown) {
-      console.error("Error:", error);
-      toast.error("Error while saving course tools");
-    }
+    });
   };
 
-  if (loading) {
-    return (
-      <Card className="w-full mx-auto">
-        <CardContent className="pt-6">
-          <div className="flex flex-col items-center justify-center h-48 space-y-4">
-            <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-            <p className="text-muted-foreground animate-pulse">Loading course tools...</p>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
+  useEffect(() => {
+    loadTools();
+  }, []);
+
+  /*==================== Load assigned tools (Edit mode)===================*/
+  useEffect(() => {
+    if (!isEdit || !courseId) return;
+
+    const fetchAssignedTools = async () => {
+      try {
+        const response: AssignedToolsResponse =
+          await getCourseAssignedTools(courseId);
+        if (response.success && response.data) {
+          const toolsList: CourseTool[] = response.data;
+          if (toolsList.length > 0) {
+            const assignedToolIds = toolsList.map((tool) => tool.id);
+            setValue("tools", assignedToolIds);
+          }
+        }
+      } catch (error: unknown) {
+        console.error("Failed to load assigned tools", error);
+      }
+    };
+
+    fetchAssignedTools();
+  }, [isEdit, courseId, setValue]);
+
+  /* ==================Toggle tool selection================== */
+  const toggleTool = (toolId: number, isChecked: boolean) => {
+    const updatedToolIds = isChecked
+      ? [...selectedToolIds, toolId]
+      : selectedToolIds.filter((id) => id !== toolId);
+
+    setValue("tools", updatedToolIds, { shouldValidate: true });
+    setSaveError(null);
+  };
+
+  /* ====================Submit selected tools==================== */
+  const onSubmit = (formData: FormValues) => {
+    if (formData.tools.length === 0) {
+      const errorMessage = "Please select at least 1 tool";
+      setSaveError(errorMessage);
+      toast.error(errorMessage);
+      return;
+    }
+
+    setSaveError(null);
+
+    startTransition(async () => {
+      try {
+        const response = await assignToolsToCourse(courseId, formData.tools);
+
+        if (response.success) {
+          toast.success(response.message || "Tools assigned successfully");
+          onSuccess();
+        } else {
+          if (response.errors) {
+            toast.error(response.message || "Failed to save tool");
+            Object.entries(response.errors).forEach(([field, messages]) => {
+              const errorMessage = Array.isArray(messages)
+                ? messages[0]
+                : messages;
+              setError(field as keyof FormValues, {
+                type: "server",
+                message: errorMessage as string,
+              });
+            });
+
+
+          }
+        }
+      } catch (error: unknown) {
+        const errorMessage =
+          error instanceof Error ? error.message : "Failed to save tool";
+        setSaveError(errorMessage);
+        toast.error(errorMessage);
+      }
+    });
+  };
+
+  /*==================== UI==================== */
   return (
-    <Card className="w-full mx-auto shadow-lg border-gray-100 overflow-hidden">
-      <CardHeader className="bg-gray-50/50 pb-6 border-b">
-        <div className="flex justify-between items-center">
-          <div>
-            <CardTitle className="text-2xl font-bold flex items-center gap-2">
-              <Wrench className="w-6 h-6 text-primary" />
-              {isEdit ? "Edit Course Tools" : "Add Course Tools"}
-            </CardTitle>
-            <p className="text-sm text-gray-500 mt-1">Specify the software or physical tools needed for this course.</p>
-          </div>
-          <div className="bg-primary/10 text-primary px-4 py-2 rounded-lg text-sm font-semibold">
-            {fields.length} {fields.length === 1 ? 'Tool' : 'Tools'}
-          </div>
-        </div>
+    <Card className="w-full mx-auto">
+      <CardHeader>
+        <CardTitle className="text-2xl flex items-center gap-2">
+          <Wrench className="w-6 h-6 text-primary" />
+          {isEdit ? "Edit Course Tools" : "Select Tools"}
+        </CardTitle>
       </CardHeader>
 
-      <CardContent className="p-6">
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-8" encType="multipart/form-data">
-          <input type="hidden" {...register("course_id")} />
+      <CardContent>
+        <form onSubmit={handleSubmit(onSubmit)} className="grid gap-6">
 
-          <div className="space-y-10">
-            {fields.map((field, index) => (
 
-              <div
-                key={field.id}
-                className="border border-gray-100 rounded-2xl p-6 bg-white space-y-6 shadow-sm transition-all duration-300 hover:shadow-md border-l-4 border-l-primary/40 relative group"
-              >
-                <input type="hidden" {...register(`course_tools.${index}.id`)} />
+          {/* Error */}
+          {loadError && (
+            <NotFoundComponent
+              message={loadError}
+              onActionClick={loadTools}
+              actionLabel="Try Again"
+            />
+          )}
 
-                <div className="flex items-center justify-between border-b border-gray-50 pb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="bg-primary text-white w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm shadow-sm">
-                      {index + 1}
-                    </div>
-                    <h3 className="font-bold text-lg text-gray-800">Tool Information</h3>
-                  </div>
-                  {fields.length > 1 && (
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      className="text-red-400 hover:text-red-600 hover:bg-red-50 w-11"
-                      onClick={() => {
-                        remove(index);
+          {/* Empty */}
+          {!loadError && tools.length === 0 && (
+            <NotFoundComponent
+              message="No active tools found. Please create tools first."
+              onActionClick={loadTools}
+              actionLabel="Refresh"
+            />
+          )}
 
-                        toast.success("Tool removed successfully");
-                      }}
+          {/* Validation Error */}
+          {saveError && (
+            <div className="bg-destructive/15 text-destructive p-3 rounded-md">
+              {saveError}
+            </div>
+          )}
+
+          {/* Tools List */}
+          {!loadError && tools.length > 0 && (
+            <div className="grid gap-4">
+              <Label>Select tools for this course:</Label>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {tools.map((tool) => {
+                  const isSelected = selectedToolIds.includes(tool.id);
+                  return (
+                    <div
+                      key={tool.id}
+                      className={`flex items-center gap-3 p-4 rounded-lg border transition-all select-none relative group ${isSelected
+                        ? "bg-accent border-primary"
+                        : "hover:bg-accent/50"
+                        }`}
                     >
-                      <Trash2 className="w-4 h-4 mr-1" /> Remove
-                    </Button>
+                      <Checkbox
+                        id={`tool-${tool.id}`}
+                        checked={isSelected}
+                        onCheckedChange={(checked) =>
+                          toggleTool(tool.id, Boolean(checked))
+                        }
+                        className="z-10"
+                      />
 
+                      <Image
+                        src={tool.image || "/images/placeholder.png"}
+                        width={45}
+                        height={45}
+                        alt={tool.title}
+                        className="rounded object-cover"
+                      />
 
-                  )}
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  {/* Tool Title */}
-                  <div className="grid gap-2">
-                    <Label className="text-sm font-semibold text-gray-700 ml-1">
-                      Tool Title <span className="text-red-500 ml-1">*</span>
-                    </Label>
-                    <Input
-                      {...register(`course_tools.${index}.title`)}
-                      placeholder="e.g. Adobe Photoshop, Figma, VS Code"
-                      className="h-11 rounded-xl border-gray-200 focus:border-primary focus:ring-primary/20 transition-all"
-                    />
-                    {errors.course_tools?.[index]?.title && (
-                      <p className="text-red-500 text-xs font-medium italic ml-1">
-                        {errors.course_tools[index]?.title?.message}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Sub Title / Short Description */}
-                  <div className="grid gap-2">
-                    <Label className="text-sm font-semibold text-gray-700 ml-1">Short Description</Label>
-                    <Input
-                      {...register(`course_tools.${index}.sub_title`)}
-                      placeholder="e.g. For vector design and prototyping"
-                      className="h-11 rounded-xl border-gray-200 focus:border-primary focus:ring-primary/20 transition-all"
-                    />
-                    {errors.course_tools?.[index]?.sub_title && (
-                      <p className="text-red-500 text-xs font-medium italic ml-1">
-                        {errors.course_tools[index]?.sub_title?.message}
-                      </p>
-                    )}
-                  </div>
-
-
-                  {/* Image Upload */}
-                  <div className="grid gap-2">
-                    <Label className="text-sm font-medium">
-                      Tool Icon / Image {isEdit && <span className="text-[10px] text-primary italic ml-1">(optional)</span>}
-                    </Label>
-                    <Controller
-                      control={control}
-                      name={`course_tools.${index}.image`}
-                      render={({ field: { value, onChange } }) => (
-                        <label className="flex flex-col items-center justify-center w-full h-40 cursor-pointer border-2 border-dashed rounded-xl bg-muted/30  text-muted-foreground">
-                          <input
-                            type="file"
-                            accept="image/*"
-                            className="hidden"
-                            onChange={(e) => onChange(e.target.files?.[0] || null)}
-                          />
-                          <UploadCloud className="w-7 h-7 mb-2" />
-                          <p className="text-sm font-medium">Drag an image</p>
-                          <p className="text-xs text-muted-foreground">Select an image or drag here to upload</p>
-                          {value instanceof File && (
-                            <Image
-                              src={URL.createObjectURL(value)}
-                              width={64}
-                              height={64}
-                              alt="Selected Tool Image"
-                              className="mt-2 max-h-16 object-contain rounded-md"
-                            />
-                          )}
-                          {typeof value === "string" && value && (
-                            <Image
-                              src={value}
-                              width={64}
-                              height={64}
-                              alt="Selected Tool Image"
-                              className="mt-2 max-h-16 object-contain rounded-md"
-                            />
-                          )}
-                        </label>
-                      )}
-                    />
-                    {errors.course_tools?.[index]?.image && (
-                      <p className="text-red-500 text-xs font-medium italic ml-1">
-                        {errors.course_tools[index]?.image?.message}
-                      </p>
-                    )}
-                  </div>
-                </div>
+                      <Label
+                        htmlFor={`tool-${tool.id}`}
+                        className="cursor-pointer font-medium stretched-link after:absolute after:inset-0"
+                      >
+                        {tool.title}
+                      </Label>
+                    </div>
+                  );
+                })}
               </div>
-            ))}
-          </div>
+            </div>
+          )}
 
-          {/* Actions */}
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-10 p-4">
-            <Button
-              type="button"
-              size="sm"
-              onClick={() => append({ title: "", sub_title: "", image: null })}
-            >
-              <Plus /> Add Another Tool
-            </Button>
-
-            <Button
-              type="submit"
-              size="lg"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? (
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  Saving...
-                </div>
-              ) : isEdit ? "Update Course Tools" : "Save Tools & Continue"}
-            </Button>
-          </div>
+          {/* Save Button */}
+          {!loadError && tools.length > 0 && (
+            <div className="flex justify-end">
+              <Button
+                type="submit"
+                className="w-36"
+                disabled={isPending || selectedToolIds.length === 0}
+              >
+                {isPending ? "Saving..." : "Save Tools"}
+              </Button>
+            </div>
+          )}
         </form>
       </CardContent>
     </Card>

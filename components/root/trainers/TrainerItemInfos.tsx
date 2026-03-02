@@ -1,10 +1,10 @@
 "use client";
 import { useState } from "react";
-import { Trainer } from "./TrainerItemWrapper";
 import TrainerItemCard from "./TrainerItemCard";
 import TrainerItemCardModal from "./TrainerItemCardModal";
+import { TeacherList } from "@/apiServices/webPageTrainerService";
 interface TrainerProps {
-  trainer: Trainer;
+  trainer: TeacherList;
 }
 const TrainerItemInfos = ({ trainer }: TrainerProps) => {
   const [open, setOpen] = useState<boolean>(false);
@@ -13,7 +13,6 @@ const TrainerItemInfos = ({ trainer }: TrainerProps) => {
       <div onClick={() => setOpen(true)}>
         <TrainerItemCard trainer={trainer} />
       </div>
-
       <TrainerItemCardModal member={trainer} open={open} onOpenChange={setOpen} />
     </>
   );

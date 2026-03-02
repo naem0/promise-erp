@@ -1,17 +1,16 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Award } from "lucide-react";
 import Image from "next/image";
-import { Trainer } from "./TrainerItemWrapper";
+import { TeacherList } from "@/apiServices/webPageTrainerService";
 interface TrainerProps {
-    trainer: Trainer
+  trainer: TeacherList;
 }
-const TrainerItemCard = ({trainer}:TrainerProps) => {
+const TrainerItemCard = ({ trainer }: TrainerProps) => {
   return (
     <div className="flex flex-col items-center group cursor-pointer">
-        
       <div className=" z-20 relative h-48 w-fit rounded-2xl shadow-xl transition-transform duration-500 group-hover:scale-102">
         <Image
-          src={trainer?.image || "/images/placeholder_img.jpg"}
+          src={trainer?.profile_image || "/images/placeholder_img.jpg"}
           alt={trainer?.name || "teacher image"}
           width={300}
           height={300}
@@ -27,7 +26,7 @@ const TrainerItemCard = ({trainer}:TrainerProps) => {
           </h3>
 
           <p className="text-black/75 text-base font-medium mb-2">
-            {trainer?.specialty ?? "Designation ---"}
+            {trainer?.designation ?? "Designation ---"}
           </p>
 
           <div className="flex items-center justify-center gap-2 text-primary mb-2 animate-fade-in">
@@ -39,7 +38,7 @@ const TrainerItemCard = ({trainer}:TrainerProps) => {
             {trainer.experience || "Experience ---"}
           </p>
         </CardContent>
-        <div className="h-2 bg-linear-to-r from-secondary w-full via-primary to-secondary rounded-b-lg" ></div>
+        <div className="h-2 bg-linear-to-r from-secondary w-full via-primary to-secondary rounded-b-lg"></div>
       </Card>
     </div>
   );

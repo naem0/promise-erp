@@ -81,7 +81,7 @@ const TeacherListSection = ({ teacherData }: TeacherListSectionProps) => {
       </Carousel>
       <div className="flex justify-center mt-8">
         <Button asChild className="cursor-pointer flex items-center gap-2">
-          <Link href="/trainers" target="_blank">
+          <Link href="/trainers" target="_blank" prefetch={true}>
             সকল প্রশিক্ষক দেখুন
             <MoveRight className="w-5 h-5 animate-bounce" />
           </Link>

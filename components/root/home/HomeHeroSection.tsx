@@ -52,7 +52,7 @@ const HomeHeroSection = ({ heroBannerData }: HeroVideoData) => {
 
             <div className="flex items-center gap-4 mt-6">
               <Button asChild className="flex items-center gap-2">
-                <Link href={sliderData?.button_link_one || "#"}>
+                <Link href={sliderData?.button_link_one || "/courses"} prefetch={true}>
                   {sliderData?.button_text_one}
                   <MoveRight className="w-5 h-5 animate-bounce" />
                 </Link>
@@ -63,7 +63,7 @@ const HomeHeroSection = ({ heroBannerData }: HeroVideoData) => {
                 variant="outline"
                 className="flex items-center gap-2"
               >
-                <Link href={sliderData?.button_link_two || "/free-seminars"}>
+                <Link href={sliderData?.button_link_two || "/free-seminars"} prefetch={true}>
                   {sliderData?.button_text_two || "Free Seminars"}
                   <MoveRight className="w-5 h-5 animate-bounce" />
                 </Link>

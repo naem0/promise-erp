@@ -34,7 +34,7 @@ const CareerDevelopmentBlog = async () => {
         </div>
         <div className="flex justify-center mt-8">
           <Button asChild className="cursor-pointer flex items-center gap-2">
-            <Link href="/blog">
+            <Link href="/blog" prefetch={true}>
               আরও পড়ুন
               <MoveRight className="w-5 h-5 animate-bounce" />
             </Link>
