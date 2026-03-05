@@ -6,119 +6,119 @@ import { cacheTag, updateTag } from "next/cache";
 import { PaginationType } from "@/types/pagination";
 
 const API_BASE =
-    process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
+  process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
 
 // =======================
 // Interfaces
 // =======================
 
 export interface EmployeeRole {
-    id: number;
-    name: string;
+  id: number;
+  name: string;
 }
 
 export interface EmployeeBranch {
-    id: number;
-    name: string;
+  id: number;
+  name: string;
 }
 
 export interface EmployeeDepartment {
-    id: number;
-    name: string;
+  id: number;
+  name: string;
 }
 
 export interface EmployeeDesignation {
-    id: number;
-    name: string;
+  id: number;
+  name: string;
 }
 
 export interface EmployeeSalaryScale {
-    id: number;
-    name: string;
+  id: number;
+  name: string;
 }
 
 export interface EmployeeTool {
-    id: number;
-    title: string;
-    image?: string | null;
-    role: string;
+  id: number;
+  title: string;
+  image?: string | null;
+  role: string;
 }
 
 export interface Employee {
-    id: number;
-    uuid: string;
-    employee_id: string;
-    name: string;
-    email: string;
-    phone: string;
-    blood_group: string;
-    designation: EmployeeDesignation;
-    employment_type: number;
-    join_date: string;
-    joining_date?: string; // From get response
-    release_date: string;
-    profile_image: string;
-    display_order?: number;
-    probation_period?: number;
-    branch: EmployeeBranch;
-    department: EmployeeDepartment;
-    role?: EmployeeRole;
-    nid_no?: string;
-    address?: string;
-    experience?: string;
-    note?: string;
-    tools?: EmployeeTool[];
-    salary_scale?: EmployeeSalaryScale;
+  id: number;
+  uuid: string;
+  employee_id: string;
+  name: string;
+  email: string;
+  phone: string;
+  blood_group: string;
+  designation: EmployeeDesignation;
+  employment_type: number;
+  join_date: string;
+  joining_date?: string; // From get response
+  release_date: string;
+  profile_image: string;
+  display_order?: number;
+  probation_period?: number;
+  branch: EmployeeBranch;
+  department: EmployeeDepartment;
+  role?: EmployeeRole;
+  nid_no?: string;
+  address?: string;
+  experience?: string;
+  note?: string;
+  tools?: EmployeeTool[];
+  salary_scale?: EmployeeSalaryScale;
 }
 
 export interface EmployeesResponse {
-    success: boolean;
-    message: string;
-    code: number;
-    data: {
-        total_employees: number;
-        employees: Employee[];
-        pagination: PaginationType;
-    };
-    errors?: Record<string, string[]>;
+  success: boolean;
+  message: string;
+  code: number;
+  data: {
+    total_employees: number;
+    employees: Employee[];
+    pagination: PaginationType;
+  };
+  errors?: Record<string, string[]>;
 }
 
 export interface SingleEmployeeResponse {
-    success: boolean;
-    message: string;
-    code: number;
-    data: Employee;
-    errors?: Record<string, string[] | string>;
+  success: boolean;
+  message: string;
+  code: number;
+  data: Employee;
+  errors?: Record<string, string[] | string>;
 }
 
 export interface DesignationsResponse {
-    success: boolean;
-    message: string;
-    code: number;
-    data: {
-        designations: EmployeeDesignation[];
-        pagination: PaginationType;
-    };
+  success: boolean;
+  message: string;
+  code: number;
+  data: {
+    designations: EmployeeDesignation[];
+    pagination: PaginationType;
+  };
 }
 
 export interface DepartmentsResponse {
-    success: boolean;
-    message: string;
-    code: number;
-    data: {
-        departments: EmployeeDepartment[];
-        pagination: PaginationType;
-    };
+  success: boolean;
+  message: string;
+  code: number;
+  data: {
+    departments: EmployeeDepartment[];
+    pagination: PaginationType;
+  };
 }
 
 export interface SalaryScalesResponse {
-    success: boolean;
-    message: string;
-    code: number;
-    data: {
-        salary_scales: EmployeeSalaryScale[];
-        pagination: PaginationType;
-    };
+  success: boolean;
+  message: string;
+  code: number;
+  data: {
+    salary_scales: EmployeeSalaryScale[];
+    pagination: PaginationType;
+  };
 }
 
 // =======================
@@ -126,43 +126,40 @@ export interface SalaryScalesResponse {
 // =======================
 
 export async function getEmployeesCached(
-    token: string,
-    params: Record<string, unknown> = {}
+  token: string,
+  params: Record<string, unknown> = {},
 ): Promise<EmployeesResponse> {
-    "use cache";
-    cacheTag("employees-list");
+  "use cache";
+  cacheTag("employees-list");
 
-    try {
-        const urlParams = new URLSearchParams();
-        for (const key in params) {
-            if (params[key] !== undefined && params[key] !== null) {
-                urlParams.append(key, String(params[key]));
-            }
-        }
-
-        const res = await fetch(
-            `${API_BASE}/employees?${urlParams.toString()}`,
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json",
-                },
-            }
-        );
-
-        if (!res.ok) {
-            throw new Error(`Status: ${res.status} ${res.statusText}`);
-        }
-        const result = await res.json();
-
-        return result;
-    } catch (error: unknown) {
-        if (error instanceof Error) {
-            throw new Error(error.message);
-        } else {
-            throw new Error("Error fetching employees");
-        }
+  try {
+    const urlParams = new URLSearchParams();
+    for (const key in params) {
+      if (params[key] !== undefined && params[key] !== null) {
+        urlParams.append(key, String(params[key]));
+      }
     }
+
+    const res = await fetch(`${API_BASE}/employees?${urlParams.toString()}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error(`Status: ${res.status} ${res.statusText}`);
+    }
+    const result = await res.json();
+
+    return result;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    } else {
+      throw new Error("Error fetching employees");
+    }
+  }
 }
 
 // =======================
@@ -170,49 +167,51 @@ export async function getEmployeesCached(
 // =======================
 
 export async function getEmployees(
-    params: Record<string, unknown> = {}
+  params: Record<string, unknown> = {},
 ): Promise<EmployeesResponse> {
-    const session = await getServerSession(authOptions);
-    const token = session?.accessToken;
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
 
-    if (!token) throw new Error("No valid session/token");
+  if (!token) throw new Error("No valid session/token");
 
-    return getEmployeesCached(token, params);
+  return getEmployeesCached(token, params);
 }
 
 // =======================
 // GET SINGLE EMPLOYEE
 // =======================
 
-export async function getEmployeeById(id: number): Promise<SingleEmployeeResponse> {
-    try {
-        const session = await getServerSession(authOptions);
-        const token = session?.accessToken;
+export async function getEmployeeById(
+  id: number,
+): Promise<SingleEmployeeResponse> {
+  try {
+    const session = await getServerSession(authOptions);
+    const token = session?.accessToken;
 
-        if (!token) throw new Error("No valid session/token");
+    if (!token) throw new Error("No valid session/token");
 
-        const res = await fetch(`${API_BASE}/employees/${id}`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json",
-            },
-        });
+    const res = await fetch(`${API_BASE}/employees/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
 
-        if (!res.ok) {
-            throw new Error(`Status: ${res.status} ${res.statusText}`);
-        }
-
-        const result = await res.json();
-
-        return result;
-    } catch (error: unknown) {
-        console.error("Error in getEmployeeById:", error);
-        if (error instanceof Error) {
-            throw new Error(error.message || "Failed to fetch employee");
-        } else {
-            throw new Error("Failed to fetch employee");
-        }
+    if (!res.ok) {
+      throw new Error(`Status: ${res.status} ${res.statusText}`);
     }
+
+    const result = await res.json();
+
+    return result;
+  } catch (error: unknown) {
+    console.error("Error in getEmployeeById:", error);
+    if (error instanceof Error) {
+      throw new Error(error.message || "Failed to fetch employee");
+    } else {
+      throw new Error("Failed to fetch employee");
+    }
+  }
 }
 
 // =======================
@@ -220,36 +219,34 @@ export async function getEmployeeById(id: number): Promise<SingleEmployeeRespons
 // =======================
 
 export async function createEmployee(
-    formData: FormData
+  formData: FormData,
 ): Promise<SingleEmployeeResponse> {
-    try {
-        const session = await getServerSession(authOptions);
-        const token = session?.accessToken;
+  try {
+    const session = await getServerSession(authOptions);
+    const token = session?.accessToken;
 
-        if (!token) throw new Error("No valid session/token");
+    if (!token) throw new Error("No valid session/token");
 
-        const res = await fetch(`${API_BASE}/employees`, {
-            method: "POST",
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-            body: formData,
-        });
+    const res = await fetch(`${API_BASE}/employees`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
 
+    const result = await res.json();
 
-
-        const result = await res.json();
-
-        updateTag("employees-list");
-        return result;
-    } catch (error: unknown) {
-        if (error instanceof Error) {
-            console.error("Error in createEmployee:", error);
-            throw new Error(error.message || "Failed to create employee");
-        } else {
-            throw new Error("Failed to create employee");
-        }
+    updateTag("employees-list");
+    return result;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error in createEmployee:", error);
+      throw new Error(error.message || "Failed to create employee");
+    } else {
+      throw new Error("Failed to create employee");
     }
+  }
 }
 
 // =======================
@@ -257,190 +254,287 @@ export async function createEmployee(
 // =======================
 
 export async function updateEmployee(
-    id: number,
-    formData: FormData
+  id: number,
+  formData: FormData,
 ): Promise<SingleEmployeeResponse> {
-    try {
-        const session = await getServerSession(authOptions);
-        const token = session?.accessToken;
+  try {
+    const session = await getServerSession(authOptions);
+    const token = session?.accessToken;
 
-        if (!token) throw new Error("No valid session/token");
+    if (!token) throw new Error("No valid session/token");
 
-        const res = await fetch(`${API_BASE}/employees/${id}`, {
-            method: "POST",
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-            body: formData,
-        });
+    const res = await fetch(`${API_BASE}/employees/${id}`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
 
-        if (!res.ok) {
-            const text = await res.text();
-            console.error("Update Employee Failed:", text);
-            try {
-                const json = JSON.parse(text);
-                return json;
-            } catch (error: unknown) {
-                if (error instanceof Error) {
-                    console.error("Error in updateEmployee:", error);
-                    throw new Error(error.message || "Failed to update employee");
-                } else {
-                    throw new Error("Failed to update employee");
-                }
-            }
-        }
-
-        const result = await res.json();
-
-        updateTag("employees-list");
-        return result;
-    } catch (error: unknown) {
+    if (!res.ok) {
+      const text = await res.text();
+      console.error("Update Employee Failed:", text);
+      try {
+        const json = JSON.parse(text);
+        return json;
+      } catch (error: unknown) {
         if (error instanceof Error) {
-            console.error("Error in updateEmployee:", error);
-            throw new Error(error.message || "Failed to update employee");
+          console.error("Error in updateEmployee:", error);
+          throw new Error(error.message || "Failed to update employee");
         } else {
-            throw new Error("Failed to update employee");
+          throw new Error("Failed to update employee");
         }
+      }
     }
+
+    const result = await res.json();
+
+    updateTag("employees-list");
+    return result;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error in updateEmployee:", error);
+      throw new Error(error.message || "Failed to update employee");
+    } else {
+      throw new Error("Failed to update employee");
+    }
+  }
 }
 
 // =======================
 // FETCH HELPERS
 // =======================
 
-export async function getDesignations(params: Record<string, unknown> = {}): Promise<DesignationsResponse> {
-    try {
-        const session = await getServerSession(authOptions);
-        const token = session?.accessToken;
-        if (!token) throw new Error("No valid session/token");
+export async function getDesignations(
+  params: Record<string, unknown> = {},
+): Promise<DesignationsResponse> {
+  try {
+    const session = await getServerSession(authOptions);
+    const token = session?.accessToken;
+    if (!token) throw new Error("No valid session/token");
 
-        const urlParams = new URLSearchParams();
-        Object.entries(params).forEach(([key, value]) => {
-            if (value !== undefined && value !== null) {
-                urlParams.append(key, String(value));
-            }
-        });
+    const urlParams = new URLSearchParams();
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        urlParams.append(key, String(value));
+      }
+    });
 
-        const queryString = urlParams.toString();
-        const url = queryString ? `${API_BASE}/designations?${queryString}` : `${API_BASE}/designations`;
+    const queryString = urlParams.toString();
+    const url = queryString
+      ? `${API_BASE}/designations?${queryString}`
+      : `${API_BASE}/designations`;
 
-        const res = await fetch(url, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json",
-            },
-        });
-        const result = await res.json();
-        return result;
-    } catch (error: unknown) {
-        console.error("Error fetching designations:", error);
-        if (error instanceof Error) {
-            throw new Error(error.message);
-        } else {
-            throw new Error("Error fetching designations");
-        }
+    const res = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    const result = await res.json();
+    return result;
+  } catch (error: unknown) {
+    console.error("Error fetching designations:", error);
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    } else {
+      throw new Error("Error fetching designations");
     }
+  }
 }
 
-export async function getDepartments(params: Record<string, unknown> = {}): Promise<DepartmentsResponse> {
-    try {
-        const session = await getServerSession(authOptions);
-        const token = session?.accessToken;
-        if (!token) throw new Error("No valid session/token");
+export async function getDepartments(
+  params: Record<string, unknown> = {},
+): Promise<DepartmentsResponse> {
+  try {
+    const session = await getServerSession(authOptions);
+    const token = session?.accessToken;
+    if (!token) throw new Error("No valid session/token");
 
-        const urlParams = new URLSearchParams();
-        Object.entries(params).forEach(([key, value]) => {
-            if (value !== undefined && value !== null) {
-                urlParams.append(key, String(value));
-            }
-        });
+    const urlParams = new URLSearchParams();
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        urlParams.append(key, String(value));
+      }
+    });
 
-        const queryString = urlParams.toString();
-        const url = queryString ? `${API_BASE}/departments?${queryString}` : `${API_BASE}/departments`;
+    const queryString = urlParams.toString();
+    const url = queryString
+      ? `${API_BASE}/departments?${queryString}`
+      : `${API_BASE}/departments`;
 
-        const res = await fetch(url, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json",
-            },
-        });
-        const result = await res.json();
-        return result;
-    } catch (error: unknown) {
-        console.error("Error fetching departments:", error);
-        if (error instanceof Error) {
-            throw new Error(error.message);
-        } else {
-            throw new Error("Error fetching departments");
-        }
+    const res = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    const result = await res.json();
+    return result;
+  } catch (error: unknown) {
+    console.error("Error fetching departments:", error);
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    } else {
+      throw new Error("Error fetching departments");
     }
+  }
 }
 
-export async function getSalaryScales(params: Record<string, unknown> = {}): Promise<SalaryScalesResponse> {
-    try {
-        const session = await getServerSession(authOptions);
-        const token = session?.accessToken;
-        if (!token) throw new Error("No valid session/token");
+export async function getSalaryScales(
+  params: Record<string, unknown> = {},
+): Promise<SalaryScalesResponse> {
+  try {
+    const session = await getServerSession(authOptions);
+    const token = session?.accessToken;
+    if (!token) throw new Error("No valid session/token");
 
-        const urlParams = new URLSearchParams();
-        Object.entries(params).forEach(([key, value]) => {
-            if (value !== undefined && value !== null) {
-                urlParams.append(key, String(value));
-            }
-        });
+    const urlParams = new URLSearchParams();
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        urlParams.append(key, String(value));
+      }
+    });
 
-        const queryString = urlParams.toString();
-        const url = queryString ? `${API_BASE}/salary-scales?${queryString}` : `${API_BASE}/salary-scales`;
+    const queryString = urlParams.toString();
+    const url = queryString
+      ? `${API_BASE}/salary-scales?${queryString}`
+      : `${API_BASE}/salary-scales`;
 
-        const res = await fetch(url, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json",
-            },
-        });
-        const result = await res.json();
-        return result;
-    } catch (error: unknown) {
-        console.error("Error fetching salary scales:", error);
-        if (error instanceof Error) {
-            throw new Error(error.message);
-        } else {
-            throw new Error("Error fetching salary scales");
-        }
+    const res = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    const result = await res.json();
+    return result;
+  } catch (error: unknown) {
+    console.error("Error fetching salary scales:", error);
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    } else {
+      throw new Error("Error fetching salary scales");
     }
+  }
 }
 
 // =======================
 // DELETE EMPLOYEE
 // =======================
 
-export async function deleteEmployee(id: number): Promise<SingleEmployeeResponse> {
-    try {
-        const session = await getServerSession(authOptions);
-        const token = session?.accessToken;
+export async function deleteEmployee(
+  id: number,
+): Promise<SingleEmployeeResponse> {
+  try {
+    const session = await getServerSession(authOptions);
+    const token = session?.accessToken;
 
-        if (!token) {
-            throw new Error("No valid session/token");
-        }
-
-        const res = await fetch(`${API_BASE}/employees/${id}`, {
-            method: "DELETE",
-            headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json",
-            },
-        });
-
-        const result = await res.json();
-
-        updateTag("employees-list");
-        return result;
-    } catch (error: unknown) {
-        console.error("Error in deleteEmployee:", error);
-        if (error instanceof Error) {
-            throw new Error(error.message);
-        } else {
-            throw new Error("Failed to delete employee");
-        }
+    if (!token) {
+      throw new Error("No valid session/token");
     }
+
+    const res = await fetch(`${API_BASE}/employees/${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    const result = await res.json();
+
+    updateTag("employees-list");
+    return result;
+  } catch (error: unknown) {
+    console.error("Error in deleteEmployee:", error);
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    } else {
+      throw new Error("Failed to delete employee");
+    }
+  }
 }
+
+// *********Start public employees api End Point******* //
+
+export interface AllOfficeEmployee {
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+  designation: string;
+  profile_image?: string;
+  display_order: number;
+}
+export interface AllOfficeDepartment {
+  department_id: number | null;
+  department_name: string;
+  employees: AllOfficeEmployee[];
+}
+
+export interface AllOfficeEmployeesApiResponse {
+  success: boolean;
+  message: string;
+  code: number;
+  data: AllOfficeDepartment[];
+  errors?: Record<string, string[]>;
+}
+
+export async function getPublicAllEmployees(): Promise<AllOfficeEmployeesApiResponse> {
+  try {
+    const url = `${API_BASE}/public/employees`;
+    const res = await fetch(url);
+    if (!res.ok) {
+      throw new Error(`Failed to fetch public employees — HTTP ${res.status}`);
+    }
+    const result: AllOfficeEmployeesApiResponse = await res.json();
+    return result;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error fetching public employees:", error);
+      throw new Error(error.message);
+    } else {
+      throw new Error("Error fetching public employees");
+    }
+  }
+}
+// *********End public employees api End Point******* //
+
+// *********Start public chairman message api End Point******* //
+export interface ChairmanMessage {
+  id: number;
+  name: string;
+  designation: string;
+  message_title: string;
+  message_content: string;
+  chairman_image?: string;
+  status: number;
+  type: number;
+}
+export interface ChairmanMessageResponse {
+  success: boolean;
+  message: string;
+  code: number;
+  data: ChairmanMessage[];
+  errors?: Record<string, string[]>;
+}
+export async function getPublicAllExecutives(): Promise<ChairmanMessageResponse> {
+  try {
+    const url = `${API_BASE}/public/chairman-message`;
+    const res = await fetch(url);
+    if (!res.ok) {
+      throw new Error(`Failed to fetch public employees — HTTP ${res.status}`);
+    }
+    const result: ChairmanMessageResponse = await res.json();
+    return result;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error fetching public executives employees:", error);
+      throw new Error(error.message);
+    } else {
+      throw new Error("Error fetching public executives employees");
+    }
+  }
+}
+// *********End public chairman message api End Point******* //

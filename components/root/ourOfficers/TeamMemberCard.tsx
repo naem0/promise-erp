@@ -1,44 +1,90 @@
-import { TeamMember } from "@/app/(root)/our-officers/page";
-import { Card, CardContent } from "@/components/ui/card";
-import { Mail } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
+import { ChairmanMessage } from "@/apiServices/employeeService";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { Quote } from "lucide-react";
 
-const TeamMemberCard = ({ member }: { member: TeamMember }) => {
-  const getBorderColor = (level: TeamMember["level"]) => {
-    switch (level) {
-      case "executive":
-        return "bg-secondary text-white hover:border-t-0 hover:border-primary";
-      default:
-        return "bg-white text-secondary hover:border-t-0 hover:border-primary";
-    }
-  };
+interface TeamMember {
+  member: ChairmanMessage;
+}
+
+const TeamMemberCard = ({ member }: TeamMember) => {
+  const isTypeTwo = member.type === 2;
 
   return (
-    <Card className={`${getBorderColor(member.level)} relative cursor-pointer py-0`}>
-      <div className="h-2 bg-linear-to-r from-secondary via-primary to-secondary rounded-t-lg" />
+    <div
+      className={`grid ${
+        isTypeTwo ? "md:grid-cols-[220px_1fr]" : "md:grid-cols-[1fr_220px]"
+      } border rounded-xl shadow-md hover:shadow-lg transition bg-white`}
+    >
+      {/* Avatar */}
+      <div
+        className={`hidden md:flex items-center p-4 ${
+          isTypeTwo ? "justify-start order-1" : "justify-end order-2"
+        }`}
+      >
+        <div className="p-3 relative rounded-lg bg-[url(/images/Executive-Management-bg.png)] h-full md:w-[75%] flex items-center justify-center">
+          <div
+            className={`absolute bg-white rounded-full p-1 h-36 w-36 shadow-md flex justify-center items-center ${
+              isTypeTwo ? "-right-10" : "-left-10"
+            }`}
+          >
+            <Avatar className="h-32 w-32 border-4 border-primary rounded-full">
+              <AvatarImage
+                src={member.chairman_image}
+                alt={member.name}
+                className=" object-scale-down"
+              />
+            </Avatar>
+          </div>
+        </div>
+      </div>
 
-      <CardContent className="flex flex-col items-center text-center pb-6">
-        <div className="relative w-[180px] h-[180px] rounded-full overflow-hidden shadow-xl border-4 border-white ">
-          <Image
-            src={member.image || "/images/placeholder_img.jpg"}
-            alt={member.name}
-            fill
-            className="object-cover"
-          />
+      <div
+        className={`md:hidden flex items-center p-4 ${
+          isTypeTwo ? "justify-start order-1" : "justify-end order-2"
+        }`}
+      >
+        <div className="p-3 rounded-lg bg-[url(/images/Executive-Management-bg22.png)] bg-size-[100%] bg-no-repeat h-full w-full flex items-center justify-center">
+          <div
+            className={` bg-white rounded-full p-1 h-36 w-36 shadow-md flex justify-center items-center  `}
+          >
+            <Avatar className="h-32 w-32 border-4 border-primary rounded-full">
+              <AvatarImage
+                src={member.chairman_image}
+                alt={member.name}
+                className=" object-scale-down"
+              />
+            </Avatar>
+          </div>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className={`px-4 py-6 ${isTypeTwo ? "order-2" : "order-1"}`}>
+        {/* Name + Designation */}
+        <div className={isTypeTwo ? "text-right" : "text-left"}>
+          <h3 className="text-2xl md:text-4xl font-bold text-secondary">
+            {member.name}
+          </h3>
+
+          <p className="text-base font-extrabold text-secondary/80 mt-1">
+            {member.designation}
+          </p>
         </div>
 
-        <h3 className="font-semibold mt-3">{member.name}</h3>
-        <p className="text-primary font-medium">{member.role}</p>
+        {/* Message Content (Always Left) */}
+        <div className="mt-6 relative text-left">
+          <Quote className="text-primary w-10 h-10 mb-2 rotate-180" />
 
-        <Link
-          href={`mailto:${member.email}`}
-          className="flex items-center gap-2 text-secondary mt-2"
-        >
-          <Mail size={16} /> {member.email}
-        </Link>
-      </CardContent>
-    </Card>
+          <p className="text-gray-700 leading-relaxed max-w-md">
+            {member.message_content}
+          </p>
+
+          <div className="flex justify-end mt-4">
+            <Quote className="text-primary w-8 h-8 " />
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 

@@ -320,6 +320,11 @@ const data = {
           url: "/web-content/news-feeds",
           permissions: ["view-news-feeds"],
         },
+        {
+          title: "Career Categories",
+          url: "/web-content/career-categories",
+          permissions: ["view-career-categories"],
+        },
       ],
     },
     {
@@ -347,6 +352,7 @@ const data = {
           url: "#",
           permissions: ["view-newsletters"],
         },
+        
       ],
     },
     {
