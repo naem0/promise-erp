@@ -1,17 +1,17 @@
-
-import JobCircularJoinUs from "@/components/root/jobCirculars/JobCircularJoinUs"
-import JobCircularsData from "@/components/root/jobCirculars/JobCircularsData"
-import JobWrapperHeroBanner from "@/components/root/jobCirculars/JobWrapperHeroBanner"
-
-
-const JobCircularsPage = () => {
+import JobCircularJoinUs from "@/components/root/jobCirculars/JobCircularJoinUs";
+import JobCircularWrapper from "@/components/root/jobCirculars/JobCircularWrapper";
+import JobWrapperHeroBanner from "@/components/root/jobCirculars/JobWrapperHeroBanner";
+interface SearchParamsProps {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+const JobCircularsPage = ({ searchParams }: SearchParamsProps) => {
   return (
     <>
       <JobWrapperHeroBanner />
-      <JobCircularsData />
+      <JobCircularWrapper searchParams={searchParams} />
       <JobCircularJoinUs />
     </>
-  )
-}
+  );
+};
 
-export default JobCircularsPage
+export default JobCircularsPage;

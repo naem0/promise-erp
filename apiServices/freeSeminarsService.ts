@@ -5,8 +5,7 @@ import { getServerSession } from "next-auth";
 import { cacheTag, updateTag } from "next/cache";
 import { PaginationType } from "@/types/pagination";
 
-const API_BASE =
-  process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
 // ============================================================
 // Interfaces
 // ============================================================
@@ -46,6 +45,12 @@ export interface CourseBatch {
   duration?: string;
 }
 
+export interface FreeSeminarTool {
+  id: number;
+  title: string;
+  image?: string;
+}
+
 export interface FreeSeminarCourse {
   id: number;
   title: string;
@@ -64,22 +69,27 @@ export interface FreeSeminar {
   about: string;
   class_topic: string;
   seminar_type: number;
-  description: string | null;
-  location: string | null;
+  description?: string;
+  location: string;
   seminar_date: string;
   seminar_time: string;
-  seminar_link: string | null;
+  seminar_link?: string;
   image?: string | null;
   status?: number;
+  meta_title?: string;
+  meta_description?: string;
+  meta_tag?: string[];
+  schema?: string;
   branch: {
     id: number;
     name: string;
   };
-  course_category?: FreeSeminarCourseCategory;
+  course_category: FreeSeminarCourseCategory;
   category_id?: number;
   category_name?: string;
   instructors: Instructor[];
-  courses?: FreeSeminarCourse[];
+  tools: FreeSeminarTool[];
+  courses: FreeSeminarCourse[];
 }
 
 export interface FreeSeminarsResponse {
@@ -98,7 +108,7 @@ export interface SingleFreeSeminarResponse {
   success: boolean;
   message: string;
   code: number;
-  data?: FreeSeminar | null;
+  data: FreeSeminar;
   errors?: Record<string, string[] | string>;
 }
 
@@ -257,7 +267,7 @@ export async function updateFreeSeminar(
     if (!token) {
       throw new Error("No valid session or access token found.");
     }
-    // formData.append("_method", "PUT");
+    formData.append("_method", "PUT");
     const res = await fetch(`${API_BASE}/free-seminars/${id}`, {
       method: "POST",
       headers: {
@@ -305,7 +315,7 @@ export async function deleteFreeSeminar(
     });
 
     const result: SingleFreeSeminarResponse = await res.json();
-    
+
     updateTag("free-seminars-list");
 
     return result;

@@ -18,12 +18,13 @@ import {
   createFreeSeminar,
   updateFreeSeminar,
 } from "@/apiServices/freeSeminarsService";
+import { Tool, getTools } from "@/apiServices/toolsService";
 import { getBranches, Branch } from "@/apiServices/branchService";
 import { getCategories, Category } from "@/apiServices/categoryService";
 import { getTeachers, Teacher } from "@/apiServices/teacherService";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useTransition } from "react";
 import Image from "next/image";
-import { ChevronLeft, Camera } from "lucide-react";
+import { ChevronLeft, Camera, X } from "lucide-react";
 import RichTextEditor from "@/components/lms/courses/RichTextEditor";
 
 interface FreeSeminarFormProps {
@@ -33,6 +34,7 @@ interface FreeSeminarFormProps {
 
 interface FormValues {
   title: string;
+  slug: string;
   about: string;
   class_topic: string;
   seminar_type: string;
@@ -44,6 +46,11 @@ interface FormValues {
   branch_id: string;
   course_category_id: string;
   instructor_ids: string[];
+  tool_ids: string[];
+  meta_title: string;
+  meta_description: string;
+  meta_tag: string[];
+  schema: string;
   image?: FileList;
 }
 
@@ -55,7 +62,15 @@ export default function FreeSeminarForm({
   const [branches, setBranches] = useState<Branch[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [fetchedTeachers, setFetchedTeachers] = useState<Teacher[]>([]);
-  const [preview, setPreview] = useState<string | null>( freeSeminar?.image || null);
+  const [allTools, setAllTools] = useState<Tool[]>([]);
+  const [preview, setPreview] = useState<string | null>(freeSeminar?.image || null);
+  const [isToolsPending, startToolsTransition] = useTransition();
+
+  // Meta tag state
+  const [metaTags, setMetaTags] = useState<string[]>(
+    Array.isArray(freeSeminar?.meta_tag) ? freeSeminar.meta_tag : []
+  );
+  const [metaTagInput, setMetaTagInput] = useState("");
 
   const {
     register,
@@ -64,11 +79,13 @@ export default function FreeSeminarForm({
     reset,
     watch,
     setError,
+    clearErrors,
     setValue,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
     defaultValues: {
       title: freeSeminar?.title || "",
+      slug: freeSeminar?.slug || "",
       about: freeSeminar?.about || "",
       class_topic: freeSeminar?.class_topic || "",
       seminar_type: freeSeminar?.seminar_type?.toString() || "0",
@@ -80,11 +97,30 @@ export default function FreeSeminarForm({
       branch_id: freeSeminar?.branch?.id?.toString() || "",
       course_category_id: freeSeminar?.category_id?.toString() || "",
       instructor_ids: freeSeminar?.instructors?.map((i) => i.id.toString()) || [],
+      tool_ids: freeSeminar?.tools?.map((t) => t.id.toString()) || [],
+      meta_title: freeSeminar?.meta_title || "",
+      meta_description: freeSeminar?.meta_description || "",
+      meta_tag: Array.isArray(freeSeminar?.meta_tag) ? freeSeminar.meta_tag : [],
+      schema: freeSeminar?.schema || "",
     },
   });
 
   const watchedBranchId = watch("branch_id");
   const watchedSeminarType = watch("seminar_type");
+  const watchedTitle = watch("title");
+
+  // Auto-generate slug from title (only when creating)
+  const [slugManuallyEdited, setSlugManuallyEdited] = useState(!!freeSeminar?.slug);
+  useEffect(() => {
+    if (!slugManuallyEdited) {
+      const generated = watchedTitle
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, "")
+        .trim()
+        .replace(/\s+/g, "-");
+      setValue("slug", generated);
+    }
+  }, [watchedTitle, slugManuallyEdited, setValue]);
 
   useEffect(() => {
     const loadInitialData = async () => {
@@ -101,6 +137,16 @@ export default function FreeSeminarForm({
       }
     };
     loadInitialData();
+
+    // Load tools via server action + useTransition
+    startToolsTransition(async () => {
+      try {
+        const toolsRes = await getTools({ per_page: 1000, status: 1 });
+        if (toolsRes?.success) setAllTools(toolsRes.data?.tools || []);
+      } catch (error) {
+        console.error("Error loading tools:", error);
+      }
+    });
   }, []);
 
   useEffect(() => {
@@ -130,7 +176,9 @@ export default function FreeSeminarForm({
     if (!file) return;
     setPreview(URL.createObjectURL(file));
     setValue("image", e.target.files as FileList);
+    clearErrors("image"); // Clear any previous errors
   };
+
 
   const handleRemoveImage = () => {
     setPreview(null);
@@ -140,9 +188,40 @@ export default function FreeSeminarForm({
     toast.success("Image removed");
   };
 
+  // Meta tag handlers
+  const addMetaTag = (input: string) => {
+    const trimmed = input.trim().replace(/,$/, "").trim();
+    if (trimmed && !metaTags.includes(trimmed)) {
+      const updated = [...metaTags, trimmed];
+      setMetaTags(updated);
+      setValue("meta_tag", updated);
+    }
+    setMetaTagInput("");
+  };
+
+  const handleMetaTagKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" || e.key === ",") {
+      e.preventDefault();
+      addMetaTag(metaTagInput);
+    }
+  };
+
+  const handleMetaTagBlur = () => {
+    if (metaTagInput.trim()) {
+      addMetaTag(metaTagInput);
+    }
+  };
+
+  const removeMetaTag = (tag: string) => {
+    const updated = metaTags.filter((t) => t !== tag);
+    setMetaTags(updated);
+    setValue("meta_tag", updated);
+  };
+
   const submitHandler = async (values: FormValues) => {
     const formData = new FormData();
     formData.append("title", values.title);
+    formData.append("slug", values.slug);
     formData.append("about", values.about);
     formData.append("class_topic", values.class_topic);
     formData.append("seminar_type", values.seminar_type);
@@ -154,7 +233,14 @@ export default function FreeSeminarForm({
     formData.append("branch_id", values.branch_id);
     formData.append("course_category_id", values.course_category_id);
     formData.append("instructor_ids", values.instructor_ids.join(","));
-    formData.append("image", values.image?.[0] || "");
+    formData.append("tool_ids", values.tool_ids.join(","));
+    formData.append("meta_title", values.meta_title);
+    formData.append("meta_description", values.meta_description);
+    formData.append("meta_tag", JSON.stringify(values.meta_tag));
+    formData.append("schema", values.schema);
+    if (values.image?.[0]) {
+      formData.append("image", values.image[0]);
+    }
 
     try {
       const res = freeSeminar
@@ -168,12 +254,17 @@ export default function FreeSeminarForm({
         router.push("/lms/free-seminars");
         reset();
         setPreview(null);
+        setMetaTags([]);
         return;
       }
 
       if (res.errors) {
         Object.entries(res.errors).forEach(([field, messages]) => {
-          setError(field as keyof FormValues, {
+          // Handle dot-notation array errors e.g. "instructor_ids.0" → "instructor_ids"
+          const rootField = field.includes(".")
+            ? (field.split(".")[0] as keyof FormValues)
+            : (field as keyof FormValues);
+          setError(rootField, {
             type: "server",
             message: Array.isArray(messages)
               ? messages[0]
@@ -204,6 +295,8 @@ export default function FreeSeminarForm({
 
       <div className="bg-white rounded-xl shadow-sm border p-8">
         <form onSubmit={handleSubmit(submitHandler)} className="space-y-8">
+
+          {/* ── Basic Info ── */}
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
@@ -218,6 +311,26 @@ export default function FreeSeminarForm({
                 {errors.title && (
                   <p className="text-xs text-red-500 mt-1">
                     {errors.title.message}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label className="text-sm font-semibold text-gray-600 mb-1 block">
+                  Slug <span className="text-red-500">*</span>
+                </label>
+                <Input
+                  placeholder="auto-generated-from-title"
+                  {...register("slug")}
+                  className="border-gray-200"
+                  onChange={(e) => {
+                    setSlugManuallyEdited(true);
+                    setValue("slug", e.target.value);
+                  }}
+                />
+                {errors.slug && (
+                  <p className="text-xs text-red-500 mt-1">
+                    {errors.slug.message}
                   </p>
                 )}
               </div>
@@ -314,9 +427,28 @@ export default function FreeSeminarForm({
                   </p>
                 )}
               </div>
+
+              <div>
+                <label className="text-sm font-semibold text-gray-600 mb-1 block">
+                  Topics <span className="text-red-500">*</span>
+                </label>
+                <Input
+                  placeholder="e.g. HTML5, CSS3"
+                  {...register("class_topic")}
+                  className="border-gray-200"
+                />
+                {errors.class_topic && (
+                  <p className="text-xs text-red-500 mt-1">
+                    {errors.class_topic.message}
+                  </p>
+                )}
+              </div>
             </div>
           </div>
 
+
+
+          {/* ── Content ── */}
           <div className="space-y-6">
             <div className="grid grid-cols-1 gap-y-4">
               <div>
@@ -334,24 +466,10 @@ export default function FreeSeminarForm({
                   </p>
                 )}
               </div>
+
               <div>
                 <label className="text-sm font-semibold text-gray-600 mb-1 block">
-                  Topics <span className="text-red-500">*</span>
-                </label>
-                <Input
-                  placeholder="e.g. HTML5, CSS3"
-                  {...register("class_topic")}
-                  className="border-gray-200"
-                />
-                {errors.class_topic && (
-                  <p className="text-xs text-red-500 mt-1">
-                    {errors.class_topic.message}
-                  </p>
-                )}
-              </div>
-              <div>
-                <label className="text-sm font-semibold text-gray-600 mb-1 block">
-                  Detailed Description <span className="text-red-500">*</span>
+                  Detailed Description 
                 </label>
                 <Controller
                   name="description"
@@ -372,6 +490,7 @@ export default function FreeSeminarForm({
             </div>
           </div>
 
+          {/* ── Scheduling ── */}
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
               <div>
@@ -445,6 +564,7 @@ export default function FreeSeminarForm({
             </div>
           </div>
 
+          {/* ── Instructors ── */}
           <div className="space-y-6">
             <div className="bg-[#F9FAFB] border rounded-lg p-4">
               <label className="text-sm font-semibold text-gray-600 mb-3 block">
@@ -457,30 +577,35 @@ export default function FreeSeminarForm({
                   const selected = Array.isArray(field.value) ? field.value : [];
                   return (
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 max-h-48 overflow-y-auto pr-2 custom-scrollbar">
-                      {fetchedTeachers.map((t) => (
-                        <div
-                          key={t.id}
-                          className="flex items-center space-x-3 p-2 rounded-md bg-white border hover:border-primary transition-colors cursor-pointer group"
-                        >
-                          <input
-                            type="checkbox"
-                            id={`t-${t.id}`}
-                            checked={selected.includes(t.id.toString())}
-                            onChange={(e) => {
+                      {fetchedTeachers.map((t) => {
+                        const isSelected = selected.includes(t.id.toString());
+                        return (
+                          <div
+                            key={t.id}
+                            onClick={() => {
                               const val = t.id.toString();
-                              const next = e.target.checked ? [...selected, val] : selected.filter((x) => x !== val);
+                              const next = isSelected
+                                ? selected.filter((x) => x !== val)
+                                : [...selected, val];
                               field.onChange(next);
                             }}
-                            className="h-4 w-4 rounded border-gray-300 text-primary cursor-pointer"
-                          />
-                          <label
-                            htmlFor={`t-${t.id}`}
-                            className="text-sm font-medium cursor-pointer group-hover:text-primary transition-colors"
+                            className={`flex items-center space-x-3 p-2 rounded-md border cursor-pointer transition-all select-none ${isSelected
+                              ? "bg-primary/10 border-primary"
+                              : "bg-white hover:bg-gray-50 border-gray-200"
+                              }`}
                           >
-                            {t.name}
-                          </label>
-                        </div>
-                      ))}
+                            <input
+                              type="checkbox"
+                              readOnly
+                              checked={isSelected}
+                              className="h-4 w-4 rounded border-gray-300 text-primary pointer-events-none"
+                            />
+                            <span className="text-sm font-medium">
+                              {t.name}
+                            </span>
+                          </div>
+                        );
+                      })}
                       {!fetchedTeachers.length && (
                         <p className="col-span-full text-center py-4 text-gray-500 italic text-sm">
                           {watchedBranchId ? "No instructors found" : "Select a branch first"}
@@ -498,10 +623,76 @@ export default function FreeSeminarForm({
             </div>
           </div>
 
+          {/* ── Tools ── */}
+          <div className="space-y-6">
+            <div className="bg-[#F9FAFB] border rounded-lg p-4">
+              <label className="text-sm font-semibold text-gray-600 mb-3 block">
+                Tools
+              </label>
+              <Controller
+                name="tool_ids"
+                control={control}
+                render={({ field }) => {
+                  const selected = Array.isArray(field.value) ? field.value : [];
+                  return isToolsPending ? (
+                    <p className="text-sm text-gray-400 italic py-2">Loading tools...</p>
+                  ) : allTools.length === 0 ? (
+                    <p className="text-sm text-gray-400 italic py-2">No tools available</p>
+                  ) : (
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                      {allTools.map((tool) => {
+                        const isSelected = selected.includes(tool.id.toString());
+                        return (
+                          <div
+                            key={tool.id}
+                            onClick={() => {
+                              const val = tool.id.toString();
+                              const next = isSelected
+                                ? selected.filter((x) => x !== val)
+                                : [...selected, val];
+                              field.onChange(next);
+                            }}
+                            className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-all select-none ${isSelected
+                              ? "bg-primary/10 border-primary"
+                              : "bg-white hover:bg-gray-50 border-gray-200"
+                              }`}
+                          >
+                            <input
+                              type="checkbox"
+                              readOnly
+                              checked={isSelected}
+                              className="h-4 w-4 rounded border-gray-300 text-primary pointer-events-none"
+                            />
+                            <Image
+                              src={tool.image || "/images/placeholder.png"}
+                              width={32}
+                              height={32}
+                              alt={tool.title}
+                              className="rounded object-cover "
+                            />
+                            <span className="text-sm font-medium truncate">
+                              {tool.title}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  );
+                }}
+              />
+              {errors.tool_ids && (
+                <p className="text-xs text-red-500 mt-2 font-medium">
+                  {errors.tool_ids.message}
+                </p>
+              )}
+            </div>
+          </div>
+
+          {/* ── Image ── */}
           <div className="space-y-4">
             <div>
               <label className="text-sm font-medium text-gray-600 mb-2 block">
-                Image
+                Image <span className="text-red-500">*</span>
               </label>
 
               <Input
@@ -551,6 +742,101 @@ export default function FreeSeminarForm({
             </div>
           </div>
 
+          {/* ── SEO / Meta ── */}
+          <div className="space-y-4 border rounded-lg p-5 bg-[#F9FAFB]">
+            <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide">
+              SEO &amp; Meta
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="text-sm font-semibold text-gray-600 mb-1 block">
+                  Meta Title
+                </label>
+                <Input
+                  placeholder="SEO title"
+                  {...register("meta_title")}
+                  className="border-gray-200"
+                />
+                {errors.meta_title && (
+                  <p className="text-xs text-red-500 mt-1">
+                    {errors.meta_title.message}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label className="text-sm font-semibold text-gray-600 mb-1 block">
+                  Meta Description
+                </label>
+                <Input
+                  placeholder="SEO description"
+                  {...register("meta_description")}
+                  className="border-gray-200"
+                />
+                {errors.meta_description && (
+                  <p className="text-xs text-red-500 mt-1">
+                    {errors.meta_description.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="text-sm font-semibold text-gray-600 mb-1 block">
+                  Meta Tags
+                </label>
+                <div className="flex flex-wrap gap-2 border border-gray-200 rounded-md p-2 bg-white min-h-[42px] focus-within:ring-1 focus-within:ring-ring">
+                  {metaTags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="flex items-center gap-1 bg-primary/10 text-primary text-xs font-medium px-2 py-1 rounded-full"
+                    >
+                      {tag}
+                      <button
+                        type="button"
+                        onClick={() => removeMetaTag(tag)}
+                        className="hover:text-red-500 transition-colors"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </span>
+                  ))}
+                  <input
+                    type="text"
+                    value={metaTagInput}
+                    onChange={(e) => setMetaTagInput(e.target.value)}
+                    onKeyDown={handleMetaTagKeyDown}
+                    onBlur={handleMetaTagBlur}
+                    placeholder={metaTags.length === 0 ? "Type and press Enter or comma to add tags" : ""}
+                    className="flex-1 min-w-[180px] outline-none text-sm bg-transparent placeholder:text-gray-400"
+                  />
+                </div>
+                <input type="hidden" {...register("meta_tag")} />
+                {errors.meta_tag && (
+                  <p className="text-xs text-red-500 mt-1">
+                    {errors.meta_tag.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="text-sm font-semibold text-gray-600 mb-1 block">
+                  Schema (JSON)
+                </label>
+                <Textarea
+                  placeholder="{}"
+                  {...register("schema")}
+                  className="border-gray-200 font-mono text-xs min-h-20"
+                />
+                {errors.schema && (
+                  <p className="text-xs text-red-500 mt-1">
+                    {errors.schema.message}
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* ── Actions ── */}
           <div className="pt-6 flex justify-end space-x-3 border-t">
             <Button
               type="button"

@@ -1,21 +1,17 @@
-import {
-  Briefcase,
-  MapPin,
-  Calendar,
-  MoveRight,
-} from "lucide-react";
+import { Briefcase, MapPin, Calendar, MoveRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { JobCircularsProps } from "./JobCircularsData";
 import Link from "next/link";
+import { JobCircularItem } from "@/apiServices/jobCircularPublicService";
 
-export interface JobCardProps {
-  job: JobCircularsProps;
+export interface JobCircularsProps {
+  job: JobCircularItem;
 }
 
-const JobCircularCard = ({ job }: JobCardProps) => {
+const JobCircularCard = ({ job }: JobCircularsProps) => {
+
   return (
-    <div className="bg-card rounded-xl p-4 sm:p-6 shadow-sm border border-border hover:shadow-md transition-shadow duration-200 mb-4 last:mb-0">
+    <div className="rounded-xl p-4 sm:p-6 shadow-sm border border-border hover:shadow-md transition-shadow duration-200 mb-4 last:mb-0">
       <div className="flex flex-col sm:flex-row items-start gap-4">
         <div className="flex-1">
           <div className="flex items-center gap-4">
@@ -24,33 +20,31 @@ const JobCircularCard = ({ job }: JobCardProps) => {
             </div>
             <div className="">
               <div className="flex flex-wrap gap-2 mb-4">
-                {job.badges.map((badge, index) => (
-                  <span
-                    className="border border-secondary text-secondary bg-secondary/10 px-3 py-1 rounded-full"
-                    key={index}
-                  >
-                    {badge.label}
-                  </span>
-                ))}
+                <span className="border border-secondary text-secondary bg-secondary/10 px-3 py-1 rounded-full">
+                  {job.job_type_label}
+                </span>
+                <span className="border border-primary text-primary bg-primary/5 px-3 py-1 rounded-full">
+                  {job.career_category.name}
+                </span>
               </div>
               <h3 className="text-xl font-semibold text-secondary mb-1">
                 {job.title}
               </h3>
-              <p className="text-secondary/80 mb-3">{job.description}</p>
+              <p className="text-secondary/80 mb-3">{job.subtitle}</p>
 
               <p className="text-primary font-semibold mb-2">
-                Salary: {job.salary}
+                Salary: {job.salary || "Negotiable"}
               </p>
 
               {/* Location & Deadline */}
               <div className="flex flex-wrap items-center gap-4 text-secondary">
                 <div className="flex items-center gap-1.5">
                   <MapPin className="w-4 h-4 text-primary" />
-                  <span>{job.location}</span>
+                  <span>{job.location || "N/A"}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <Calendar className="w-4 h-4 text-primary" />
-                  <span>Deadline: {job.deadline}</span>
+                  <span>Deadline: {job.deadline || "N/A"}</span>
                 </div>
               </div>
             </div>
@@ -60,7 +54,11 @@ const JobCircularCard = ({ job }: JobCardProps) => {
         {/* Apply Button */}
         <div className="shrink-0 self-end">
           <Button asChild className="cursor-pointer flex items-center gap-2">
-            <Link href={`/job-circulars/${job.slug}`} target="_blank" className="bg-primary px-4">
+            <Link
+              href={`/job-circulars/${job.slug}`}
+              target="_blank"
+              className="bg-primary px-4"
+            >
               Apply Now
               <MoveRight className="w-5 h-5 animate-bounce" />
             </Link>

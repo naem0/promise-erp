@@ -13,7 +13,7 @@ const JobCircularState = ({ category }: EmployeeStateProps) => {
         </div>
 
         {/* Employee Count */}
-        <h3 className="text-4xl font-bold mb-2">{category.id}</h3>
+        {/* <h3 className="text-4xl font-bold mb-2">{category.id}</h3> */}
 
         {/* Title */}
         <h4 className="text-lg font-semibold mb-2">{category.title}</h4>

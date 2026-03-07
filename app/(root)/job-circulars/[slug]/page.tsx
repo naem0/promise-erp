@@ -1,22 +1,49 @@
+import {
+  getPublicJobCircularBySlug,
+  JobCircularDetails,
+} from "@/apiServices/jobCircularPublicService";
+import ErrorComponent from "@/components/common/ErrorComponent";
 import JobApplicationForm from "@/components/root/jobCirculars/JobApplicationForm";
 import JobBySlugWrapperBanner from "@/components/root/jobCirculars/JobBySlugWrapperBanner";
-import JobInfoCardBySlug from "@/components/root/jobCirculars/JobInfoCardBySlug";
-import JobInfoRoleOverview from "@/components/root/jobCirculars/JobInfoRoleOverview";
-import JobKeyResponsibilities from "@/components/root/jobCirculars/JobKeyResponsibilities";
-import JobQualifications from "@/components/root/jobCirculars/JobQualifications";
+import JobInfoBySlugWrapper from "@/components/root/jobCirculars/JobInfoBySlugWrapper";
 
-const JobCircularBySlugdPage = () => {
+interface JobCircularParams {
+  params: Promise<{ slug: string }>;
+}
+
+const JobCircularBySlugdPage = async ({ params }: JobCircularParams) => {
+  const { slug } = await params;
+  console.log(slug);
+  let jobCircularData;
+  try {
+    jobCircularData = await getPublicJobCircularBySlug(slug);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      return (
+        <ErrorComponent
+          message={jobCircularData?.message || "Failed to fetch job circulars"}
+        />
+      );
+    } else {
+      return <ErrorComponent message="An unexpected error occurred." />;
+    }
+  }
+
+  const jobCirculars: JobCircularDetails = jobCircularData?.data || {};
+
   return (
     <>
       <JobBySlugWrapperBanner />
       <div className="container mx-auto px-4 py-8 md:py-12">
+        <div className="pb-10">
+          <h1 className="text-center text-secondary capitalize font-bold text-2xl lg:text-4xl">
+            Post For:- {jobCirculars.title}
+          </h1>
+        </div>
         <div className="grid lg:grid-cols-3 gap-4">
           {/* Left Column - Job Details */}
           <div className="lg:col-span-2 space-y-6">
-            <JobInfoCardBySlug />
-            <JobInfoRoleOverview />
-            <JobKeyResponsibilities />
-            <JobQualifications />
+            <JobInfoBySlugWrapper jobCirculars={jobCirculars} />
           </div>
 
           {/* Right Column - Application Form */}

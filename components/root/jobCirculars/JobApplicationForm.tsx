@@ -49,14 +49,6 @@ const JobApplicationForm = () => {
           </CardDescription>
         </CardHeader>
 
-        <div className="px-3">
-          <div className="px-6 py-3 bg-primary/20 rounded-2xl">
-            <p className="text-center font-semibold text-primary text-sm">
-              Content Writer & Digital Content Strategist
-            </p>
-          </div>
-        </div>
-
         <CardContent className="p-3 lg:p-6">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">

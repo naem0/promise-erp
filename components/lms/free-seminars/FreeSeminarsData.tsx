@@ -28,12 +28,32 @@ const FreeSeminarsData = async ({
       typeof resolvedSearchParams.search === "string"
         ? resolvedSearchParams.search
         : undefined,
+    branch_id:
+      typeof resolvedSearchParams.branch_id === "string"
+        ? resolvedSearchParams.branch_id
+        : undefined,
+    course_category_id:
+      typeof resolvedSearchParams.course_category_id === "string"
+        ? resolvedSearchParams.course_category_id
+        : undefined,
+    seminar_type:
+      typeof resolvedSearchParams.seminar_type === "string"
+        ? resolvedSearchParams.seminar_type
+        : undefined,
+    seminar_date_from:
+      typeof resolvedSearchParams.seminar_date_from === "string"
+        ? resolvedSearchParams.seminar_date_from
+        : undefined,
+    seminar_date_to:
+      typeof resolvedSearchParams.seminar_date_to === "string"
+        ? resolvedSearchParams.seminar_date_to
+        : undefined,
     sort_order:
       typeof resolvedSearchParams.sort_order === "string"
         ? resolvedSearchParams.sort_order
         : undefined,
-    
   };
+
 
   let results;
   try {
