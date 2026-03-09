@@ -1,4 +1,5 @@
 import {
+  getPublicJobCircular,
   getPublicJobCircularBySlug,
   JobCircularDetails,
 } from "@/apiServices/jobCircularPublicService";
@@ -11,9 +12,20 @@ interface JobCircularParams {
   params: Promise<{ slug: string }>;
 }
 
+export async function generateStaticParams() {
+  const response = await getPublicJobCircular( { per_page: 100 } );
+  const jobItems = response?.data?.careers || [];
+  if (!jobItems || jobItems.length === 0) {
+    return [{ slug: "not-found" }];
+  }
+
+  return jobItems.map((job) => ({
+    slug: job.slug,
+  }));
+}
+
 const JobCircularBySlugdPage = async ({ params }: JobCircularParams) => {
   const { slug } = await params;
-  console.log(slug);
   let jobCircularData;
   try {
     jobCircularData = await getPublicJobCircularBySlug(slug);
@@ -30,6 +42,8 @@ const JobCircularBySlugdPage = async ({ params }: JobCircularParams) => {
   }
 
   const jobCirculars: JobCircularDetails = jobCircularData?.data || {};
+
+  const careerId = jobCirculars?.id;
 
   return (
     <>
@@ -49,7 +63,7 @@ const JobCircularBySlugdPage = async ({ params }: JobCircularParams) => {
           {/* Right Column - Application Form */}
           <div className="lg:col-span-1">
             <div className="lg:sticky lg:top-8">
-              <JobApplicationForm />
+              <JobApplicationForm careerId={careerId} />
             </div>
           </div>
         </div>

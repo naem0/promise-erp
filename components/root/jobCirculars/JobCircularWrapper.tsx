@@ -28,12 +28,20 @@ const JobCircularWrapper = async ({ searchParams }: SearchParamsProps) => {
   } catch (error: unknown) {
     if (error instanceof Error) {
       return (
-        <ErrorComponent
-          message={jobCircularData?.message || "Failed to fetch job circulars"}
-        />
+        <div className="mx-auto px-4 py-16 space-y-16">
+          <ErrorComponent
+            message={
+              jobCircularData?.message || "Failed to fetch job circulars"
+            }
+          />
+        </div>
       );
     } else {
-      return <ErrorComponent message="An unexpected error occurred." />;
+      return (
+        <div className="mx-auto px-4 py-16 space-y-16">
+          <ErrorComponent message="An unexpected error occurred." />
+        </div>
+      );
     }
   }
 
@@ -46,7 +54,7 @@ const JobCircularWrapper = async ({ searchParams }: SearchParamsProps) => {
     <>
       <JobCircularSearch jobCirculars={jobCirculars} />
       <JobCircularsData totalJobCirculars={totalJobCirculars} />
-      {paginationData.per_page >30 &&  (
+      {paginationData.per_page > 30 && (
         <div className="py-3">
           <Pagination pagination={paginationData} />
         </div>

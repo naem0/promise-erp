@@ -241,12 +241,15 @@ export async function updateBatch(
     }
 
     const res = await fetch(`${API_BASE}/batches/${id}`, {
-      method: "PATCH",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(batchData),
+      body: JSON.stringify({
+        ...batchData,
+        _method: "PUT",
+      }),
     });
 
     const result = await processApiResponse(res, "Failed to update batch.");

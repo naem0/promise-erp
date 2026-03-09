@@ -154,6 +154,11 @@ const data = {
           url: "/lms/branches",
           permissions: ["view-branches"],
         },
+         {
+          title: "Blogs",
+          url: "/lms/blogs",
+          permissions: ["view-blogs"],
+        },
       ],
     },
 
@@ -380,8 +385,9 @@ const data = {
       icon: BriefcaseBusiness,
       items: [
         {
-          title: "Jobs List",
-          url: "#",
+          title: "All Careers",
+          url: "/lms/careers",
+          permissions: ["view-careers"],
         },
         {
           title: "Job Applications",

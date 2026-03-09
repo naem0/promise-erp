@@ -1,11 +1,11 @@
-"use server";
+// "use server";
 
-import { authOptions } from "@/lib/auth";
-import { getServerSession } from "next-auth";
+// import { authOptions } from "@/lib/auth";
+// import { getServerSession } from "next-auth";
 import { PaginationType } from "@/types/pagination";
 
 const API_BASE =
-  process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
+  process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1"; 
 
 // ======================= Start Public Job Circular Api Service =======================
 
@@ -148,3 +148,54 @@ export async function getPublicJobCircularBySlug(
   }
 }
 // ================== End Public Job Circular by slug Api Service ===============
+
+// ================== Start Apply Job Circular Api Service ===============
+// Interface for the Career object
+export interface ApplyCareerJob {
+  id: number;
+  title: string;
+  salary?: string;
+}
+export interface ApplyJobApplicationData {
+  id: number;
+  career: ApplyCareerJob;
+  name: string;
+  email: string;
+  phone: string;
+  address?: string;
+  resume: string;
+  cover_letter?: string;
+  status: number;
+  status_label: string;
+  created_at: string;
+}
+export interface ApplyJobApplicationResponse {
+  success: boolean;
+  message: string;
+  code: number;
+  data: ApplyJobApplicationData;
+  errors?: Record<string, string[]>;
+}
+
+export async function applyJobApplicationForWeb(
+  formData: FormData
+): Promise<ApplyJobApplicationResponse> {
+  try {
+    const res = await fetch(`${API_BASE}/public/job-applies`, {
+      method: "POST",
+      body: formData,
+    });
+
+    const result = await res.json();
+    return result;
+  } catch (error: unknown) {
+    console.error("Full error:", error);
+    if (error instanceof Error) {
+      console.log("Error in applyJobApplicationForWeb:===>", error);
+      throw new Error(error.message);
+    } else {
+      throw new Error("Failed to applyJobApplicationForWeb");
+    }
+  }
+}
+// ================== End Apply Job Circular Api Service ===============
