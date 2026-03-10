@@ -153,10 +153,11 @@ export default function EmployeesFilter({
 
             <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
                 {/* Search */}
-                <div className="col-span-2">
-                    <Search className="absolute left-3 top-1/2 h-4 w-4 text-muted-foreground" />
+                <div className="relative col-span-2">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                         placeholder="name, email, phone, designation..."
+                        className="pl-10"
                         {...register("search")}
                     />
                 </div>

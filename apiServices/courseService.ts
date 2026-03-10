@@ -460,11 +460,6 @@ export async function createChaptersWithLessons(
     });
 
     const result = await res.json();
-
-    if (!result.success) {
-      throw new Error(result.message || "Failed to create chapters");
-    }
-
     return result;
   } catch (error: unknown) {
     console.error("Error in createChaptersWithLessons:", error);
@@ -499,10 +494,6 @@ export async function updateChaptersWithLessons(
     });
 
     const result = await res.json();
-
-    if (!result.success) {
-      throw new Error(result.message || "Failed to update chapters");
-    }
 
     return result;
   } catch (error: unknown) {
