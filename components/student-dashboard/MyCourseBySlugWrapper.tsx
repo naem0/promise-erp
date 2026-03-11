@@ -22,9 +22,10 @@ const MyCourseBySlugWrapper = async ({
   const lessonId = queryParams?.lesson_id
     ? Number(queryParams.lesson_id)
     : undefined;
+  const batchId = queryParams?.batch_id ? Number(queryParams.batch_id) : undefined;
   const queryParamsLessonId = {
     lesson_id: lessonId,
-    batch_id: queryParams?.batch_id ? Number(queryParams.batch_id) : undefined,
+    batch_id: batchId,
   };
 
   const response = await getStudentMyCoursesBySlug(slug, queryParamsLessonId);
@@ -42,7 +43,6 @@ const MyCourseBySlugWrapper = async ({
   const courseTitle = response?.data?.course?.title;
   const currentLesson = response?.data?.current_lesson;
   const navigation = response?.data?.navigation;
-
   return (
     <div className="min-h-screen bg-background py-6 px-4 md:px-8">
       <div className="container mx-auto">
@@ -64,6 +64,7 @@ const MyCourseBySlugWrapper = async ({
                 <MyCourseBySlugCourseModule
                   slug={slug}
                   currentLessonId={lessonId}
+                  batchId={batchId}
                 />
               </CardContent>
             </Card>

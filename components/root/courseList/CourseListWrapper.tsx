@@ -3,13 +3,10 @@ import ErrorComponent from "@/components/common/ErrorComponent";
 import NotFoundComponent from "@/components/common/NotFoundComponent";
 import Pagination from "@/components/common/Pagination";
 import CourseCard from "@/components/root/courseList/CourseCard";
-
-const CourseListWrapper = async ({
-  searchParams,
-}: {
-  searchParams:Promise<{ [key: string]: string | string[] | undefined }>;
-}) => {
-
+interface CoursesPageProps {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}
+const CourseListWrapper = async ({ searchParams }: CoursesPageProps) => {
   const resolvedParams = await searchParams;
 
   const params = {
@@ -31,17 +28,26 @@ const CourseListWrapper = async ({
     budget_scale: resolvedParams.budget_scale?.toString(),
     course_track: resolvedParams.course_track?.toString(),
     page: resolvedParams.page?.toString(),
+    per_page: resolvedParams.per_page?.toString(),
   };
 
   let results;
 
   try {
-    results = await getPublicCoursesList({ params });
+    results = await getPublicCoursesList(params);
   } catch (error) {
     if (error instanceof Error) {
-      return <ErrorComponent message={error.message} />;
+      return (
+        <div className="py-8 md:py-12">
+          <ErrorComponent message={error.message} />
+        </div>
+      );
     } else {
-      return <ErrorComponent message="An unexpected error occurred." />;
+      return (
+        <div className="py-8 md:py-12">
+          <ErrorComponent message="An unexpected error occurred." />;
+        </div>
+      );
     }
   }
 
@@ -58,13 +64,11 @@ const CourseListWrapper = async ({
           <CourseCard key={course.id} course={course} />
         ))}
       </div>
-      {
-        courses.length > 0 && (
-          <div className="pt-6">
-            <Pagination pagination={results?.data?.pagination} />
-          </div>
-        )
-      }
+      {courses.length > 0 && (
+        <div className="pt-6">
+          <Pagination pagination={results?.data?.pagination} />
+        </div>
+      )}
     </>
   );
 };

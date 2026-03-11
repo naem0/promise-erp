@@ -763,6 +763,11 @@ export interface MyCourseBySlugLessonNavigationItem {
 }
 
 export interface LessonNavigation {
+  batch: {
+    id: number;
+    name: string;
+  };
+
   previous_lesson: MyCourseBySlugLessonNavigationItem | null;
   next_lesson: MyCourseBySlugLessonNavigationItem | null;
 }
@@ -1344,19 +1349,16 @@ export async function getPublicFreeSeminarBySlug(
   slug: string,
 ): Promise<PublicFreeSeminarBySlugResponse> {
   try {
-    const response = await fetch(
-      `${API_BASE}/public/free-seminars/${slug}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const response = await fetch(`${API_BASE}/public/free-seminars/${slug}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
 
     if (!response.ok) {
       throw new Error(
-        `Failed to fetch public free seminar (${response.status} ${response.statusText})`
+        `Failed to fetch public free seminar (${response.status} ${response.statusText})`,
       );
     }
 
@@ -1367,14 +1369,19 @@ export async function getPublicFreeSeminarBySlug(
     if (error instanceof Error) {
       throw new Error(`Error fetching public free seminar: ${error.message}`);
     }
-    throw new Error("An unknown error occurred while fetching public free seminar");
+    throw new Error(
+      "An unknown error occurred while fetching public free seminar",
+    );
   }
 }
 
 // End Public get Free Seminar by Slug
 
-export async function getFreeSeminarByPublicPage({ params = {} }: { params?: Record<string, unknown> } = {}): Promise<FreeSeminarsApiResponse> {
-
+export async function getFreeSeminarByPublicPage({
+  params = {},
+}: {
+  params?: Record<string, unknown>;
+} = {}): Promise<FreeSeminarsApiResponse> {
   try {
     const urlParams = new URLSearchParams();
 
@@ -1386,14 +1393,12 @@ export async function getFreeSeminarByPublicPage({ params = {} }: { params?: Rec
 
     const queryString = urlParams.toString();
     const url = `${API_BASE}/public/free-seminars?${queryString}`;
-    const response = await fetch(url,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
 
     const data: FreeSeminarsApiResponse = await response.json();
     return data;
@@ -1405,7 +1410,6 @@ export async function getFreeSeminarByPublicPage({ params = {} }: { params?: Rec
     throw new Error("An unknown error occurred while fetching free seminars");
   }
 }
-
 
 // start get All Job Titles For Earning
 

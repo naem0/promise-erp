@@ -13,11 +13,13 @@ import { CourseModuleLessonItem, getStudentCourseModulesList } from "@/apiServic
 interface MyCourseBySlugCourseModuleProps {
   slug: string;
   currentLessonId?: number;
+  batchId?: number
 }
 
 const MyCourseBySlugCourseModule = async ({
   slug,
   currentLessonId,
+  batchId
 }: MyCourseBySlugCourseModuleProps) => {
   const response = await getStudentCourseModulesList(slug);
   const modules = response?.data?.course_modules || [];
@@ -33,8 +35,6 @@ const MyCourseBySlugCourseModule = async ({
       <FileText className="w-5 h-5" />
     ) : null;
   };
-
-  console.log("modules--->", modules);
 
   const activeModule = modules.find((module) =>
     module.lessons.some((lesson) => lesson.id === currentLessonId)
@@ -76,7 +76,7 @@ const MyCourseBySlugCourseModule = async ({
                   {module.lessons.map((lesson) => (
                     <Link
                       key={lesson?.id}
-                      href={`/student/mycourses/${slug}?lesson_id=${lesson?.id}`}
+                      href={`/student/mycourses/${slug}?lesson_id=${lesson?.id}&batch_id=${batchId}`}
                       className={`flex items-start gap-3 p-3 transition-colors ${currentLessonId === lesson?.id
                         ? " bg-secondary border-l-3 border-primary text-white"
                         : "bg-secondary/90 text-white"

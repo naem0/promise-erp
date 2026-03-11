@@ -31,7 +31,7 @@ const MyCourseBySlugNavigationBtn = ({
         {previous_lesson ? (
           <Button asChild>
             <Link
-              href={`/student/mycourses/${slug}?lesson_id=${previous_lesson.id}`}
+              href={`/student/mycourses/${slug}?lesson_id=${previous_lesson?.id}&batch_id=${navigation?.batch?.id}`}
             >
               Previous
             </Link>
@@ -46,7 +46,7 @@ const MyCourseBySlugNavigationBtn = ({
         {next_lesson ? (
           <Button asChild>
             <Link
-              href={`/student/mycourses/${slug}?lesson_id=${next_lesson.id}`}
+              href={`/student/mycourses/${slug}?lesson_id=${next_lesson.id}&batch_id=${navigation?.batch?.id}`}
               className="nav-button nav-button-primary hover:bg-primary/90 transition-colors"
             >
               Next

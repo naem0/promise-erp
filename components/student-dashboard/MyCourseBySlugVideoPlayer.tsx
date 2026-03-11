@@ -22,7 +22,7 @@ const MyCourseBySlugVideoPlayer = ({ currentLesson }: VideoPlayerProps) => {
 
       {currentLesson?.type === 1 && currentLesson?.video_url && (
         <div className="mb-4">
-          <MyCourseLessonVideoPlayer videoUrl="https://youtu.be/Ya4ZDyjSsMo?si=lYLYBlGGCAL7s5ai" />
+          <MyCourseLessonVideoPlayer videoUrl={currentLesson?.video_url} />
         </div>
       )}
 

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useTransition } from "react";
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -53,7 +52,7 @@ const HeaderBranchDropdown = () => {
     startTransition(() => {
       const params = new URLSearchParams(Array.from(searchParams.entries()));
       params.set("branch_id", branchId.toString());
-      router.push(`/?${params.toString()}`);
+      router.replace(`/?${params.toString()}`);
     });
   };
 

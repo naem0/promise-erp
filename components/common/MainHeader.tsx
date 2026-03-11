@@ -7,6 +7,7 @@ const navLinks: NavLink[] = [
   { name: "Home", href: "/" },
   { name: "Courses", href: "/course", hasDropdown: true },
   { name: "Branch", href: "/branch" },
+  { name: "About", href: "/about" },
   { name: "Blog", href: "/blog" },
   { name: "Our Officers", href: "/our-officers" },
   { name: "Careers", href: "/job-circulars" },

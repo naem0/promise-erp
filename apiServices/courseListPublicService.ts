@@ -84,13 +84,12 @@ export interface ApiResponse {
   };
 }
 export interface GetPublicCoursesParams {
-  page?: number;
   params?: Record<string, unknown>;
 }
 
-export async function getPublicCoursesList({
-  params = {},
-}: GetPublicCoursesParams): Promise<ApiResponse> {
+export async function getPublicCoursesList(
+  params: Record<string, unknown> = {},
+): Promise<ApiResponse> {
   const urlParams = new URLSearchParams();
   Object.entries(params).forEach(([key, value]) => {
     if (value !== undefined && value !== null) {

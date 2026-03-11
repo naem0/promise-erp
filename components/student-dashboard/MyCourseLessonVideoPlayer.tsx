@@ -21,7 +21,7 @@ const MyCourseLessonVideoPlayer = ({ videoUrl }: LessonVideoPlayerProps) => {
         className="aspect-video"
         src={videoUrl}
         playing={isPlaying}
-        controls={isPlaying}
+        controls={true}
         width="100%"
         height="100%"
         onPlay={() => setIsPlaying(true)}

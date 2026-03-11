@@ -6,12 +6,10 @@ import CourseListWrapper from "@/components/root/courseList/CourseListWrapper";
 import { Card } from "@/components/ui/card";
 import CourseFilterSkeleton from "@/components/root/courseList/CourseFilterSkeleton";
 
-const CoursesPage = async ({
-  searchParams,
-}: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}) => {
-  
+interface CoursesPageProps {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}
+const CoursesPage = ({ searchParams }: CoursesPageProps) => {
   return (
     <>
       <HeaderBanner />

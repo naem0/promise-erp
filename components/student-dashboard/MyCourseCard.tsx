@@ -38,7 +38,8 @@ const MyCourseCard = ({ course }: MyCourseCardProps) => {
           <RatingStars rating={course?.course?.ratings} />
         </div>
         <h3 className="text-base font-semibold text-secondary leading-snug">
-          <Link href={`/student/mycourses/${course?.course?.slug}`}>{course?.course?.title}</Link>
+           <Link href={`/student/mycourses/${course?.course?.slug}?batch_id=${course?.batch?.id}`}>{course?.course?.title}</Link>
+
         </h3>
         {/* Progress info */}
         <div className="flex justify-between text-sm text-primary">
@@ -54,7 +55,7 @@ const MyCourseCard = ({ course }: MyCourseCardProps) => {
       <CardFooter className="p-4 pt-0 flex justify-center">
         {
           course?.status === "Active" ? (
-            <Link href={`/student/mycourses/${course?.course?.slug}`}>
+            <Link href={`/student/mycourses/${course?.course?.slug}?batch_id=${course?.batch?.id}`}>
               <Button>Continue Learning</Button>
             </Link>
           ) : (course?.status === "Expired" ? (<Button variant="outline" className="cursor-not-allowed bg-red-500/10 border-red-500 text-red-500 font-bold ">Your Access is Terminated</Button>) : (
