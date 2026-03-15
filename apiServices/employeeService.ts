@@ -466,6 +466,8 @@ export interface AllOfficeEmployee {
   designation: string;
   profile_image?: string;
   display_order: number;
+  experience: string;
+
 }
 export interface AllOfficeDepartment {
   department_id: number | null;

@@ -12,6 +12,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
 import OurCoursesLink from "./OurCoursesLink";
+import CopyRight from "./CopyRight";
 
 const FooterWidget = () => {
   const importantLinks = [
@@ -126,7 +127,8 @@ const FooterWidget = () => {
           </div>
         </div>
         <div className="flex justify-center text-base text-white pt-4 border-t border-primary-foreground/20">
-          <p>© {new Date().getFullYear()} E-Learning and Earning Ltd. All Rights Reserved</p>
+          {/* <CopyRight /> */}
+            © 2026 E-Learning and Earning Ltd. All Rights Reserved
         </div>
       </div>
     </section>

@@ -6,9 +6,10 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogClose,
 } from "@/components/ui/dialog";
-import { Mail, PhoneCall } from "lucide-react";
 import { TeacherList } from "@/apiServices/webPageTrainerService";
+import { X } from "lucide-react";
 
 interface Props {
   member: TeacherList;
@@ -19,7 +20,10 @@ const TrainerItemCardModal = ({ member, open, onOpenChange }: Props) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl p-0 overflow-hidden">
-        <div className="h-24 bg-linear-to-r from-secondary via-primary to-secondary" />
+        <DialogClose className="absolute right-4 cursor-pointer top-4 z-50 bg-white rounded-full p-2 shadow-md hover:bg-gray-100">
+          <X className="h-4 w-4 text-black" />
+        </DialogClose>
+        <div className="h-24 bg-[url('/images/empolyeemodalheader.png')] bg-no-repeat bg-cover"></div>
 
         <div className="-mt-16 px-6 pb-6 text-center">
           <DialogHeader className="">
@@ -40,20 +44,13 @@ const TrainerItemCardModal = ({ member, open, onOpenChange }: Props) => {
                   {member.designation || "Designation ---"}
                 </h2>
                 <p className="text-primary">
-                  {member.experience || "Experience ---"}
+                  {member.experience || "Experience ---"} Experience
                 </p>
               </div>
             </div>
           </DialogHeader>
 
           <div className="mt-6 space-y-4">
-            <div className="bg-muted p-4 rounded-lg flex justify-center gap-2">
-              <Mail /> {member.email || "Email Address ---"}
-            </div>
-            <div className="bg-muted p-4 rounded-lg flex justify-center gap-2">
-              <PhoneCall /> {member.phone || "Phone Number ---"}
-            </div>
-
             <div className="bg-muted p-4 rounded-lg text-sm">
               {member.note || "Note ---"}
             </div>

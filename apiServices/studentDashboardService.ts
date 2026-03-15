@@ -806,9 +806,8 @@ export async function getStudentMyCoursesBySlug(
   }
 
   const queryString = urlParams.toString();
-  const url = `${API_BASE}/student-panel/my-courses/${slug}${
-    queryString ? `?${queryString}` : ""
-  }`;
+  const url = `${API_BASE}/student-panel/my-courses/${slug}${queryString ? `?${queryString}` : ""
+    }`;
 
   try {
     const res = await fetch(url, {
@@ -1218,6 +1217,8 @@ export interface Instructor {
 }
 export interface InstructorTool {
   id: number;
+  title: string;
+  sub_title?: string;
   image?: string | null;
 }
 export interface FreeSeminarBySlugResponse {
@@ -1276,11 +1277,23 @@ export interface PublicFreeSeminar {
   location: string;
   seminar_date: string;
   seminar_time: string;
+  seminar_duration?: string;
   seminar_link: string | null;
   image?: string | null;
   branch: PublicSeminarBranch;
   instructors: PublicInstructor[];
   course_category?: PublicFreeSeminarCourseCategory;
+  tools?: PublicSeminarTool[];
+  category_id?: number;
+  category_name?: string;
+  courses?: PublicCourse[];
+}
+
+export interface PublicSeminarTool {
+  id: number;
+  title: string;
+  sub_title?: string;
+  image?: string | null;
 }
 
 export interface PublicFreeSeminarCourseCategory {
@@ -1336,6 +1349,8 @@ export interface PublicInstructor {
 
 export interface PublicInstructorTool {
   id: number;
+  title?: string;
+  sub_title?: string;
   image?: string | null;
 }
 
@@ -1369,9 +1384,12 @@ export async function getPublicFreeSeminarBySlug(
     if (error instanceof Error) {
       throw new Error(`Error fetching public free seminar: ${error.message}`);
     }
-    throw new Error(
-      "An unknown error occurred while fetching public free seminar",
-    );
+    else {
+      throw new Error(
+        "An unknown error occurred while fetching public free seminar",
+      );
+    }
+    
   }
 }
 
@@ -1410,6 +1428,45 @@ export async function getFreeSeminarByPublicPage({
     throw new Error("An unknown error occurred while fetching free seminars");
   }
 }
+
+// Start register for free seminar
+export interface FreeSeminarRegistrationApiResponse {
+  success: boolean;
+  message: string;
+  code: number;
+  data?: any;
+  errors?: Record<string, string[]>;
+}
+
+export async function registerForFreeSeminar(
+  seminarId: number,
+  address: string,
+  token: string,
+): Promise<FreeSeminarRegistrationApiResponse> {
+  try {
+    const response = await fetch(`${API_BASE}/public/free-seminars/register`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        free_seminar_id: seminarId,
+        address: address,
+      }),
+    });
+
+    const data: FreeSeminarRegistrationApiResponse = await response.json();
+    return data;
+  } catch (error: unknown) {
+    console.error("registerForFreeSeminar Error:", error);
+    if (error instanceof Error) {
+      throw new Error(`Error registering for free seminar: ${error.message}`);
+    }
+    throw new Error("An unknown error occurred while registering for free seminar");
+  }
+}
+// End register for free seminar
 
 // start get All Job Titles For Earning
 

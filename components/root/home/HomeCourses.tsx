@@ -10,15 +10,17 @@ import {
 } from "@/components/ui/carousel";
 import Link from "next/link";
 import CourseCard from "../courseList/CourseCard";
-import { ApiResponse } from "@/apiServices/courseListPublicService";
+import { ApiResponse, Course } from "@/apiServices/courseListPublicService";
+import { PublicCourse } from "@/apiServices/studentDashboardService";
 import NotFoundComponent from "@/components/common/NotFoundComponent";
 
 interface HomeCoursesProps {
-  coursesData: ApiResponse | null;
+  coursesData?: ApiResponse | null;
+  courses?: Course[] | PublicCourse[];
 }
 
-const HomeCourses = ({coursesData}:HomeCoursesProps ) => {
-  const courses = coursesData?.data?.courses || [];
+const HomeCourses = ({ coursesData, courses: directCourses }: HomeCoursesProps) => {
+  const courses = directCourses || coursesData?.data?.courses || [];
   
   if (courses.length === 0) {
     return <NotFoundComponent message={coursesData?.message || "No Courses Found"} />;

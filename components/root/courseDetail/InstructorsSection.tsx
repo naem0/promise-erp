@@ -1,27 +1,21 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
-import { CourseDetail } from "@/apiServices/courseDetailPublicService";
+import { CourseInstructor } from "@/apiServices/courseDetailPublicService";
+import { PublicInstructor } from "@/apiServices/studentDashboardService";
 import Image from "next/image";
 
 const INSTRUCTOR_PLACEHOLDER = "https://placehold.co/200x200/4f46e5/ffffff/png?text=Instructor";
 
-interface InstructorsSectionProps {
-  course: CourseDetail;
-}
-
-export const InstructorsSection = ({ course }: InstructorsSectionProps) => {
-  const instructors = course?.course_instructors || [];
-
-  if (instructors.length === 0) return null;
+export const InstructorsSection = ({ instructors, title }: { instructors: CourseInstructor[] | PublicInstructor[] ; title: string }) => {
+  if (instructors?.length === 0) return null;
 
   return (
     <Card className="bg-muted/30">
       <CardContent className="p-8">
-        <h2 className="text-3xl font-bold text-center mb-8 animate-in fade-in duration-500">Instructors</h2>
-
+        <h2 className="text-3xl font-bold text-center mb-8 animate-in fade-in duration-500">{title || "Instructors"}</h2>
         <Carousel opts={{align: "start", loop: true}} className="w-full max-w-full">
           <CarouselContent>
-            {instructors.map((instructor, index) => (
+            {instructors?.map((instructor, index) => (
               <CarouselItem key={index} className="basis-full sm:basis-1/1 lg:basis-1/2">
                 <Card className="shadow-md animate-in fade-in duration-500 hover:scale-95 transition-transform p-0">
                   <CardContent className="p-6 space-y-4 sm:flex gap-6">
@@ -47,7 +41,7 @@ export const InstructorsSection = ({ course }: InstructorsSectionProps) => {
                         {instructor?.instructors_tools?.map((tool, idx) => (
                           <Image
                             src={tool.image || INSTRUCTOR_PLACEHOLDER}
-                            alt={tool.title || instructor.name}
+                            alt={('title' in tool ? tool.title : instructor.name) || instructor.name}
                             width={36}
                             height={36}
                             key={idx}
