@@ -3,9 +3,9 @@ import {
   AllOfficeEmployeesApiResponse,
   getPublicAllEmployees,
 } from "@/apiServices/employeeService";
-import GeneralTeamMemberCardItem from "./GeneralTeamMemberCardItem";
 import ErrorComponent from "@/components/common/ErrorComponent";
 import NotFoundComponent from "@/components/common/NotFoundComponent";
+import GeneralTeamMemberInfos from "./GeneralTeamMemberInfos";
 
 const GeneralTeamMemberCard = async () => {
   let employeeData: AllOfficeEmployeesApiResponse;
@@ -41,7 +41,7 @@ const GeneralTeamMemberCard = async () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 justify-center items-center">
               {department.employees.map((employee) => (
-                <GeneralTeamMemberCardItem
+                <GeneralTeamMemberInfos
                   key={employee.id}
                   employee={employee}
                 />

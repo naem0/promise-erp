@@ -12,10 +12,10 @@ export default function RootLayout({
       <MainHeader />
       <main className="">
         {children}
-        <div className="hidden sm:block">
+        <div className="hidden lg:block">
           <div className="fixed left-0 top-1/2 -translate-y-1/2 z-30">
             <Link
-              href="/free-seminar"
+              href="/free-seminars"
               className="bg-primary text-white px-4 py-3 rounded-r-lg text-sm sm:text-base font-bold
       writing-vertical shadow-lg hover:px-3 transition-all
       flex items-center gap-1"

@@ -8,12 +8,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { BookOpen, Clock } from "lucide-react";
 import { Course } from "@/apiServices/courseListPublicService";
+import { PublicCourse } from "@/apiServices/studentDashboardService";
 import Image from "next/image";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import RatingStars from "@/components/common/RatingStars";
 import Link from "next/link";
 
-const CourseCard = ({ course }: { course: Course }) => {
+const CourseCard = ({ course }: { course: Course | PublicCourse }) => {
   return (
     <Card
       key={course?.id}

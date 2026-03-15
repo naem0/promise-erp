@@ -9,7 +9,7 @@ import { ToolsSection } from "@/components/root/courseDetail/ToolsSection";
 import { VideoSection } from "@/components/root/courseDetail/VideoSection";
 import { WhatYouLearnSection } from "@/components/root/courseDetail/WhatYouLearnSection";
 import { WhoCanJoinSection } from "@/components/root/courseDetail/WhoCanJoinSection";
-import {ApiResponse,  getCourseDetailBySlug } from "@/apiServices/courseDetailPublicService";
+import { ApiResponse, getCourseDetailBySlug } from "@/apiServices/courseDetailPublicService";
 
 import { notFound } from "next/navigation";
 import ErrorComponent from "@/components/common/ErrorComponent";
@@ -19,7 +19,7 @@ interface CourseDetailsWrapperProps {
 
 const CourseDetailsWrapper = async ({ slug }: CourseDetailsWrapperProps) => {
   let course;
-  
+
   try {
     const response: ApiResponse = await getCourseDetailBySlug(slug);
 
@@ -40,9 +40,15 @@ const CourseDetailsWrapper = async ({ slug }: CourseDetailsWrapperProps) => {
         <VideoSection course={course} />
         <WhatYouLearnSection course={course} />
         <CurriculumSection course={course} />
-        <ToolsSection course={course} />
+        <ToolsSection
+          tools={course.course_tools || []}
+          title={"Tools & Technologies You Will Master"}
+        />
         <WhoCanJoinSection course={course} />
-        <InstructorsSection course={course} />
+        <InstructorsSection 
+          instructors={course.course_instructors} 
+          title={"Meet Your Instructors"}
+        />
         <ReviewsSection course={course} />
         <CertificateSection course={course} />
         <FAQSection course={course} />
