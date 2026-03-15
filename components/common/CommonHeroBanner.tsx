@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 interface CommonHeroBannerProps {
   title: string;
@@ -13,7 +12,7 @@ const CommonHeroBanner = ({
   bgImage,
 }: CommonHeroBannerProps) => {
   return (
-    <section className="relative h-[300px] lg:h-[500px] w-full overflow-hidden flex items-center justify-center text-center px-4">
+    <section className="relative h-[300px] lg:h-[400px] w-full overflow-hidden flex items-center justify-center text-center px-4">
       {/* Optimized Background Image */}
       <Image
         src={bgImage}

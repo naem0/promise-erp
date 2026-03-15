@@ -1,36 +1,3 @@
-// import { getPublicAllEmployees } from "@/apiServices/employeeService";
-// import GeneralTeamMemberCardItem from "./GeneralTeamMemberCardItem";
-// import ErrorComponent from "@/components/common/ErrorComponent";
-
-// const GeneralTeamMemberCard = async () => {
-//   let employeeData;
-//   try {
-//     employeeData = await getPublicAllEmployees();
-//   } catch (error: unknown) {
-//     if (error instanceof Error) {
-//       return (
-//         <div className="container mx-auto px-4 py-8 md:py-14">
-//           <ErrorComponent message={error.message} />
-//         </div>
-//       );
-//     } else {
-//       return (
-//         <div className="container mx-auto px-4 py-8 md:py-14">
-//           <ErrorComponent message="An unknown error occurred while fetching video galleries." />
-//         </div>
-//       );
-//     }
-//   }
-//   console.log("---->", employeeData);
-//   return (
-//     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
-//       <GeneralTeamMemberCardItem />
-//     </div>
-//   );
-// };
-
-// export default GeneralTeamMemberCard;
-
 import {
   AllOfficeDepartment,
   AllOfficeEmployeesApiResponse,

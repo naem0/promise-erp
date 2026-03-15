@@ -1,4 +1,4 @@
-import { Briefcase, MapPin, Calendar, MoveRight } from "lucide-react";
+import { Briefcase, MapPin, Calendar } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -60,7 +60,6 @@ const JobCircularCard = ({ job }: JobCircularsProps) => {
               className="bg-primary px-4"
             >
               Apply Now
-              <MoveRight className="w-5 h-5 animate-bounce" />
             </Link>
           </Button>
         </div>

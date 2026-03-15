@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { cacheTag } from "next/cache";
 import Link from "next/link";
 import BlogCardItems from "./BlogCardItems";
-import { MoveRight } from "lucide-react";
 
 const CareerDevelopmentBlog = async () => {
   "use cache";
@@ -36,7 +35,6 @@ const CareerDevelopmentBlog = async () => {
           <Button asChild className="cursor-pointer flex items-center gap-2">
             <Link href="/blog" prefetch={true}>
               আরও পড়ুন
-              <MoveRight className="w-5 h-5 animate-bounce" />
             </Link>
           </Button>
         </div>

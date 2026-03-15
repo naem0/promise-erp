@@ -7,7 +7,6 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { Card, CardContent } from "@/components/ui/card";
-import { MoveRight } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -80,7 +79,6 @@ const StudentSuccessStories = ({ reviewsData }: StudentSuccessStoriesProps) => {
         <Button asChild className="cursor-pointer flex items-center gap-2">
           <Link href="/success-stories" prefetch={true}>
             আরও পড়ুন
-            <MoveRight className="w-5 h-5 animate-bounce" />
           </Link>
         </Button>
       </div>

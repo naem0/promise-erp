@@ -2,11 +2,12 @@ import {
   fetchPublicNewsFeeds,
   NewsFeedItem,
 } from "@/apiServices/homePageService";
+import ErrorComponent from "@/components/common/ErrorComponent";
+import NotFoundComponent from "@/components/common/NotFoundComponent";
 import SectionTitle from "@/components/common/SectionTitle";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { MoveRight } from "lucide-react";
 import { cacheTag } from "next/cache";
 import Image from "next/image";
 import Link from "next/link";
@@ -14,8 +15,27 @@ import Link from "next/link";
 const NewsfeedsArchive = async () => {
   "use cache";
   cacheTag("public-news-feeds");
-  const newsData = await fetchPublicNewsFeeds();
+  let newsData;
+  try {
+    newsData = await fetchPublicNewsFeeds();
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      return (
+        <div className="container mx-auto px-4 py-8 md:py-14">
+          <ErrorComponent message={error.message} />
+        </div>
+      );
+    }
+    return (
+      <div className="container mx-auto px-4 py-8 md:py-14">
+        <ErrorComponent message="An unknown error occurred while fetching video galleries." />
+      </div>
+    );
+  }
   const newsItems: NewsFeedItem[] = newsData?.data?.news_feeds || [];
+  if (!newsItems.length) {
+    return <NotFoundComponent message={newsData?.message || "No news found"} />;
+  }
 
   return (
     <section className="py-8 md:py-14 bg-secondary/5">
@@ -76,7 +96,6 @@ const NewsfeedsArchive = async () => {
           <Button asChild className="cursor-pointer flex items-center gap-2">
             <Link href="/news-feeds" prefetch={true}>
               আরও পড়ুন
-              <MoveRight className="w-5 h-5 animate-bounce" />
             </Link>
           </Button>
         </div>

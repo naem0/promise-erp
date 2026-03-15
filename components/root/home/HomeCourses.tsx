@@ -1,6 +1,5 @@
 "use client";
 
-import { MoveRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Carousel,
@@ -53,7 +52,6 @@ const HomeCourses = ({coursesData}:HomeCoursesProps ) => {
         <Button asChild className="cursor-pointer flex items-center gap-2" variant="secondary">
             <Link href="/courses">
                সব কোর্স দেখুন
-              <MoveRight className="w-5 h-5 animate-bounce" />
             </Link>
           </Button>
       </div>

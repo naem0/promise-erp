@@ -9,9 +9,12 @@ const nextConfig: NextConfig = {
 
   cacheComponents: true,
   compiler: {
-    removeConsole: process.env.NODE_ENV === 'production' ? {
-      exclude: ['error', 'warn'],
-    } : false,
+    removeConsole:
+      process.env.NODE_ENV === "production"
+        ? {
+            exclude: ["error", "warn"],
+          }
+        : false,
   },
 
   experimental: {
@@ -22,12 +25,12 @@ const nextConfig: NextConfig = {
   },
 
   images: {
-    formats: ['image/avif', 'image/webp'],
+    formats: ["image/avif", "image/webp"],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     minimumCacheTTL: 31536000,
     dangerouslyAllowSVG: true,
-    contentDispositionType: 'attachment',
+    contentDispositionType: "attachment",
     remotePatterns: [
       {
         protocol: "http",
@@ -61,6 +64,22 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "images.unsplash.com",
       },
+      {
+        protocol: "https",
+        hostname: "t3.ftcdn.net",
+      },
+      {
+        protocol: "https",
+        hostname: "cdn-icons-png.flaticon.com",
+      },
+      {
+        protocol: "https",
+        hostname: "static.vecteezy.com",
+      },
+      {
+        protocol: "https",
+        hostname: "miro.medium.com",
+      },
     ],
   },
 
@@ -68,20 +87,20 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
-        source: '/:all*(svg|jpg|jpeg|png|webp|avif|gif|ico|woff|woff2)',
+        source: "/:all*(svg|jpg|jpeg|png|webp|avif|gif|ico|woff|woff2)",
         headers: [
           {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
           },
         ],
       },
       {
-        source: '/_next/static/:path*',
+        source: "/_next/static/:path*",
         headers: [
           {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
           },
         ],
       },
@@ -91,7 +110,7 @@ const nextConfig: NextConfig = {
   logging: {
     fetches: {
       fullUrl: true,
-    }
+    },
   },
 };
 

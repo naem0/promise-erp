@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardContent } from "@/components/ui/card";
-import { Award, MoveRight } from "lucide-react";
+import { Award } from "lucide-react";
 import Image from "next/image";
 import {
   Carousel,
@@ -83,7 +83,6 @@ const TeacherListSection = ({ teacherData }: TeacherListSectionProps) => {
         <Button asChild className="cursor-pointer flex items-center gap-2">
           <Link href="/trainers" target="_blank" prefetch={true}>
             সকল প্রশিক্ষক দেখুন
-            <MoveRight className="w-5 h-5 animate-bounce" />
           </Link>
         </Button>
       </div>

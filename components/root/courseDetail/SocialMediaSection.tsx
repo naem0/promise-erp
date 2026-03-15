@@ -1,6 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
-import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 export default function SocialMediaSection() {
@@ -58,7 +57,7 @@ export default function SocialMediaSection() {
               target="_blank"
               className="border border-primary text-primary rounded-full px-6 py-2 text-sm font-medium hover:bg-primary hover:text-primary-foreground transition flex items-center gap-2"
             >
-              {item.btn} <ArrowRight size={16} />
+              {item.btn} 
             </Link>
           </CardContent>
         </Card>

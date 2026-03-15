@@ -1,6 +1,5 @@
 import MainFooter from "@/components/common/MainFooter";
 import MainHeader from "@/components/common/MainHeader";
-import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 export default function RootLayout({
@@ -22,7 +21,6 @@ export default function RootLayout({
       flex items-center gap-1"
             >
               Free Seminar
-              <ArrowRight className="w-3 h-3 animate-ping rotate-90" />
             </Link>
           </div>
 
@@ -34,7 +32,6 @@ export default function RootLayout({
       flex items-center gap-1"
             >
               Browse Course
-              <ArrowRight className="w-3 h-3 animate-ping rotate-90" />
             </Link>
           </div>
         </div>

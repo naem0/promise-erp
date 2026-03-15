@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Play, MoveRight } from "lucide-react";
+import { Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
@@ -54,7 +54,6 @@ const HomeHeroSection = ({ heroBannerData }: HeroVideoData) => {
               <Button asChild className="flex items-center gap-2">
                 <Link href={sliderData?.button_link_one || "/courses"} prefetch={true}>
                   {sliderData?.button_text_one}
-                  <MoveRight className="w-5 h-5 animate-bounce" />
                 </Link>
               </Button>
 
@@ -65,7 +64,6 @@ const HomeHeroSection = ({ heroBannerData }: HeroVideoData) => {
               >
                 <Link href={sliderData?.button_link_two || "/free-seminars"} prefetch={true}>
                   {sliderData?.button_text_two || "Free Seminars"}
-                  <MoveRight className="w-5 h-5 animate-bounce" />
                 </Link>
               </Button>
             </div>
