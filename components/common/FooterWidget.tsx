@@ -1,5 +1,4 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+
 import {
   Facebook,
   Linkedin,
@@ -11,27 +10,21 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { Suspense } from "react";
+import OurCoursesLink from "./OurCoursesLink";
 
 const FooterWidget = () => {
   const importantLinks = [
-    { name: "Home", href: "#" },
-    { name: "About Us", href: "#" },
-    { name: "Blogs", href: "#" },
-    { name: "Branch", href: "#" },
-    { name: "Contact", href: "#" },
+    { name: "Home", href: "/" },
+    { name: "About Us", href: "/about" },
+    { name: "Blogs", href: "/blog" },
+    { name: "Branch", href: "/branch" },
+    { name: "Contact", href: "/contact" },
     { name: "Privacy Policy", href: "#" },
     { name: "Terms & Conditions", href: "#" },
-  ];
 
-  const courses = [
-    "Web & Software Development",
-    "Graphics & Multimedia",
-    "Digital Marketing",
-    "Networking",
-    "CPA & Affiliate Marketing",
-    "Language & Communications",
-    "Others",
   ];
+  
   return (
     <section className="py-8 md:py-12 px-4 bg-secondary text-white">
       <div className="container mx-auto">
@@ -52,21 +45,6 @@ const FooterWidget = () => {
               E-Learning and Earning Ltd. has been the finest information
               technology service provider since 2013.
             </p>
-            <div>
-              <h3 className="font-semibold text-white  mb-3">
-                Subscribe to Our Newsletter
-              </h3>
-              <div className="flex gap-1">
-                <Input
-                  type="email"
-                  placeholder="Your Email"
-                  className=" border-primary-foreground/20 h-10 text-primary-foreground placeholder:text-primary-foreground/50"
-                />
-                <Button size="lg" className=" hover:border-primary">
-                  Subscribe
-                </Button>
-              </div>
-            </div>
             <div className="mt-6">
               <p className="text-sm text-white mb-2">Follow us on:</p>
               <div className="flex gap-3">
@@ -110,18 +88,10 @@ const FooterWidget = () => {
             <h3 className="font-semibold text-lg mb-4 text-white">
               Our Courses
             </h3>
-            <ul className="space-y-2">
-              {courses.map((course) => (
-                <li key={course}>
-                  <a
-                    href="#"
-                    className="text-sm text-white"
-                  >
-                    {course}
-                  </a>
-                </li>
-              ))}
-            </ul>
+            <Suspense fallback={null}>
+              <OurCoursesLink />
+            </Suspense>
+            
           </div>
 
           {/* Contact Us */}
@@ -156,7 +126,7 @@ const FooterWidget = () => {
           </div>
         </div>
         <div className="flex justify-center text-base text-white pt-4 border-t border-primary-foreground/20">
-          <p>2025 E-Learning and Earning Ltd. All Rights Reserved</p>
+          <p>© {new Date().getFullYear()} E-Learning and Earning Ltd. All Rights Reserved</p>
         </div>
       </div>
     </section>

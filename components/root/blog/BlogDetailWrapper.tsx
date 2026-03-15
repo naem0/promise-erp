@@ -135,13 +135,10 @@ const BlogDetailWrapper = async ({ slug }: BlogDetailWrapperProps) => {
           <div dangerouslySetInnerHTML={{ __html: blogData.description }} />
         </div>
         <div className="pt-4">
-          <Link
-            href="/"
-            className="text-secondary text-lg md:text-2xl font-bold flex items-center gap-2"
-          >
+          <h4 className="text-secondary text-lg md:text-2xl font-bold flex items-center gap-2">
             <SquareArrowOutUpRight className="w-4 h-4 inline mr-2" />
             নিয়মিত নিউজ পেতে আমাদের ওয়েব সাইট ভিজিট করুন।
-          </Link>
+          </h4>
         </div>
         {token && (
           <div className="mt-4">

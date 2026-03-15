@@ -6,7 +6,6 @@ import SectionTitle from "@/components/common/SectionTitle";
 import { cacheTag } from "next/cache";
 import VideoStoriesCard from "./VideoStoriesCard";
 import Link from "next/link";
-import { MoveRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import NotFoundComponent from "@/components/common/NotFoundComponent";
 
@@ -36,8 +35,7 @@ const VideoStories = async () => {
         <div className="flex justify-center mt-8">
           <Button asChild className="cursor-pointer flex items-center gap-2">
             <Link href="/video-gellary" prefetch={true}>
-              আরও পড়ুন
-              <MoveRight className="w-5 h-5 animate-bounce" />
+              আরও দেখুন
             </Link>
           </Button>
         </div>

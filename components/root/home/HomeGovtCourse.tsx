@@ -3,14 +3,16 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { AspectRatio } from "@radix-ui/react-aspect-ratio";
 import Link from "next/link";
-import { MoveRight } from "lucide-react";
-import { getPublicGovtCourseSection, GovtCourseResponse } from "@/apiServices/homePageService";
+import {
+  getPublicGovtCourseSection,
+  GovtCourseResponse,
+} from "@/apiServices/homePageService";
 import { cacheTag } from "next/cache";
 
 export default async function HomeGovtCourse() {
   "use cache";
   cacheTag("public-govt-course");
-  const govtCourseData:GovtCourseResponse = await getPublicGovtCourseSection();
+  const govtCourseData: GovtCourseResponse = await getPublicGovtCourseSection();
   const govtCourseInfo = govtCourseData?.data || {};
 
   return (
@@ -40,9 +42,14 @@ export default async function HomeGovtCourse() {
                 asChild
                 className="cursor-pointer flex items-center gap-2"
               >
-                <Link href="/courses?course_type=govt">
+                <Link
+                  href={{
+                    pathname: "/courses",
+                    query: { course_type: "govt" },
+                  }}
+                  prefetch={true}
+                >
                   বিস্তারিত দেখুন
-                  <MoveRight className="w-5 h-5 animate-bounce" />
                 </Link>
               </Button>
             </div>

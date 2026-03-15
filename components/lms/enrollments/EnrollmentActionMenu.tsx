@@ -19,7 +19,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, CheckCircle2, Loader2 } from "lucide-react";
+import { CheckCircle2, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
@@ -79,7 +79,6 @@ export default function EnrollmentActionMenu({
             href={`/lms/enrollments/${enrollmentId}`}
             className="flex items-center cursor-pointer"
           >
-            <ArrowRight className="mr-2 h-4 w-4" />
             View Details
           </Link>
         </DropdownMenuItem>

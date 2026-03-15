@@ -29,6 +29,7 @@ import TeacherListSkeleton from "@/components/common/TeacherListSkeleton";
 import StudentSuccessSkeleton from "@/components/common/StudentSuccessSkeleton";
 import NewsfeedsArchiveSkeleton from "@/components/common/NewsfeedsArchiveSkeleton";
 import NewsletterSkeleton from "@/components/common/NewsletterSkeleton";
+import BackToTop from "@/components/common/BackToTop";
 
 const HomePage = () => {
   return (
@@ -60,17 +61,14 @@ const HomePage = () => {
       <Suspense fallback={<VideoStorySkeleton />}>
         <VideoStories />
       </Suspense>
-      <Suspense fallback={<BlogSkeleton />}>
-        <CareerDevelopmentBlog />
-      </Suspense>
       <Suspense fallback={<StudentSuccessSkeleton />}>
         <StudentSuccessWrapper />
       </Suspense>
+      <Suspense fallback={<BlogSkeleton />}>
+        <CareerDevelopmentBlog />
+      </Suspense>
       <Suspense fallback={<NewsfeedsArchiveSkeleton />}>
         <NewsfeedsArchive />
-      </Suspense>
-      <Suspense fallback={<NewsletterSkeleton />}>
-        <NewsletterSection />
       </Suspense>
       <Suspense fallback={<PartnerSkeleton />}>
         <AffiliatesAndClients />
@@ -78,6 +76,10 @@ const HomePage = () => {
       <Suspense fallback={<BranchesSkeleton />}>
         <OurBranchesWrapper />
       </Suspense>
+      <Suspense fallback={<NewsletterSkeleton />}>
+        <NewsletterSection />
+      </Suspense>
+      <BackToTop />
     </>
   );
 };
