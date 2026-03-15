@@ -12,7 +12,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
 import OurCoursesLink from "./OurCoursesLink";
-import CopyRight from "./CopyRight";
 
 const FooterWidget = () => {
   const importantLinks = [

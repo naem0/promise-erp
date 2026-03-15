@@ -36,9 +36,6 @@ const NewsfeedsArchive = async () => {
   if (!newsItems.length) {
     return <NotFoundComponent message={newsData?.message || "No news found"} />;
   }
-
-  console.log("newsItems===>",newsItems);
-
   return (
     <section className="py-8 md:py-14 bg-secondary/5">
       <div className="container mx-auto px-4">
