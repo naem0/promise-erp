@@ -17,7 +17,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Eye, Pencil } from "lucide-react";
+import { BookOpen, Eye, Pencil } from "lucide-react";
 import Link from "next/link";
 import DeleteButton from "./DeleteBatchButton";
 import Pagination from "@/components/common/Pagination";
@@ -141,6 +141,15 @@ export default async function BatchesData({
                         >
                           <Pencil className="mr-2 h-4 w-4" />
                           Manage
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link
+                          href={`/lms/batches/${batch?.id}/chapter-lessons`}
+                          className="flex items-center cursor-pointer"
+                        >
+                          <BookOpen className="mr-2 h-4 w-4" />
+                          Chapters &amp; Lessons
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild>

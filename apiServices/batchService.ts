@@ -3,7 +3,7 @@
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import { revalidateTag } from "next/cache";
-import { handleApiError, processApiResponse, ApiResponse } from "@/lib/apiErrorHandler";
+import {ApiResponse } from "@/lib/apiErrorHandler";
 import { PaginationType } from "@/types/pagination";
 
 
@@ -24,17 +24,17 @@ export interface Batch {
   course_id: number;
   branch_id: number;
   name: string;
-  price: number | null;
-  discount: number | null;
-  discount_type: string | null;
-  duration: string | null;
-  start_date: string | null;
-  start_date_raw: string | null;
-  end_date: string | null;
-  end_date_raw: string | null;
-  total_enrolled: number | null;
+  price: number;
+  discount: number;
+  discount_type: string;
+  duration: string;
+  start_date: string;
+  start_date_raw: string;
+  end_date: string;
+  end_date_raw: string;
+  total_enrolled: number;
   is_online: number;
-  apply_end_date: string | null;
+  apply_end_date: string;
   status: number;
   branch: {
     id: number;
@@ -46,8 +46,8 @@ export interface Batch {
     level: string | null;
   };
   instructors: BatchInstructor[];
-  after_discount: number | string | null;
-  teacher_ids?: (string | number)[];
+  after_discount: number | string;
+  teacher_ids?: number[];
 }
 
 
@@ -71,10 +71,9 @@ export interface BatchSingleResponse {
 
 export interface BatchResponseType {
   success: boolean;
-  message?: string;
-  errors?: { [key: string]: string[] | string };
-  data?: Batch;
-  code?: number;
+  message: string;
+  errors?: { [key: string]: string[] | string };data: Batch;
+  code: number;
 }
 
 export interface CreateBatchRequest {
@@ -103,11 +102,7 @@ export async function addBatch(batchData: CreateBatchRequest): Promise<BatchResp
     const token = session?.accessToken;
 
     if (!token) {
-      return {
-        success: false,
-        message: "No valid session or access token found.",
-        code: 401,
-      };
+      throw new Error("No valid session or access token found.");
     }
 
     const res = await fetch(`${API_BASE}/batches`, {
@@ -119,22 +114,20 @@ export async function addBatch(batchData: CreateBatchRequest): Promise<BatchResp
       body: JSON.stringify(batchData),
     });
 
-    const result = await processApiResponse(res, "Failed to add batch.");
+    const result = await res.json();
 
-    if (!result.success) {
-      return result;
-    }
+
 
     revalidateTag("batches-list", "max");
 
-    return {
-      success: true,
-      message: result.message || "Batch added successfully.",
-      data: result.data,
-      code: result.code,
-    };
-  } catch (error) {
-    return await handleApiError(error, "Failed to add batch.");
+    return result;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+    else {
+      throw new Error("Failed to add batch.");
+    }
   }
 }
 
@@ -165,23 +158,22 @@ export async function getBatches(
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
-      },
-      next: {
-        tags: ["batches-list"], // cache tag
-      },
+      }
     });
 
-    if (!res.ok) {
-      const errorData = await res.json().catch(() => ({}));
-      throw new Error(errorData.message || "Failed to fetch batches.");
-    }
+
 
     return res.json();
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Error in getBatches:", error);
-    throw error;
+      if (error instanceof Error) {
+        throw new Error(error.message);
+      }else {
+      throw new Error("Failed to fetch batches.");
   }
 }
+}
+
 
 // ==========================
 // Get Batch by ID
@@ -202,21 +194,16 @@ export async function getBatchById(
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
-      },
-      next: {
-        tags: [`batch-${id}`],
-      },
+      }
     });
 
-    if (!res.ok) {
-      const errorData = await res.json().catch(() => ({}));
-      throw new Error(errorData.message || `Failed to fetch batch: ${res.statusText}`);
-    }
-
     return res.json();
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Error in getBatchById:", error);
-    throw error;
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+    throw new Error("Failed to fetch batch.");
   }
 }
 
@@ -233,11 +220,7 @@ export async function updateBatch(
     const token = session?.accessToken;
 
     if (!token) {
-      return {
-        success: false,
-        message: "No valid session or access token found.",
-        code: 401,
-      };
+      throw new Error("No valid session or access token found.");
     }
 
     const res = await fetch(`${API_BASE}/batches/${id}`, {
@@ -252,26 +235,142 @@ export async function updateBatch(
       }),
     });
 
-    const result = await processApiResponse(res, "Failed to update batch.");
+    const result = await res.json();
 
-    if (!result.success) {
-      return result;
-    }
+
 
     revalidateTag("batches-list", "max");
     revalidateTag(`batch-${id}`, "max");
 
-    return {
-      success: true,
-      message: result.message || "Batch updated successfully.",
-      data: result.data,
-      code: result.code,
-    };
-  } catch (error) {
-    return await handleApiError(error, "Failed to update batch.");
+    return result;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    } else {
+      throw new Error("Failed to update batch.");
+    }
   }
 }
 
+// ==========================
+// Delete Batch
+// ==========================
+
+
+// ==========================
+// Batch Chapter-Lesson Types
+// ==========================
+
+export interface BatchLesson {
+  id?: number | null;
+  title: string;
+  description: string | null;
+  duration: number;
+  type: string | number;
+  type_name?: string;
+  video_url: string;
+  order: number;
+  is_preview: number;
+  status: number;
+  schedule_at: string | null;
+}
+
+export interface BatchChapter {
+  id?: number;
+  title: string;
+  description: string;
+  status: string | number;
+  lessons: BatchLesson[];
+  lessons_count?: number;
+}
+
+export interface BatchChapterLessonFormValues {
+  batch_id: number;
+  course_id?: number;
+  chapters: BatchChapter[];
+}
+
+export interface BatchChapterLessonResponse {
+  success: boolean;
+  message: string;
+  code: number;
+  data?: BatchChapter[];
+  errors?: Record<string, string[] | string>;
+}
+
+// ==========================
+// Get Chapters by Batch ID
+// ==========================
+
+export async function getChaptersByBatchId(
+  batchId: number
+): Promise<BatchChapterLessonResponse> {
+  try {
+    const session = await getServerSession(authOptions);
+    const token = session?.accessToken;
+
+    if (!token) {
+      throw new Error("No valid session or access token found.");
+    }
+
+    const res = await fetch(`${API_BASE}/chapter-lessons/batches/${batchId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    const result = await res.json();
+
+
+
+    return result;
+  } catch (error) {
+    console.error("Error in getChaptersByBatchId:", error);
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    } else {
+      throw new Error("Failed to fetch batch chapters.");
+    }
+  }
+}
+
+// ==========================
+// Bulk Update Batch Chapter-Lessons
+// ==========================
+
+export async function bulkUpdateBatchChapterLessons(
+  data: BatchChapterLessonFormValues
+): Promise<BatchChapterLessonResponse> {
+  try {
+    const session = await getServerSession(authOptions);
+    const token = session?.accessToken;
+
+    if (!token) {
+      throw new Error("No valid session or access token found.");
+    }
+
+    const res = await fetch(`${API_BASE}/chapter-lessons/bulk-update`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+
+    const result = await res.json();
+    return result;
+  } catch (error: unknown) {
+    console.error("Error in bulkUpdateBatchChapterLessons:", error);
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+    else {
+      throw new Error("Failed to update batch chapters and lessons.");
+    }
+  }
+}
 // ==========================
 // Delete Batch
 // ==========================
@@ -282,11 +381,7 @@ export async function deleteBatch(id: number): Promise<ApiResponse> {
     const token = session?.accessToken;
 
     if (!token) {
-      return {
-        success: false,
-        message: "Unauthorized",
-        code: 401,
-      };
+      throw new Error("No valid session or access token found.");
     }
 
     const res = await fetch(`${API_BASE}/batches/${id}`, {
@@ -297,17 +392,18 @@ export async function deleteBatch(id: number): Promise<ApiResponse> {
       },
     });
 
-    const result = await processApiResponse(res, "Failed to delete batch.");
+    const result =await res.json();
 
-    if (!result.success) {
-      return result;
-    }
-
+    // Revalidate cache
     revalidateTag("batches-list", "max");
     revalidateTag(`batch-${id}`, "max");
 
     return result;
-  } catch (error) {
-    return await handleApiError(error, "Failed to delete batch.");
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    } else {
+      throw new Error("Failed to delete batch.");
+    }
   }
 }

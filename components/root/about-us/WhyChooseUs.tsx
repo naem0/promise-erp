@@ -4,8 +4,10 @@ import {
 } from "@/apiServices/aboutPageService";
 import ErrorComponent from "@/components/common/ErrorComponent";
 import NotFoundComponent from "@/components/common/NotFoundComponent";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
+import Link from "next/link";
 const WhyChooseUs = async () => {
   let whyChooseUsData: WhyChooseUsApiResponse | undefined;
   try {
@@ -39,14 +41,30 @@ const WhyChooseUs = async () => {
   return (
     <section className="py-8 md:py-12">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-        <Card className="py-2 px-2 border border-secondary/30 shadow">
-          <div className="relative w-full h-[300px] sm:h-[400px] lg:h-[600px] rounded-2xl">
-            <Image
-              src="/images/why-choose-us.svg"
-              alt="why choose us"
-              fill
-              className="object-cover rounded-2xl"
-            />
+        <Card className="p-4 bg-[#EFF3EA] shadow">
+          <div className="">
+            <strong className="text-xl lg:text-2xl text-secondary block mb-3">Why Choose Us</strong>
+            <h2 className="text-2xl lg:text-3xl font-bold text-black mb-4">
+              We Have Experience <br />
+              And We Have A Team <br />
+              Of Experts
+            </h2>
+            <p>
+              E-Learning and Earning Ltd. has been the foremost information
+              technology service provider since 2013. The training programs of
+              e-Learning and Earning Ltd. a wide range of skills that are
+              integral and necessary parts of everyday business. In our quest to
+              address every organizational development need, we offer a gamut of
+              training programs, which ranges from Executive Coaching and
+              Leadership Training to basic Communication Skills.
+            </p>
+            <div className="pt-4 lg:pt-6">
+              <Button asChild>
+                <Link href="/our-officers" prefetch={true}> 
+                  View Our Officers
+                </Link>
+              </Button>
+            </div>
           </div>
         </Card>
         <div>
@@ -54,10 +72,7 @@ const WhyChooseUs = async () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
               {whyChooseUs.map((item) => {
                 return (
-                  <Card
-                    key={item.id}
-                    className="py-0 border border-secondary/30"
-                  >
+                  <Card key={item.id} className="py-0 bg-[#EFF3EA] shadow">
                     <CardContent className="p-4">
                       <div className="shrink-0 relative w-[60px] h-[60px] mb-2 shadow-2xl rounded-full">
                         <Image
@@ -72,7 +87,7 @@ const WhyChooseUs = async () => {
                         <h5 className="font-semibold text-lg xl:text-lg text-secondary">
                           {item.title || "Dummy Title"}
                         </h5>
-                        <p className="text-black/60">
+                        <p className="text-black/90">
                           {item.subtitle || "Dummy Subtitle"}
                         </p>
                       </div>

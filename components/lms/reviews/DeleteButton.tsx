@@ -19,9 +19,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-
-import DeleteReviewAction from "@/actions/DeleteReviewAction";
-import { SingleReviewResponse } from "@/apiServices/reviewService";
+import { deleteReview, SingleReviewResponse } from "@/apiServices/reviewService";
 
 interface DeleteReviewButtonProps {
   id: number;
@@ -34,7 +32,7 @@ const DeleteReviewButton = ({ id }: DeleteReviewButtonProps) => {
   const handleDelete = () => {
     startTransition(async () => {
       try {
-        const res: SingleReviewResponse = await DeleteReviewAction(id);
+        const res: SingleReviewResponse = await deleteReview(id);
 
         if (res.success) {
           toast.success(res.message || "Review deleted successfully");

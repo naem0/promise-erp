@@ -15,6 +15,7 @@ import {
   LocationEdit,
   LockIcon,
   MessageSquare,
+  MonitorCog,
   Settings,
   ShieldCheck,
   ShoppingCartIcon,
@@ -60,7 +61,7 @@ const data = {
       plan: "Enterprise",
     },
   ],
-  navMain: [
+  navLMS: [
     {
       title: "User Management",
       url: "#",
@@ -154,7 +155,7 @@ const data = {
           url: "/lms/branches",
           permissions: ["view-branches"],
         },
-         {
+        {
           title: "Blogs",
           url: "/lms/blogs",
           permissions: ["view-blogs"],
@@ -260,6 +261,7 @@ const data = {
         },
       ],
     },
+
     {
       title: "Contents Management",
       url: "#",
@@ -332,6 +334,7 @@ const data = {
         },
       ],
     },
+
     {
       title: "Communications",
       url: "#",
@@ -357,9 +360,10 @@ const data = {
           url: "#",
           permissions: ["view-newsletters"],
         },
-        
+
       ],
     },
+
     {
       title: "Progress Reports",
       url: "#",
@@ -379,6 +383,7 @@ const data = {
         },
       ],
     },
+
     {
       title: "Careers Management",
       url: "#",
@@ -399,6 +404,7 @@ const data = {
         },
       ],
     },
+
     {
       title: "Requisition Manage",
       url: "#",
@@ -416,6 +422,22 @@ const data = {
           title: "Head office",
           url: "#",
         },
+      ],
+    },
+  ],
+
+  navCRM: [
+    {
+      title: "CRM Management",
+      url: "#",
+      icon: MonitorCog,
+      items: [
+        {
+          title: "Categories",
+          url: "/crm/categories",
+          permissions: ["view-crm-categories"],
+        },
+       
       ],
     },
   ],
@@ -1169,19 +1191,20 @@ export default function AppSidebar({
         <TeamSwitcher teams={data.teams} />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavCoordinateManagment items={data.coordinatManagement} />
-        <NavHr items={data.navHr} />
-        <NavInventory items={data.navInventory} />
-        <NavSales items={data.navSales} />
-        <NavExpense items={data.navExpenses} />
-        <NavPurchases items={data.navPurchase} />
-        <NavAccount items={data.navAccount} />
-        <NavSettings items={data.navSettings} />
-        <NavDivision items={data.navDivision} />
-        <NavDistrict items={data.navDistrict} />
-        <NavUserManage items={data.userManagement} />
-        <NavRolePermission items={data.navRolePermission} />
+        <NavMain items={data.navLMS} lavel="LMS" />
+        <NavMain items={data.navCRM} lavel="CRM" />
+        <NavMain items={data.coordinatManagement} lavel="Coordinator" />
+        <NavMain items={data.navHr} lavel="HR" />
+        <NavMain items={data.navInventory} lavel="Inventory" />
+        <NavMain items={data.navSales} lavel="Sales" />
+        <NavMain items={data.navExpenses} lavel="Expenses" />
+        <NavMain items={data.navPurchase} lavel="Purchase" />
+        <NavMain items={data.navAccount} lavel="Account" />
+        <NavMain items={data.navSettings} lavel="Settings" />
+        <NavMain items={data.navDivision} lavel="Division" />
+        <NavMain items={data.navDistrict} lavel="District" />
+        <NavMain items={data.userManagement} lavel="User Management" />
+        <NavMain items={data.navRolePermission} lavel="Role & Permission" />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />

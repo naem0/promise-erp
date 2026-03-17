@@ -16,21 +16,23 @@ const AboutSection = () => {
         </div>
 
         {/* card */}
-        <Card className="rounded-2xl shadow-xl py-0 border-2 border-secondary/60">
+        <Card className="rounded-2xl shadow-xl py-0 ">
           <CardContent className="p-6 grid lg:grid-cols-2 gap-6 lg:gap-10 items-center">
             {/* left image */}
-            <div className="relative w-full h-[300px] md:h-[500px] rounded-xl overflow-hidden ">
-              <Image
-                src="/images/web-developers011.jpeg"
-                alt="about"
-                fill
-                className="object-cover rounded-2xl"
-              />
+            <div className="border-primary/40 border p-2 rounded-xl">
+              <div className="relative w-full h-[300px] md:h-[500px] rounded-xl overflow-hidden border ">
+                <Image
+                  src="/images/web-developers011.jpeg"
+                  alt="about"
+                  fill
+                  className="object-cover rounded-2xl"
+                />
+              </div>
             </div>
 
             {/* right content */}
             <div>
-              <h3 className="text-2xl md:text-3xl font-semibold text-primary mb-4 leading-relaxed">
+              <h3 className="text-2xl md:text-3xl font-semibold text-primary mb-4 leading-tight">
                 Empowering the next generation of IT leaders with industry-ready
                 expertise.
               </h3>
@@ -47,9 +49,7 @@ const AboutSection = () => {
                 digital landscape.
               </p>
 
-              <Button>
-                Contact Us
-              </Button>
+              <Button>Contact Us</Button>
             </div>
           </CardContent>
         </Card>

@@ -24,7 +24,7 @@ export default async function CoursesPage({
               <Link href="/lms/courses/add">
                   <PlusCircle className="w-4 h-4 mr-2" />
                   Add Course
-                </Link>
+                </Link>  
                 </Button>
           </PermissionGuard>
         </div>

@@ -5,71 +5,63 @@ import { getServerSession } from "next-auth";
 import { cacheTag, updateTag } from "next/cache";
 import { PaginationType } from "@/types/pagination";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
+const API_BASE =
+  process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
 
 // =======================
 // Interfaces
 // =======================
 
-export interface Review {
+export interface CRMCategory {
   id: number;
-  user: {
-    id: number;
-    name: string;
-  };
-  batch: {
-    id: number;
-    name: string;
-  };
-  rating: number;
-  feedback: string;
+  name: string;
+  description: string;
+  image_url: string | null;
   status: number;
-  is_featured: number;
+  status_text: string;
+  total_leads: number;
 }
 
-export interface ReviewsResponse {
+export interface CRMCategoriesResponse {
   success: boolean;
   message: string;
   code: number;
   data: {
-    total_reviews: number;
-    reviews: Review[];
+    total_categories: number;
+    categories: CRMCategory[];
     pagination: PaginationType;
   };
   errors?: Record<string, string[]>;
 }
 
-export interface SingleReviewResponse {
+export interface SingleCRMCategoryResponse {
   success: boolean;
   message: string;
   code: number;
-  data: Review;
+  data: CRMCategory;
   errors?: Record<string, string[] | string>;
 }
 
-
-
 // =======================
-//  Get Reviews (Cached)
+// GET CATEGORIES (CACHED)
 // =======================
 
-export async function getReviewsCached(
+export async function getCRMCategoriesCached(
   token: string,
-  params: Record<string, unknown> = {}
-): Promise<ReviewsResponse> {
+  params: Record<string, unknown> = {},
+): Promise<CRMCategoriesResponse> {
   "use cache";
-  cacheTag("reviews-list");
+  cacheTag("crm-categories-list");
 
   try {
     const urlParams = new URLSearchParams();
-
     for (const key in params) {
       if (params[key] !== undefined && params[key] !== null) {
         urlParams.append(key, String(params[key]));
       }
     }
 
-    const res = await fetch(`${API_BASE}/reviews?${urlParams.toString()}`, {
+    const res = await fetch(`${API_BASE}/crm/categories?${urlParams.toString()}`, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -77,49 +69,50 @@ export async function getReviewsCached(
     });
 
     if (!res.ok) {
-      throw new Error(`Status: ${res.status} ${res.statusText}`);
+        const result = await res.json();
+        return result;
     }
-
     const result = await res.json();
+
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
       throw new Error(error.message);
     } else {
-      throw new Error("Error fetching reviews");
+      throw new Error("Error fetching CRM categories");
     }
   }
 }
 
 // =======================
-//  Get Reviews (Main)
+// GET CATEGORIES WRAPPER
 // =======================
 
-export async function getReviews(
-  params: Record<string, unknown> = {}
-): Promise<ReviewsResponse> {
+export async function getCRMCategories(
+  params: Record<string, unknown> = {},
+): Promise<CRMCategoriesResponse> {
   const session = await getServerSession(authOptions);
   const token = session?.accessToken;
 
   if (!token) throw new Error("No valid session/token");
 
-  return getReviewsCached(token, params);
+  return getCRMCategoriesCached(token, params);
 }
 
 // =======================
-//  Get Review By ID
+// GET SINGLE CATEGORY
 // =======================
 
-export async function getReviewById(
-  id: number
-): Promise<SingleReviewResponse> {
+export async function getCRMCategoryById(
+  id: number,
+): Promise<SingleCRMCategoryResponse> {
   try {
     const session = await getServerSession(authOptions);
     const token = session?.accessToken;
 
     if (!token) throw new Error("No valid session/token");
 
-    const res = await fetch(`${API_BASE}/reviews/${id}`, {
+    const res = await fetch(`${API_BASE}/crm/categories/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -127,35 +120,37 @@ export async function getReviewById(
     });
 
     if (!res.ok) {
-      throw new Error(`Status: ${res.status} ${res.statusText}`);
+        const result = await res.json();
+        return result;
     }
 
     const result = await res.json();
+
     return result;
   } catch (error: unknown) {
-    console.error("Error in getReviewById:", error);
+    console.error("Error in getCRMCategoryById:", error);
     if (error instanceof Error) {
-      throw new Error(error.message || "Failed to fetch review");
+      throw new Error(error.message || "Failed to fetch CRM category");
     } else {
-      throw new Error("Failed to fetch review");
+      throw new Error("Failed to fetch CRM category");
     }
   }
 }
 
 // =======================
-//  CREATE REVIEW
+// CREATE CATEGORY
 // =======================
 
-export async function createReview(
-  formData: FormData
-): Promise<SingleReviewResponse> {
+export async function createCRMCategory(
+  formData: FormData,
+): Promise<SingleCRMCategoryResponse> {
   try {
     const session = await getServerSession(authOptions);
     const token = session?.accessToken;
 
     if (!token) throw new Error("No valid session/token");
 
-    const res = await fetch(`${API_BASE}/reviews`, {
+    const res = await fetch(`${API_BASE}/crm/categories`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -165,35 +160,38 @@ export async function createReview(
 
     const result = await res.json();
 
-    updateTag("reviews-list");
+    updateTag("crm-categories-list");
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error("Error in createReview:", error);
-      throw new Error(error.message || "Failed to create review");
+      console.error("Error in createCRMCategory:", error);
+      throw new Error(error.message || "Failed to create CRM category");
     } else {
-      throw new Error("Failed to create review");
+      throw new Error("Failed to create CRM category");
     }
   }
 }
 
 // =======================
-//  UPDATE REVIEW
+// UPDATE CATEGORY
 // =======================
 
-export async function updateReview(
+export async function updateCRMCategory(
   id: number,
-  formData: FormData
-): Promise<SingleReviewResponse> {
+  formData: FormData,
+): Promise<SingleCRMCategoryResponse> {
   try {
     const session = await getServerSession(authOptions);
     const token = session?.accessToken;
 
     if (!token) throw new Error("No valid session/token");
 
-    formData.append("_method", "PUT");
+    // Use POST with _method=PUT for image uploads if needed, or structured like the employee update
+    if (!formData.has("_method")) {
+        formData.append("_method", "PUT");
+    }
 
-    const res = await fetch(`${API_BASE}/reviews/${id}`, {
+    const res = await fetch(`${API_BASE}/crm/categories/${id}`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -203,69 +201,34 @@ export async function updateReview(
 
     const result = await res.json();
 
-    updateTag("reviews-list");
+    updateTag("crm-categories-list");
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error("Error in updateReview:", error);
-      throw new Error(error.message || "Failed to update review");
+      console.error("Error in updateCRMCategory:", error);
+      throw new Error(error.message || "Failed to update CRM category");
     } else {
-      throw new Error("Failed to update review");
+      throw new Error("Failed to update CRM category");
     }
   }
 }
 
 // =======================
-//  APPROVE REVIEW
+// DELETE CATEGORY
 // =======================
 
-export async function approveReview(
-  id: number
-): Promise<SingleReviewResponse> {
+export async function deleteCRMCategory(
+  id: number,
+): Promise<SingleCRMCategoryResponse> {
   try {
     const session = await getServerSession(authOptions);
     const token = session?.accessToken;
 
-    if (!token) throw new Error("No valid session/token");
-
-    const res = await fetch(`${API_BASE}/reviews/${id}/approve`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    });
-
-    
-
-    const result = await res.json();
-
-    updateTag("reviews-list");
-    return result;
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error("Error in approveReview:", error);
-      throw new Error(error.message || "Failed to approve review");
-    } else {
-      throw new Error("Failed to approve review");
+    if (!token) {
+      throw new Error("No valid session/token");
     }
-  }
-}
 
-// =======================
-//  DELETE REVIEW
-// =======================
-
-export async function deleteReview(
-  id: number
-): Promise<SingleReviewResponse> {
-  try {
-    const session = await getServerSession(authOptions);
-    const token = session?.accessToken;
-
-    if (!token) throw new Error("No valid session/token");
-
-    const res = await fetch(`${API_BASE}/reviews/${id}`, {
+    const res = await fetch(`${API_BASE}/crm/categories/${id}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -275,14 +238,14 @@ export async function deleteReview(
 
     const result = await res.json();
 
-    updateTag("reviews-list");
+    updateTag("crm-categories-list");
     return result;
   } catch (error: unknown) {
-    console.error("Error in deleteReview:", error);
+    console.error("Error in deleteCRMCategory:", error);
     if (error instanceof Error) {
       throw new Error(error.message);
     } else {
-      throw new Error("Failed to delete review");
+      throw new Error("Failed to delete CRM category");
     }
   }
 }

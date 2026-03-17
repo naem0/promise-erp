@@ -9,6 +9,7 @@ import { NavCollapsibleItem } from "./NavCollapsibleItem"
 
 export function NavMain({
   items,
+  lavel
 }: {
   items: {
     title: string
@@ -22,10 +23,11 @@ export function NavMain({
       permissions?: string[]
     }[]
   }[]
+  lavel?: string
 }) {
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>LMS</SidebarGroupLabel>
+      <SidebarGroupLabel>{lavel}</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (
           <NavCollapsibleItem key={item.title} item={item} />
