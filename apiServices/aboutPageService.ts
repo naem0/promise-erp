@@ -68,7 +68,7 @@ export interface LicenseApiResponse {
 
 export async function getPublicLicensesCertificate(): Promise<LicenseApiResponse> {
   try {
-    const res = await fetch(`${API_BASE}/public/public/licenses`);
+    const res = await fetch(`${API_BASE}/public/licenses`);
 
     if (!res.ok) {
       throw new Error(

@@ -1,15 +1,17 @@
+import PartnerSkeleton from "@/components/common/PartnerSkeleton";
 import AboutOpportunities from "@/components/root/about-us/AboutOpportunities";
 import AboutSection from "@/components/root/about-us/AboutSection";
 import CertificationsCarousel from "@/components/root/about-us/CertificationsCarousel";
 import CompanyMission from "@/components/root/about-us/CompanyMission";
-import OurAchievements from "@/components/root/about-us/OurAchievements";
+import OurAchievementsWrapper from "@/components/root/about-us/OurAchievementsWrapper";
 import WhyChooseUs from "@/components/root/about-us/WhyChooseUs";
 import WhyChooseUsSkeleton from "@/components/root/about-us/WhyChooseUsSkeleton";
 import TeamMemberCardSkeleton from "@/components/root/ourOfficers/TeamMemberCardSkeleton";
 import TeamMemberCardWrapper from "@/components/root/ourOfficers/TeamMemberCardWrapper";
-import { Card, CardContent } from "@/components/ui/card";
-import Image from "next/image";
+import AffiliatesAndClients from "@/components/root/home/AffiliatesAndClients";
 import { Suspense } from "react";
+import AboutBranch from "@/components/root/about-us/AboutBranch";
+import CertificateSkeleton from "@/components/root/about-us/CertificateSkeleton";
 const AboutPage = () => {
   return (
     <>
@@ -21,14 +23,10 @@ const AboutPage = () => {
             </Suspense>
           </div>
         </section>
-        <Suspense fallback={<WhyChooseUsSkeleton />}>
-          <WhyChooseUs />
-        </Suspense>
+        <OurAchievementsWrapper />
+
         <Suspense fallback={<WhyChooseUsSkeleton />}>
           <CompanyMission />
-        </Suspense>
-        <Suspense fallback={<WhyChooseUsSkeleton />}>
-          <AboutOpportunities />
         </Suspense>
       </div>
 
@@ -36,10 +34,29 @@ const AboutPage = () => {
         <AboutSection />
       </Suspense>
       <div className="container mx-auto px-4">
+        <Suspense fallback={<WhyChooseUsSkeleton />}>
+          <WhyChooseUs />
+        </Suspense>
+        <Suspense
+          fallback={
+            <div className="grid xl:grid-cols-2 gap-6">
+              {[...Array(4)].map((_, i) => (
+                <CertificateSkeleton key={i} />
+              ))}
+            </div>
+          }
+        >
           <CertificationsCarousel />
-          
-        <OurAchievements />
+        </Suspense>
+
+        <Suspense fallback={<WhyChooseUsSkeleton />}>
+          <AboutOpportunities />
+        </Suspense>
+        <AboutBranch />
       </div>
+      <Suspense fallback={<PartnerSkeleton />}>
+        <AffiliatesAndClients />
+      </Suspense>
     </>
   );
 };

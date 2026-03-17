@@ -31,19 +31,14 @@ const WhyChooseUs = async () => {
     );
   }
   const whyChooseUs = whyChooseUsData?.data?.why_choose_us || [];
-  if (!whyChooseUs) {
-    return (
-      <div className="container mx-auto px-4 py-8 md:py-14">
-        <NotFoundComponent message={whyChooseUsData.message} />
-      </div>
-    );
-  }
   return (
     <section className="py-8 md:py-12">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
         <Card className="p-4 bg-[#EFF3EA] shadow">
           <div className="">
-            <strong className="text-xl lg:text-2xl text-secondary block mb-3">Why Choose Us</strong>
+            <strong className="text-xl lg:text-2xl text-secondary block mb-3">
+              Why Choose Us
+            </strong>
             <h2 className="text-2xl lg:text-3xl font-bold text-black mb-4">
               We Have Experience <br />
               And We Have A Team <br />
@@ -60,7 +55,7 @@ const WhyChooseUs = async () => {
             </p>
             <div className="pt-4 lg:pt-6">
               <Button asChild>
-                <Link href="/our-officers" prefetch={true}> 
+                <Link href="/our-officers" prefetch={true}>
                   View Our Officers
                 </Link>
               </Button>
@@ -70,31 +65,37 @@ const WhyChooseUs = async () => {
         <div>
           <div className="space-y-4">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-              {whyChooseUs.map((item) => {
-                return (
-                  <Card key={item.id} className="py-0 bg-[#EFF3EA] shadow">
-                    <CardContent className="p-4">
-                      <div className="shrink-0 relative w-[60px] h-[60px] mb-2 shadow-2xl rounded-full">
-                        <Image
-                          src={item.image || "/images/why-choose1.svg"}
-                          alt={item.title}
-                          fill
-                          className="object-scal-down shadow-2xl rounded-full border border-primary"
-                        />
-                      </div>
+              {whyChooseUs.length > 0 ? (
+                whyChooseUs.map((item) => {
+                  return (
+                    <Card key={item.id} className="py-0 bg-[#EFF3EA] shadow">
+                      <CardContent className="p-4">
+                        <div className="shrink-0 relative w-[60px] h-[60px] mb-2 shadow-2xl rounded-full">
+                          <Image
+                            src={item.image || "/images/why-choose1.svg"}
+                            alt={item.title}
+                            fill
+                            className="object-scal-down shadow-2xl rounded-full border border-primary"
+                          />
+                        </div>
 
-                      <div>
-                        <h5 className="font-semibold text-lg xl:text-lg text-secondary">
-                          {item.title || "Dummy Title"}
-                        </h5>
-                        <p className="text-black/90">
-                          {item.subtitle || "Dummy Subtitle"}
-                        </p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
+                        <div>
+                          <h5 className="font-semibold text-lg xl:text-lg text-secondary">
+                            {item.title || "Dummy Title"}
+                          </h5>
+                          <p className="text-black/90">
+                            {item.subtitle || "Dummy Subtitle"}
+                          </p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })
+              ) : (
+                <div className="py-8 md:py-12">
+                  <NotFoundComponent message={whyChooseUsData.message} />
+                </div>
+              )}
             </div>
           </div>
         </div>

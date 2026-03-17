@@ -1,5 +1,7 @@
 import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
+import ErrorComponent from "@/components/common/ErrorComponent";
+import { getPublicLicensesCertificate } from "@/apiServices/aboutPageService";
 
 // Certification data
 const certifications = [
@@ -53,7 +55,34 @@ const certifications = [
   },
 ];
 
-export default function CertificationsSection() {
+const CertificationsSection = async () => {
+  let certificateList;
+  try {
+    // Fetch branches
+    certificateList = await getPublicLicensesCertificate();
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Failed to fetch Certificates:", error.message);
+      return (
+        <div className="py-8 md:py-12">
+          <ErrorComponent
+            message={certificateList?.message || "Failed to fetch certificates"}
+          />
+        </div>
+      );
+    } else {
+      console.error("Failed to fetch Certificates:", error);
+      return (
+        <div className="py-8 md:py-12">
+          <ErrorComponent message="An unexpected error occurred." />
+        </div>
+      );
+    }
+  }
+
+  const certificates = certificateList?.data?.licenses || [];
+  console.log("llll--->", certificates);
+
   return (
     <div className="w-full px-4 py-10 space-y-10">
       <div className="">
@@ -68,7 +97,7 @@ export default function CertificationsSection() {
 
       <div className="space-y-12">
         <div className="grid xl:grid-cols-2 items-center gap-6">
-          {certifications.map((cert) => (
+          {certificates.map((cert) => (
             <div
               key={cert.id}
               className={`grid lg:grid-cols-2 items-center rounded-xl gap-4 bg-[#EFF3EA] shadow p-2 h-full`}
@@ -78,8 +107,8 @@ export default function CertificationsSection() {
                 <CardContent className="p-2 flex justify-center">
                   <div className="relative w-full h-[280px] md:h-[380px]">
                     <Image
-                      src={cert.image}
-                      alt={cert.alt}
+                      src={cert.image || "/images/placeholder_img.jpg"}
+                      alt={cert.title || "image"}
                       fill
                       className="object-contain p-4"
                     />
@@ -102,4 +131,5 @@ export default function CertificationsSection() {
       </div>
     </div>
   );
-}
+};
+export default CertificationsSection;

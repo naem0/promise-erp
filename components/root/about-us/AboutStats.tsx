@@ -9,7 +9,7 @@ const AboutStats = ({
   infoData: InfoItem[];
 }) => {
   return (
-    <div className="pt-4 md:pt-8">
+    <div className="pt-4 md:pt-6">
       {/* Grid */}
       <div
         className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-${gridCols} gap-4`}
