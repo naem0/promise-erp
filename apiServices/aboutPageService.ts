@@ -89,3 +89,50 @@ export async function getPublicLicensesCertificate(): Promise<LicenseApiResponse
   }
 }
 //   ******* End getPublicLicensesCertificate list API *******
+
+//   ******* Start getPublicAchievements API *******
+export interface PublicAchievement {
+  id: number;
+  image?: string;
+  title: string;
+  description: string;
+  name: string;
+  designation: string;
+  status: number;
+}
+
+export interface PublicAchievementData {
+  achievements: PublicAchievement[];
+}
+
+export interface PublicAchievementApiResponse {
+  success: boolean;
+  message: string;
+  code: number;
+  data: PublicAchievementData;
+  errors?: Record<string, string[]>;
+}
+
+export async function getPublicAchievements(): Promise<PublicAchievementApiResponse> {
+  try {
+    const res = await fetch(`${API_BASE}/public/achievements`);
+
+    if (!res.ok) {
+      throw new Error(
+        `getPublicAchievements API error: ${res.status} ${res.statusText}`,
+      );
+    }
+
+    const data: PublicAchievementApiResponse = await res.json();
+    return data;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error fetching Achievements:", error.message);
+      throw new Error(error.message);
+    }
+    throw new Error(
+      "Unknown error occurred while fetching Achievements",
+    );
+  }
+}
+//   ******* End getPublicAchievements API *******

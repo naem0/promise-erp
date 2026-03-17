@@ -1,6 +1,7 @@
-
-import OurAchievements from './OurAchievements'
-import AboutStats from './AboutStats'
+import OurAchievements from "./OurAchievements";
+import AboutStats from "./AboutStats";
+import { Suspense } from "react";
+import OurAchievementSkeleton from "./OurAchievementSkeleton";
 export interface InfoItem {
   id: number;
   title: string;
@@ -32,10 +33,12 @@ export const infoData: InfoItem[] = [
 const OurAchievementsWrapper = () => {
   return (
     <>
-      <OurAchievements />
-        <AboutStats gridCols={4} infoData={infoData} />
+      <Suspense fallback={<OurAchievementSkeleton />}>
+        <OurAchievements />
+      </Suspense>
+      <AboutStats gridCols={4} infoData={infoData} />
     </>
-  )
-}
+  );
+};
 
-export default OurAchievementsWrapper
+export default OurAchievementsWrapper;
