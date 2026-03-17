@@ -17,7 +17,7 @@ export default async function EditCategoryPage({
     }
 
     return (
-      <div className="mx-auto max-w-4xl">
+      <div className="mx-auto">
         <CategoriesForm title="Edit CRM Category" category={response.data} />
       </div>
     );

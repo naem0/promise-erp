@@ -1,79 +1,108 @@
 "use client";
 
+import { useTransition } from "react";
+import { Trash2, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
+    AlertDialog,
+    AlertDialogTrigger,
+    AlertDialogContent,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogCancel,
+    AlertDialogAction,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { Trash2 } from "lucide-react";
-import { toast } from "sonner";
+import { Spinner } from "@/components/ui/spinner";
 import { deleteCRMCategory } from "@/apiServices/crmCategoryService";
-import { useState } from "react";
 
 interface DeleteCategoryButtonProps {
-  id: number;
+    id: number;
 }
 
-export default function DeleteCategoryButton({ id }: DeleteCategoryButtonProps) {
-  const [isDeleting, setIsDeleting] = useState(false);
+type ApiResponse = {
+    success: boolean;
+    message: string;
+    code: number;
+    data?: unknown;
+};
 
-  const handleDelete = async () => {
-    setIsDeleting(true);
-    try {
-      const res = await deleteCRMCategory(id);
-      if (res.success) {
-        toast.success(res.message || "Category deleted successfully");
-      } else {
-        toast.error(res.message || "Failed to delete category");
-      }
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        toast.error(error.message);
-      } else {
-        toast.error("An unexpected error occurred");
-      }
-    } finally {
-      setIsDeleting(false);
-    }
-  };
+const DeleteCategoryButton = ({ id }: DeleteCategoryButtonProps) => {
+    const [isPending, startTransition] = useTransition();
 
-  return (
-    <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <button className="flex w-full items-center text-red-600 cursor-pointer">
-          <Trash2 className="mr-2 h-4 w-4" />
-          Delete
-        </button>
-      </AlertDialogTrigger>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-          <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete the category
-            and all associated data.
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
-          <AlertDialogAction
-            onClick={(e) => {
-              e.preventDefault();
-              handleDelete();
-            }}
-            className="bg-red-600 hover:bg-red-700"
-            disabled={isDeleting}
-          >
-            {isDeleting ? "Deleting..." : "Delete"}
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
-  );
-}
+    const handleDelete = () => {
+        startTransition(async () => {
+            try {
+                const res: ApiResponse = await deleteCRMCategory(id);
+
+                if (res.success) {
+                    toast.success(res.message || "Category deleted successfully");
+                } else {
+                    toast.error(res.message || "Delete failed");
+                }
+            } catch (error: unknown) {
+                console.error("Category delete failed:", error);
+                if (error instanceof Error) {
+                    toast.error(error.message);
+                } else {
+                    toast.error("An unknown error occurred while deleting category");
+                }
+            }
+        });
+    };
+
+    return (
+        <AlertDialog>
+            <AlertDialogTrigger asChild>
+                <Button
+                    variant="ghost"
+                    className="text-red-600 hover:text-red-800 flex items-center justify-start w-full px-2"
+                    disabled={isPending}
+                >
+                    {isPending ? (
+                        <>
+                            <Spinner className="h-4 w-4 mr-2" /> Deleting...
+                        </>
+                    ) : (
+                        <>
+                            <Trash2 className="h-4 w-4 mr-2" /> Delete
+                        </>
+                    )}
+                </Button>
+            </AlertDialogTrigger>
+
+            <AlertDialogContent>
+                <AlertDialogHeader>
+                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                        This action cannot be undone. This category record will be permanently deleted.
+                    </AlertDialogDescription>
+                </AlertDialogHeader>
+
+                <AlertDialogFooter>
+                    <AlertDialogCancel disabled={isPending}>Cancel</AlertDialogCancel>
+
+                    <AlertDialogAction asChild>
+                        <Button
+                            onClick={handleDelete}
+                            variant="destructive"
+                            disabled={isPending}
+                        >
+                            {isPending ? (
+                                <>
+                                    <Loader2 className="h-4 w-4 mr-2 animate-spin" /> Deleting...
+                                </>
+                            ) : (
+                                "Yes, Delete"
+                            )}
+                        </Button>
+                    </AlertDialogAction>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
+    );
+};
+
+export default DeleteCategoryButton;

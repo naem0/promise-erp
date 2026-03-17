@@ -171,19 +171,12 @@ export default function CategoriesForm({
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 gap-x-6 gap-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
                     {/* Name */}
                     <div>
                         <label className="block text-sm font-medium mb-1">Name<span className="text-red-500">*</span></label>
                         <Input placeholder="Enter category name" {...register("name")} />
                         {errors.name && <p className="text-sm text-red-500 mt-1">{errors.name.message}</p>}
-                    </div>
-
-                    {/* Description */}
-                    <div>
-                        <label className="block text-sm font-medium mb-1">Description</label>
-                        <Textarea placeholder="Enter category description" {...register("description")} rows={4} />
-                        {errors.description && <p className="text-sm text-red-500 mt-1">{errors.description.message}</p>}
                     </div>
 
                     {/* Status */}
@@ -206,13 +199,20 @@ export default function CategoriesForm({
                         />
                         {errors.status && <p className="text-sm text-red-500 mt-1">{errors.status.message}</p>}
                     </div>
+
+                    {/* Description */}
+                    <div className="md:col-span-2">
+                        <label className="block text-sm font-medium mb-1">Description</label>
+                        <Textarea placeholder="Enter category description" {...register("description")} rows={4} />
+                        {errors.description && <p className="text-sm text-red-500 mt-1">{errors.description.message}</p>}
+                    </div>
                 </div>
 
                 <div className="flex justify-end gap-3 pt-4">
                     <Button type="button" variant="outline" onClick={() => router.back()} className="rounded-lg">
                         Cancel
                     </Button>
-                    <Button type="submit" disabled={isSubmitting} className="bg-green-600 hover:bg-green-700 text-white px-8 rounded-lg">
+                    <Button type="submit" disabled={isSubmitting} >
                         {isSubmitting ? "Submitting..." : category ? "Update" : "Add"}
                     </Button>
                 </div>

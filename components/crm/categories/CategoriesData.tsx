@@ -42,6 +42,10 @@ const CategoriesData = async ({
             typeof resolvedSearchParams.status === "string"
                 ? resolvedSearchParams.status
                 : undefined,
+        sort_order:
+            typeof resolvedSearchParams.sort_order === "string"
+                ? resolvedSearchParams.sort_order
+                : undefined,
     };
 
     let results;
@@ -64,6 +68,7 @@ const CategoriesData = async ({
         );
     }
     return (
+        <>
         <div className="rounded-md border">
             <Table>
                 <TableHeader>
@@ -140,12 +145,14 @@ const CategoriesData = async ({
                     ))}
                 </TableBody>
             </Table>
-            {paginationData && (
+            
+        </div>
+        {paginationData && (
                 <div className="mt-4">
                     <Pagination pagination={paginationData} />
                 </div>
             )}
-        </div>
+        </>
     );
 };
 

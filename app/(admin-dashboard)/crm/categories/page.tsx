@@ -16,7 +16,7 @@ export default function CategoriesPage({
             <div className="flex justify-between items-center">
                 <h1 className="text-2xl font-semibold tracking-tight text-slate-800">CRM Categories</h1>
 
-                <Button asChild className="bg-green-600 hover:bg-green-700">
+                <Button asChild >
                     <Link href="/crm/categories/add">
                         <PlusCircle className="w-4 h-4 mr-2" />
                         Add Category

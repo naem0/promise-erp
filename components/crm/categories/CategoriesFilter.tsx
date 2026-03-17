@@ -16,6 +16,7 @@ import { Search, FilterX } from "lucide-react";
 interface FilterFormValues {
     search?: string;
     status?: string;
+    sort_order?: string;
 }
 
 export default function CategoriesFilter() {
@@ -28,6 +29,7 @@ export default function CategoriesFilter() {
             defaultValues: {
                 search: searchParams.get("search") || "",
                 status: searchParams.get("status") || "",
+                sort_order: searchParams.get("sort_order") || "",
             },
         });
 
@@ -75,16 +77,19 @@ export default function CategoriesFilter() {
         reset({
             search: "",
             status: "",
+            sort_order: "",
         });
         router.replace(pathname, { scroll: false });
     };
 
     const currentSearch = searchParams.get("search") || "";
     const currentStatus = searchParams.get("status") || "";
+    const currentSortOrder = searchParams.get("sort_order") || "";
 
     const hasActiveFilters =
         currentSearch !== "" ||
-        currentStatus !== "";
+        currentStatus !== "" ||
+        currentSortOrder !== "";
 
     return (
         <div className="p-6 mb-6 border rounded-xl bg-card shadow-sm">
@@ -105,9 +110,9 @@ export default function CategoriesFilter() {
                 )}
             </div>
 
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
                 {/* Search */}
-                <div className="relative col-span-1 md:col-span-2">
+                <div className="relative col-span-1 lg:col-span-2">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                         placeholder="Search categories..."
@@ -134,6 +139,29 @@ export default function CategoriesFilter() {
                             <SelectContent>
                                 <SelectItem value="1">Active</SelectItem>
                                 <SelectItem value="0">Inactive</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    )}
+                />
+
+                {/* Sort Order */}
+                <Controller
+                    name="sort_order"
+                    control={control}
+                    render={({ field }) => (
+                        <Select
+                            value={field.value}
+                            onValueChange={(value) => {
+                                field.onChange(value);
+                                handleSelectChange("sort_order")(value);
+                            }}
+                        >
+                            <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Sort Order" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="asc">ASC</SelectItem>
+                                <SelectItem value="desc">DESC</SelectItem>
                             </SelectContent>
                         </Select>
                     )}
