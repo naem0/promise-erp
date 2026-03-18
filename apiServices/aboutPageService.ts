@@ -136,3 +136,51 @@ export async function getPublicAchievements(): Promise<PublicAchievementApiRespo
   }
 }
 //   ******* End getPublicAchievements API *******
+
+//   ******* Start getPublicCompanyMissionSection API *******
+// Single section type (mission / vision / value)
+export interface CompanyMission {
+  id: number;
+  title: string;
+  sub_title: string;
+  image: string;
+  status: number;
+}
+export interface CompanyMissionData {
+    mission: CompanyMission;
+    vision: CompanyMission;
+    value: CompanyMission;
+}
+
+// Main API response type
+export interface CompanyMissionResponse {
+  success: boolean;
+  message: string;
+  code: number;
+  data: CompanyMissionData;
+  errors?: Record<string, string[]>;
+}
+  
+export async function getPublicCompanyMissionSection(): Promise<PublicAchievementApiResponse> {
+  try {
+    const res = await fetch(`${API_BASE}/public/company-mission-section`);
+
+    if (!res.ok) {
+      throw new Error(
+        `getPublicCompanyMissionSection API error: ${res.status} ${res.statusText}`,
+      );
+    }
+
+    const data: PublicAchievementApiResponse = await res.json();
+    return data;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error fetching company mission:", error.message);
+      throw new Error(error.message);
+    }
+    throw new Error(
+      "Unknown error occurred while fetching company mission",
+    );
+  }
+}
+//   ******* End getPublicCompanyMissionSection API *******

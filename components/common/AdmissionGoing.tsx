@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 const AdmissionGoing = () => {
   return (
@@ -12,8 +13,12 @@ const AdmissionGoing = () => {
             Join any online or offline course today and move one step closer to a stronger, future-ready career.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Button className="primary border-primary primary-border-hover">Browse Courses</Button>
-            <Button className="primary border-primary primary-border-hover">Join Free Seminar</Button>
+            <Button asChild className="primary border-primary primary-border-hover">
+              <Link href="/courses">Browse Course</Link>
+            </Button>
+            <Button asChild className="primary border-primary primary-border-hover">
+              <Link href="/free-seminars">Join Free Seminar</Link>
+            </Button>
           </div>
         </div>
       </section>
