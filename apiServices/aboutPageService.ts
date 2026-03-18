@@ -140,20 +140,19 @@ export async function getPublicAchievements(): Promise<PublicAchievementApiRespo
 //   ******* Start getPublicCompanyMissionSection API *******
 // Single section type (mission / vision / value)
 export interface CompanyMission {
+  type: string;
   id: number;
   title: string;
   sub_title: string;
-  image: string;
+  image?: string;
   status: number;
 }
 export interface CompanyMissionData {
-    mission: CompanyMission;
-    vision: CompanyMission;
-    value: CompanyMission;
+  company_mission: CompanyMission[]
 }
 
 // Main API response type
-export interface CompanyMissionResponse {
+export interface CompanyMissionApiResponse {
   success: boolean;
   message: string;
   code: number;
@@ -161,7 +160,7 @@ export interface CompanyMissionResponse {
   errors?: Record<string, string[]>;
 }
   
-export async function getPublicCompanyMissionSection(): Promise<PublicAchievementApiResponse> {
+export async function getPublicCompanyMissionSection(): Promise<CompanyMissionApiResponse> {
   try {
     const res = await fetch(`${API_BASE}/public/company-mission-section`);
 
@@ -171,16 +170,14 @@ export async function getPublicCompanyMissionSection(): Promise<PublicAchievemen
       );
     }
 
-    const data: PublicAchievementApiResponse = await res.json();
+    const data: CompanyMissionApiResponse = await res.json();
     return data;
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error("Error fetching company mission:", error.message);
       throw new Error(error.message);
     }
-    throw new Error(
-      "Unknown error occurred while fetching company mission",
-    );
+    throw new Error("Unknown error occurred while fetching company mission");
   }
 }
 //   ******* End getPublicCompanyMissionSection API *******

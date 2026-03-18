@@ -1,10 +1,40 @@
-
+import { getPublicCompanyMissionSection } from "@/apiServices/aboutPageService";
+import ErrorComponent from "@/components/common/ErrorComponent";
+import NotFoundComponent from "@/components/common/NotFoundComponent";
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
 
-const CompanyMission = () => {
+const CompanyMission = async () => {
+  let companyMissionData;
+
+  try {
+    companyMissionData = await getPublicCompanyMissionSection();
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      return (
+        <div className="py-8 md:py-12">
+          <ErrorComponent
+            message={
+              companyMissionData?.message ||
+              "Failed to fetch company mission data"
+            }
+          />
+        </div>
+      );
+    } else {
+      return (
+        <div className="py-8 md:py-12">
+          <ErrorComponent message="An unexpected error occurred." />
+        </div>
+      );
+    }
+  }
+
+  const missions = companyMissionData?.data?.company_mission || [];
+
   return (
     <section className="py-8 md:py-12">
+      {/* Header */}
       <div className="max-w-full md:max-w-2xl pb-6 md:pb-8">
         <h2 className="text-2xl lg:text-4xl text-secondary font-bold tracking-tight mb-4">
           Shaping the Future
@@ -16,82 +46,43 @@ const CompanyMission = () => {
         </p>
       </div>
 
+      {/* Dynamic Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-        
-        {/* Mission */}
-        <Card className="group text-center bg-[#EFF3EA] shadow hover:shadow-xl h-full hover:bg-primary transition-all duration-300">
-          <CardContent className="p-4">
-            <div className="flex justify-center mb-4">
-              <Image
-                src="/images/vission-mission1.svg"
-                alt="mission image"
-                width={70}
-                height={70}
-              />
-            </div>
+        {missions.length > 0 ? (
+          missions.map((item) => (
+            <Card
+              key={item.id}
+              className="group text-center bg-[#EFF3EA] shadow hover:shadow-xl h-full hover:bg-primary transition-all duration-300"
+            >
+              <CardContent className="p-4">
+                <div className="flex justify-center mb-4">
+                  <Image
+                    src={item.image || "/images/vission-mission1.svg"}
+                    alt={item.type}
+                    width={70}
+                    height={70}
+                  />
+                </div>
 
-            <h3 className="text-xl font-semibold mb-3 text-secondary group-hover:text-white">
-              Our Mission
-            </h3>
+                <h3 className="text-xl font-semibold mb-3 text-secondary group-hover:text-white capitalize">
+                  {item.title || "Title"}
+                </h3>
 
-            <p className="text-black/80 group-hover:text-white">
-              Our mission is to provide quality educational opportunities
-              to develop and enable trainees to realize their potential by
-              strengthening their knowledge, IT skills, and educational
-              values.
-            </p>
-          </CardContent>
-        </Card>
-
-        {/* Vision */}
-        <Card className="group text-center h-full bg-[#EFF3EA] shadow hover:shadow-xl hover:bg-primary transition-all duration-300">
-          <CardContent className="p-4">
-            <div className="flex justify-center mb-4">
-              <Image
-                src="/images/vission-mission2.svg"
-                alt="vision image"
-                width={70}
-                height={70}
-              />
-            </div>
-
-            <h3 className="text-xl font-semibold mb-3 text-secondary group-hover:text-white">
-              Our Vision
-            </h3>
-
-            <p className="text-black/80 group-hover:text-white">
-              To be a leading IT training provider, equipping individuals
-              with future-ready skills. Our vision is to empower careers,
-              inspire innovation and help build a more tech-enabled,
-              inclusive society.
-            </p>
-          </CardContent>
-        </Card>
-
-        {/* Values */}
-        <Card className="group text-center bg-[#EFF3EA] shadow hover:shadow-xl h-full hover:bg-primary transition-all duration-300">
-          <CardContent className="p-4">
-            <div className="flex justify-center mb-4">
-              <Image
-                src="/images/vission-mission3.svg"
-                alt="values image"
-                width={70}
-                height={70}
-              />
-            </div>
-
-            <h3 className="text-xl font-semibold mb-3 text-secondary group-hover:text-white">
-              Our Values
-            </h3>
-
-            <p className="text-black/80 group-hover:text-white">
-              Driven by integrity, growth, and innovation, we make
-              learning accessible to all. We strive to inspire and equip
-              learners for the future.
-            </p>
-          </CardContent>
-        </Card>
-
+                <p className="text-black/80 group-hover:text-white">
+                  {item.sub_title || "Sub Title"}
+                </p>
+              </CardContent>
+            </Card>
+          ))
+        ) : (
+          <div className="py-8 md:py-12">
+            <NotFoundComponent
+              message={
+                companyMissionData?.message || "No company mission found"
+              }
+            />
+          </div>
+        )}
       </div>
     </section>
   );

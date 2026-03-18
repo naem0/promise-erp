@@ -84,6 +84,14 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "miro.medium.com",
       },
+      {
+        protocol: "https",
+        hostname: "miro.medium.com",
+      },
+      {
+        protocol: "https",
+        hostname: "www.citypng.com",
+      },
     ],
   },
 
