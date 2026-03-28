@@ -1,5 +1,7 @@
 "use client";
 
+import { useRef } from "react";
+import Autoplay from "embla-carousel-autoplay";
 import { MapPin, Phone, Mail } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -18,9 +20,16 @@ interface BranchesDataProps {
 const OurBranches = ({ branchesData }: BranchesDataProps) => {
 
   const branches = branchesData?.data?.branches || [];
+  const plugin = useRef(
+      Autoplay({
+        delay: 2000,
+        stopOnInteraction: false,
+      })
+    );
 
   return (
     <Carousel
+      plugins={[plugin.current]}
       opts={{
         align: "start",
         loop: true,
@@ -70,14 +79,20 @@ const OurBranches = ({ branchesData }: BranchesDataProps) => {
                 </div>
 
                 {/* Email */}
-                <p className="text-secondary/80 text-sm flex items-center gap-2">
-                  <Mail className="w-4 h-4" />
-                  {Array.isArray(branche?.email) && branche?.email?.length > 0
-                    ? branche.email.map((email: string, index: number) => (
-                        <span key={index}>{email}</span>
+                <ul className="text-secondary/80 text-sm flex flex-col gap-1">
+                  <li className="flex flex-col items-center gap-2">
+                    {/* <Mail className="w-4 h-4" /> */}
+                    {Array.isArray(branche?.email) && branche.email.length > 0 ? (
+                      branche.email.map((email: string, index: number) => (
+                        <span key={index}>
+                          {email}
+                        </span>
                       ))
-                    : "info@e-laeltd.com"}
-                </p>
+                    ) : (
+                      <span>info@e-laeltd.com</span>
+                    )}
+                  </li>
+                </ul>
               </CardContent>
             </Card>
           </CarouselItem>

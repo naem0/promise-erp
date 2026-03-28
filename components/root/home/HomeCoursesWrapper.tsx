@@ -28,7 +28,7 @@ const HomeCoursesWrapper = () => {
               : 1,
           };
 
-          const res = await getPublicCoursesList({ params });
+          const res = await getPublicCoursesList(params);
           if (res.success) {
             setCoursesData(res ?? null);
           } else {

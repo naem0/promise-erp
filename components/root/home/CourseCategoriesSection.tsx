@@ -1,6 +1,8 @@
 "use client";
 
 import { ChevronRight } from "lucide-react";
+import { useRef } from "react";
+import Autoplay from "embla-carousel-autoplay";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -22,9 +24,17 @@ interface CategoriesData {
 const CourseCategoriesSection = ({ categoriesData }: CategoriesData) => {
   
   const categories = categoriesData?.data?.categories || [];
+   // autoplay plugin
+  const plugin = useRef(
+    Autoplay({
+      delay: 2000,
+      stopOnInteraction: false,
+    })
+  );
   return (
 
     <Carousel
+      plugins={[plugin.current]}
       opts={{
         align: "start",
         loop: true,

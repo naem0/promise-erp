@@ -15,9 +15,6 @@ import CertificateSkeleton from "@/components/root/about-us/CertificateSkeleton"
 const AboutPage = () => {
   return (
     <>
-      <Suspense fallback={<h1>Loading...</h1>}>
-        <AboutSection />
-      </Suspense>
       <div className="container mx-auto px-4">
         <section className="py-10 md:py-12">
           <div className="max-w-full lg:max-w-6xl mx-auto">
@@ -32,6 +29,9 @@ const AboutPage = () => {
           <CompanyMission />
         </Suspense>
       </div>
+      <Suspense fallback={<h1>Loading...</h1>}>
+        <AboutSection />
+      </Suspense>
 
       <div className="container mx-auto px-4">
         <Suspense

@@ -2,6 +2,7 @@ import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import ErrorComponent from "@/components/common/ErrorComponent";
 import { getPublicLicensesCertificate } from "@/apiServices/aboutPageService";
+import NotFoundComponent from "@/components/common/NotFoundComponent";
 
 const CertificationsSection = async () => {
   let certificateList;
@@ -44,45 +45,20 @@ const CertificationsSection = async () => {
 
       <div className="space-y-12">
         <div className="grid grid-cols-1 items-center gap-6">
-          {/* {certificates.map((cert, index) => (
-            <div
-              key={cert.id}
-              className={`grid lg:grid-cols-2 items-center rounded-xl gap-4 bg-[#EFF3EA] shadow p-2 h-full ${index === 1 ? "md:col-span-2" : ""}`}
-            >
-              <Card className="py-0 shadow-none">
-                <CardContent className="p-2 flex justify-center">
-                  <div className="relative w-full h-[280px] md:h-[380px]">
-                    <Image
-                      src={cert.image || "/images/placeholder_img.jpg"}
-                      alt={cert.title || "image"}
-                      fill
-                      className="object-contain p-4"
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-
-              <div className="px-4 py-4">
-                <h3 className="text-xl text-secondary lg:text-2xl font-semibold mb-3">
-                  {cert.title}
-                </h3>
-                <p className="text-black/60 leading-relaxed text-base">
-                  {cert.description}
-                </p>
-              </div>
-            </div>
-          ))} */}
-          {certificates.map((cert, index) => {
+          
+          {
+            certificates.length > 0 ?(
+              certificates.map((cert, index) => {
             const isEven = index % 2 === 0;
 
             return (
               <div
                 key={cert.id}
-                className="grid lg:grid-cols-2 items-center rounded-xl gap-4 bg-[#EFF3EA] shadow p-2 h-full"
+                className="grid lg:grid-cols-2 items-center rounded-xl gap-4 shadow p-2 h-full"
               >
                 {/* Image */}
                 <Card
-                  className={`py-0 shadow-none ${
+                  className={`py-0 shadow-none border-0 ${
                     isEven ? "lg:order-2" : "lg:order-1"
                   }`}
                 >
@@ -113,7 +89,15 @@ const CertificationsSection = async () => {
                 </div>
               </div>
             );
-          })}
+          })
+            ):(
+              <div className="py-8 md:py-12">
+                <NotFoundComponent
+                  message={certificateList?.message || "Failed to fetch certificates"}
+                />
+              </div>
+            )
+        }
         </div>
       </div>
     </div>

@@ -1,5 +1,7 @@
 "use client";
 
+import { useRef } from "react";
+import Autoplay from "embla-carousel-autoplay";
 import { Card, CardContent } from "@/components/ui/card";
 import { Award } from "lucide-react";
 import Image from "next/image";
@@ -19,9 +21,16 @@ interface TeacherListSectionProps {
 }
 const TeacherListSection = ({ teacherData }: TeacherListSectionProps) => {
   const instructors = teacherData?.data?.teachers || [];
+  const plugin = useRef(
+    Autoplay({
+      delay: 2000,
+      stopOnInteraction: false,
+    })
+  );
   return (
     <>
       <Carousel
+        plugins={[plugin.current]}
         opts={{
           align: "start",
           loop: true,

@@ -1,4 +1,6 @@
-import SectionTitle from "@/components/common/SectionTitle";
+"use client";
+import { useRef } from "react";
+import Autoplay from "embla-carousel-autoplay";
 import {
   Carousel,
   CarouselContent,
@@ -18,9 +20,17 @@ interface StudentSuccessStoriesProps {
 }
 const StudentSuccessStories = ({ reviewsData }: StudentSuccessStoriesProps) => {
   const reviews = reviewsData?.data?.reviews || [];
+
+  const plugin = useRef(
+    Autoplay({
+      delay: 2000,
+      stopOnInteraction: false,
+    })
+  );
   return (
     <>
       <Carousel
+        plugins={[plugin.current]}
         opts={{
           align: "start",
           loop: true,

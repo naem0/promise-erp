@@ -10,11 +10,12 @@ const API_BASE =
 export interface BlogCategory {
   id: number;
   title: string;
-  image?: string;
+  image: string;
   status: number;
   meta_title: string;
   meta_description: string;
-  meta_keywords?: string[];
+  meta_tag: string[];
+  schema: string;
   slug: string;
 }
 
@@ -201,7 +202,7 @@ export async function deleteBlogCategory(
     const session = await getServerSession(authOptions);
     const token = session?.accessToken;
     if (!token) {
-        throw new Error("No valid session or access token found.");
+      throw new Error("No valid session or access token found.");
     }
     const res = await fetch(`${API_BASE}/blog-categories/${id}`, {
       method: "DELETE",

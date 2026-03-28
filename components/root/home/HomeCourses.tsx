@@ -1,5 +1,7 @@
 "use client";
 
+import { useRef } from "react";
+import Autoplay from "embla-carousel-autoplay";
 import { Button } from "@/components/ui/button";
 import {
   Carousel,
@@ -25,10 +27,18 @@ const HomeCourses = ({ coursesData, courses: directCourses }: HomeCoursesProps) 
   if (courses.length === 0) {
     return <NotFoundComponent message={coursesData?.message || "No Courses Found"} />;
   }
+
+  const plugin = useRef(
+      Autoplay({
+        delay: 2000,
+        stopOnInteraction: false,
+      })
+    );
   
   return (
     <>
       <Carousel
+      plugins={[plugin.current]}
         opts={{
           align: "start",
           loop: true,
