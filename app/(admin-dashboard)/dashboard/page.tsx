@@ -12,6 +12,7 @@ import AdminRecentActivity from "@/components/admin-dashboard/AdminRecentActivit
 import AdminOfflineBatchSnapshot from "@/components/admin-dashboard/AdminOfflineBatchSnapshot"
 import AdminCertificateStatus from "@/components/admin-dashboard/AdminCertificateStatus"
 import AdminQuickSendAlert from "@/components/admin-dashboard/AdminQuickSendAlert"
+import AdminUsersStatWrapper from "@/components/admin-dashboard/AdminUsersStatWrapper"
 
 const DashboardPage = () => {
   return (
@@ -20,12 +21,12 @@ const DashboardPage = () => {
         <div className="pb-4 px-4">
           <h1 className="text-secondary text-xl lg:text-2xl capitalize font-bold ">Dashboard Page</h1>
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 px-4 py-5">
-          <AdminUsersStat />
-          <AdminCoursesStat />
+        {/* <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3 gap-4 px-4 py-5"> */}
+          <AdminUsersStatWrapper />
+          {/* <AdminCoursesStat />
           <AdminOrganizationStat />
-          <AdminFinanceStat />
-        </div>
+          <AdminFinanceStat /> */}
+        {/* </div> */}
         {/* Charts */}
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 px-4 py-5">
           <AdminMonthlyRegistrationChart />

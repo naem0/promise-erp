@@ -1,40 +1,37 @@
-import { Hotel } from "lucide-react";
-import AdminStatCard from "./AdminStatCard";
+interface StatCard {
+  label: string;
+  value: string;
+  icon: React.ReactNode;
+}
+interface StatCardProps {
+  bgColor: string;
+  title: string;
+  students: StatCard[];
+}
 
-const AdminUsersStat = () => {
+const AdminUsersStat = ({ bgColor, students, title }: StatCardProps) => {
+  console.log(bgColor, "<===bgColor");
   return (
-    <AdminStatCard
-      title="Districts"
-      bgClass="bg-secondary"
-      icon={
-        <span className="p-2 rounded-lg bg-white text-black">
-          <Hotel className="h-6 w-6 font-bold" />
-        </span>
-      }
-    >
-      <div className="space-y-1 text-base">
-        <div className="flex justify-between text-white">
-          <span className="font-bold ">Total Districts</span>
-          <span className="font-bold">48</span>
-        </div>
-        <div className="flex justify-between text-white">
-          <span className="">Total Branches:</span>
-          <span className="font-bold">72</span>
-        </div>
-        <div className="flex justify-between text-white">
-          <span className="">Active Students</span>
-          <span className="font-bold">18,200</span>
-        </div>
-        <div className="flex justify-between text-white">
-          <span className="">Active Instructors:</span>
-          <span className="font-bold">1,420</span>
-        </div>
-        <div className="flex justify-between text-white">
-          <span className="">Active Courses</span>
-          <span className="font-bold">50+ </span>
-        </div>
+    <div className={`${bgColor} rounded-xl p-4`}>
+      <div className="pb-4 text-white text-2xl font-medium">
+        <h3>{title}</h3>
       </div>
-    </AdminStatCard>
+      <div className={`grid grid-cols-1 lg:grid-cols-2 gap-6 `}>
+        {students.map((stat, index) => (
+          <div key={index} className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center shrink-0">
+              {stat.icon}
+            </div>
+            <div className="flex-1">
+              <p className="text-white text-sm font-medium mb-1">
+                {stat.label}
+              </p>
+              <p className="text-white text-2xl font-bold">{stat.value}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 };
 
