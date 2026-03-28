@@ -1,8 +1,5 @@
-import AdminCoursesStat from "@/components/admin-dashboard/AdminCoursesStat"
+
 import AdminCourseTypeChart from "@/components/admin-dashboard/AdminCourseTypeChart"
-import AdminFinanceStat from "@/components/admin-dashboard/AdminFinanceStat"
-import AdminOrganizationStat from "@/components/admin-dashboard/AdminOrganizationStat"
-import AdminUsersStat from "@/components/admin-dashboard/AdminUsersStat"
 import NextAuthGuardWrapper from "@/components/auth/NextAuthGuardWrapper"
 import AdminModeProgress from "@/components/admin-dashboard/AdminModeProgress"
 import AdminMonthlyRegistrationChart from "@/components/admin-dashboard/AdminMonthlyRegistrationChart"
@@ -21,12 +18,7 @@ const DashboardPage = () => {
         <div className="pb-4 px-4">
           <h1 className="text-secondary text-xl lg:text-2xl capitalize font-bold ">Dashboard Page</h1>
         </div>
-        {/* <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3 gap-4 px-4 py-5"> */}
           <AdminUsersStatWrapper />
-          {/* <AdminCoursesStat />
-          <AdminOrganizationStat />
-          <AdminFinanceStat /> */}
-        {/* </div> */}
         {/* Charts */}
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 px-4 py-5">
           <AdminMonthlyRegistrationChart />
