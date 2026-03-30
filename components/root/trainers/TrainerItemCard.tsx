@@ -8,13 +8,12 @@ interface TrainerProps {
 const TrainerItemCard = ({ trainer }: TrainerProps) => {
   return (
     <div className="flex flex-col items-center group cursor-pointer">
-      <div className=" z-20 relative h-48 w-fit rounded-2xl shadow-xl transition-transform duration-500 group-hover:scale-102">
+      <div className=" z-20 relative h-44 w-[70%] bg-white rounded-2xl shadow-xl transition-transform duration-500 group-hover:scale-102">
         <Image
           src={trainer?.profile_image || "/images/placeholder_img.jpg"}
           alt={trainer?.name || "teacher image"}
-          width={300}
-          height={300}
-          className="h-full border border-primary w-full object-cover rounded-2xl transition-transform duration-700 group-hover:scale-102"
+          fill
+          className="border border-primary/10 object-contain rounded-2xl transition-transform duration-700 group-hover:scale-102"
         />
       </div>
 

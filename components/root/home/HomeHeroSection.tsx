@@ -71,7 +71,7 @@ const HomeHeroSection = ({ heroBannerData }: HeroVideoData) => {
 
           {/* RIGHT VIDEO */}
           <div
-            className="group py-14 md:py-18 "
+            className="group py-10 pt-0 md:py-18 "
             style={{
               backgroundImage: 'url("/images/home/hero-video-bg-image.webp")',
               backgroundSize: "contain",

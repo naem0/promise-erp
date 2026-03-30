@@ -25,7 +25,7 @@ const TeacherListSection = ({ teacherData }: TeacherListSectionProps) => {
     Autoplay({
       delay: 2000,
       stopOnInteraction: false,
-    })
+    }),
   );
   return (
     <>
@@ -46,15 +46,14 @@ const TeacherListSection = ({ teacherData }: TeacherListSectionProps) => {
               <div className="flex flex-col items-center group">
                 {/* Image Wrapper */}
 
-                <div className=" z-20 relative h-48 w-fit rounded-2xl overflow-hidden shadow-xl transition-transform duration-500 group-hover:scale-102">
+                <div className=" z-20 relative h-44 w-[70%] bg-white rounded-2xl overflow-hidden shadow-xl transition-transform duration-500 group-hover:scale-102">
                   <Image
                     src={
                       instructor?.profile_image || "/images/placeholder_img.jpg"
                     }
                     alt={instructor?.name || "teacher image"}
-                    width={300}
-                    height={300}
-                    className="h-full w-full object-cover rounded-2xl transition-transform duration-700 group-hover:scale-102"
+                    fill
+                    className="object-contain rounded-2xl transition-transform duration-300 group-hover:scale-102"
                   />
                 </div>
 

@@ -1,31 +1,31 @@
-interface StatCard {
-  label: string;
-  value: string;
-  icon: React.ReactNode;
-}
+import { DashboardCardItem } from "@/apiServices/adminDashboardService";
+import { ChartNoAxesCombined } from "lucide-react";
+
 interface StatCardProps {
-  bgColor: string;
-  title: string;
-  students: StatCard[];
+  title?: string;
+  allStats: DashboardCardItem[];
 }
 
-const AdminUsersStat = ({ bgColor, students, title }: StatCardProps) => {
-  console.log(bgColor, "<===bgColor");
+const AdminUsersStat = ({ allStats, title }: StatCardProps) => {
   return (
-    <div className={`${bgColor} rounded-xl p-4`}>
-      <div className="pb-4 text-white text-2xl font-medium">
-        <h3>{title}</h3>
+    <div className="rounded-xl p-4 text-white bg-secondary/80 shadow-md hover:shadow-lg transition-all duration-500">
+      <div className="pb-2 text-white text-2xl xl:text-3xl font-medium">
+        <h3 className="flex items-center gap-2">
+          <ChartNoAxesCombined />
+          {title || "No Title"}
+        </h3>
       </div>
-      <div className={`grid grid-cols-1 lg:grid-cols-2 gap-6 `}>
-        {students.map((stat, index) => (
-          <div key={index} className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center shrink-0">
-              {stat.icon}
-            </div>
-            <div className="flex-1">
-              <p className="text-white text-sm font-medium mb-1">
-                {stat.label}
-              </p>
+      <div className="pb-2">
+        <p className="text-white text-2xl xl:text-3xl font-bold">
+          {" "}
+          {allStats[0]?.value}
+        </p>
+      </div>
+      <div className={`grid grid-cols-3 gap-2 `}>
+        {allStats?.slice(1).map((stat, index) => (
+          <div key={index} className="flex gap-2">
+            <div className="flex-1 bg-black/20 rounded-lg py-2 px-3">
+              <p className="text-white text-base mb-1">{stat.title}</p>
               <p className="text-white text-2xl font-bold">{stat.value}</p>
             </div>
           </div>

@@ -48,7 +48,6 @@ const AboutPage = () => {
         <Suspense fallback={<WhyChooseUsSkeleton />}>
           <WhyChooseUs />
         </Suspense>
-
         <Suspense fallback={<WhyChooseUsSkeleton />}>
           <AboutOpportunities />
         </Suspense>

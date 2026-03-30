@@ -27,7 +27,7 @@ const HighlightsSection = async () => {
           {stats.map((stat) => (
             <Card
               key={stat?.id}
-              className="relative overflow-hidden bg-linear-to-r to-[#009F41] from-0% via-[#1C833E] via-40% from-[#0B5B28] to-100% transition-all duration-300 border-0 shadow-lg hover:shadow-xl hover:-translate-y-2 group animate-scale-in"
+              className=" py-0 relative overflow-hidden bg-linear-to-r to-[#009F41] from-0% via-[#1C833E] via-40% from-[#0B5B28] to-100% transition-all duration-300 border-0 shadow-lg hover:shadow-xl hover:-translate-y-2 group animate-scale-in"
               style={{ animationDelay: `${stat?.id * 0.1}s` }}
             >
               <div className="px-4 py-6 text-center relative z-10">

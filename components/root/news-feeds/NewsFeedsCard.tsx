@@ -33,6 +33,7 @@ const NewsFeedsCard = async ({ searchParams }: NewFeedsPageProps) => {
   }
   const newsItems = newsData?.data?.news_feeds || [];
   const totalPage = newsData?.data?.pagination;
+  console.log("newsItems===>", newsItems);
   return (
     <section className="py-8 md:py-14">
       <div className="container mx-auto px-4">

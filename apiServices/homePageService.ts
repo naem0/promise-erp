@@ -266,6 +266,7 @@ export interface NewsFeedItem {
   news_link: string;
   image: string;
   entry_date: string;
+  title: string;
 }
 
 export interface NewsFeedData {
