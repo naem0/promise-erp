@@ -34,18 +34,6 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import NavHr from "./NavHr";
-import NavExpense from "./NavExpense";
-import NavPurchases from "./NavPurchases";
-import NavAccount from "./NavAccount";
-import NavInventory from "./NavInventory";
-import NavSales from "./NavSales";
-import NavSettings from "./NavSettings";
-import NavUserManage from "./NavUserManage";
-import NavRolePermission from "./NavRolePermission";
-import NavDivision from "./NavDivision";
-import NavDistrict from "./NavDistrict";
-import NavCoordinateManagment from "./NavCoordinateManagment";
 
 // This is sample data.
 const data = {
@@ -765,6 +753,7 @@ const data = {
       ],
     },
   ],
+
   navExpenses: [
     {
       title: "Expenses Management",
@@ -789,6 +778,7 @@ const data = {
       ],
     },
   ],
+
   navPurchase: [
     {
       title: "Purchases Manage",
@@ -833,6 +823,7 @@ const data = {
       ],
     },
   ],
+
   navAccount: [
     {
       title: "Account Management",
@@ -867,6 +858,7 @@ const data = {
       ],
     },
   ],
+
   navInventory: [
     {
       title: "Inventory Management",
@@ -991,6 +983,7 @@ const data = {
       ],
     },
   ],
+
   navSettings: [
     {
       title: "Settings",
@@ -1020,6 +1013,7 @@ const data = {
       ],
     },
   ],
+
   userManagement: [
     {
       title: "User Management",
@@ -1054,6 +1048,7 @@ const data = {
       ],
     },
   ],
+
   navDivision: [
     {
       title: "Division List",
@@ -1068,6 +1063,7 @@ const data = {
       ],
     },
   ],
+
   navDistrict: [
     {
       title: "District List",
@@ -1082,6 +1078,7 @@ const data = {
       ],
     },
   ],
+
   navRolePermission: [
     {
       title: "Role & Permission",
@@ -1101,6 +1098,7 @@ const data = {
       ],
     },
   ],
+
   coordinatManagement: [
     {
       title: "Coordinate Manage",
