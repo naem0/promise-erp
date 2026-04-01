@@ -13,9 +13,9 @@ import {
 } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
 import { Branch } from "@/apiServices/branchService"
-import { Course } from "@/apiServices/courseService"
 import { Division } from "@/apiServices/divisionService"
 import { Search, FilterX } from "lucide-react"
+import CourseSearchSelect from "@/components/common/CourseSearchSelect"
 
 interface FilterFormValues {
   search?: string
@@ -31,14 +31,14 @@ interface FilterFormValues {
 interface StudentFilterProps {
   divisions: Division[]
   branches: Branch[]
-  courses: Course[]
 }
+
 
 export default function StudentFilter({
   divisions,
   branches,
-  courses,
 }: StudentFilterProps) {
+
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -126,7 +126,7 @@ export default function StudentFilter({
           name="sort_order"
           control={control}
           render={({ field }) => (
-            <Select onValueChange={field.onChange} value={field.value}>
+            <Select onValueChange={field.onChange} value={field.value || ""}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Sort Order" />
               </SelectTrigger>
@@ -143,7 +143,7 @@ export default function StudentFilter({
           name="division_id"
           control={control}
           render={({ field }) => (
-            <Select onValueChange={field.onChange} value={field.value}>
+            <Select onValueChange={field.onChange} value={field.value || ""}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Division" />
               </SelectTrigger>
@@ -163,7 +163,7 @@ export default function StudentFilter({
           name="branch_id"
           control={control}
           render={({ field }) => (
-            <Select onValueChange={field.onChange} value={field.value}>
+            <Select onValueChange={field.onChange} value={field.value || ""}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Branch" />
               </SelectTrigger>
@@ -183,27 +183,21 @@ export default function StudentFilter({
           name="course_id"
           control={control}
           render={({ field }) => (
-            <Select onValueChange={field.onChange} value={field.value}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Course" />
-              </SelectTrigger>
-              <SelectContent>
-                {courses?.map((course) => (
-                  <SelectItem key={course.id} value={String(course.id)}>
-                    {course.title}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <CourseSearchSelect 
+              value={field.value || ""} 
+              onValueChange={field.onChange}
+              placeholder="Select Course"
+            />
           )}
         />
+
 
         {/* Status  */}
         <Controller
           name="status"
           control={control}
           render={({ field }) => (
-            <Select onValueChange={field.onChange} value={field.value}>
+            <Select onValueChange={field.onChange} value={field.value || ""}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
@@ -220,7 +214,7 @@ export default function StudentFilter({
           name="is_govt"
           control={control}
           render={({ field }) => (
-            <Select onValueChange={(val) => field.onChange(val === "true")}>
+            <Select onValueChange={(val) => field.onChange(val === "true")} value={field.value !== undefined ? String(field.value) : ""}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Is Govt" />
               </SelectTrigger>
@@ -235,7 +229,7 @@ export default function StudentFilter({
           name="is_blocked"
           control={control}
           render={({ field }) => (
-            <Select onValueChange={(val) => field.onChange(val === "true")} >
+            <Select onValueChange={(val) => field.onChange(val === "true")} value={field.value !== undefined ? String(field.value) : ""}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Is Blocked" />
               </SelectTrigger>
@@ -246,6 +240,7 @@ export default function StudentFilter({
             </Select>
           )}
         />
+
       </div>
     </div>
   )

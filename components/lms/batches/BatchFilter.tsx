@@ -6,239 +6,236 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useForm, Controller } from "react-hook-form"
 import { Input } from "@/components/ui/input"
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger, 
-  SelectValue,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
 } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
 import { Branch } from "@/apiServices/branchService"
-import { Course } from "@/apiServices/courseService"
+import CourseSearchSelect from "@/components/common/CourseSearchSelect"
+
 import { Division } from "@/apiServices/divisionService"
+
 import { District } from "@/apiServices/districtService"
 import { Search, FilterX } from "lucide-react"
 
 interface FilterFormValues {
-  search?: string
-  sort_order?: string
-  division_id?: string
-  district_id?: string  
-  branch_id?: string
-  course_id?: string
-  is_online?: string
-  is_offline?: string
+    search?: string
+    sort_order?: string
+    division_id?: string
+    district_id?: string
+    branch_id?: string
+    course_id?: string
+    is_online?: string
+    is_offline?: string
 }
 
 interface BatchFilterProps {
-  divisions: Division[]
-  districts: District[]
-  branches: Branch[]
-  courses: Course[]
+    divisions: Division[]
+    districts: District[]
+    branches: Branch[]
 }
 
+
 export default function BatchFilter({
-  divisions,
-  districts,
-  branches,
-  courses,
+    divisions,
+    districts,
+    branches,
 }: BatchFilterProps) {
-  const router = useRouter()
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
-  const { register, control, reset, watch } = useForm<FilterFormValues>({
-    defaultValues: {
-      search: searchParams.get("search") || "",
-      sort_order: searchParams.get("sort_order") || "",
-      division_id: searchParams.get("division_id") || "",
-      district_id: searchParams.get("district_id") || "",
-      branch_id: searchParams.get("branch_id") || "",
-      course_id: searchParams.get("course_id") || "",
-      is_online: searchParams.get("is_online") || "",
-      is_offline: searchParams.get("is_offline") || "",
-    },
-  })
 
-  const watchedValues = watch()
-
-  useEffect(() => {
-    const params = new URLSearchParams(searchParams)
-    Object.entries(watchedValues).forEach(([key, value]) => {
-      if (value) {
-        params.set(key, String(value))
-      } else {
-        params.delete(key)
-      }
+    const router = useRouter()
+    const pathname = usePathname()
+    const searchParams = useSearchParams()
+    const { register, control, reset, watch } = useForm<FilterFormValues>({
+        defaultValues: {
+            search: searchParams.get("search") || "",
+            sort_order: searchParams.get("sort_order") || "",
+            division_id: searchParams.get("division_id") || "",
+            district_id: searchParams.get("district_id") || "",
+            branch_id: searchParams.get("branch_id") || "",
+            course_id: searchParams.get("course_id") || "",
+            is_online: searchParams.get("is_online") || "",
+            is_offline: searchParams.get("is_offline") || "",
+        },
     })
-    params.set("page", "1") // Reset to first page on filter change
-    const timer = setTimeout(() => {
-      router.replace(`${pathname}?${params.toString()}`)
-    }, 500)
 
-    return () => clearTimeout(timer)
-  }, [JSON.stringify(watchedValues), router, pathname]);
+    const watchedValues = watch()
 
-  const handleReset = () => {
-    reset({
-      search: "",
-      sort_order: "",
-      division_id: "",
-      district_id: "",
-      branch_id: "",
-      course_id: "",
-      is_online: "",
-      is_offline: "",
-    })
-    router.replace(pathname)
-  }
+    useEffect(() => {
+        const params = new URLSearchParams(searchParams)
+        Object.entries(watchedValues).forEach(([key, value]) => {
+            if (value) {
+                params.set(key, String(value))
+            } else {
+                params.delete(key)
+            }
+        })
+        params.set("page", "1") // Reset to first page on filter change
+        const timer = setTimeout(() => {
+            router.replace(`${pathname}?${params.toString()}`)
+        }, 500)
 
-  const hasActiveFilters = Object.values(watchedValues).some(
-    (value) => value && value !== "" && value !== false
-  )
+        return () => clearTimeout(timer)
+    }, [JSON.stringify(watchedValues), router, pathname]);
 
-  return (
-    <div className="p-6 mb-6 border rounded-xl bg-card shadow-sm">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-foreground">Filters</h3>
-        {hasActiveFilters && (
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={handleReset}
-            className="flex items-center gap-2"
-          >
-            <FilterX className="h-4 w-4" />
-            Clear Filters
-          </Button>
-        )}
-      </div>
+    const handleReset = () => {
+        reset({
+            search: "",
+            sort_order: "",
+            division_id: "",
+            district_id: "",
+            branch_id: "",
+            course_id: "",
+            is_online: "",
+            is_offline: "",
+        })
+        router.replace(pathname)
+    }
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
-        {/* Search Input */}
-        <div className="relative col-span-1 lg:col-span-2">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search batches..."
-            className="pl-10"
-            {...register("search")}
-          />
+    const hasActiveFilters = Object.values(watchedValues).some(
+        (value) => value && value !== "" && value !== false
+    )
+
+    return (
+        <div className="p-6 mb-6 border rounded-xl bg-card shadow-sm">
+            <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-foreground">Filters</h3>
+                {hasActiveFilters && (
+                    <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={handleReset}
+                        className="flex items-center gap-2"
+                    >
+                        <FilterX className="h-4 w-4" />
+                        Clear Filters
+                    </Button>
+                )}
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
+                {/* Search Input */}
+                <div className="relative col-span-1 lg:col-span-2">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                        placeholder="Search batches..."
+                        className="pl-10"
+                        {...register("search")}
+                    />
+                </div>
+
+                {/* Sort By */}
+                <Controller
+                    name="sort_order"
+                    control={control}
+                    render={({ field }) => (
+                        <Select onValueChange={field.onChange} value={field.value || ""}>
+                            <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Sort Order" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="asc">ASC</SelectItem>
+                                <SelectItem value="desc">DESC</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    )}
+                />
+
+                {/* Division */}
+                <Controller
+                    name="division_id"
+                    control={control}
+                    render={({ field }) => (
+                        <Select onValueChange={field.onChange} value={field.value || ""}>
+                            <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Division" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {divisions.map((division) => (
+                                    <SelectItem key={division.id} value={String(division.id)}>
+                                        {division.name}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    )}
+                />
+
+                {/* District */}
+                <Controller
+                    name="district_id"
+                    control={control}
+                    render={({ field }) => (
+                        <Select onValueChange={field.onChange} value={field.value || ""}>
+                            <SelectTrigger className="w-full">
+                                <SelectValue placeholder="District" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {districts.map((district) => (
+                                    <SelectItem key={district.id} value={String(district.id)}>
+                                        {district.name}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    )}
+                />
+
+                {/* Branch */}
+                <Controller
+                    name="branch_id"
+                    control={control}
+                    render={({ field }) => (
+                        <Select onValueChange={field.onChange} value={field.value || ""}>
+                            <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Branch" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {branches.map((branch) => (
+                                    <SelectItem key={branch.id} value={String(branch.id)}>
+                                        {branch.name}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    )}
+                />
+
+                {/* Course */}
+                <Controller
+                    name="course_id"
+                    control={control}
+                    render={({ field }) => (
+                        <CourseSearchSelect 
+                            value={field.value || ""} 
+                            onValueChange={field.onChange}
+                            placeholder="Select Course"
+                        />
+                    )}
+                />
+
+
+                {/* Is Online */}
+                <Controller
+                    name="is_online"
+                    control={control}
+                    render={({ field }) => (
+                        <Select onValueChange={field.onChange} value={field.value || ""}>
+                            <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Online/Offline" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="1">Online</SelectItem>
+                                <SelectItem value="0">Offline</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    )}
+                />
+            </div>
+
         </div>
-
-        {/* Sort By */}
-        <Controller
-          name="sort_order"
-          control={control}
-          render={({ field }) => (
-            <Select onValueChange={field.onChange} value={field.value}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Sort Order" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="asc">ASC</SelectItem>
-                <SelectItem value="desc">DESC</SelectItem>
-              </SelectContent>
-            </Select>
-          )}
-        />
-
-        {/* Division */}
-        <Controller
-          name="division_id"
-          control={control}
-          render={({ field }) => (
-            <Select onValueChange={field.onChange} value={field.value}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Division" />
-              </SelectTrigger>
-              <SelectContent>
-                {divisions.map((division) => (
-                  <SelectItem key={division.id} value={String(division.id)}>
-                    {division.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
-        />
-
-        {/* District */}
-        <Controller
-          name="district_id"
-          control={control}
-          render={({ field }) => (
-            <Select onValueChange={field.onChange} value={field.value}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="District" />
-              </SelectTrigger>
-              <SelectContent>
-                {districts.map((district) => (
-                  <SelectItem key={district.id} value={String(district.id)}>
-                    {district.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
-        />
-
-        {/* Branch */}
-        <Controller
-          name="branch_id"
-          control={control}
-          render={({ field }) => (
-            <Select onValueChange={field.onChange} value={field.value}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Branch" />
-              </SelectTrigger>
-              <SelectContent>
-                {branches.map((branch) => (
-                  <SelectItem key={branch.id} value={String(branch.id)}>
-                    {branch.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
-        />
-
-        {/* Course */}
-        <Controller
-          name="course_id"
-          control={control}
-          render={({ field }) => (
-            <Select onValueChange={field.onChange} value={field.value}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Course" />
-              </SelectTrigger>
-              <SelectContent>
-                {courses?.map((course) => (
-                  <SelectItem key={course.id} value={String(course.id)}>
-                    {course.title}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
-        />
-
-        {/* Is Online */}
-        <Controller
-          name="is_online"
-          control={control}
-          render={({ field }) => (
-            <Select onValueChange={field.onChange} value={field.value}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Online/Offline" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="1">Online</SelectItem>
-                <SelectItem value="0">Offline</SelectItem>
-              </SelectContent>
-            </Select>
-          )}
-        />
-      </div>
-    </div>
-  )
+    )
 }

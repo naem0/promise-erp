@@ -15,6 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Combobox } from "@/components/ui/combobox";
+import CourseSearchSelect from "@/components/common/CourseSearchSelect";
 import { createEnrollment } from "@/apiServices/enrollmentService";
 import {
   PAYMENT_METHOD_PAYLATER,
@@ -72,7 +73,6 @@ interface Course {
 interface CreateEnrollmentFormProps {
   students: Student[];
   batches: Batch[];
-  courses: Course[];
 }
 
 interface FormValues {
@@ -90,7 +90,6 @@ interface FormValues {
 export default function CreateEnrollmentForm({
   students: initialStudents,
   batches: initialBatches,
-  courses,
 }: CreateEnrollmentFormProps) {
   const router = useRouter();
   const [courseId, setCourseId] = useState<string>("");
@@ -131,11 +130,6 @@ export default function CreateEnrollmentForm({
   const studentOptions = (initialStudents || []).map((student) => ({
     value: student?.id?.toString() || "",
     label: student ? `${student.name || "N/A"}${student.email ? ` (${student.email})` : ""}${student.phone ? ` - ${student.phone}` : ""}` : "Unknown Student",
-  }));
-
-  const courseOptions = (courses || []).map((course) => ({
-    value: course?.id?.toString() || "",
-    label: course?.title || "Unknown Course",
   }));
 
   const batchOptions = (filteredBatches || []).map((batch) => ({
@@ -181,15 +175,16 @@ export default function CreateEnrollmentForm({
     }
   }, [additionalDiscount, selectedBatch, setValue]);
 
-  const handleCourseChange = (value: string) => {
-    setCourseId(value);
-    setValue("course_id", value);
+  const handleCourseChange = (value: string | null) => {
+    const val = value || "";
+    setCourseId(val);
+    setValue("course_id", val);
     setValue("batch_id", "");
     setSelectedBatch(null);
   };
 
-  const handleBatchChange = (value: string) => {
-    setValue("batch_id", value);
+  const handleBatchChange = (value: string | null) => {
+    setValue("batch_id", value || "");
   };
 
   const onSubmit = async (values: FormValues) => {
@@ -265,7 +260,7 @@ export default function CreateEnrollmentForm({
                 <Combobox
                   options={studentOptions}
                   value={watch("user_id")}
-                  onValueChange={(value) => setValue("user_id", value)}
+                  onValueChange={(value) => setValue("user_id", value || "")}
                   placeholder="Select student..."
                   searchPlaceholder="Search student by name, email, or phone..."
                   emptyMessage="No students found"
@@ -276,22 +271,19 @@ export default function CreateEnrollmentForm({
                 )}
               </div>
 
-              {/* Course Selection with Combobox */}
+              {/* Course Selection with SearchSelect */}
               <div className="space-y-2">
                 <Label htmlFor="course_id">Course</Label>
-                <Combobox
-                  options={courseOptions}
-                  value={courseId}
-                  onValueChange={handleCourseChange}
-                  placeholder="Select course (optional)..."
-                  searchPlaceholder="Search course..."
-                  emptyMessage="No courses found"
-                  disabled={isSubmitting}
+                <CourseSearchSelect 
+                   value={courseId}
+                   onValueChange={handleCourseChange}
+                   placeholder="Select course (optional)..."
                 />
                 {errors.course_id && (
                   <p className="text-sm text-red-500">{errors.course_id.message}</p>
                 )}
               </div>
+
 
               {/* Batch Selection with Combobox */}
               <div className="space-y-2">

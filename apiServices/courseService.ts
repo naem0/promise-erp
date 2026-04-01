@@ -945,7 +945,7 @@ export async function assignToolsToCourse(
       }
     );
 
-    
+
 
     const result = await response.json();
 
@@ -994,6 +994,31 @@ export async function getCourseAssignedTools(
       throw new Error(error.message);
     } else {
       throw new Error("Failed to fetch course tools.");
+    }
+  }
+}
+
+// =======================
+// Get ALL Public Courses
+// =======================
+export async function getPublicCoursesAll(): Promise<CourseResponse> {
+  try {
+    const res = await fetch(`${API_BASE}/public/courses/all`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (!res.ok) {
+      throw new Error(`Failed to fetch all public courses: ${res.statusText}`);
+    }
+    return res.json();
+  } catch (error: unknown) {
+    console.error("Error in getPublicCoursesAll:", error);
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    } else {
+      throw new Error("Failed to fetch all public courses");
     }
   }
 }
