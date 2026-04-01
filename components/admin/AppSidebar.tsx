@@ -42,6 +42,7 @@ const data = {
     email: "m@example.com",
     avatar: "/avatars/shadcn.jpg",
   },
+
   teams: [
     {
       name: "EL ERP System",
@@ -49,6 +50,7 @@ const data = {
       plan: "Enterprise",
     },
   ],
+
   navLMS: [
     {
       title: "User Management",
@@ -71,6 +73,7 @@ const data = {
         // },
       ],
     },
+
     {
       title: "Course Management",
       url: "#",
@@ -425,7 +428,7 @@ const data = {
           url: "/crm/categories",
           permissions: ["view-crm-categories"],
         },
-       
+
       ],
     },
   ],
@@ -1098,86 +1101,6 @@ const data = {
       ],
     },
   ],
-
-  coordinatManagement: [
-    {
-      title: "Coordinate Manage",
-      url: "#",
-      icon: Users,
-      items: [
-        {
-          title: "Dashboard",
-          url: "/coordinator/dashboard",
-          permissions: ["view-dashboard"],
-        },
-        {
-          title: "Students",
-          url: "/coordinator/students",
-          permissions: ["view-dashboard"],
-        },
-        {
-          title: "Enrollments",
-          url: "/coordinator/enrollments",
-          permissions: ["view-dashboard"],
-        },
-        {
-          title: "Payments",
-          url: "/coordinator/payments",
-          permissions: ["view-dashboard"],
-        },
-        {
-          title: "Courses",
-          url: "/coordinator/courses",
-          permissions: ["view-dashboard"],
-        },
-        {
-          title: "Attendance",
-          url: "/coordinator/attendance",
-          permissions: ["view-dashboard"],
-        },
-        {
-          title: "Assets",
-          url: "/coordinator/assets",
-          permissions: ["view-dashboard"],
-        },
-        {
-          title: "Foods",
-          url: "/coordinator/foods",
-          permissions: ["view-dashboard"],
-        },
-        {
-          title: "Earning Reports",
-          url: "/coordinator/earning-reports",
-          permissions: ["view-dashboard"],
-        },
-        {
-          title: "Visitors",
-          url: "/coordinator/visitors",
-          permissions: ["view-dashboard"],
-        },
-        {
-          title: "Feetbacks",
-          url: "/coordinator/feetbacks",
-          permissions: ["view-dashboard"],
-        },
-        {
-          title: "Events",
-          url: "/coordinator/events",
-          permissions: ["view-dashboard"],
-        },
-        {
-          title: "Reports",
-          url: "/coordinator/reports",
-          permissions: ["view-dashboard"],
-        },
-        {
-          title: "Settings",
-          url: "/coordinator/settings",
-          permissions: ["view-dashboard"],
-        },
-      ],
-    },
-  ],
 };
 
 export default function AppSidebar({
@@ -1191,7 +1114,6 @@ export default function AppSidebar({
       <SidebarContent>
         <NavMain items={data.navLMS} lavel="LMS" />
         <NavMain items={data.navCRM} lavel="CRM" />
-        <NavMain items={data.coordinatManagement} lavel="Coordinator" />
         <NavMain items={data.navHr} lavel="HR" />
         <NavMain items={data.navInventory} lavel="Inventory" />
         <NavMain items={data.navSales} lavel="Sales" />

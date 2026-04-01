@@ -61,14 +61,6 @@ const getDashboardUrl = (role: string | string[] | null | undefined) => {
   if (roles.includes("student")) {
     return "/student/dashboard";
   }
-  if (roles.includes("coordinator")) {
-    return "/coordinator/dashboard";
-  }
-  // Use the first role to determine the dashboard path
-  // const primaryRole = roles[0];
-  // if (primaryRole) {
-  //   return `/${primaryRole}/dashboard`;
-  // }
   
   return "/dashboard";
 };
@@ -356,7 +348,7 @@ const HeaderContent = ({ navLinks }: HeaderContentProps) => {
           }
         }}
       >
-        <DialogContent className="max-w-lg z-99999 max-h-[80vh] overflow-y-auto">
+        <DialogContent className="max-w-lg z-9 max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
               Search Results for {"'"} {searchQuery} {"'"}

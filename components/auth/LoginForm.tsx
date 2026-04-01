@@ -34,7 +34,7 @@ const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectPath = searchParams.get("redirect") || "/";
+  const redirectPath = searchParams.get("redirect");
 
   const {
     register,
@@ -52,14 +52,12 @@ const LoginForm = () => {
     if (res?.ok) {
       const updatedSession = await getSession();
       const role = updatedSession?.user?.roles?.[0];
-      if (role === "super-admin") {
-        router.push("/dashboard");
+      if (redirectPath) {
+        router.push(redirectPath);
       } else if (role === "student") {
         router.push("/student/dashboard");
-      } else if (role === "coordinator") {
-        router.push("/coordinator/dashboard");
       } else {
-        router.push(redirectPath);
+        router.push("/dashboard");
       }
       toast.success("Logged in successfully!");
     } else {
@@ -156,7 +154,7 @@ const LoginForm = () => {
                 Don’t have an account?{" "}
                 <Link
                   className="text-blue-600 hover:underline"
-                  href={`/register${redirectPath !== "/" ? `?redirect=${encodeURIComponent(redirectPath)}` : ""}`}
+                  href={`/register${redirectPath ? `?redirect=${encodeURIComponent(redirectPath)}` : ""}`}
                 >
                   Register
                 </Link>

@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -64,13 +63,12 @@ const RegisterForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectPath = searchParams.get("redirect") || "/";
+  const redirectPath = searchParams.get("redirect");
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-    watch,
     reset,
     setError,
     clearErrors,
@@ -97,6 +95,7 @@ const RegisterForm = () => {
       const result = (await RegisterUser(data)) as ApiResponse;
 
       if (result.success) {
+        const role = result.data.roles[0];
         toast.success(result.message || "Registration successful!");
 
         const signInResult = await signIn("credentials", {
@@ -104,14 +103,19 @@ const RegisterForm = () => {
           email_or_phone: data.email,
           password: data.password,
         });
-
         reset();
 
         if (signInResult?.ok) {
           toast.success("Logged in successfully!");
-          router.push(redirectPath);
+          if (redirectPath) {
+            router.push(redirectPath);
+          } else if (role === "student") {
+            router.push("/student/dashboard");
+          } else {
+            router.push("/dashboard");
+          }
         } else {
-          router.push(`/login${redirectPath !== "/" ? `?redirect=${encodeURIComponent(redirectPath)}` : ""}`);
+          router.push(`/login${redirectPath ? `?redirect=${encodeURIComponent(redirectPath)}` : ""}`);
         }
 
         return;
@@ -255,7 +259,7 @@ const RegisterForm = () => {
               <FieldDescription className="text-center">
                 Already have an account?{" "}
                 <Link
-                  href={`/login${redirectPath !== "/" ? `?redirect=${encodeURIComponent(redirectPath)}` : ""}`}
+                  href={`/login${redirectPath ? `?redirect=${encodeURIComponent(redirectPath)}` : ""}`}
                   className="text-blue-600 hover:underline"
                 >
                   Login
