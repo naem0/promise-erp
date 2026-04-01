@@ -67,10 +67,6 @@ const data = {
           url: "/lms/students",
           permissions: ["view-students"],
         },
-        // {
-        //   title: "Earning Reports",
-        //   url: "/lms/earning-reports",
-        // },
       ],
     },
 
@@ -78,7 +74,6 @@ const data = {
       title: "Course Management",
       url: "#",
       icon: GraduationCap,
-      // isActive: true,
       items: [
         {
           title: "Categories",
@@ -1112,19 +1107,19 @@ export default function AppSidebar({
         <TeamSwitcher teams={data.teams} />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navLMS} lavel="LMS" />
-        <NavMain items={data.navCRM} lavel="CRM" />
-        <NavMain items={data.navHr} lavel="HR" />
-        <NavMain items={data.navInventory} lavel="Inventory" />
-        <NavMain items={data.navSales} lavel="Sales" />
-        <NavMain items={data.navExpenses} lavel="Expenses" />
-        <NavMain items={data.navPurchase} lavel="Purchase" />
-        <NavMain items={data.navAccount} lavel="Account" />
-        <NavMain items={data.navSettings} lavel="Settings" />
-        <NavMain items={data.navDivision} lavel="Division" />
-        <NavMain items={data.navDistrict} lavel="District" />
-        <NavMain items={data.userManagement} lavel="User Management" />
-        <NavMain items={data.navRolePermission} lavel="Role & Permission" />
+        <NavMain items={data.navLMS} label="LMS" />
+        <NavMain items={data.navCRM} label="CRM" />
+        <NavMain items={data.navHr} label="HR" />
+        <NavMain items={data.navInventory} label="Inventory" />
+        <NavMain items={data.navSales} label="Sales" />
+        <NavMain items={data.navExpenses} label="Expenses" />
+        <NavMain items={data.navPurchase} label="Purchase" />
+        <NavMain items={data.navAccount} label="Account" />
+        <NavMain items={data.navSettings} label="Settings" />
+        <NavMain items={data.navDivision} label="Division" />
+        <NavMain items={data.navDistrict} label="District" />
+        <NavMain items={data.userManagement} label="User Management" />
+        <NavMain items={data.navRolePermission} label="Role & Permission" />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />

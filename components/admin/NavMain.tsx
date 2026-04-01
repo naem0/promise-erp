@@ -10,7 +10,7 @@ import { usePermission } from "@/hooks/usePermission"
 
 export function NavMain({
   items,
-  lavel
+  label
 }: {
   items: {
     title: string
@@ -24,7 +24,7 @@ export function NavMain({
       permissions?: string[]
     }[]
   }[]
-  lavel?: string
+  label?: string
 }) {
   const { hasPermission, loading } = usePermission()
 
@@ -46,7 +46,7 @@ export function NavMain({
 
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>{lavel}</SidebarGroupLabel>
+      <SidebarGroupLabel>{label}</SidebarGroupLabel>
       <SidebarMenu>
         {visibleItems.map((item) => (
           <NavCollapsibleItem key={item.title} item={item} />
