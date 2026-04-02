@@ -57,7 +57,9 @@ export function NavCollapsibleItem({
         }
     }, [isActive])
 
-    if (!loading && item.permissions && !hasPermission(item.permissions)) {
+    if (loading) return null
+
+    if (item.permissions && !hasPermission(item.permissions)) {
         return null
     }
 
@@ -71,6 +73,27 @@ export function NavCollapsibleItem({
         return null; // Don't show parent if all children are hidden and parent itself is not a link
     }
 
+    // ── Direct link item (no children, or all children hidden) ────
+    const hasVisibleChildren = visibleSubItems && visibleSubItems.length > 0
+    if (!item.items || item.items.length === 0 || !hasVisibleChildren) {
+        return (
+            <SidebarMenuItem>
+                <SidebarMenuButton
+                    asChild
+                    tooltip={item.title}
+                    isActive={!!isActive}
+                    className="data-[active=true]:bg-primary/10 data-[active=true]:text-primary font-medium hover:bg-primary/5 hover:text-primary cursor-pointer"
+                >
+                    <Link href={item.url}>
+                        {item.icon && <item.icon />}
+                        <span>{item.title}</span>
+                    </Link>
+                </SidebarMenuButton>
+            </SidebarMenuItem>
+        )
+    }
+
+    // ── Collapsible item (has children) ─────────────────────────
     return (
         <Collapsible
             key={item.title}
