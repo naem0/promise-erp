@@ -93,6 +93,11 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "www.citypng.com",
       },
+      {
+        protocol: "https",
+        hostname: "elt-back.promisemart.com",
+        pathname: "/storage/images/**",
+      },
     ],
   },
 

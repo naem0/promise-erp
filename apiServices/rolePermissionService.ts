@@ -517,3 +517,75 @@ export async function getAllUserlist(token: string | undefined): Promise<UserLis
   }
 }
 // =======================End GET ALL USERS LIST =======================
+
+// ======================= Start  Role-Wise users list  ======================= 
+export interface RoleWiseUserRole {
+  id: number;
+  name: string;
+  guard_name?: string;
+}
+
+export interface RoleWiseUserList {
+  id: number;
+  uuid: string;
+  name: string;
+  email: string;
+  status: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface RoleWiseUserData {
+  role: RoleWiseUserRole;
+  users: RoleWiseUserList[];
+  pagination: PaginationType;
+}
+
+export interface RoleWiseUserListApiResponse {
+  success: boolean;
+  message: string;
+  code: number;
+  data: RoleWiseUserData;
+  errors?: Record<string, string[]>;
+}
+
+export async function getUserWiseByRole(
+  roleId: number,
+  token: string | undefined
+): Promise<RoleWiseUserListApiResponse> {
+  
+  if (!token) {
+    throw new Error("Unauthorized: Access token not found");
+  }
+
+  try {
+    const url = `${API_BASE}/roles/${roleId}/users`;
+
+    const res = await fetch(url, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error(
+        `getUserWiseByRole API Error: ${res.status} ${res.statusText}`
+      );
+    }
+
+    const data: RoleWiseUserListApiResponse = await res.json();
+    return data;
+
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("getUserWiseByRole Error:", error.message);
+      throw error;
+    }
+
+    throw new Error("Unknown error occurred while fetching role users");
+  }
+}
+
+// ======================= End  Role-Wise users list  =======================
