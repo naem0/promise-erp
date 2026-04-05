@@ -21,7 +21,7 @@ export default async function EditBatchPage({
     const res = await getBatchById(batchId)
     batch = res.data
     message = res.message
-  } catch (error : unknown) {
+  } catch (error: unknown) {
     if (error instanceof Error) {
       return <ErrorComponent message={error.message} />
     }

@@ -29,13 +29,13 @@ export default async function EnrollmentsPage({
         </PermissionGuard>
       </div>
 
-        <Suspense fallback={<div>Loading filters...</div>}>
-          <EnrollmentFilterData />
-        </Suspense>
+      <Suspense fallback={<div>Loading filters...</div>}>
+        <EnrollmentFilterData />
+      </Suspense>
 
-        <Suspense fallback={<TableSkeleton columns={8} rows={10} />}>
-          <EnrollmentsData searchParams={params} />
-        </Suspense>
-      </div>
-      );
+      <Suspense fallback={<TableSkeleton columns={8} rows={10} />}>
+        <EnrollmentsData searchParams={params} />
+      </Suspense>
+    </div>
+  );
 }

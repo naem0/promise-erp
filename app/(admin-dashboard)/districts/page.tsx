@@ -17,28 +17,28 @@ const DistrictsPage = async ({
 
 
   return (
-          <div className="mx-auto space-y-6 ">
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-semibold tracking-tight">District</h1>
-          <PermissionGuard requiredPermission="create-districts">
-            <Button asChild>
-              <Link href="/districts/add">
-                <PlusCircle className="w-4 h-4 mr-2" />
-                Add District
-              </Link>
-            </Button>
-          </PermissionGuard>
-        </div>
-
-        <Suspense fallback={<div>Loading Search...</div>}>
-          <DistrictFilterData />
-        </Suspense>
-
-        <Suspense fallback={<TableSkeleton columns={4} rows={8} />}>
-          <DistrictData searchParams={params} />
-        </Suspense>
+    <div className="mx-auto space-y-6 ">
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-semibold tracking-tight">District</h1>
+        <PermissionGuard requiredPermission="create-districts">
+          <Button asChild>
+            <Link href="/districts/add">
+              <PlusCircle className="w-4 h-4 mr-2" />
+              Add District
+            </Link>
+          </Button>
+        </PermissionGuard>
       </div>
-      )
+
+      <Suspense fallback={<div>Loading Search...</div>}>
+        <DistrictFilterData />
+      </Suspense>
+
+      <Suspense fallback={<TableSkeleton columns={4} rows={8} />}>
+        <DistrictData searchParams={params} />
+      </Suspense>
+    </div>
+  )
 }
 
 export default DistrictsPage

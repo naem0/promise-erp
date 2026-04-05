@@ -16,28 +16,28 @@ const DivisionPage = async ({
   const params = await searchParams;
 
   return (
-          <div className="mx-auto space-y-6 ">
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-semibold tracking-tight">Division</h1>
-          <PermissionGuard requiredPermission="create-divisions">
-            <Button asChild>
-              <Link href="/divisions/add">
-                <PlusCircle className="w-4 h-4 mr-2" />
-                Add Division
-              </Link>
-            </Button>
-          </PermissionGuard>
-        </div>
-
-        <Suspense fallback={<div>Loading Search...</div>}>
-          <DivisionFilterData />
-        </Suspense>
-
-        <Suspense fallback={<TableSkeleton columns={4} rows={8} />}>
-          <DivisionData searchParams={params} />
-        </Suspense>
+    <div className="mx-auto space-y-6 ">
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-semibold tracking-tight">Division</h1>
+        <PermissionGuard requiredPermission="create-divisions">
+          <Button asChild>
+            <Link href="/divisions/add">
+              <PlusCircle className="w-4 h-4 mr-2" />
+              Add Division
+            </Link>
+          </Button>
+        </PermissionGuard>
       </div>
-      )
+
+      <Suspense fallback={<div>Loading Search...</div>}>
+        <DivisionFilterData />
+      </Suspense>
+
+      <Suspense fallback={<TableSkeleton columns={4} rows={8} />}>
+        <DivisionData searchParams={params} />
+      </Suspense>
+    </div>
+  )
 }
 
 export default DivisionPage

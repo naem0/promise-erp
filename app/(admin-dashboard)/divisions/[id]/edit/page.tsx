@@ -52,7 +52,7 @@ export default function EditDivisionPage({ params }: EditDivisionPageProps) {
     setFormError: (field: string, message: string) => void
   ) => {
     const result = await updateDivision(divisionId, formData);
-    
+
     if (result.success) {
       handleFormSuccess(result.message || "Division updated successfully!");
       router.push("/divisions");
@@ -62,7 +62,7 @@ export default function EditDivisionPage({ params }: EditDivisionPageProps) {
   };
 
   if (loading) {
-    return <TableSkeleton/>;
+    return <TableSkeleton />;
   }
 
   if (error) {
