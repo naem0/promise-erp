@@ -70,9 +70,9 @@ const HomePage = () => {
       <Suspense fallback={<NewsfeedsArchiveSkeleton />}>
         <NewsfeedsArchive />
       </Suspense>
-      <Suspense fallback={<PartnerSkeleton />}>
+      {/* <Suspense fallback={<PartnerSkeleton />}>
         <AffiliatesAndClients />
-      </Suspense>
+      </Suspense> */}
       <Suspense fallback={<BranchesSkeleton />}>
         <OurBranchesWrapper />
       </Suspense>

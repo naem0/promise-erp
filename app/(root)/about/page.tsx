@@ -19,7 +19,7 @@ const AboutPage = () => {
         <section className="py-10 md:py-12">
           <div className="max-w-full lg:max-w-6xl mx-auto">
             <Suspense fallback={<TeamMemberCardSkeleton />}>
-              <TeamMemberCardWrapper />
+              <TeamMemberCardWrapper isAbout={true} />
             </Suspense>
           </div>
         </section>

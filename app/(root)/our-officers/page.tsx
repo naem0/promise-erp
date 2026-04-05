@@ -20,7 +20,7 @@ const OurOfficersPage = () => {
 
         <div className="mx-auto max-w-5xl mb-10">
           <Suspense fallback={<TeamMemberCardSkeleton />}>
-            <TeamMemberCardWrapper />
+            <TeamMemberCardWrapper isAbout={false} />
           </Suspense>
         </div>
         <div className="">

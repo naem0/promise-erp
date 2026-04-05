@@ -5,8 +5,10 @@ import {
 import TeamMemberCard from "./TeamMemberCard";
 import ErrorComponent from "@/components/common/ErrorComponent";
 import NotFoundComponent from "@/components/common/NotFoundComponent";
-
-const TeamMemberCardWrapper = async () => {
+interface Props {
+  isAbout: boolean;
+}
+const TeamMemberCardWrapper = async ({ isAbout =false }: Props) => {
   let memberDatas;
   try {
     memberDatas = await getPublicAllExecutives();
@@ -27,11 +29,12 @@ const TeamMemberCardWrapper = async () => {
   }
 
   const members: ChairmanMessage[] = memberDatas?.data || [];
+  const displayMembers = isAbout ? members.slice(0, 1) : members;
   return (
     <>
       <div className="grid grid-cols-1 gap-8">
-        {members.length > 0 ? (
-          members.map((member) => (
+        {displayMembers.length > 0 ? (
+          displayMembers.map((member) => (
             <TeamMemberCard key={member?.id} member={member} />
           ))
         ) : (
