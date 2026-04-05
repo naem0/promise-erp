@@ -16,23 +16,20 @@ import Image from "next/image";
 import Link from "next/link";
 import { CategoriesResponse } from "@/apiServices/categoryService";
 
-
 interface CategoriesData {
   categoriesData: CategoriesResponse;
 }
 
 const CourseCategoriesSection = ({ categoriesData }: CategoriesData) => {
-  
   const categories = categoriesData?.data?.categories || [];
-   // autoplay plugin
+  // autoplay plugin
   const plugin = useRef(
     Autoplay({
       delay: 2000,
       stopOnInteraction: false,
-    })
+    }),
   );
   return (
-
     <Carousel
       plugins={[plugin.current]}
       opts={{
@@ -48,7 +45,7 @@ const CourseCategoriesSection = ({ categoriesData }: CategoriesData) => {
             className="basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4"
           >
             <Card className="group h-full bg-secondary-light transition-all duration-300 hover:shadow-xl hover:-translate-y-2 border-0 text-center">
-              <CardContent className="flex flex-col items-center justify-between gap-6 px-8">
+              <CardContent className="flex flex-col items-center justify-between gap-0 lg:gap-6 px-8">
                 <div className="bg-white mt-4 rounded-full w-25 h-25 flex items-center justify-center p-3">
                   <Image
                     src={course.image || "/images/placeholder_img.jpg"}
@@ -59,15 +56,20 @@ const CourseCategoriesSection = ({ categoriesData }: CategoriesData) => {
                   />
                 </div>
 
-
-                <h3 className="text-base md:text-2xl font-semibold capitalize text-white">
+                <h3 className="text-base lg:text-2xl font-semibold capitalize text-white min-h-[4rem] flex items-center justify-center">
                   {course.name}
                 </h3>
 
                 <div className="flex justify-center ">
-                  <Button variant="outline" asChild className="text-white py-5 flex items-center gap-2 ">
+                  <Button
+                    variant="outline"
+                    asChild
+                    className="py-5 flex items-center gap-2 bg-transparent hover:bg-transparent"
+                  >
                     <Link href={`/courses?category_id=${course.id}`}>
-                      <span className="font-semibold">{course.total_course}{" "}Courses</span>
+                      <span className="font-semibold text-white">
+                        {course.total_course} Courses
+                      </span>
                       <div className="bg-primary text-white p-2 rounded-full inline-flex items-center justify-center">
                         <ChevronRight width={20} height={20} />
                       </div>

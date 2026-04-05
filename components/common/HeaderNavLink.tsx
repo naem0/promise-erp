@@ -23,6 +23,7 @@ const aboutDropdownLinks = [
   { name: "About", href: "/about" },
   { name: "Trainers", href: "/trainers" },
   { name: "Video Gallery", href: "/video-gellary" },
+  { name: "Image Gallery", href: "/image-gallery" },
   { name: "Success Stories", href: "/success-stories" },
   { name: "News Feeds", href: "/news-feeds" },
   { name: "Our Officers", href: "/our-officers" },
@@ -114,7 +115,7 @@ const HeaderNavLink = async ({
         <div className="flex items-center justify-end gap-2 text-sm w-1/4">
           <Phone className="h-4 w-4 text-secondary" />
           <span className="font-semibold text-secondary text-base">
-            01550-666800
+            01550-666900
           </span>
         </div>
       )}

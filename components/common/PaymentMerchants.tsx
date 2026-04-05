@@ -4,17 +4,17 @@ const PaymentMerchants = () => {
     {
       name: "bKash",
       img: "/images/bkash01.png",
-      number: "01550-666800",
+      number: "01550-666900",
     },
     {
       name: "Nagad",
       img: "/images/nagad01.png",
-      number: "01550-666800",
+      number: "01550-666900",
     },
     {
       name: "Rocket",
       img: "/images/roket01.png",
-      number: "01550-666800",
+      number: "01550-666900",
     },
   ];
 

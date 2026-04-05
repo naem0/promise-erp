@@ -102,7 +102,7 @@ const FooterWidget = () => {
             <div className="space-y-3 text-sm text-white">
               <p className="flex items-center gap-2">
                 {" "}
-                <Phone size={20} /> 01550-666800
+                <Phone size={20} /> 01550-666900
               </p>
               <p className="flex items-center gap-2">
                 <Phone size={20} />

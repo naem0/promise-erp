@@ -10,7 +10,7 @@ const CourseCategoriesWrapper = async () => {
   const categoriesData: CategoriesResponse = await getHomeCourseCategories();
 
   return (
-    <section className="bg-secondary py-8 md:py-14">
+    <section className="bg-secondary py-8 lg:py-14">
       <div className="container mx-auto px-4">
         <SectionTitle
           title={categoriesData?.data?.section_title}

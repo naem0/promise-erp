@@ -100,7 +100,7 @@ const FreeSeminarRegistrationForm = ({ seminarId }: { seminarId: number }) => {
                 </p>
                 <div className="flex items-center justify-center gap-3 text-2xl md:text-4xl font-bold text-secondary">
                     <Phone className="w-8 h-8 md:w-9 md:h-9 text-secondary" strokeWidth={2.5} />
-                    <span>01550-666800</span>
+                    <span>01550-666900</span>
                 </div>
             </div>
         </div>

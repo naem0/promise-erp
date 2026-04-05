@@ -19,7 +19,7 @@ const SupportContact = () => {
                             href="tel:01550666800"
                             className=" border text-center border-secondary rounded-lg px-4 py-2 font-medium inline-block"
                         >
-                            01550-666800
+                            01550-666900
                         </Link>
                         <p className="text-muted-foreground text-sm">
                             For any enrollment assistance, please call this number.

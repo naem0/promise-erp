@@ -42,7 +42,7 @@ const HomeHeroSection = ({ heroBannerData }: HeroVideoData) => {
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
           {/* LEFT CONTENT */}
-          <div className="flex flex-col justify-center pe-0 lg:pe-4 py-14 md:py-18">
+          <div className="flex flex-col justify-center pe-0 lg:pe-4 py-8 lg:py-18">
             <h1 className="text-secondary capitalize font-bold text-2xl md:text-4xl xl:text-6xl leading-normal">
               {sliderData?.title}
             </h1>
@@ -81,7 +81,7 @@ const HomeHeroSection = ({ heroBannerData }: HeroVideoData) => {
           >
             <div className="rounded-2xl overflow-hidden border-6 min-h-[425px] border-white relative">
               <ReactPlayer
-                className="aspect-video"
+                className="absolute inset-0"
                 src={videoUrl}
                 playing={isPlaying}
                 controls={true}

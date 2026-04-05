@@ -66,61 +66,65 @@ interface ImageGalleryCardItemsProps {
 const ImageGalleryCardItems = ({ event }: ImageGalleryCardItemsProps) => {
   const images = event?.images || [];
 
+  // Card-এর মতো 2x2 grid-এ প্রথম ৪টি image দেখাবে
+  const gridImages = images.slice(0, 4);
+  while (gridImages.length < 4) {
+    gridImages.push(images[0] || "/images/placeholder_img.jpg");
+  }
+
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Card className="py-0 gap-2 cursor-pointer hover:shadow-lg transition">
-          <CardContent className="p-3 pb-0">
-            <div className="relative w-full h-[250px] lg:h-[350px] rounded-lg">
-              <Image
-                src={images[0] || "/images/placeholder_img.jpg"}
-                alt={event?.title}
-                fill
-                className="rounded-lg object-cover"
-              />
+        <Card className="py-0 gap-0 cursor-pointer hover:shadow-lg transition overflow-hidden">
+          {/* 2x2 Image Grid — card-এর মতো */}
+          <CardContent className="p-0">
+            <div className="grid grid-cols-2 gap-2 p-2 ">
+              {gridImages.map((img, i) => (
+                <div key={i} className="relative w-full h-[130px] lg:h-[160px]">
+                  <Image
+                    src={img}
+                    alt={`${event?.title} ${i + 1}`}
+                    fill
+                    className="object-cover rounded-lg"
+                  />
+                </div>
+              ))}
             </div>
           </CardContent>
 
           <CardFooter className="flex flex-col items-start gap-3 p-3">
-            <p className="text-base">{event?.title}</p>
+            <p className="text-base text-secondary leading-relaxed">{event?.title}</p>
             <Button className="w-full">View More</Button>
           </CardFooter>
         </Card>
       </DialogTrigger>
 
-      <DialogContent className="max-w-7xl w-full">
-        {/* Accessibility Title (hidden) */}
+      <DialogContent className="w-[90%] md:!max-w-[85%] p-0 overflow-hidden gap-0">
         <VisuallyHidden>
           <DialogTitle>{event?.title}</DialogTitle>
         </VisuallyHidden>
 
-        {images.length > 1 ? (
-          <Carousel className="w-full">
-            <CarouselContent className="w-full">
-              {images.map((img, index) => (
-                <CarouselItem key={index}>
-                  <div className="relative w-full h-[400px]">
-                    <Image
-                      src={img}
-                      alt={`gallery-${index}`}
-                      fill
-                      className="object-cover rounded-md w-full h-full"
-                    />
-                  </div>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious className="absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-primary text-white" />
-            <CarouselNext className="absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-primary text-white" />
-          </Carousel>
-        ) : (
-          <div className="relative w-full h-[400px]">
-            <Image
-              src={images[0] || "/images/placeholder_img.jpg"}
-              alt="gallery"
-              fill
-              className="object-cover rounded-md w-full h-full"
-            />
+        {/* Full carousel — সব images */}
+        {images.length > 0 && (
+          <div className="relative px-10 py-4">
+            <Carousel className="w-full h-full">
+              <CarouselContent>
+                {images.map((img, index) => (
+                  <CarouselItem key={index} className="basis-full]">
+                    <div className="relative w-full  aspect-[16/9]">
+                      <Image
+                        src={img}
+                        alt={`gallery-${index}`}
+                        fill
+                        className="object-cover rounded-md"
+                      />
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="left-0 bg-primary text-white hover:bg-primary/90" />
+              <CarouselNext className="right-0 bg-primary text-white hover:bg-primary/90" />
+            </Carousel>
           </div>
         )}
       </DialogContent>
