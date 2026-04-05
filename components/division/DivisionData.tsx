@@ -13,7 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { Eye, Pencil } from "lucide-react";
 import Link from "next/link";
 import DeleteButton from "./DeleteButton";
-
+import PermissionGuard from "@/components/auth/PermissionGuard";
 
 const DivisionData = async ({
   searchParams,
@@ -82,27 +82,35 @@ const DivisionData = async ({
                     </DropdownMenuTrigger>
 
                     <DropdownMenuContent align="center">
-                      <DropdownMenuItem asChild>
-                        <Link
-                          href={`/divisions/${division?.id}`}
-                          className="flex items-center cursor-pointer"
-                        >
-                          <Eye className="mr-2 h-4 w-4" />
-                          Details
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <Link
-                          href={`/divisions/${division?.id}/edit`}
-                          className="flex items-center cursor-pointer"
-                        >
-                          <Pencil className="mr-2 h-4 w-4" />
-                          Manage
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <DeleteButton id={division?.id} />
-                      </DropdownMenuItem>
+                      <PermissionGuard requiredPermission="view-divisions">
+                        <DropdownMenuItem asChild>
+                          <Link
+                            href={`/divisions/${division?.id}`}
+                            className="flex items-center cursor-pointer"
+                          >
+                            <Eye className="mr-2 h-4 w-4" />
+                            Details
+                          </Link>
+                        </DropdownMenuItem>
+                      </PermissionGuard>
+
+                      <PermissionGuard requiredPermission="edit-divisions">
+                        <DropdownMenuItem asChild>
+                          <Link
+                            href={`/divisions/${division?.id}/edit`}
+                            className="flex items-center cursor-pointer"
+                          >
+                            <Pencil className="mr-2 h-4 w-4" />
+                            Manage
+                          </Link>
+                        </DropdownMenuItem>
+                      </PermissionGuard>
+
+                      <PermissionGuard requiredPermission="delete-divisions">
+                        <DropdownMenuItem asChild>
+                          <DeleteButton id={division?.id} />
+                        </DropdownMenuItem>
+                      </PermissionGuard>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>

@@ -6,6 +6,8 @@ import { Suspense } from "react";
 import FacilitiesFilterData from "@/components/lms/facilities/FacilitiesFilterData";
 import FacilitiesData from "@/components/lms/facilities/FacilitiesData";
 
+import PermissionGuard from "@/components/auth/PermissionGuard";
+
 const FacilitiesPage = ({
   searchParams,
 }: {
@@ -15,12 +17,14 @@ const FacilitiesPage = ({
     <div className="mx-auto space-y-6 ">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-semibold tracking-tight">Facility</h1>
-        <Button asChild>
-          <Link href="/lms/facilities/add">
-            <PlusCircle className="w-4 h-4 mr-2" />
-            Add Facility
-          </Link>
-        </Button>
+        <PermissionGuard requiredPermission="create-facilities">
+          <Button asChild>
+            <Link href="/lms/facilities/add">
+              <PlusCircle className="w-4 h-4 mr-2" />
+              Add Facility
+            </Link>
+          </Button>
+        </PermissionGuard>
       </div>
 
       <Suspense fallback={<div>Loading Search...</div>}>

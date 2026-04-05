@@ -23,6 +23,7 @@ import { Pencil } from "lucide-react";
 import Link from "next/link";
 import DeleteBranchButton from "@/components/lms/branches/DeleteBranchButton";
 import Pagination from "@/components/common/Pagination";
+import PermissionGuard from "@/components/auth/PermissionGuard";
 
 /* ---------------------- Interfaces ---------------------- */
 
@@ -96,19 +97,23 @@ export default async function BranchesData({
                       </Badge>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="center">
-                      <DropdownMenuItem asChild>
-                        <Link
-                          href={`/lms/branches/${branch.id}/edit`}
-                          className="flex items-center cursor-pointer"
-                        >
-                          <Pencil className="mr-2 h-4 w-4" />
-                          Manage
-                        </Link>
-                      </DropdownMenuItem>
+                      <PermissionGuard requiredPermission="edit-branches">
+                        <DropdownMenuItem asChild>
+                          <Link
+                            href={`/lms/branches/${branch.id}/edit`}
+                            className="flex items-center cursor-pointer"
+                          >
+                            <Pencil className="mr-2 h-4 w-4" />
+                            Manage
+                          </Link>
+                        </DropdownMenuItem>
+                      </PermissionGuard>
 
-                      <DropdownMenuItem asChild>
-                        <DeleteBranchButton id={branch.id} />
-                      </DropdownMenuItem>
+                      <PermissionGuard requiredPermission="delete-branches">
+                        <DropdownMenuItem asChild>
+                          <DeleteBranchButton id={branch.id} />
+                        </DropdownMenuItem>
+                      </PermissionGuard>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>

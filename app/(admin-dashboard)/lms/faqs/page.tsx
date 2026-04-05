@@ -6,6 +6,8 @@ import { PlusCircle } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
 
+import PermissionGuard from "@/components/auth/PermissionGuard";
+
 export default function FaqsPage({
     searchParams,
 }: {
@@ -16,12 +18,14 @@ export default function FaqsPage({
             <div className="flex justify-between items-center">
                 <h1 className="text-2xl font-semibold tracking-tight">FAQs</h1>
 
-                <Button asChild>
-                    <Link href="/lms/faqs/add">
-                        <PlusCircle className="w-4 h-4 mr-2" />
-                        Add FAQ
-                    </Link>
-                </Button>
+                <PermissionGuard requiredPermission="create-faqs">
+                    <Button asChild>
+                        <Link href="/lms/faqs/add">
+                            <PlusCircle className="w-4 h-4 mr-2" />
+                            Add FAQ
+                        </Link>
+                    </Button>
+                </PermissionGuard>
             </div>
 
             <Suspense fallback={<div>Loading filters...</div>}>

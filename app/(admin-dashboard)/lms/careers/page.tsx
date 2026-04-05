@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
+import PermissionGuard from "@/components/auth/PermissionGuard";
+
 interface CareersPageProps {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }
@@ -17,12 +19,14 @@ export default function CareersPage({ searchParams }: CareersPageProps) {
           Careers
         </h1>
 
-        <Button asChild className="bg-green-600">
-          <Link href="/lms/careers/add" prefetch={true}>
-            <PlusCircle className="w-4 h-4 mr-2" />
-            Add Career
-          </Link>
-        </Button>
+        <PermissionGuard requiredPermission="create-careers">
+          <Button asChild className="bg-green-600">
+            <Link href="/lms/careers/add" prefetch={true}>
+              <PlusCircle className="w-4 h-4 mr-2" />
+              Add Career
+            </Link>
+          </Button>
+        </PermissionGuard>
       </div>
 
       <Suspense fallback={<div>Loading filters...</div>}>

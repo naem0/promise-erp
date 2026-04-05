@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
+import PermissionGuard from "@/components/auth/PermissionGuard";
 
 export default function BranchesPage({
   searchParams,
@@ -17,12 +18,14 @@ export default function BranchesPage({
       {/* Header */}
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-semibold tracking-tight">Branches</h1>
-        <Link href="/lms/branches/add">
-          <Button className="gap-2">
-            <PlusCircle className="w-4 h-4" />
-            Add Branch
+        <PermissionGuard requiredPermission="create-branches">
+          <Button asChild>
+            <Link href="/lms/branches/add">
+              <PlusCircle className="w-4 h-4 mr-2" />
+              Add Branch
+            </Link>
           </Button>
-        </Link>
+        </PermissionGuard>
       </div>
 
       {/* Branch Filters */}

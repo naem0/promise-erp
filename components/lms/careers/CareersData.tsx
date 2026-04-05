@@ -21,6 +21,7 @@ import Image from "next/image";
 import { Career, getCareers } from "@/apiServices/careerService";
 import DeleteCareerButton from "./DeleteCareerButton";
 import Pagination from "@/components/common/Pagination";
+import PermissionGuard from "@/components/auth/PermissionGuard";
 
 const JOB_TYPE_LABELS: Record<number, string> = {
   1: "Full Time",
@@ -129,18 +130,23 @@ const CareersData = async ({ searchParams }: CareersDataProps) => {
                     </DropdownMenuTrigger>
 
                     <DropdownMenuContent align="center">
-                      <DropdownMenuItem asChild>
-                        <Link
-                          href={`/lms/careers/${career?.id}/edit`} prefetch={true}
-                          className="flex items-center cursor-pointer"
-                        >
-                          <Pencil className="mr-2 h-4 w-4" />
-                          Edit
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <DeleteCareerButton id={career?.id} />
-                      </DropdownMenuItem>
+                      <PermissionGuard requiredPermission="edit-careers">
+                        <DropdownMenuItem asChild>
+                          <Link
+                            href={`/lms/careers/${career?.id}/edit`} prefetch={true}
+                            className="flex items-center cursor-pointer"
+                          >
+                            <Pencil className="mr-2 h-4 w-4" />
+                            Edit
+                          </Link>
+                        </DropdownMenuItem>
+                      </PermissionGuard>
+
+                      <PermissionGuard requiredPermission="delete-careers">
+                        <DropdownMenuItem asChild>
+                          <DeleteCareerButton id={career?.id} />
+                        </DropdownMenuItem>
+                      </PermissionGuard>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>

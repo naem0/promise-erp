@@ -5,6 +5,8 @@ import Link from "next/link";
 import { Suspense } from "react";
 import FreeSeminarsFilterData from "@/components/lms/free-seminars/FreeSeminarsFilterData";
 import FreeSeminarsData from "@/components/lms/free-seminars/FreeSeminarsData";
+import PermissionGuard from "@/components/auth/PermissionGuard";
+
 const FreeSeminarsPage = ({
   searchParams,
 }: {
@@ -14,12 +16,14 @@ const FreeSeminarsPage = ({
     <div className="mx-auto space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-semibold tracking-tight">Free Seminars</h1>
-        <Button asChild>
-          <Link href="/lms/free-seminars/add">
-            <PlusCircle className="w-4 h-4 mr-2" />
-            Add Free Seminar
-          </Link>
-        </Button>
+        <PermissionGuard requiredPermission="create-free-seminars">
+          <Button asChild>
+            <Link href="/lms/free-seminars/add">
+              <PlusCircle className="w-4 h-4 mr-2" />
+              Add Free Seminar
+            </Link>
+          </Button>
+        </PermissionGuard>
       </div>
       <Suspense fallback={<div>Loading Search...</div>}>
         <FreeSeminarsFilterData />

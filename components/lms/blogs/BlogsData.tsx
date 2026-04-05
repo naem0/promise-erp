@@ -21,6 +21,8 @@ import Image from "next/image";
 import { Blog, getBlogs } from "@/apiServices/blogsService";
 import DeleteBlogButton from "./DeleteBlogButton";
 import Pagination from "@/components/common/Pagination";
+import PermissionGuard from "@/components/auth/PermissionGuard";
+
 interface SearchParamsProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
@@ -104,18 +106,23 @@ const BlogsData = async ({ searchParams }: SearchParamsProps) => {
                   </DropdownMenuTrigger>
 
                   <DropdownMenuContent align="center">
-                    <DropdownMenuItem asChild>
-                      <Link
-                        href={`/lms/blogs/${blog?.id}/edit`}
-                        className="flex items-center cursor-pointer"
-                      >
-                        <Pencil className="mr-2 h-4 w-4" />
-                        Manage
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <DeleteBlogButton id={blog?.id} />
-                    </DropdownMenuItem>
+                    <PermissionGuard requiredPermission="edit-blogs">
+                      <DropdownMenuItem asChild>
+                        <Link
+                          href={`/lms/blogs/${blog?.id}/edit`}
+                          className="flex items-center cursor-pointer"
+                        >
+                          <Pencil className="mr-2 h-4 w-4" />
+                          Manage
+                        </Link>
+                      </DropdownMenuItem>
+                    </PermissionGuard>
+
+                    <PermissionGuard requiredPermission="delete-blogs">
+                      <DropdownMenuItem asChild>
+                        <DeleteBlogButton id={blog?.id} />
+                      </DropdownMenuItem>
+                    </PermissionGuard>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </TableCell>

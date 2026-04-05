@@ -22,6 +22,8 @@ import Pagination from "@/components/common/Pagination";
 import Link from "next/link";
 import DeleteButton from "./DeleteButton";
 import AssignBranchesButton from "./AssignBranchesButton";
+import PermissionGuard from "@/components/auth/PermissionGuard";
+
 export default async function CoursesData({
   searchParams,
 }: {
@@ -110,20 +112,26 @@ export default async function CoursesData({
                         </Link>
                       </DropdownMenuItem>
 
-                      <DropdownMenuItem asChild>
-                        <Link href={`/lms/courses/${course.id}/edit`}>
-                          <Pencil className="mr-2 h-4 w-4" /> Manage
-                        </Link>
-                      </DropdownMenuItem>
+                      <PermissionGuard requiredPermission="edit-courses">
+                        <DropdownMenuItem asChild>
+                          <Link href={`/lms/courses/${course.id}/edit`}>
+                            <Pencil className="mr-2 h-4 w-4" /> Manage
+                          </Link>
+                        </DropdownMenuItem>
+                      </PermissionGuard>
 
-                      <DropdownMenuItem asChild>
-                        <DeleteButton id={course.id} />
-                      </DropdownMenuItem>
+                      <PermissionGuard requiredPermission="delete-courses">
+                        <DropdownMenuItem asChild>
+                          <DeleteButton id={course.id} />
+                        </DropdownMenuItem>
+                      </PermissionGuard>
 
-                      <AssignBranchesButton
-                        courseId={String(course.id)}
-                        initialAssignedBranches={course.branches}
-                      />
+                      <PermissionGuard requiredPermission="assign-course-branches">
+                        <AssignBranchesButton
+                          courseId={String(course.id)}
+                          initialAssignedBranches={course.branches}
+                        />
+                      </PermissionGuard>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>

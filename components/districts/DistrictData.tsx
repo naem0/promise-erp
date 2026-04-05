@@ -15,6 +15,7 @@ import Link from "next/link";
 import { District, getDistricts } from "@/apiServices/districtService";
 import DeleteButton from "./DeleteButton";
 import Pagination from "@/components/common/Pagination";
+import PermissionGuard from "@/components/auth/PermissionGuard";
 
 
 const DistrictData = async ({
@@ -88,27 +89,35 @@ const DistrictData = async ({
                     </DropdownMenuTrigger>
 
                     <DropdownMenuContent align="center">
-                      <DropdownMenuItem asChild>
-                        <Link
-                          href={`/districts/${district?.id}`}
-                          className="flex items-center cursor-pointer"
-                        >
-                          <Eye className="mr-2 h-4 w-4" />
-                          Details
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <Link
-                          href={`/districts/${district?.id}/edit`}
-                          className="flex items-center cursor-pointer"
-                        >
-                          <Pencil className="mr-2 h-4 w-4" />
-                          Manage
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <DeleteButton id={district?.id} />
-                      </DropdownMenuItem>
+                      <PermissionGuard requiredPermission="view-districts">
+                        <DropdownMenuItem asChild>
+                          <Link
+                            href={`/districts/${district?.id}`}
+                            className="flex items-center cursor-pointer"
+                          >
+                            <Eye className="mr-2 h-4 w-4" />
+                            Details
+                          </Link>
+                        </DropdownMenuItem>
+                      </PermissionGuard>
+
+                      <PermissionGuard requiredPermission="edit-districts">
+                        <DropdownMenuItem asChild>
+                          <Link
+                            href={`/districts/${district?.id}/edit`}
+                            className="flex items-center cursor-pointer"
+                          >
+                            <Pencil className="mr-2 h-4 w-4" />
+                            Manage
+                          </Link>
+                        </DropdownMenuItem>
+                      </PermissionGuard>
+
+                      <PermissionGuard requiredPermission="delete-districts">
+                        <DropdownMenuItem asChild>
+                          <DeleteButton id={district?.id} />
+                        </DropdownMenuItem>
+                      </PermissionGuard>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>

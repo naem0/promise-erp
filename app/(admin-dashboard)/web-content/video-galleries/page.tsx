@@ -5,6 +5,8 @@ import Link from "next/link";
 import { Suspense } from "react";  
 import VideoGalleryFilterData from "@/components/web-content/video-galleries/VideoGalleryFilterData";
 import VideoGalleryData from "@/components/web-content/video-galleries/VideoGalleryData";  
+import PermissionGuard from "@/components/auth/PermissionGuard";
+
 const VideoGalleriesPage = ({
   searchParams,
 }: {
@@ -14,12 +16,14 @@ const VideoGalleriesPage = ({
     <div className="mx-auto space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-semibold tracking-tight">Video Galleries</h1>
-        <Button asChild>
-            <Link href="/web-content/video-galleries/add">  
-                <PlusCircle className="w-4 h-4 mr-2" />
-                Add Video Gallery
-            </Link>
-        </Button>
+        <PermissionGuard requiredPermission="create-video-gallery">
+          <Button asChild>
+              <Link href="/web-content/video-galleries/add">  
+                  <PlusCircle className="w-4 h-4 mr-2" />
+                  Add Video Gallery
+              </Link>
+          </Button>
+        </PermissionGuard>
         </div>
         <Suspense fallback={<div>Loading Search...</div>}>
         <VideoGalleryFilterData />

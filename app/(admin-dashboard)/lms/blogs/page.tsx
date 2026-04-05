@@ -6,6 +6,8 @@ import { PlusCircle } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
 
+import PermissionGuard from "@/components/auth/PermissionGuard";
+
 interface PageProps {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }
@@ -17,12 +19,14 @@ export default function BlogsPage({ searchParams }: PageProps) {
           Blogs
         </h1>
 
-        <Button asChild className="bg-green-600">
-          <Link href="/lms/blogs/add">
-            <PlusCircle className="w-4 h-4 mr-2" />
-            Add Blog
-          </Link>
-        </Button>
+        <PermissionGuard requiredPermission="create-blogs">
+          <Button asChild className="bg-green-600">
+            <Link href="/lms/blogs/add">
+              <PlusCircle className="w-4 h-4 mr-2" />
+              Add Blog
+            </Link>
+          </Button>
+        </PermissionGuard>
       </div>
 
       <Suspense fallback={<div>Loading filters...</div>}>

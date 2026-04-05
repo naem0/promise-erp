@@ -15,6 +15,7 @@ import Link from "next/link";
 import { Faq, getFaqs } from "@/apiServices/faqsService";
 import DeleteButton from "./DeleteButton";
 import Pagination from "@/components/common/Pagination";
+import PermissionGuard from "@/components/auth/PermissionGuard";
 
 
 const FaqsData = async ({
@@ -94,18 +95,23 @@ const FaqsData = async ({
                   </DropdownMenuTrigger>
 
                   <DropdownMenuContent align="center">
-                    <DropdownMenuItem asChild>
-                      <Link
-                        href={`/lms/faqs/${faq?.id}/edit`}
-                        className="flex items-center cursor-pointer"
-                      >
-                        <Pencil className="mr-2 h-4 w-4" />
-                        Manage
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <DeleteButton id={faq?.id} />
-                    </DropdownMenuItem>
+                    <PermissionGuard requiredPermission="edit-faqs">
+                      <DropdownMenuItem asChild>
+                        <Link
+                          href={`/lms/faqs/${faq?.id}/edit`}
+                          className="flex items-center cursor-pointer"
+                        >
+                          <Pencil className="mr-2 h-4 w-4" />
+                          Manage
+                        </Link>
+                      </DropdownMenuItem>
+                    </PermissionGuard>
+
+                    <PermissionGuard requiredPermission="delete-faqs">
+                      <DropdownMenuItem asChild>
+                        <DeleteButton id={faq?.id} />
+                      </DropdownMenuItem>
+                    </PermissionGuard>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </TableCell>

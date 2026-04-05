@@ -14,6 +14,7 @@ import { getCommonSections, CommonSection, deleteCommonSection } from "@/apiServ
 import Image from "next/image";
 import Pagination from "@/components/common/Pagination";
 import DeleteButton from "@/components/common/DeleteButton";
+import PermissionGuard from "@/components/auth/PermissionGuard";
 
 // Function to get badge color based on type
 const getTypeBadgeColor = (type: string): string => {
@@ -120,22 +121,27 @@ const CommonSectionsData = async ({
                     </DropdownMenuTrigger>
 
                     <DropdownMenuContent align="center">
-                      <DropdownMenuItem asChild>
-                        <Link
-                          href={`/web-content/common-sections/${item.id}/edit`}
-                          className="flex items-center cursor-pointer"
-                        >
-                          <Pencil className="mr-2 h-4 w-4" />
-                          Manage
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <DeleteButton
-                          id={item.id}
-                          deleteAction={deleteCommonSection}
-                          itemName="common section"
-                        />
-                      </DropdownMenuItem>
+                      <PermissionGuard requiredPermission="edit-common-sections">
+                        <DropdownMenuItem asChild>
+                          <Link
+                            href={`/web-content/common-sections/${item.id}/edit`}
+                            className="flex items-center cursor-pointer"
+                          >
+                            <Pencil className="mr-2 h-4 w-4" />
+                            Manage
+                          </Link>
+                        </DropdownMenuItem>
+                      </PermissionGuard>
+
+                      <PermissionGuard requiredPermission="delete-common-sections">
+                        <DropdownMenuItem asChild>
+                          <DeleteButton
+                            id={item.id}
+                            deleteAction={deleteCommonSection}
+                            itemName="common section"
+                          />
+                        </DropdownMenuItem>
+                      </PermissionGuard>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>

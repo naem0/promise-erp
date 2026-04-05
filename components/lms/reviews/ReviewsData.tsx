@@ -21,6 +21,7 @@ import { getReviews, Review } from "@/apiServices/reviewService";
 import DeleteButton from "./DeleteButton";
 import ApproveReviewButton from "./ApproveReviewButton";
 import Pagination from "@/components/common/Pagination";
+import PermissionGuard from "@/components/auth/PermissionGuard";
 
 const ReviewsData = async ({
   searchParams,
@@ -127,25 +128,31 @@ const ReviewsData = async ({
                     </DropdownMenuTrigger>
 
                     <DropdownMenuContent align="center">
-                      <DropdownMenuItem asChild>
-                        <Link
-                          href={`/lms/reviews/${review.id}/edit`}
-                          className="flex items-center cursor-pointer"
-                        >
-                          <Pencil className="mr-2 h-4 w-4" />
-                          Manage
-                        </Link>
-                      </DropdownMenuItem>
+                      <PermissionGuard requiredPermission="edit-reviews">
+                        <DropdownMenuItem asChild>
+                          <Link
+                            href={`/lms/reviews/${review.id}/edit`}
+                            className="flex items-center cursor-pointer"
+                          >
+                            <Pencil className="mr-2 h-4 w-4" />
+                            Manage
+                          </Link>
+                        </DropdownMenuItem>
+                      </PermissionGuard>
 
                       {review.status !== 1 && (
-                        <DropdownMenuItem asChild>
-                          <ApproveReviewButton id={review.id} />
-                        </DropdownMenuItem>
+                        <PermissionGuard requiredPermission="edit-reviews">
+                          <DropdownMenuItem asChild>
+                            <ApproveReviewButton id={review.id} />
+                          </DropdownMenuItem>
+                        </PermissionGuard>
                       )}
 
-                      <DropdownMenuItem asChild>
-                        <DeleteButton id={review.id} />
-                      </DropdownMenuItem>
+                      <PermissionGuard requiredPermission="delete-reviews">
+                        <DropdownMenuItem asChild>
+                          <DeleteButton id={review.id} />
+                        </DropdownMenuItem>
+                      </PermissionGuard>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>

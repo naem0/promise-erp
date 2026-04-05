@@ -11,17 +11,21 @@ export interface BlogParams {
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
+import PermissionGuard from "@/components/auth/PermissionGuard";
+
 const BlogCategoriesPage = ({ searchParams }: BlogParams) => {
     return (
         <div className="mx-auto space-y-6">
             <div className="flex justify-between items-center">
                 <h1 className="text-2xl font-semibold tracking-tight">Blog Categories</h1>
-                <Button asChild>
-                    <Link href="/web-content/blog-categories/add">
-                        <PlusCircle className="w-4 h-4 mr-2" />
-                        Add Blog Category
-                    </Link>
-                </Button>
+                <PermissionGuard requiredPermission="create-blog-categories">
+                    <Button asChild>
+                        <Link href="/web-content/blog-categories/add">
+                            <PlusCircle className="w-4 h-4 mr-2" />
+                            Add Blog Category
+                        </Link>
+                    </Button>
+                </PermissionGuard>
             </div>
             <Suspense fallback={<div>Loading filters...</div>}>
                 <BlogCategoriesFilterNav />

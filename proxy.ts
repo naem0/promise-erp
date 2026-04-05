@@ -86,19 +86,15 @@ export async function proxy(request: NextRequest) {
       const allowed = matchedRoute.permissions.every(p => userPermissions.includes(p));
 
       if (!allowed) {
-        // Log to terminal for debugging
-        console.log(`❌ Unauthorized access blocked! User tried to visit ${pathname} without ${matchedRoute.permissions.join(', ')}`);
         return NextResponse.redirect(new URL('/unauthorized', request.url));
       }
     } else {
       // Security fallback: Block deep/unexpected paths under /lms that don't have rules
-      // (Except dashboard or known safe prefixes if necessary. Adjust this if you want to allow safe fallbacks)
       if (
         pathname.startsWith('/lms/courses/') || 
         pathname.startsWith('/lms/employees/') ||
         pathname.startsWith('/lms/teachers/')
       ) {
-         console.log(`⚠️ Blocked unknown route: ${pathname}`);
          return NextResponse.redirect(new URL('/unauthorized', request.url));
       }
     }

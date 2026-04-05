@@ -23,6 +23,7 @@ import Link from "next/link";
 import { Pencil } from "lucide-react";
 import Pagination from "@/components/common/Pagination";
 import DeleteButton from "@/components/common/DeleteButton";
+import PermissionGuard from "@/components/auth/PermissionGuard";
 
 interface CareerCategoriesParamsProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -116,22 +117,27 @@ const CareerCategoriesData = async ({
                       </Badge>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="center">
-                      <DropdownMenuItem asChild>
-                        <Link
-                          href={`/web-content/career-categories/${career_category?.id}/edit`}
-                          className="flex items-center cursor-pointer"
-                        >
-                          <Pencil className="mr-2 h-4 w-4" />
-                          Manage
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <DeleteButton
-                          id={career_category?.id}
-                          deleteAction={deleteCareerCategory}
-                          itemName="career category"
-                        />
-                      </DropdownMenuItem>
+                      <PermissionGuard requiredPermission="edit-career-category">
+                        <DropdownMenuItem asChild>
+                          <Link
+                            href={`/web-content/career-categories/${career_category?.id}/edit`}
+                            className="flex items-center cursor-pointer"
+                          >
+                            <Pencil className="mr-2 h-4 w-4" />
+                            Manage
+                          </Link>
+                        </DropdownMenuItem>
+                      </PermissionGuard>
+
+                      <PermissionGuard requiredPermission="delete-career-category">
+                        <DropdownMenuItem asChild>
+                          <DeleteButton
+                            id={career_category?.id}
+                            deleteAction={deleteCareerCategory}
+                            itemName="career category"
+                          />
+                        </DropdownMenuItem>
+                      </PermissionGuard>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>

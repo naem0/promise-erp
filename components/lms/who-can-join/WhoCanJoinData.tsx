@@ -14,6 +14,7 @@ import Link from "next/link";
 import { getJoins, JoinType } from "@/apiServices/joinService";
 import DeleteButton from "./DeleteButton";
 import Pagination from "@/components/common/Pagination";
+import PermissionGuard from "@/components/auth/PermissionGuard";
 
 const WhoCanJoinData = async ({
   searchParams,
@@ -90,18 +91,23 @@ const WhoCanJoinData = async ({
                   </DropdownMenuTrigger>
 
                   <DropdownMenuContent align="center">
-                    <DropdownMenuItem asChild>
-                      <Link
-                        href={`/lms/who-can-join/${join?.id}/edit`}
-                        className="flex items-center cursor-pointer"
-                      >
-                        <Pencil className="mr-2 h-4 w-4" />
-                        Manage
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <DeleteButton id={join?.id} />
-                    </DropdownMenuItem>
+                    <PermissionGuard requiredPermission="edit-who-can-join">
+                      <DropdownMenuItem asChild>
+                        <Link
+                          href={`/lms/who-can-join/${join?.id}/edit`}
+                          className="flex items-center cursor-pointer"
+                        >
+                          <Pencil className="mr-2 h-4 w-4" />
+                          Manage
+                        </Link>
+                      </DropdownMenuItem>
+                    </PermissionGuard>
+
+                    <PermissionGuard requiredPermission="delete-who-can-join">
+                      <DropdownMenuItem asChild>
+                        <DeleteButton id={join?.id} />
+                      </DropdownMenuItem>
+                    </PermissionGuard>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </TableCell>

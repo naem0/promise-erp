@@ -15,6 +15,7 @@ import Link from "next/link";
 import { Group, getGroups } from "@/apiServices/groupService";
 import DeleteButton from "./DeleteButton";
 import Pagination from "@/components/common/Pagination";
+import PermissionGuard from "@/components/auth/PermissionGuard";
 
 
 const GroupsData = async ({
@@ -88,27 +89,35 @@ const GroupsData = async ({
                     </DropdownMenuTrigger>
 
                     <DropdownMenuContent align="center">
-                      <DropdownMenuItem asChild>
-                        <Link
-                          href={`/lms/groups/${group?.id}`}
-                          className="flex items-center cursor-pointer"
-                        >
-                          <Eye className="mr-2 h-4 w-4" />
-                          Details
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <Link
-                          href={`/lms/groups/${group?.id}/edit`}
-                          className="flex items-center cursor-pointer"
-                        >
-                          <Pencil className="mr-2 h-4 w-4" />
-                          Manage
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <DeleteButton id={group?.id} />
-                      </DropdownMenuItem>
+                      <PermissionGuard requiredPermission="view-groups">
+                        <DropdownMenuItem asChild>
+                          <Link
+                            href={`/lms/groups/${group?.id}`}
+                            className="flex items-center cursor-pointer"
+                          >
+                            <Eye className="mr-2 h-4 w-4" />
+                            Details
+                          </Link>
+                        </DropdownMenuItem>
+                      </PermissionGuard>
+
+                      <PermissionGuard requiredPermission="edit-groups">
+                        <DropdownMenuItem asChild>
+                          <Link
+                            href={`/lms/groups/${group?.id}/edit`}
+                            className="flex items-center cursor-pointer"
+                          >
+                            <Pencil className="mr-2 h-4 w-4" />
+                            Manage
+                          </Link>
+                        </DropdownMenuItem>
+                      </PermissionGuard>
+
+                      <PermissionGuard requiredPermission="delete-groups">
+                        <DropdownMenuItem asChild>
+                          <DeleteButton id={group?.id} />
+                        </DropdownMenuItem>
+                      </PermissionGuard>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>

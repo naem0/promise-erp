@@ -6,6 +6,8 @@ import { PlusCircle } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
 
+import PermissionGuard from "@/components/auth/PermissionGuard";
+
 export default function CategoriesPage({
     searchParams,
 }: {
@@ -16,12 +18,14 @@ export default function CategoriesPage({
             <div className="flex justify-between items-center">
                 <h1 className="text-2xl font-semibold tracking-tight text-slate-800">CRM Categories</h1>
 
-                <Button asChild >
-                    <Link href="/crm/categories/add">
-                        <PlusCircle className="w-4 h-4 mr-2" />
-                        Add Category
-                    </Link>
-                </Button>
+                <PermissionGuard requiredPermission="create-crm-categories">
+                    <Button asChild >
+                        <Link href="/crm/categories/add">
+                            <PlusCircle className="w-4 h-4 mr-2" />
+                            Add Category
+                        </Link>
+                    </Button>
+                </PermissionGuard>
             </div>
 
             <CategoriesFilter />

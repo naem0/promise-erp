@@ -14,6 +14,7 @@ import { getOpportunities, Opportunity } from "@/apiServices/homePageAdminServic
 import DeleteButton from "./DeleteButton";
 import Image from "next/image";
 import Pagination from "@/components/common/Pagination";
+import PermissionGuard from "@/components/auth/PermissionGuard";
 
 const OpportunitiesData = async ({
   searchParams,
@@ -94,18 +95,23 @@ const OpportunitiesData = async ({
                     </DropdownMenuTrigger>
 
                     <DropdownMenuContent align="center">
-                      <DropdownMenuItem asChild>
-                        <Link
-                          href={`/web-content/opportunities/${item.id}/edit`}
-                          className="flex items-center cursor-pointer"
-                        >
-                          <Pencil className="mr-2 h-4 w-4" />
-                          Manage
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <DeleteButton id={item.id} />
-                      </DropdownMenuItem>
+                      <PermissionGuard requiredPermission="edit-opportunities">
+                        <DropdownMenuItem asChild>
+                          <Link
+                            href={`/web-content/opportunities/${item.id}/edit`}
+                            className="flex items-center cursor-pointer"
+                          >
+                            <Pencil className="mr-2 h-4 w-4" />
+                            Manage
+                          </Link>
+                        </DropdownMenuItem>
+                      </PermissionGuard>
+
+                      <PermissionGuard requiredPermission="delete-opportunities">
+                        <DropdownMenuItem asChild>
+                          <DeleteButton id={item.id} />
+                        </DropdownMenuItem>
+                      </PermissionGuard>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>

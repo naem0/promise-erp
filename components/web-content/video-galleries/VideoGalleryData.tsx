@@ -14,6 +14,7 @@ import { getVideoGalleries, VideoGallery } from "@/apiServices/homePageAdminServ
 import DeleteButton from "./DeleteButton";
 import Image from "next/image";
 import Pagination from "@/components/common/Pagination";
+import PermissionGuard from "@/components/auth/PermissionGuard";
 
 const VideoGalleryData = async ({
   searchParams,
@@ -93,18 +94,23 @@ const VideoGalleryData = async ({
                     </DropdownMenuTrigger>
 
                     <DropdownMenuContent align="center">
-                      <DropdownMenuItem asChild>
-                        <Link
-                          href={`/web-content/video-galleries/${item.id}/edit`}
-                          className="flex items-center cursor-pointer"
-                        >
-                          <Pencil className="mr-2 h-4 w-4" />
-                          Manage
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <DeleteButton id={item.id} />
-                      </DropdownMenuItem>
+                      <PermissionGuard requiredPermission="edit-video-gallery">
+                        <DropdownMenuItem asChild>
+                          <Link
+                            href={`/web-content/video-galleries/${item.id}/edit`}
+                            className="flex items-center cursor-pointer"
+                          >
+                            <Pencil className="mr-2 h-4 w-4" />
+                            Manage
+                          </Link>
+                        </DropdownMenuItem>
+                      </PermissionGuard>
+
+                      <PermissionGuard requiredPermission="delete-video-gallery">
+                        <DropdownMenuItem asChild>
+                          <DeleteButton id={item.id} />
+                        </DropdownMenuItem>
+                      </PermissionGuard>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>

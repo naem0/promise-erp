@@ -7,6 +7,8 @@ import { Suspense } from "react";
 import ReviewsFilterData from "@/components/lms/reviews/ReviewsFilterData";
 import ReviewsData from "@/components/lms/reviews/ReviewsData";
 
+import PermissionGuard from "@/components/auth/PermissionGuard";
+
 export default function ReviewsPage({
   searchParams,
 }: {
@@ -19,12 +21,14 @@ export default function ReviewsPage({
           Reviews
         </h1>
 
-        <Button asChild className="bg-green-600">
-          <Link href="/lms/reviews/add">
-            <PlusCircle className="w-4 h-4 mr-2" />
-            Add Review
-          </Link>
-        </Button>
+        <PermissionGuard requiredPermission="create-reviews">
+          <Button asChild className="bg-green-600">
+            <Link href="/lms/reviews/add">
+              <PlusCircle className="w-4 h-4 mr-2" />
+              Add Review
+            </Link>
+          </Button>
+        </PermissionGuard>
       </div>
 
       {/* Filter section */}

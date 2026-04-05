@@ -24,6 +24,7 @@ import {
 import DeleteButton from "./DeleteButton";
 import Image from "next/image";
 import Pagination from "@/components/common/Pagination";
+import PermissionGuard from "@/components/auth/PermissionGuard";
 
 const HeroSectionData = async ({
   searchParams,
@@ -106,18 +107,23 @@ const HeroSectionData = async ({
                       </DropdownMenuTrigger>
 
                       <DropdownMenuContent align="center">
-                        <DropdownMenuItem asChild>
-                          <Link
-                            href={`/web-content/hero-section/${item.id}/edit`}
-                            className="flex items-center cursor-pointer"
-                          >
-                            <Pencil className="mr-2 h-4 w-4" />
-                            Manage
-                          </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                          <DeleteButton id={item.id} />
-                        </DropdownMenuItem>
+                        <PermissionGuard requiredPermission="edit-hero-section">
+                          <DropdownMenuItem asChild>
+                            <Link
+                              href={`/web-content/hero-section/${item.id}/edit`}
+                              className="flex items-center cursor-pointer"
+                            >
+                              <Pencil className="mr-2 h-4 w-4" />
+                              Manage
+                            </Link>
+                          </DropdownMenuItem>
+                        </PermissionGuard>
+
+                        <PermissionGuard requiredPermission="delete-hero-section">
+                          <DropdownMenuItem asChild>
+                            <DeleteButton id={item.id} />
+                          </DropdownMenuItem>
+                        </PermissionGuard>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>

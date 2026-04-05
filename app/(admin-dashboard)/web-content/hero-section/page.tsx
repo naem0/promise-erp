@@ -7,6 +7,8 @@ import { Suspense } from "react";
 import HeroSectionFilterData from "@/components/web-content/hero-section/HeroSectionFilterData";
 import HeroSectionData from "@/components/web-content/hero-section/HeroSectionData";
 
+import PermissionGuard from "@/components/auth/PermissionGuard";
+
 const HeroSectionsPage = ({
   searchParams,
 }: {
@@ -17,12 +19,14 @@ const HeroSectionsPage = ({
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-semibold tracking-tight">Hero Sections</h1>
 
-        <Button asChild>
-          <Link href="/web-content/hero-section/add">
-            <PlusCircle className="w-4 h-4 mr-2" />
-            Add Hero Section
-          </Link>
-        </Button>
+        <PermissionGuard requiredPermission="create-hero-section">
+          <Button asChild>
+            <Link href="/web-content/hero-section/add">
+              <PlusCircle className="w-4 h-4 mr-2" />
+              Add Hero Section
+            </Link>
+          </Button>
+        </PermissionGuard>
       </div>
 
       <Suspense fallback={<div>Loading Search...</div>}>

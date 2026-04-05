@@ -11,6 +11,7 @@ import ErrorComponent from "../common/ErrorComponent";
 import { useSession } from "next-auth/react";
 import { Skeleton } from "../ui/skeleton";
 import AddEditRoleDialog from "./AddEditRoleDialog";
+import PermissionGuard from "../auth/PermissionGuard";
 
 const RolesWrapper = () => {
     const [roles, setRoles] = useState<Role[]>([]);
@@ -67,9 +68,11 @@ const RolesWrapper = () => {
             {/* Header */}
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-bold">Roles</h1>
-                <Button onClick={() => setAssignRoleDialogOpen(true)}>
-                    Assign Role
-                </Button>
+                <PermissionGuard requiredPermission="edit-roles">
+                    <Button onClick={() => setAssignRoleDialogOpen(true)}>
+                        Assign Role
+                    </Button>
+                </PermissionGuard>
             </div>
 
             {/* Error */}
@@ -95,32 +98,36 @@ const RolesWrapper = () => {
                         >
                             <CardContent className="p-0 text-center">
                                 <div className="text-lg font-medium">{role?.name}</div>
-                                <Button
-                                    variant="outline"
-                                    className="mt-1 cursor-pointer"
-                                    onClick={() => openEditRoleDialog(role)}
-                                >
-                                    Edit Role
-                                </Button>
+                                <PermissionGuard requiredPermission="edit-roles">
+                                    <Button
+                                        variant="outline"
+                                        className="mt-1 cursor-pointer"
+                                        onClick={() => openEditRoleDialog(role)}
+                                    >
+                                        Edit Role
+                                    </Button>
+                                </PermissionGuard>
                             </CardContent>
                         </Card>
                     ))}
 
                     {/* Add New Role Card */}
-                    <Card
-                        className="flex justify-center items-center p-4 cursor-pointer hover:bg-muted transition"
-                        onClick={openAddRoleDialog}
-                    >
-                        <CardContent className="p-0 flex items-center gap-4">
-                            <Image
-                                src="/images/add-new-roles.png"
-                                alt="Add Role"
-                                width={40}
-                                height={40}
-                            />
-                            <Button variant="outline">Add New Role</Button>
-                        </CardContent>
-                    </Card>
+                    <PermissionGuard requiredPermission="create-roles">
+                        <Card
+                            className="flex justify-center items-center p-4 cursor-pointer hover:bg-muted transition"
+                            onClick={openAddRoleDialog}
+                        >
+                            <CardContent className="p-0 flex items-center gap-4">
+                                <Image
+                                    src="/images/add-new-roles.png"
+                                    alt="Add Role"
+                                    width={40}
+                                    height={40}
+                                />
+                                <Button variant="outline">Add New Role</Button>
+                            </CardContent>
+                        </Card>
+                    </PermissionGuard>
                 </div>
             )}
 

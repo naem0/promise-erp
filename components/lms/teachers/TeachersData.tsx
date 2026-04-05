@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/table";
 import { Pencil } from "lucide-react";
 import Link from "next/link";
+import PermissionGuard from "@/components/auth/PermissionGuard";
 import DeleteButton from "./DeleteButton";
 
 export default async function TeachersData({
@@ -112,18 +113,23 @@ export default async function TeachersData({
                       </Badge>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="center">
-                      <DropdownMenuItem asChild>
-                        <Link
-                          href={`/lms/teachers/${teacher.id}/edit`}
-                          className="flex items-center cursor-pointer"
-                        >
-                          <Pencil className="mr-2 h-4 w-4" />
-                          Edit
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <DeleteButton id={teacher?.id} />
-                      </DropdownMenuItem>
+                      <PermissionGuard requiredPermission="edit-teachers">
+                        <DropdownMenuItem asChild>
+                          <Link
+                            href={`/lms/teachers/${teacher.id}/edit`}
+                            className="flex items-center cursor-pointer"
+                          >
+                            <Pencil className="mr-2 h-4 w-4" />
+                            Edit
+                          </Link>
+                        </DropdownMenuItem>
+                      </PermissionGuard>
+
+                      <PermissionGuard requiredPermission="delete-teachers">
+                        <DropdownMenuItem asChild>
+                          <DeleteButton id={teacher?.id} />
+                        </DropdownMenuItem>
+                      </PermissionGuard>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>

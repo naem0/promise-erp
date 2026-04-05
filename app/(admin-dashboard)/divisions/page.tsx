@@ -6,6 +6,8 @@ import Link from "next/link";
 import { Suspense } from "react";
 import DivisionFilterData from "@/components/division/DivisionFilterData";
 import DivisionData from "@/components/division/DivisionData";
+import PermissionGuard from "@/components/auth/PermissionGuard";
+
 const DivisionPage = async ({
   searchParams,
 }: {
@@ -17,12 +19,14 @@ const DivisionPage = async ({
           <div className="mx-auto space-y-6 ">
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-semibold tracking-tight">Division</h1>
-          <Button asChild>
-            <Link href="/divisions/add">
-              <PlusCircle className="w-4 h-4 mr-2" />
-              Add Division
-            </Link>
-          </Button>
+          <PermissionGuard requiredPermission="create-divisions">
+            <Button asChild>
+              <Link href="/divisions/add">
+                <PlusCircle className="w-4 h-4 mr-2" />
+                Add Division
+              </Link>
+            </Button>
+          </PermissionGuard>
         </div>
 
         <Suspense fallback={<div>Loading Search...</div>}>

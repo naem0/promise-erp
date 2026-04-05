@@ -7,6 +7,8 @@ import { Suspense } from "react";
 import GroupFilterData from "@/components/lms/groups/GroupFilterData";
 import GroupsData from "@/components/lms/groups/GroupsData";
 
+import PermissionGuard from "@/components/auth/PermissionGuard";
+
 const GroupsPage = async ({
   searchParams,
 }: {
@@ -19,12 +21,14 @@ const GroupsPage = async ({
           <div className="mx-auto space-y-6 ">
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-semibold tracking-tight">Groups</h1>
-          <Button asChild>
-            <Link href="/lms/groups/add">
-              <PlusCircle className="w-4 h-4 mr-2" />
-              Add Group
-            </Link>
-          </Button>
+          <PermissionGuard requiredPermission="create-groups">
+            <Button asChild>
+              <Link href="/lms/groups/add">
+                <PlusCircle className="w-4 h-4 mr-2" />
+                Add Group
+              </Link>
+            </Button>
+          </PermissionGuard>
         </div>
 
         <Suspense fallback={<div>Loading Search...</div>}>

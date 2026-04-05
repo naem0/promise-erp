@@ -6,6 +6,8 @@ import Link from "next/link";
 import { Suspense } from "react";
 import DistrictFilterData from "@/components/districts/DistrictFilterData";
 import DistrictData from "@/components/districts/DistrictData";
+import PermissionGuard from "@/components/auth/PermissionGuard";
+
 const DistrictsPage = async ({
   searchParams,
 }: {
@@ -18,12 +20,14 @@ const DistrictsPage = async ({
           <div className="mx-auto space-y-6 ">
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-semibold tracking-tight">District</h1>
-          <Button asChild>
-            <Link href="/districts/add">
-              <PlusCircle className="w-4 h-4 mr-2" />
-              Add Division
-            </Link>
-          </Button>
+          <PermissionGuard requiredPermission="create-districts">
+            <Button asChild>
+              <Link href="/districts/add">
+                <PlusCircle className="w-4 h-4 mr-2" />
+                Add District
+              </Link>
+            </Button>
+          </PermissionGuard>
         </div>
 
         <Suspense fallback={<div>Loading Search...</div>}>

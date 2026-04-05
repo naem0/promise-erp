@@ -21,6 +21,8 @@ import { Pencil } from "lucide-react";
 import Image from "next/image";
 import Pagination from "@/components/common/Pagination";
 import DeleteButton from "@/components/common/DeleteButton";
+import PermissionGuard from "@/components/auth/PermissionGuard";
+
 interface BlogCategoriesParamsProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
@@ -91,22 +93,27 @@ const BlogCategoriesData = async ({
                     </Badge>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="center">
-                    <DropdownMenuItem asChild>
-                      <Link
-                        href={`/web-content/blog-categories/${blog_category?.id}/edit`}
-                        className="flex items-center cursor-pointer"
-                      >
-                        <Pencil className="mr-2 h-4 w-4" />
-                        Manage
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <DeleteButton
-                        id={blog_category?.id}
-                        deleteAction={deleteBlogCategory}
-                        itemName="blog category"
-                      />
-                    </DropdownMenuItem>
+                    <PermissionGuard requiredPermission="edit-blog-categories">
+                      <DropdownMenuItem asChild>
+                        <Link
+                          href={`/web-content/blog-categories/${blog_category?.id}/edit`}
+                          className="flex items-center cursor-pointer"
+                        >
+                          <Pencil className="mr-2 h-4 w-4" />
+                          Manage
+                        </Link>
+                      </DropdownMenuItem>
+                    </PermissionGuard>
+
+                    <PermissionGuard requiredPermission="delete-blog-categories">
+                      <DropdownMenuItem asChild>
+                        <DeleteButton
+                          id={blog_category?.id}
+                          deleteAction={deleteBlogCategory}
+                          itemName="blog category"
+                        />
+                      </DropdownMenuItem>
+                    </PermissionGuard>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </TableCell>

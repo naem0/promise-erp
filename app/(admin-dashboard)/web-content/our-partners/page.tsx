@@ -5,6 +5,8 @@ import Link from "next/link";
 import { Suspense } from "react";
 import OurPartnersFilterData from "@/components/web-content/our-partners/OurPartnersFilterData";
 import OurPartnersData from "@/components/web-content/our-partners/OurPartnersData";
+import PermissionGuard from "@/components/auth/PermissionGuard";
+
 const OurPartnersPage = async ({
   searchParams,
 }: {
@@ -14,12 +16,14 @@ const OurPartnersPage = async ({
     <div className="mx-auto space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-semibold tracking-tight">Our Partners</h1>
-        <Button asChild>
-          <Link href="/web-content/our-partners/add">
-            <PlusCircle className="w-4 h-4 mr-2" />
-            Add Partner
-          </Link>
-        </Button>
+        <PermissionGuard requiredPermission="create-partners">
+          <Button asChild>
+            <Link href="/web-content/our-partners/add">
+              <PlusCircle className="w-4 h-4 mr-2" />
+              Add Partner
+            </Link>
+          </Button>
+        </PermissionGuard>
       </div>
       <Suspense fallback={<div>Loading Search...</div>}>
         <OurPartnersFilterData />

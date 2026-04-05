@@ -22,6 +22,7 @@ import Pagination from "@/components/common/Pagination";
 import Image from "next/image";
 import { StatsSearchParamsProps } from "@/app/(admin-dashboard)/web-content/stats/page";
 import DeleteButton from "@/components/common/DeleteButton";
+import PermissionGuard from "@/components/auth/PermissionGuard";
 
 export default async function StatsData({
   searchParams }: StatsSearchParamsProps) {
@@ -88,31 +89,39 @@ export default async function StatsData({
                     </DropdownMenuTrigger>
 
                     <DropdownMenuContent align="center">
-                      <DropdownMenuItem asChild>
-                        <Link
-                          href={`/web-content/stats/${statData?.id}`}
-                          className="flex items-center cursor-pointer"
-                        >
-                          <Eye className="mr-2 h-4 w-4" />
-                          Details
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <Link
-                          href={`/web-content/stats/${statData?.id}/edit`}
-                          className="flex items-center cursor-pointer"
-                        >
-                          <Pencil className="mr-2 h-4 w-4" />
-                          Manage
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <DeleteButton
-                          id={statData?.id}
-                          deleteAction={deleteStats}
-                          itemName="stat"
-                        />
-                      </DropdownMenuItem>
+                      <PermissionGuard requiredPermission="view-stats">
+                        <DropdownMenuItem asChild>
+                          <Link
+                            href={`/web-content/stats/${statData?.id}`}
+                            className="flex items-center cursor-pointer"
+                          >
+                            <Eye className="mr-2 h-4 w-4" />
+                            Details
+                          </Link>
+                        </DropdownMenuItem>
+                      </PermissionGuard>
+
+                      <PermissionGuard requiredPermission="edit-stats">
+                        <DropdownMenuItem asChild>
+                          <Link
+                            href={`/web-content/stats/${statData?.id}/edit`}
+                            className="flex items-center cursor-pointer"
+                          >
+                            <Pencil className="mr-2 h-4 w-4" />
+                            Manage
+                          </Link>
+                        </DropdownMenuItem>
+                      </PermissionGuard>
+
+                      <PermissionGuard requiredPermission="delete-stats">
+                        <DropdownMenuItem asChild>
+                          <DeleteButton
+                            id={statData?.id}
+                            deleteAction={deleteStats}
+                            itemName="stat"
+                          />
+                        </DropdownMenuItem>
+                      </PermissionGuard>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>

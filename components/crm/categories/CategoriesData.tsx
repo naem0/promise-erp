@@ -21,6 +21,7 @@ import Image from "next/image";
 import { CRMCategory, getCRMCategories } from "@/apiServices/crmCategoryService";
 import DeleteCategoryButton from "./DeleteCategoryButton";
 import Pagination from "@/components/common/Pagination";
+import PermissionGuard from "@/components/auth/PermissionGuard";
 
 const CategoriesData = async ({
     searchParams,
@@ -103,18 +104,23 @@ const CategoriesData = async ({
                                     </DropdownMenuTrigger>
 
                                     <DropdownMenuContent align="center">
-                                        <DropdownMenuItem asChild>
-                                            <Link
-                                                href={`/crm/categories/${category?.id}/edit`}
-                                                className="flex items-center cursor-pointer"
-                                            >
-                                                <Pencil className="mr-2 h-4 w-4" />
-                                                Edit
-                                            </Link>
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem asChild>
-                                            <DeleteCategoryButton id={category?.id} />
-                                        </DropdownMenuItem>
+                                        <PermissionGuard requiredPermission="edit-crm-categories">
+                                            <DropdownMenuItem asChild>
+                                                <Link
+                                                    href={`/crm/categories/${category?.id}/edit`}
+                                                    className="flex items-center cursor-pointer"
+                                                >
+                                                    <Pencil className="mr-2 h-4 w-4" />
+                                                    Edit
+                                                </Link>
+                                            </DropdownMenuItem>
+                                        </PermissionGuard>
+
+                                        <PermissionGuard requiredPermission="delete-crm-categories">
+                                            <DropdownMenuItem asChild>
+                                                <DeleteCategoryButton id={category?.id} />
+                                            </DropdownMenuItem>
+                                        </PermissionGuard>
                                     </DropdownMenuContent>
                                 </DropdownMenu>
                             </TableCell>

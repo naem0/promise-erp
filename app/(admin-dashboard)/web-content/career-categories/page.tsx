@@ -10,17 +10,21 @@ export interface CareerCategoryParams {
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
+import PermissionGuard from "@/components/auth/PermissionGuard";
+
 const CareerCategoriesPage = ({ searchParams }: CareerCategoryParams) => {
     return (
         <div className="mx-auto space-y-6">
             <div className="flex justify-between items-center">
                 <h1 className="text-2xl font-semibold tracking-tight">Career Categories</h1>
-                <Button asChild>
-                    <Link href="/web-content/career-categories/add">
-                        <PlusCircle className="w-4 h-4 mr-2" />
-                        Add Career Category
-                    </Link>
-                </Button>
+                <PermissionGuard requiredPermission="create-career-category">
+                    <Button asChild>
+                        <Link href="/web-content/career-categories/add">
+                            <PlusCircle className="w-4 h-4 mr-2" />
+                            Add Career Category
+                        </Link>
+                    </Button>
+                </PermissionGuard>
             </div>
             <Suspense fallback={<div>Loading filters...</div>}>
                 <CareerCategoriesFilterNav />

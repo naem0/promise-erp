@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Eye, Pencil } from "lucide-react";
 import Link from "next/link";
 import { getStudents, Student } from "@/apiServices/studentService";
+import PermissionGuard from "@/components/auth/PermissionGuard";
 import DeleteButton from "./DeleteButton";
 import Pagination from "@/components/common/Pagination";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
@@ -112,27 +113,35 @@ const StudentsData = async ({
                   </DropdownMenuTrigger>
 
                   <DropdownMenuContent align="center">
-                    <DropdownMenuItem asChild>
-                      <Link
-                        href={`/lms/students/${student?.id}`}
-                        className="flex items-center cursor-pointer"
-                      >
-                        <Eye className="mr-2 h-4 w-4" />
-                        Details
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link
-                        href={`/lms/students/${student?.id}/edit`}
-                        className="flex items-center cursor-pointer"
-                      >
-                        <Pencil className="mr-2 h-4 w-4" />
-                        Manage
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <DeleteButton id={student?.id} />
-                    </DropdownMenuItem>
+                    <PermissionGuard requiredPermission="view-students">
+                      <DropdownMenuItem asChild>
+                        <Link
+                          href={`/lms/students/${student?.id}`}
+                          className="flex items-center cursor-pointer"
+                        >
+                          <Eye className="mr-2 h-4 w-4" />
+                          Details
+                        </Link>
+                      </DropdownMenuItem>
+                    </PermissionGuard>
+
+                    <PermissionGuard requiredPermission="edit-students">
+                      <DropdownMenuItem asChild>
+                        <Link
+                          href={`/lms/students/${student?.id}/edit`}
+                          className="flex items-center cursor-pointer"
+                        >
+                          <Pencil className="mr-2 h-4 w-4" />
+                          Manage
+                        </Link>
+                      </DropdownMenuItem>
+                    </PermissionGuard>
+
+                    <PermissionGuard requiredPermission="delete-students">
+                      <DropdownMenuItem asChild>
+                        <DeleteButton id={student?.id} />
+                      </DropdownMenuItem>
+                    </PermissionGuard>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </TableCell>

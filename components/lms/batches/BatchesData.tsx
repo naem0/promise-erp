@@ -21,6 +21,7 @@ import { BookOpen, Eye, Pencil } from "lucide-react";
 import Link from "next/link";
 import DeleteButton from "./DeleteBatchButton";
 import Pagination from "@/components/common/Pagination";
+import PermissionGuard from "@/components/auth/PermissionGuard";
 
 export default async function BatchesData({
   searchParams,
@@ -125,36 +126,47 @@ export default async function BatchesData({
                     </DropdownMenuTrigger>
 
                     <DropdownMenuContent align="center">
-                      <DropdownMenuItem asChild>
-                        <Link
-                          href={`/lms/batches/${batch?.id}`}
-                          className="flex items-center cursor-pointer"
-                        >
-                          <Eye className="mr-2 h-4 w-4" />
-                          Details
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <Link
-                          href={`/lms/batches/${batch?.id}/edit`}
-                          className="flex items-center cursor-pointer"
-                        >
-                          <Pencil className="mr-2 h-4 w-4" />
-                          Manage
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <Link
-                          href={`/lms/batches/${batch?.id}/chapter-lessons`}
-                          className="flex items-center cursor-pointer"
-                        >
-                          <BookOpen className="mr-2 h-4 w-4" />
-                          Chapters &amp; Lessons
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <DeleteButton id={batch?.id} />
-                      </DropdownMenuItem>
+                      <PermissionGuard requiredPermission="view-batches">
+                        <DropdownMenuItem asChild>
+                          <Link
+                            href={`/lms/batches/${batch?.id}`}
+                            className="flex items-center cursor-pointer"
+                          >
+                            <Eye className="mr-2 h-4 w-4" />
+                            Details
+                          </Link>
+                        </DropdownMenuItem>
+                      </PermissionGuard>
+
+                      <PermissionGuard requiredPermission="edit-batches">
+                        <DropdownMenuItem asChild>
+                          <Link
+                            href={`/lms/batches/${batch?.id}/edit`}
+                            className="flex items-center cursor-pointer"
+                          >
+                            <Pencil className="mr-2 h-4 w-4" />
+                            Manage
+                          </Link>
+                        </DropdownMenuItem>
+                      </PermissionGuard>
+
+                      <PermissionGuard requiredPermission="view-chapters">
+                        <DropdownMenuItem asChild>
+                          <Link
+                            href={`/lms/batches/${batch?.id}/chapter-lessons`}
+                            className="flex items-center cursor-pointer"
+                          >
+                            <BookOpen className="mr-2 h-4 w-4" />
+                            Chapters &amp; Lessons
+                          </Link>
+                        </DropdownMenuItem>
+                      </PermissionGuard>
+
+                      <PermissionGuard requiredPermission="delete-batches">
+                        <DropdownMenuItem asChild>
+                          <DeleteButton id={batch?.id} />
+                        </DropdownMenuItem>
+                      </PermissionGuard>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>

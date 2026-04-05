@@ -16,6 +16,7 @@ import { Facility, getFacilities } from "@/apiServices/facilitiesService";
 import DeleteButton from "./DeleteButton";
 import Image from "next/image";
 import Pagination from "@/components/common/Pagination";
+import PermissionGuard from "@/components/auth/PermissionGuard";
 
 
 const FacilitiesData = async ({
@@ -44,8 +45,6 @@ const FacilitiesData = async ({
   let results;
   try {
     results = await getFacilities(params);
-    console.log(results)
-    
   } catch (error: unknown) {
     if (error instanceof Error) {
       return <ErrorComponent message={error.message} />;
@@ -92,18 +91,23 @@ const FacilitiesData = async ({
                     </DropdownMenuTrigger>
 
                     <DropdownMenuContent align="center">
-                      <DropdownMenuItem asChild>
-                        <Link
-                          href={`/lms/facilities/${facility?.id}/edit`}
-                          className="flex items-center cursor-pointer"
-                        >
-                          <Pencil className="mr-2 h-4 w-4" />
-                          Manage
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <DeleteButton id={facility?.id} />
-                      </DropdownMenuItem>
+                      <PermissionGuard requiredPermission="edit-facilities">
+                        <DropdownMenuItem asChild>
+                          <Link
+                            href={`/lms/facilities/${facility?.id}/edit`}
+                            className="flex items-center cursor-pointer"
+                          >
+                            <Pencil className="mr-2 h-4 w-4" />
+                            Manage
+                          </Link>
+                        </DropdownMenuItem>
+                      </PermissionGuard>
+
+                      <PermissionGuard requiredPermission="delete-facilities">
+                        <DropdownMenuItem asChild>
+                          <DeleteButton id={facility?.id} />
+                        </DropdownMenuItem>
+                      </PermissionGuard>
                     </DropdownMenuContent>
                   </DropdownMenu>
               </TableCell>
