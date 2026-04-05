@@ -28,7 +28,9 @@ export default function CategoriesPage({
                 </PermissionGuard>
             </div>
 
-            <CategoriesFilter />
+            <Suspense fallback={<div>Loading filters...</div>}>
+                <CategoriesFilter />
+            </Suspense>
 
             <Suspense fallback={<TableSkeleton columns={7} rows={10} />}>
                 <CategoriesData searchParams={searchParams} />

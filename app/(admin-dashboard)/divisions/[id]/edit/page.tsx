@@ -1,5 +1,5 @@
 "use client";
-import { use, useEffect, useState } from "react";
+import { Suspense, use, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Division, DivisionFormData, getDivision, updateDivision } from "@/apiServices/divisionService";
 import DivisionForm from "@/components/division/DivisionForm";
@@ -70,16 +70,18 @@ export default function EditDivisionPage({ params }: EditDivisionPageProps) {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-6">Edit Division</h1>
-      {division && (
-        <DivisionForm
-          title="Edit Division"
-          buttonTitle="Update Division"
-          defaultValues={division}
-          onSubmit={handleSubmit}
-        />
-      )}
-    </div>
+    <Suspense fallback={<TableSkeleton />}>
+      <div className="max-w-4xl mx-auto p-4">
+        <h1 className="text-2xl font-bold mb-6">Edit Division</h1>
+        {division && (
+          <DivisionForm
+            title="Edit Division"
+            buttonTitle="Update Division"
+            defaultValues={division}
+            onSubmit={handleSubmit}
+          />
+        )}
+      </div>
+    </Suspense>
   );
 }

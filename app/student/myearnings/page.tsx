@@ -42,10 +42,14 @@ const MyEarningsPage = () => {
         <EarningStateGrids />
       </Suspense>
       <div className="px-4 mb-5">
-        <EarningsChartUSD />
+        <Suspense fallback={<div className="h-[300px] w-full bg-muted animate-pulse rounded-xl" />}>
+          <EarningsChartUSD />
+        </Suspense>
       </div>
       <div className="px-4">
-        <EarningsChartBDT />
+        <Suspense fallback={<div className="h-[300px] w-full bg-muted animate-pulse rounded-xl" />}>
+          <EarningsChartBDT />
+        </Suspense>
       </div>
     </section>
   );

@@ -25,7 +25,7 @@ const authRoutes = ['/login', '/register']
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
-  
+
   const token = await getToken({
     req: request,
     secret: process.env.NEXTAUTH_SECRET,
@@ -55,14 +55,14 @@ export async function proxy(request: NextRequest) {
       if (accessToken) {
         const data = await fetchMyPermissions(accessToken);
         if (data?.success && data?.data?.permissions) {
-             userPermissions = data.data.permissions;
+          userPermissions = data.data.permissions;
         }
       }
     } catch (error) {
       // Sielntly fallback to JWT cache
     }
 
-    
+
 
     // Sort by descending path length to avoid partial string matching bugs (e.g. /lms/courses/add matches before /lms/courses)
     const sortedRoutes = [...routePermissions].sort((a, b) => b.path.length - a.path.length);
@@ -73,7 +73,7 @@ export async function proxy(request: NextRequest) {
         const basePath = r.path.split('/edit')[0]; // "/lms/courses"
         return pathname.startsWith(basePath) && pathname.endsWith('/edit');
       }
-      
+
       // Exact string match (ignoring optional trailing slash on pathname)
       const cleanPathname = pathname.endsWith('/') ? pathname.slice(0, -1) : pathname;
       return cleanPathname === r.path;
@@ -91,11 +91,11 @@ export async function proxy(request: NextRequest) {
     } else {
       // Security fallback: Block deep/unexpected paths under /lms that don't have rules
       if (
-        pathname.startsWith('/lms/courses/') || 
+        pathname.startsWith('/lms/courses/') ||
         pathname.startsWith('/lms/employees/') ||
         pathname.startsWith('/lms/teachers/')
       ) {
-         return NextResponse.redirect(new URL('/unauthorized', request.url));
+        return NextResponse.redirect(new URL('/unauthorized', request.url));
       }
     }
   }
@@ -108,7 +108,7 @@ export const config = {
     '/accounts/:path*',
     '/dashboard/:path*',
     '/hr/:path*',
-    '/lms/:path*', 
+    '/lms/:path*',
     '/profile/:path*',
     '/settings/:path*',
     '/divisions/:path*',

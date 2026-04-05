@@ -1,6 +1,7 @@
 import ProfileTabs from "@/components/student-dashboard/ProfileTabs";
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
+import { Suspense } from "react";
 
 const ProfilePage = () => {
   return (
@@ -13,7 +14,9 @@ const ProfilePage = () => {
           Profile Settings
         </h1>
       </div>
-      <ProfileTabs />
+      <Suspense fallback={<div className="h-40 w-full bg-muted animate-pulse rounded-xl" />}>
+        <ProfileTabs />
+      </Suspense>
     </section>
   );
 };

@@ -1,4 +1,3 @@
-// CategoriesPage.tsx
 import TableSkeleton from "@/components/TableSkeleton";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
@@ -6,7 +5,6 @@ import Link from "next/link";
 import { Suspense } from "react";
 import CategoryFilterData from "@/components/lms/categories/CategoryFilterData";
 import CategoriesData from "@/components/lms/categories/CategoriesData";
-
 import PermissionGuard from "@/components/auth/PermissionGuard";
 
 const CategoriesPage = ({

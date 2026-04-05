@@ -30,25 +30,42 @@ const DashboardPage = () => {
         >
           <AdminUsersStatWrapper />
         </Suspense>
-        {/* Charts */}
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 px-4 py-5">
-          <AdminMonthlyRegistrationChart />
+          <Suspense fallback={<div className="h-[350px] w-full bg-muted animate-pulse rounded-xl" />}>
+            <AdminMonthlyRegistrationChart />
+          </Suspense>
           <div className="space-y-6">
-            <AdminCourseTypeChart />
-            <AdminModeProgress />
+            <Suspense fallback={<div className="h-[200px] w-full bg-muted animate-pulse rounded-xl" />}>
+              <AdminCourseTypeChart />
+            </Suspense>
+            <Suspense fallback={<div className="h-[150px] w-full bg-muted animate-pulse rounded-xl" />}>
+              <AdminModeProgress />
+            </Suspense>
           </div>
         </div>
         {/* Table + Alerts */}
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 px-4 py-5">
-          <AdminPerformanceTable />
-          <AdminCriticalAlert />
+          <Suspense fallback={<div className="h-[400px] w-full bg-muted animate-pulse rounded-xl" />}>
+            <AdminPerformanceTable />
+          </Suspense>
+          <Suspense fallback={<div className="h-[400px] w-full bg-muted animate-pulse rounded-xl" />}>
+            <AdminCriticalAlert />
+          </Suspense>
         </div>
         {/* Bottom Widgets */}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 px-4 py-5">
-          <AdminRecentActivity />
-          <AdminOfflineBatchSnapshot />
-          <AdminCertificateStatus />
-          <AdminQuickSendAlert />
+          <Suspense fallback={<div className="h-[300px] w-full bg-muted animate-pulse rounded-xl" />}>
+            <AdminRecentActivity />
+          </Suspense>
+          <Suspense fallback={<div className="h-[300px] w-full bg-muted animate-pulse rounded-xl" />}>
+            <AdminOfflineBatchSnapshot />
+          </Suspense>
+          <Suspense fallback={<div className="h-[300px] w-full bg-muted animate-pulse rounded-xl" />}>
+            <AdminCertificateStatus />
+          </Suspense>
+          <Suspense fallback={<div className="h-[300px] w-full bg-muted animate-pulse rounded-xl" />}>
+            <AdminQuickSendAlert />
+          </Suspense>
         </div>
       </div>
       );

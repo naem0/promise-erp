@@ -1,4 +1,3 @@
-// app/lms/branches/page.tsx
 import BranchesData from "@/components/lms/branches/BranchesData";
 import BranchFilterData from "@/components/lms/branches/BranchFilterData";
 import TableSkeleton from "@/components/TableSkeleton";
