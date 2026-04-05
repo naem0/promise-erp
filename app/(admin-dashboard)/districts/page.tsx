@@ -1,6 +1,5 @@
 // DistrictsPage.tsx
 import TableSkeleton from "@/components/TableSkeleton";
-import NextAuthGuardWrapper from "@/components/auth/NextAuthGuardWrapper";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
 import Link from "next/link";
@@ -16,8 +15,7 @@ const DistrictsPage = async ({
 
 
   return (
-    <NextAuthGuardWrapper requiredPermissions={["view-districts"]}>
-      <div className="mx-auto space-y-6 ">
+          <div className="mx-auto space-y-6 ">
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-semibold tracking-tight">District</h1>
           <Button asChild>
@@ -36,8 +34,7 @@ const DistrictsPage = async ({
           <DistrictData searchParams={params} />
         </Suspense>
       </div>
-    </NextAuthGuardWrapper>
-  )
+      )
 }
 
 export default DistrictsPage

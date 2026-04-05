@@ -1,5 +1,4 @@
 import { Suspense } from "react"
-import NextAuthGuardWrapper from "@/components/auth/NextAuthGuardWrapper"
 import { SidebarProvider, SidebarTrigger, SidebarInset, } from "@/components/ui/sidebar"
 import AppSidebar from "@/components/admin/AppSidebar"
 import { Separator } from "@/components/ui/separator"
@@ -7,8 +6,7 @@ import { Separator } from "@/components/ui/separator"
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
 
   return (
-    <NextAuthGuardWrapper>
-      <SidebarProvider>
+          <SidebarProvider>
         <Suspense fallback={<div className="w-64 h-screen bg-muted animate-pulse" />}>
           <AppSidebar />
         </Suspense>
@@ -25,6 +23,5 @@ export default async function DashboardLayout({ children }: { children: React.Re
           </SidebarInset>
         </main>
       </SidebarProvider>
-    </NextAuthGuardWrapper>
-  )
+      )
 }

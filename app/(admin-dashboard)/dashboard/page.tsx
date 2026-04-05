@@ -1,5 +1,4 @@
 import AdminCourseTypeChart from "@/components/admin-dashboard/AdminCourseTypeChart";
-import NextAuthGuardWrapper from "@/components/auth/NextAuthGuardWrapper";
 import AdminModeProgress from "@/components/admin-dashboard/AdminModeProgress";
 import AdminMonthlyRegistrationChart from "@/components/admin-dashboard/AdminMonthlyRegistrationChart";
 import AdminCriticalAlert from "@/components/admin-dashboard/AdminCriticalAlert";
@@ -14,8 +13,7 @@ import AdminUsersStatSkeleton from "@/components/admin-dashboard/AdminUsersStatS
 
 const DashboardPage = () => {
   return (
-    <NextAuthGuardWrapper requiredPermissions={["view-dashboard"]}>
-      <div className="px-4 py-6">
+          <div className="px-4 py-6">
         <div className="pb-2 px-4">
           <h1 className="text-secondary text-xl lg:text-2xl capitalize font-bold ">
             Dashboard
@@ -53,8 +51,7 @@ const DashboardPage = () => {
           <AdminQuickSendAlert />
         </div>
       </div>
-    </NextAuthGuardWrapper>
-  );
+      );
 };
 
 export default DashboardPage;

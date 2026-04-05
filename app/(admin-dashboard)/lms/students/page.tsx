@@ -6,6 +6,8 @@ import { PlusCircle } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
 
+import PermissionGuard from "@/components/auth/PermissionGuard";
+
 export default function StudentsPage({
   searchParams,
 }: {
@@ -15,12 +17,14 @@ export default function StudentsPage({
     <div className="mx-auto space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-semibold tracking-tight">Students</h1>
-        <Button asChild>
-          <Link href="/lms/students/add">
-            <PlusCircle className="w-4 h-4 mr-2" />
-            Add Student
-          </Link>
-        </Button>
+        <PermissionGuard requiredPermission="create-students">
+          <Button asChild>
+            <Link href="/lms/students/add">
+              <PlusCircle className="w-4 h-4 mr-2" />
+              Add Student
+            </Link>
+          </Button>
+        </PermissionGuard>
       </div>
 
       <Suspense fallback={<div>Loading filters...</div>}>

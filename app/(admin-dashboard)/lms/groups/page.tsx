@@ -1,6 +1,5 @@
 
 import TableSkeleton from "@/components/TableSkeleton";
-import NextAuthGuardWrapper from "@/components/auth/NextAuthGuardWrapper";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
 import Link from "next/link";
@@ -17,8 +16,7 @@ const GroupsPage = async ({
 
 
   return (
-    <NextAuthGuardWrapper requiredPermissions={["view-groups"]}>
-      <div className="mx-auto space-y-6 ">
+          <div className="mx-auto space-y-6 ">
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-semibold tracking-tight">Groups</h1>
           <Button asChild>
@@ -37,8 +35,7 @@ const GroupsPage = async ({
           <GroupsData searchParams={params} />
         </Suspense>
       </div>
-    </NextAuthGuardWrapper>
-  )
+      )
 }
 
 export default GroupsPage
