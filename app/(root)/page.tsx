@@ -5,7 +5,7 @@ import CareerDevelopmentBlog from "@/components/root/home/CareerDevelopmentBlog"
 import NewsfeedsArchive from "@/components/root/home/NewsfeedsArchive";
 import NewsletterSection from "@/components/root/home/NewsletterSection";
 import VideoStories from "@/components/root/home/VideoStories";
-import AffiliatesAndClients from "@/components/root/home/AffiliatesAndClients";
+// import AffiliatesAndClients from "@/components/root/home/AffiliatesAndClients";
 import { Suspense } from "react";
 import HomeHeroSkeleton from "@/components/common/HomeHeroSkeleton";
 import HomeHeroWrapper from "@/components/root/home/HomeHeroWrapper";
@@ -24,7 +24,7 @@ import GovtCourseSkeleton from "@/components/common/GovtCourseSkeleton";
 import OpportunitySkeletone from "@/components/common/OpportunitySkeletone";
 import VideoStorySkeleton from "@/components/common/VideoStorySkeleton";
 import BlogSkeleton from "@/components/common/BlogSkeleton";
-import PartnerSkeleton from "@/components/common/PartnerSkeleton";
+// import PartnerSkeleton from "@/components/common/PartnerSkeleton";
 import TeacherListSkeleton from "@/components/common/TeacherListSkeleton";
 import StudentSuccessSkeleton from "@/components/common/StudentSuccessSkeleton";
 import NewsfeedsArchiveSkeleton from "@/components/common/NewsfeedsArchiveSkeleton";

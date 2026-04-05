@@ -46,7 +46,7 @@ const TeamMemberCard = ({ member }: Props) => {
           <p className="text-base font-extrabold text-secondary/80 mt-1">
             {member.designation}
           </p>
-          <span className="text-primary">E-Learning and Earning Ltd.</span>
+          <p className="text-primary">E-Learning and Earning Ltd.</p>
         </div>
 
         {/* Message */}

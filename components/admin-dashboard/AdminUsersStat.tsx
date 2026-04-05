@@ -4,11 +4,15 @@ import { ChartNoAxesCombined } from "lucide-react";
 interface StatCardProps {
   title?: string;
   allStats: DashboardCardItem[];
+  bgColor?: string;
 }
 
-const AdminUsersStat = ({ allStats, title }: StatCardProps) => {
+const AdminUsersStat = ({ allStats, title, bgColor }: StatCardProps) => {
   return (
-    <div className="rounded-xl p-4 text-white bg-secondary/80 shadow-md hover:shadow-lg transition-all duration-500">
+    <div
+      className="rounded-xl p-4 text-white shadow-md hover:shadow-lg transition-all duration-500"
+      style={{ backgroundColor: bgColor || "#6366f1" }}
+    >
       <div className="pb-2 text-white text-2xl xl:text-3xl font-medium">
         <h3 className="flex items-center gap-2">
           <ChartNoAxesCombined />

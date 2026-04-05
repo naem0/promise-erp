@@ -3,7 +3,7 @@ import {
   NewsFeedItem,
 } from "@/apiServices/homePageService";
 import ErrorComponent from "@/components/common/ErrorComponent";
-import NotFoundComponent from "@/components/common/NotFoundComponent";
+// import NotFoundComponent from "@/components/common/NotFoundComponent";
 import SectionTitle from "@/components/common/SectionTitle";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Button } from "@/components/ui/button";
