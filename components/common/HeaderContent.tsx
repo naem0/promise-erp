@@ -35,6 +35,7 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar";
 import { User, LogOut, LayoutDashboard } from "lucide-react";
+import { useAppSelector } from "@/store/hooks";
 
 export interface NavLink {
   name: string;
@@ -43,10 +44,9 @@ export interface NavLink {
 }
 
 interface AuthButtonsProps {
-  status: "loading" | "authenticated" | "unauthenticated";
-  isAuthenticated: boolean;
+  status?: "loading" | "authenticated" | "unauthenticated";
+  isAuthenticated?: boolean;
   userName?: string | null;
-  profileImage?: string | null;
   role?: string | string[] | null;
 }
 
@@ -77,12 +77,17 @@ const getProfileUrl = (role: string | string[] | null | undefined) => {
 
 /* ================= AUTH BUTTONS ================= */
 export const AuthButtons = ({
-  status,
-  isAuthenticated,
-  userName,
-  profileImage,
   role,
 }: AuthButtonsProps) => {
+  // Self-contained: reads session + Redux directly so it stays reactive
+  // even when rendered from a Server Component parent (HeaderNavLink)
+  const { data: session, status } = useSession();
+  const isAuthenticated = !!session?.accessToken;
+  const userName = session?.user?.name;
+  const reduxProfileImage = useAppSelector((state) => state.user.profileImage);
+  // Priority: Redux (updated on upload) → session image → placeholder
+  const profileImage = reduxProfileImage ?? session?.user?.image ?? null;
+
   if (status === "loading") {
     return <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />;
   }
@@ -299,13 +304,7 @@ const HeaderContent = ({ navLinks }: HeaderContentProps) => {
 
         {/* Desktop Auth */}
         <div className="hidden lg:flex gap-3">
-          <AuthButtons
-            status={status}
-            isAuthenticated={isAuthenticated}
-            userName={session?.user?.name}
-            profileImage={session?.user?.image}
-            role={session?.user?.roles}
-          />
+          <AuthButtons role={session?.user?.roles} />
         </div>
 
         {/* Mobile Menu */}
@@ -325,13 +324,7 @@ const HeaderContent = ({ navLinks }: HeaderContentProps) => {
             </nav>
 
             <div className="mt-6 border-t pt-4 flex gap-2">
-              <AuthButtons
-                status={status}
-                isAuthenticated={isAuthenticated}
-                userName={session?.user?.name}
-                profileImage={session?.user?.image}
-                role={session?.user?.roles}
-              />
+              <AuthButtons role={session?.user?.roles} />
             </div>
           </SheetContent>
         </Sheet>

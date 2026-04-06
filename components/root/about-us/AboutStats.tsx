@@ -16,7 +16,7 @@ const AboutStats = ({
       >
         {infoData.map((item) => {
           return (
-            <Card key={item.id} className="bg-[#EFF3EA] shadow py-0">
+            <Card key={item.id} className="bg-white shadow py-0">
               <CardContent className="p-6">
                 <h2 className="text-4xl font-bold text-primary">
                   {item.value}

@@ -49,7 +49,7 @@ const AboutOpportunities = () => {
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 rounded-2xl h-full">
         {/* Top Left - Group Discussion Image */}
-        <div className="py-3 px-2 bg-[#EFF3EA] shadow rounded-2xl lg:col-span-2">
+        <div className="py-3 px-2 bg-white shadow rounded-2xl lg:col-span-2">
           <div className="relative h-[260px] lg:h-[360px] w-full rounded-2xl ">
             <Image
               src={imageUrls.img1 || "/images/placeholder_img.jpg"}
@@ -88,7 +88,7 @@ const AboutOpportunities = () => {
           </div>
         </div>
 
-        <div className="py-3 px-2 bg-[#EFF3EA] shadow rounded-2xl lg:col-span-1">
+        <div className="py-3 px-2 bg-white shadow rounded-2xl lg:col-span-1">
           <div className="relative h-[260px] lg:h-[360px] w-full rounded-2xl ">
             <Image
               src={imageUrls.img3 || "/images/placeholder_img.jpg"}
@@ -99,7 +99,7 @@ const AboutOpportunities = () => {
           </div>
         </div>
 
-        <div className="py-3 px-2 bg-[#EFF3EA] shadow rounded-2xl lg:col-span-2">
+        <div className="py-3 px-2 bg-white shadow rounded-2xl lg:col-span-2">
           <div className="relative h-[260px] lg:h-[360px] w-full rounded-2xl ">
             <Image
               src={imageUrls.img4 || "/images/placeholder_img.jpg"}

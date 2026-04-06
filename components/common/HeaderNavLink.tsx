@@ -103,13 +103,7 @@ const HeaderNavLink = async ({
       </div>
       {isStudentDashboard ? (
         <div className="flex items-center justify-end gap-2 text-sm">
-          <AuthButtons
-            status={status}
-            isAuthenticated={!!session?.accessToken}
-            userName={session?.user?.name}
-            profileImage={session?.user?.image}
-            role={session?.user?.roles}
-          />
+          <AuthButtons role={session?.user?.roles} />
         </div>
       ) : (
         <div className="flex items-center justify-end gap-2 text-sm w-1/4">

@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import SessionProviderWrapper from "../components/next-auth/SessionProviderWrapper";
 import { PermissionProvider } from "@/providers/PermissionProvider";
-import { Toaster } from "@/components/ui/sonner"
+import { Toaster } from "@/components/ui/sonner";
+
 import "./globals.css";
+import StoreProvider from "@/store/StoreProvider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -71,12 +73,14 @@ export default function RootLayout({
         className={`${inter.variable} antialiased`}
         suppressHydrationWarning={true}
       >
-        <SessionProviderWrapper>
-          <PermissionProvider>
-            {children}
-            <Toaster />
-          </PermissionProvider>
-        </SessionProviderWrapper>
+        <StoreProvider>
+          <SessionProviderWrapper>
+            <PermissionProvider>
+              {children}
+              <Toaster />
+            </PermissionProvider>
+          </SessionProviderWrapper>
+        </StoreProvider>
       </body>
     </html>
   );

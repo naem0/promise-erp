@@ -54,7 +54,7 @@ const CertificationsSection = async () => {
             return (
               <div
                 key={cert.id}
-                className="grid lg:grid-cols-2 items-center rounded-xl gap-4 shadow p-2 h-full"
+                className="grid lg:grid-cols-2 items-center gap-4 h-full"
               >
                 {/* Image */}
                 <Card
@@ -62,7 +62,7 @@ const CertificationsSection = async () => {
                     isEven ? "lg:order-2" : "lg:order-1"
                   }`}
                 >
-                  <CardContent className="p-2 flex justify-center">
+                  <CardContent className="flex justify-start">
                     <div className="relative w-full h-[280px] md:h-[380px]">
                       <Image
                         src={cert.image || "/images/placeholder_img.jpg"}

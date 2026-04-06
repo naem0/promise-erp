@@ -52,15 +52,16 @@ const CompanyMission = async () => {
           missions.map((item) => (
             <Card
               key={item.id}
-              className="group text-center bg-[#EFF3EA] shadow hover:shadow-xl h-full hover:bg-primary transition-all duration-300"
+              className="group text-center bg-white shadow hover:shadow-xl h-full hover:bg-primary transition-all duration-300"
             >
               <CardContent className="p-4">
-                <div className="flex justify-center mb-4">
+                <div className="flex justify-center mb-2">
                   <Image
                     src={item.image || "/images/vission-mission1.svg"}
                     alt={item.type}
-                    width={70}
-                    height={70}
+                    width={50}
+                    height={50}
+                    className=" rounded-xl bg-white/80 p-2"
                   />
                 </div>
 

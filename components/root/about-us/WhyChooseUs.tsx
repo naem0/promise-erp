@@ -34,7 +34,7 @@ const WhyChooseUs = async () => {
   return (
     <section className="py-8 md:py-12">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-        <Card className="p-4 bg-[#EFF3EA] shadow">
+        <Card className="p-4 bg-white shadow">
           <div className="">
             <strong className="text-xl lg:text-2xl text-secondary block mb-3">
               Why Choose Us
@@ -68,7 +68,7 @@ const WhyChooseUs = async () => {
               {whyChooseUs.length > 0 ? (
                 whyChooseUs.map((item) => {
                   return (
-                    <Card key={item.id} className="py-0 bg-[#EFF3EA] shadow">
+                    <Card key={item.id} className="py-0 bg-white shadow">
                       <CardContent className="p-4">
                         <div className="shrink-0 relative w-[60px] h-[60px] mb-2 shadow-2xl rounded-full">
                           <Image

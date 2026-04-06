@@ -16,6 +16,8 @@ import {
   getStudentProfileClient,
   updateStudentProfileClient,
 } from "@/apiServices/studentDashboardService"
+import { useAppDispatch } from "@/store/hooks"
+import { setProfileImage as setReduxProfileImage } from "@/store/slices/userSlice"
 
 interface ProfileFormData {
   name: string
@@ -29,6 +31,7 @@ interface ProfileFormData {
 
 const MyProfileTab = () => {
   const { data: session } = useSession()
+  const dispatch = useAppDispatch()
   const [isPending, startTransition] = useTransition()
   const [educations, setEducations] = useState<Array<{ id?: number; degree: string; institution: string; subject: string }>>([
     { degree: "", institution: "", subject: "" }
@@ -192,38 +195,42 @@ const MyProfileTab = () => {
 
         const response = await updateStudentProfileClient(formData, token)
 
-      if (response.success) {
-        toast.success(response.message || "Profile updated successfully!")
+        if (response.success) {
+          toast.success(response.message || "Profile updated successfully!")
 
-        // Update profile image if returned
-        if (response.data?.profile_image) {
-          setProfileImage(response.data.profile_image)
-          setProfileImagePreview(null) // Clear preview after successful upload
-          setProfileImageFile(null)
-        }
-
-        // Refresh profile data
-        if (response.data) {
-          const profile = response.data
-          setValue("name", profile.name || "")
-          setValue("phone", profile.phone || "")
-          setValue("gender", profile.gender || "")
-          setValue("facebook", profile.facebook || "")
-          setValue("linkedin", profile.linkedin || "")
-
-          if (profile.educations && profile.educations.length > 0) {
-            setEducations(
-              profile.educations.map((edu: Education) => ({
-                id: edu.id,
-                degree: edu.degree || "",
-                institution: edu.institution || "",
-                subject: edu.subject || "",
-              }))
-            )
+          // Update profile image from API response → dispatch to Redux
+          // This syncs HeaderContent avatar in real-time (no page refresh needed)
+          if (response.data?.profile_image) {
+            const newImageUrl = response.data.profile_image
+            console.log(" MyProfileTab component--->:", newImageUrl)
+            setProfileImage(newImageUrl)
+            dispatch(setReduxProfileImage(newImageUrl))
+            setProfileImagePreview(null)
+            setProfileImageFile(null)
           }
+
+          // Refresh form fields from updated profile data
+          if (response.data) {
+            const profile = response.data
+            setValue("name", profile.name || "")
+            setValue("phone", profile.phone || "")
+            setValue("gender", profile.gender || "")
+            setValue("facebook", profile.facebook || "")
+            setValue("linkedin", profile.linkedin || "")
+
+            if (profile.educations && profile.educations.length > 0) {
+              setEducations(
+                profile.educations.map((edu: Education) => ({
+                  id: edu.id,
+                  degree: edu.degree || "",
+                  institution: edu.institution || "",
+                  subject: edu.subject || "",
+                }))
+              )
+            }
+          }
+          return
         }
-        return
-      }
 
       // Handle validation errors from backend
       if (response.errors) {
