@@ -91,7 +91,7 @@ const WhoCanJoinData = async ({
                   </DropdownMenuTrigger>
 
                   <DropdownMenuContent align="center">
-                    <PermissionGuard requiredPermission="edit-who-can-join">
+                    <PermissionGuard requiredPermission="sync-course-joins">
                       <DropdownMenuItem asChild>
                         <Link
                           href={`/lms/who-can-join/${join?.id}/edit`}
@@ -103,7 +103,7 @@ const WhoCanJoinData = async ({
                       </DropdownMenuItem>
                     </PermissionGuard>
 
-                    <PermissionGuard requiredPermission="delete-who-can-join">
+                    <PermissionGuard requiredPermission="delete-course-joins">
                       <DropdownMenuItem asChild>
                         <DeleteButton id={join?.id} />
                       </DropdownMenuItem>

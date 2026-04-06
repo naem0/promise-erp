@@ -95,7 +95,7 @@ const FaqsData = async ({
                   </DropdownMenuTrigger>
 
                   <DropdownMenuContent align="center">
-                    <PermissionGuard requiredPermission="edit-faqs">
+                    <PermissionGuard requiredPermission="sync-course-faqs">
                       <DropdownMenuItem asChild>
                         <Link
                           href={`/lms/faqs/${faq?.id}/edit`}
@@ -107,7 +107,7 @@ const FaqsData = async ({
                       </DropdownMenuItem>
                     </PermissionGuard>
 
-                    <PermissionGuard requiredPermission="delete-faqs">
+                    <PermissionGuard requiredPermission="delete-course-faqs">
                       <DropdownMenuItem asChild>
                         <DeleteButton id={faq?.id} />
                       </DropdownMenuItem>

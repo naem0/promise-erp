@@ -17,7 +17,7 @@ const FacilitiesPage = ({
     <div className="mx-auto space-y-6 ">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-semibold tracking-tight">Facility</h1>
-        <PermissionGuard requiredPermission="create-facilities">
+        <PermissionGuard requiredPermission="create-course-facilities">
           <Button asChild>
             <Link href="/lms/facilities/add">
               <PlusCircle className="w-4 h-4 mr-2" />

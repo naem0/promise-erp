@@ -4,6 +4,7 @@
   MessageSquare, MonitorCog, Settings, ShieldCheck, ShoppingCartIcon, User2Icon,
   UserCheck, Users
 } from "lucide-react";
+import { permission } from "process";
 
 export const sidebarData = {
   user: {
@@ -20,10 +21,9 @@ export const sidebarData = {
     },
   ],
 
-  // All nav sections in one array â€” each section has a label + items
   navSections: [
     {
-      label: undefined, // Dashboard â€” no label
+      label: undefined, 
       items: [
         {
           title: "Dashboard",
@@ -112,11 +112,11 @@ export const sidebarData = {
               url: "/lms/branches",
               permissions: ["view-branches"],
             },
-            {
-              title: "Blogs",
-              url: "/lms/blogs",
-              permissions: ["view-blogs"],
-            },
+            // {
+            //   title: "Blogs",
+            //   url: "/lms/blogs",
+            //   permissions: ["view-blogs"],
+            // },
           ],
         },
         {
@@ -225,16 +225,16 @@ export const sidebarData = {
               url: "/web-content/stats",
               permissions: ["view-stats"],
             },
-            {
-              title: "Departments",
-              url: "#",
-              permissions: ["view-divisions"],
-            },
-            {
-              title: "Offers List",
-              url: "#",
-              permissions: ["view-sections"],
-            },
+            // {
+            //   title: "Departments",
+            //   url: "#",
+            //   permissions: ["view-divisions"],
+            // },
+            // {
+            //   title: "Offers List",
+            //   url: "#",
+            //   permissions: ["view-sections"],
+            // },
             {
               title: "Blog Categories",
               url: "/web-content/blog-categories",
@@ -242,12 +242,12 @@ export const sidebarData = {
             },
             {
               title: "Blog Posts",
-              url: "#",
+              url: "/lms/blogs",
               permissions: ["view-blogs"],
             },
             {
               title: "Notices",
-              url: "#",
+              url: "/web-content/notices",
               permissions: ["view-news-feeds"],
             },
             {
@@ -300,7 +300,7 @@ export const sidebarData = {
             {
               title: "Reviews",
               url: "#",
-              permissions: ["view-reviews"],
+              permissions: ["view-reviews-communications"],
             },
             {
               title: "Free Consultations",
@@ -322,14 +322,17 @@ export const sidebarData = {
             {
               title: "Completed Lessons",
               url: "#",
+              permissions: ["view-progress-reports"],
             },
             {
               title: "Wishlists",
               url: "#",
+              permissions: ["view-wishlists"],
             },
             {
               title: "Tags",
               url: "#",
+              permissions: ["view-tags"],
             },
           ],
         },
@@ -361,14 +364,17 @@ export const sidebarData = {
             {
               title: "Your Requisition",
               url: "#",
+              permissions: ["view-requisitions"],
             },
             {
               title: "All Branches",
               url: "#",
+              permissions: ["view-branches-requisitions"],
             },
             {
               title: "Head office",
               url: "#",
+              permissions: ["view-head-office-requisitions"],
             },
           ],
         },
@@ -1017,43 +1023,43 @@ export const sidebarData = {
       ],
     },
 
-    {
-      label: "User Management",
-      items: [
-        {
-          title: "User Management",
-          url: "#",
-          icon: Users,
-          items: [
-            {
-              title: "Users List",
-              url: "#",
-              permissions: ["view-users"],
-            },
-            {
-              title: "User Roles",
-              url: "#",
-              permissions: ["view-role-users"],
-            },
-            {
-              title: "User Permissions",
-              url: "#",
-              permissions: ["view-user-permissions"],
-            },
-            {
-              title: "User Activity Logs",
-              url: "#",
-              permissions: ["view-logs"],
-            },
-            {
-              title: "User Profile Settings",
-              url: "#",
-              permissions: ["view-user-profile-settings"],
-            },
-          ],
-        },
-      ],
-    },
+    // {
+    //   label: "User Management",
+    //   items: [
+    //     {
+    //       title: "User Management",
+    //       url: "#",
+    //       icon: Users,
+    //       items: [
+    //         {
+    //           title: "Users List",
+    //           url: "#",
+    //           permissions: ["view-users"],
+    //         },
+    //         {
+    //           title: "User Roles",
+    //           url: "#",
+    //           permissions: ["view-role-users"],
+    //         },
+    //         {
+    //           title: "User Permissions",
+    //           url: "#",
+    //           permissions: ["view-user-permissions"],
+    //         },
+    //         {
+    //           title: "User Activity Logs",
+    //           url: "#",
+    //           permissions: ["view-logs"],
+    //         },
+    //         {
+    //           title: "User Profile Settings",
+    //           url: "#",
+    //           permissions: ["view-user-profile-settings"],
+    //         },
+    //       ],
+    //     },
+    //   ],
+    // },
 
     {
       label: "Role & Permission",

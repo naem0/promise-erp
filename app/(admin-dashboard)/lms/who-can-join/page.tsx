@@ -18,7 +18,7 @@ export default function WhoCanJoinPage({
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-semibold tracking-tight">Who Can Join</h1>
 
-        <PermissionGuard requiredPermission="create-who-can-join">
+        <PermissionGuard requiredPermission="create-course-joins">
           <Button asChild>
             <Link href="/lms/who-can-join/add">
               <PlusCircle className="w-4 h-4 mr-2" />

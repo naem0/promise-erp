@@ -18,7 +18,7 @@ export default function ToolsPage({
             <div className="flex justify-between items-center">
                 <h1 className="text-2xl font-semibold tracking-tight">Tools</h1>
 
-                <PermissionGuard requiredPermission="create-tools">
+                <PermissionGuard requiredPermission="create-course-tools">
                     <Button asChild>
                         <Link href="/lms/tools/add">
                             <PlusCircle className="w-4 h-4 mr-2" />

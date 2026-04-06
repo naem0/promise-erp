@@ -3,7 +3,6 @@ import { getToken } from 'next-auth/jwt'
 import permissionsConfig from '@/config/permissions.json'
 import { fetchMyPermissions } from '@/apiServices/auth/permissionService'
 
-// Ensure we pick up the array from JSON
 const routePermissions: { path: string; permissions: string[]; isDynamic?: boolean }[] = permissionsConfig.routes;
 
 const protectedRoutes = [
@@ -48,8 +47,6 @@ export async function proxy(request: NextRequest) {
   // 3. Very explicitly check permissions for authenticated users
   if (isAuth) {
     let userPermissions = (token?.permissions as string[]) || [];
-
-    // Dynamically fetch fresh permissions from the backend on every page transition to bypass NextAuth JWT token caching
     try {
       const accessToken = token?.accessToken as string;
       if (accessToken) {
@@ -59,29 +56,22 @@ export async function proxy(request: NextRequest) {
         }
       }
     } catch (error) {
-      // Sielntly fallback to JWT cache
+      console.error('Error fetching permissions from API, falling back to JWT cache:', error);
     }
 
 
-
-    // Sort by descending path length to avoid partial string matching bugs (e.g. /lms/courses/add matches before /lms/courses)
     const sortedRoutes = [...routePermissions].sort((a, b) => b.path.length - a.path.length);
 
     const matchedRoute = sortedRoutes.find(r => {
-      // Dynamic route matching: e.g., /lms/courses/123/edit matches /lms/courses/edit
       if (r.isDynamic) {
-        const basePath = r.path.split('/edit')[0]; // "/lms/courses"
+        const basePath = r.path.split('/edit')[0];
         return pathname.startsWith(basePath) && pathname.endsWith('/edit');
       }
 
-      // Exact string match (ignoring optional trailing slash on pathname)
       const cleanPathname = pathname.endsWith('/') ? pathname.slice(0, -1) : pathname;
       return cleanPathname === r.path;
     });
 
-    // If an exact or dynamic rule matched, enforce permissions!
-    // If NO rule matched (matchedRoute is undefined), we BLOCK by default to be safe,
-    // ONLY IF the current path is deeply nested within standard protected modules.
     if (matchedRoute) {
       const allowed = matchedRoute.permissions.every(p => userPermissions.includes(p));
 
@@ -89,7 +79,6 @@ export async function proxy(request: NextRequest) {
         return NextResponse.redirect(new URL('/unauthorized', request.url));
       }
     } else {
-      // Security fallback: Block deep/unexpected paths under /lms that don't have rules
       if (
         pathname.startsWith('/lms/courses/') ||
         pathname.startsWith('/lms/employees/') ||

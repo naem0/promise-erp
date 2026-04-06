@@ -18,7 +18,7 @@ export default function FaqsPage({
             <div className="flex justify-between items-center">
                 <h1 className="text-2xl font-semibold tracking-tight">FAQs</h1>
 
-                <PermissionGuard requiredPermission="create-faqs">
+                <PermissionGuard requiredPermission="create-course-faqs">
                     <Button asChild>
                         <Link href="/lms/faqs/add">
                             <PlusCircle className="w-4 h-4 mr-2" />

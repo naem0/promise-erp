@@ -91,7 +91,7 @@ const FacilitiesData = async ({
                     </DropdownMenuTrigger>
 
                     <DropdownMenuContent align="center">
-                      <PermissionGuard requiredPermission="edit-facilities">
+                      <PermissionGuard requiredPermission="edit-course-facilities">
                         <DropdownMenuItem asChild>
                           <Link
                             href={`/lms/facilities/${facility?.id}/edit`}
@@ -103,7 +103,7 @@ const FacilitiesData = async ({
                         </DropdownMenuItem>
                       </PermissionGuard>
 
-                      <PermissionGuard requiredPermission="delete-facilities">
+                      <PermissionGuard requiredPermission="delete-course-facilities">
                         <DropdownMenuItem asChild>
                           <DeleteButton id={facility?.id} />
                         </DropdownMenuItem>

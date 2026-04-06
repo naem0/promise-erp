@@ -105,7 +105,7 @@ const ToolsData = async ({
                                     </DropdownMenuTrigger>
 
                                     <DropdownMenuContent align="center">
-                                        <PermissionGuard requiredPermission="edit-tools">
+                                        <PermissionGuard requiredPermission="edit-course-tools">
                                             <DropdownMenuItem asChild>
                                                 <Link
                                                     href={`/lms/tools/${tool?.id}/edit`}
@@ -117,7 +117,7 @@ const ToolsData = async ({
                                             </DropdownMenuItem>
                                         </PermissionGuard>
 
-                                        <PermissionGuard requiredPermission="delete-tools">
+                                        <PermissionGuard requiredPermission="delete-course-tools">
                                             <DropdownMenuItem asChild>
                                                 <DeleteButton id={tool?.id} />
                                             </DropdownMenuItem>
