@@ -14,14 +14,14 @@ const ReviewCard = ({ review }: { review: Review }) => {
                 <div className="flex justify-between items-start pt-4 border-t">
                   <div className="flex gap-3 items-center">
                     <Image
-                      src={review.user.profile_image || AVATAR_PLACEHOLDER}
-                      alt={review.user.name}
+                      src={review?.user?.profile_image || AVATAR_PLACEHOLDER}
+                      alt={review?.user?.name}
                       width={40}
                       height={40}
                       className="w-10 h-10 rounded-full object-cover"
                     />
                     <div>
-                      <p className="font-semibold">{review.user.name}</p>
+                      <p className="font-semibold">{review?.user?.name}</p>
                       <RatingStars rating={review.rating} />
                     </div>
                   </div>

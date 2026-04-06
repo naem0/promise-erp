@@ -119,43 +119,43 @@ export const sidebarData = {
             // },
           ],
         },
-        {
-          title: "Teacher Management",
-          url: "#",
-          icon: UserCheck,
-          items: [
-            {
-              title: "Teachers",
-              url: "/lms/teachers",
-              permissions: ["view-teachers"],
-            },
-            {
-              title: "Active Teachers",
-              url: "#",
-              permissions: ["view-teachers"],
-            },
-            {
-              title: "Pending Approvals",
-              url: "#",
-              permissions: ["create-teachers"],
-            },
-            {
-              title: "Teacher Attendance",
-              url: "#",
-              permissions: ["view-attendances"],
-            },
-            {
-              title: "Teacher Payments",
-              url: "#",
-              permissions: ["view-payment-histories"],
-            },
-            {
-              title: "Performance Reports",
-              url: "#",
-              permissions: ["view-teacher-stats"],
-            },
-          ],
-        },
+        // {
+        //   title: "Teacher Management",
+        //   url: "#",
+        //   icon: UserCheck,
+        //   items: [
+        //     {
+        //       title: "Teachers",
+        //       url: "/lms/teachers",
+        //       permissions: ["view-teachers"],
+        //     },
+        //     {
+        //       title: "Active Teachers",
+        //       url: "#",
+        //       permissions: ["view-teachers"],
+        //     },
+        //     {
+        //       title: "Pending Approvals",
+        //       url: "#",
+        //       permissions: ["create-teachers"],
+        //     },
+        //     {
+        //       title: "Teacher Attendance",
+        //       url: "#",
+        //       permissions: ["view-attendances"],
+        //     },
+        //     {
+        //       title: "Teacher Payments",
+        //       url: "#",
+        //       permissions: ["view-payment-histories"],
+        //     },
+        //     {
+        //       title: "Performance Reports",
+        //       url: "#",
+        //       permissions: ["view-teacher-stats"],
+        //     },
+        //   ],
+        // },
         {
           title: "Enroll & Payments",
           url: "#",
@@ -280,11 +280,7 @@ export const sidebarData = {
               url: "/web-content/news-feeds",
               permissions: ["view-news-feeds"],
             },
-            {
-              title: "Career Categories",
-              url: "/web-content/career-categories",
-              permissions: ["view-career-categories"],
-            },
+            
           ],
         },
         {
@@ -342,18 +338,25 @@ export const sidebarData = {
           icon: BriefcaseBusiness,
           items: [
             {
+              title: "Career Categories",
+              url: "/web-content/career-categories",
+              permissions: ["view-career-categories"],
+            },
+            {
               title: "All Careers",
               url: "/lms/careers",
               permissions: ["view-careers"],
             },
-            {
-              title: "Job Applications",
-              url: "#",
-            },
-            {
-              title: "Interviews",
-              url: "#",
-            },
+            // {
+            //   title: "Job Applications",
+            //   url: "#",
+            //   permissions: ["view-job-applications"],
+            // },
+            // {
+            //   title: "Interviews",
+            //   url: "#",
+            //   permissions: ["view-interviews"],
+            // },
           ],
         },
         {
