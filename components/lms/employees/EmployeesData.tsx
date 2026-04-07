@@ -1,4 +1,3 @@
-
 import ErrorComponent from "@/components/common/ErrorComponent";
 import NotFoundComponent from "@/components/common/NotFoundComponent";
 import {
@@ -91,136 +90,138 @@ const EmployeesData = async ({
         );
     }
     return (
-        <div className="rounded-md border">
-            <Table>
-                <TableHeader>
-                    <TableRow>
-                        <TableHead className="text-center">Sl</TableHead>
-                        <TableHead className="text-center">Action</TableHead>
-                        <TableHead className="text-center">Image</TableHead>
-                        <TableHead className="text-center">Name & Email</TableHead>
-                        <TableHead className="text-center">Phone</TableHead>
-                        <TableHead className="text-center">Employee ID</TableHead>
-                        <TableHead className="text-center">Designation</TableHead>
-                        <TableHead className="text-center">Department</TableHead>
-                        <TableHead className="text-center">Branch</TableHead>
-                        <TableHead className="text-center">Role</TableHead>
-                        <TableHead className="text-center">Blood Group</TableHead>
-                        <TableHead className="text-center">Type</TableHead>
-                    </TableRow>
-                </TableHeader>
-
-                <TableBody>
-                    {employees.map((employee: Employee, index: number) => (
-                        <TableRow key={employee?.id}>
-                            <TableCell className="text-center">
-                                {(page - 1) * 15 + (index + 1)}
-                            </TableCell>
-                            <TableCell className="text-center">
-                                <DropdownMenu>
-                                    <DropdownMenuTrigger asChild>
-                                        <Badge
-                                            variant="default"
-                                            role="button"
-                                            tabIndex={0}
-                                            className="cursor-pointer select-none"
-                                        >
-                                            Action
-                                        </Badge>
-                                    </DropdownMenuTrigger>
-
-                                    <DropdownMenuContent align="center">
-                                        <PermissionGuard requiredPermission="edit-employees">
-                                            <DropdownMenuItem asChild>
-                                                <Link
-                                                    href={`/lms/employees/${employee?.id}/edit`}
-                                                    className="flex items-center cursor-pointer"
-                                                >
-                                                    <Pencil className="mr-2 h-4 w-4" />
-                                                    Manage
-                                                </Link>
-                                            </DropdownMenuItem>
-                                        </PermissionGuard>
-                                        <PermissionGuard requiredPermission="delete-employees">
-                                            <DropdownMenuItem asChild>
-                                                <DeleteEmployeeButton id={employee?.id} />
-                                            </DropdownMenuItem>
-                                        </PermissionGuard>
-                                    </DropdownMenuContent>
-                                </DropdownMenu>
-                            </TableCell>
-                            <TableCell className="font-medium flex items-center justify-center">
-                                <Image
-                                    src={employee.profile_image || "/images/profile_avatar.png"}
-                                    alt={employee?.name}
-                                    width={40}
-                                    height={40}
-                                    className="object-cover rounded-full h-10 w-10"
-                                />
-                            </TableCell>
-                            <TableCell className="font-medium text-center">
-                                <div className="flex flex-col">
-                                    <span>{employee?.name}</span>
-                                    <span className="text-xs text-secondary">{employee?.email}</span>
-                                </div>
-                            </TableCell>
-                            <TableCell className="text-center">
-                                {employee?.phone || "—"}
-                            </TableCell>
-                            <TableCell className="text-center">
-                                {employee?.employee_id || "—"}
-                            </TableCell>
-                            <TableCell className="text-center">
-                                {employee?.designation?.name || "—"}
-                            </TableCell>
-                            <TableCell className="text-center">
-                                {employee?.department?.name || "—"}
-                            </TableCell>
-                            <TableCell className="text-center">
-                                {employee?.branch?.name || "—"}
-                            </TableCell>
-                            <TableCell className="text-center">
-                                {employee?.role?.name || "—"}
-                            </TableCell>
-                            <TableCell className="text-center">
-                                {employee?.blood_group || "—"}
-                            </TableCell>
-                            <TableCell className="text-center">
-                               
-                                <Badge
-                                    variant={
-                                        +employee.employment_type === 0
-                                            ? "default"
-                                            : +employee.employment_type === 1
-                                                ? "secondary"
-                                                : +employee.employment_type === 2
-                                                    ? "outline"
-                                                    : +employee.employment_type === 3
-                                                        ? "destructive"
-                                                        : "default"
-                                    }
-                                >
-                                    {+employee.employment_type === 0
-                                        ? "Probation"
-                                        : +employee.employment_type === 1
-                                            ? "Full-time"
-                                            : +employee.employment_type === 2
-                                                ? "Part-time"
-                                                : +employee.employment_type === 3
-                                                    ? "Contractual"
-                                                    : "—"}
-                                </Badge>
-                            </TableCell>
+        <>
+            <div className="rounded-md border">
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead className="text-center">Sl</TableHead>
+                            <TableHead className="text-center">Action</TableHead>
+                            <TableHead className="text-center">Image</TableHead>
+                            <TableHead className="text-center">Name & Email</TableHead>
+                            <TableHead className="text-center">Phone</TableHead>
+                            <TableHead className="text-center">Employee ID</TableHead>
+                            <TableHead className="text-center">Designation</TableHead>
+                            <TableHead className="text-center">Department</TableHead>
+                            <TableHead className="text-center">Branch</TableHead>
+                            <TableHead className="text-center">Role</TableHead>
+                            <TableHead className="text-center">Blood Group</TableHead>
+                            <TableHead className="text-center">Type</TableHead>
                         </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
+                    </TableHeader>
+
+                    <TableBody>
+                        {employees.map((employee: Employee, index: number) => (
+                            <TableRow key={employee?.id}>
+                                <TableCell className="text-center">
+                                    {(page - 1) * 15 + (index + 1)}
+                                </TableCell>
+                                <TableCell className="text-center">
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                            <Badge
+                                                variant="default"
+                                                role="button"
+                                                tabIndex={0}
+                                                className="cursor-pointer select-none"
+                                            >
+                                                Action
+                                            </Badge>
+                                        </DropdownMenuTrigger>
+
+                                        <DropdownMenuContent align="center">
+                                            <PermissionGuard requiredPermission="edit-employees">
+                                                <DropdownMenuItem asChild>
+                                                    <Link
+                                                        href={`/lms/employees/${employee?.id}/edit`}
+                                                        className="flex items-center cursor-pointer"
+                                                    >
+                                                        <Pencil className="mr-2 h-4 w-4" />
+                                                        Manage
+                                                    </Link>
+                                                </DropdownMenuItem>
+                                            </PermissionGuard>
+                                            <PermissionGuard requiredPermission="delete-employees">
+                                                <DropdownMenuItem asChild>
+                                                    <DeleteEmployeeButton id={employee?.id} />
+                                                </DropdownMenuItem>
+                                            </PermissionGuard>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
+                                </TableCell>
+                                <TableCell className="font-medium flex items-center justify-center">
+                                    <Image
+                                        src={employee.profile_image || "/images/profile_avatar.png"}
+                                        alt={employee?.name}
+                                        width={40}
+                                        height={40}
+                                        className="object-cover rounded-full h-10 w-10"
+                                    />
+                                </TableCell>
+                                <TableCell className="font-medium text-center">
+                                    <div className="flex flex-col">
+                                        <span>{employee?.name}</span>
+                                        <span className="text-xs text-secondary">{employee?.email}</span>
+                                    </div>
+                                </TableCell>
+                                <TableCell className="text-center">
+                                    {employee?.phone || "—"}
+                                </TableCell>
+                                <TableCell className="text-center">
+                                    {employee?.employee_id || "—"}
+                                </TableCell>
+                                <TableCell className="text-center">
+                                    {employee?.designation?.name || "—"}
+                                </TableCell>
+                                <TableCell className="text-center">
+                                    {employee?.department?.name || "—"}
+                                </TableCell>
+                                <TableCell className="text-center">
+                                    {employee?.branch?.name || "—"}
+                                </TableCell>
+                                <TableCell className="text-center">
+                                    {employee?.role?.name || "—"}
+                                </TableCell>
+                                <TableCell className="text-center">
+                                    {employee?.blood_group || "—"}
+                                </TableCell>
+                                <TableCell className="text-center">
+
+                                    <Badge
+                                        variant={
+                                            +employee.employment_type === 0
+                                                ? "default"
+                                                : +employee.employment_type === 1
+                                                    ? "secondary"
+                                                    : +employee.employment_type === 2
+                                                        ? "outline"
+                                                        : +employee.employment_type === 3
+                                                            ? "destructive"
+                                                            : "default"
+                                        }
+                                    >
+                                        {+employee.employment_type === 0
+                                            ? "Probation"
+                                            : +employee.employment_type === 1
+                                                ? "Full-time"
+                                                : +employee.employment_type === 2
+                                                    ? "Part-time"
+                                                    : +employee.employment_type === 3
+                                                        ? "Contractual"
+                                                        : "—"}
+                                    </Badge>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </div>
             {paginationData && (
                 <div className="mt-4">
                     <Pagination pagination={paginationData} />
                 </div>
             )}
-        </div>
+        </>
     );
 };
 

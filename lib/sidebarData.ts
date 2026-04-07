@@ -171,11 +171,11 @@ export const sidebarData = {
               url: "#",
               permissions: ["view-invoices"],
             },
-            {
-              title: "Coupons",
-              url: "#",
-              permissions: ["view-coupons"],
-            },
+            // {
+            //   title: "Coupons",
+            //   url: "#",
+            //   permissions: ["view-coupons"],
+            // },
             {
               title: "Certificates",
               url: "#",

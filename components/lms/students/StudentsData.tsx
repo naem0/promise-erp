@@ -79,118 +79,120 @@ const StudentsData = async ({
   }
 
   return (
-    <div className="rounded-md border">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="text-center">Sl</TableHead>
-            <TableHead className="text-center">Action</TableHead>
-            <TableHead className="text-center">Profile</TableHead>
-            <TableHead className="text-center">Name & Email</TableHead>
-            <TableHead className="text-center">Phone</TableHead>
-            <TableHead className="text-center">Courses & Batches</TableHead>
-            <TableHead className="text-center">Branch</TableHead>
-            <TableHead className="text-center">Divisions</TableHead>
-            <TableHead className="text-center">Status</TableHead>
-          </TableRow>
-        </TableHeader>
-
-        <TableBody>
-          {students.map((student: Student, index: number) => (
-            <TableRow key={student?.id}>
-              <TableCell className="text-center">{(page - 1) * 15 + (index + 1)}</TableCell>
-              <TableCell className="text-center">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Badge
-                      variant="default"
-                      role="button"
-                      tabIndex={0}
-                      className="cursor-pointer select-none"
-                    >
-                      Action
-                    </Badge>
-                  </DropdownMenuTrigger>
-
-                  <DropdownMenuContent align="center">
-                    <PermissionGuard requiredPermission="view-students">
-                      <DropdownMenuItem asChild>
-                        <Link
-                          href={`/lms/students/${student?.id}`}
-                          className="flex items-center cursor-pointer"
-                        >
-                          <Eye className="mr-2 h-4 w-4" />
-                          Details
-                        </Link>
-                      </DropdownMenuItem>
-                    </PermissionGuard>
-
-                    <PermissionGuard requiredPermission="edit-students">
-                      <DropdownMenuItem asChild>
-                        <Link
-                          href={`/lms/students/${student?.id}/edit`}
-                          className="flex items-center cursor-pointer"
-                        >
-                          <Pencil className="mr-2 h-4 w-4" />
-                          Manage
-                        </Link>
-                      </DropdownMenuItem>
-                    </PermissionGuard>
-
-                    <PermissionGuard requiredPermission="delete-students">
-                      <DropdownMenuItem asChild>
-                        <DeleteButton id={student?.id} />
-                      </DropdownMenuItem>
-                    </PermissionGuard>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </TableCell>
-              <TableCell className="text-center">
-                <div className="flex justify-center">
-                  <Avatar className="h-8 w-8 bg-gray-300 rounded-full overflow-hidden">
-                    <AvatarImage
-                      src={student?.profile_image || "/images/profile_avatar.png"}
-                      alt={student?.name}
-                    />
-                  </Avatar>
-                </div>
-              </TableCell>
-              <TableCell className="text-center">
-                <div className="space-y-1">
-                  <p className="text-sm font-medium leading-none">{student?.name}</p>
-                  <p className="text-xs text-muted-foreground">{student?.email}</p>
-                </div>
-              </TableCell>
-              <TableCell className="text-center">{student?.phone}</TableCell>
-              <TableCell className="text-center">
-                {student?.courses?.map((course, idx) => (
-                  <div key={idx} className="text-xs">
-                    {course.title} - {course.batch}
-                  </div>
-                ))}
-              </TableCell>
-              <TableCell className="text-center">{student?.branches}</TableCell>
-              <TableCell className="text-center">{student?.divisions}</TableCell>
-              <TableCell className="text-center">
-                <div className="flex flex-col items-center gap-1">
-                  <Badge variant={student?.status === "PAID_COURSE_ENROLLED" ? "default" : "secondary"}>
-                    {student?.status}
-                  </Badge>
-                  {student?.is_govt === 1 && (
-                    <Badge variant="outline" className="text-blue-600 border-blue-600">Govt</Badge>
-                  )}
-                </div>
-              </TableCell>
+    <>
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="text-center">Sl</TableHead>
+              <TableHead className="text-center">Action</TableHead>
+              <TableHead className="text-center">Profile</TableHead>
+              <TableHead className="text-center">Name & Email</TableHead>
+              <TableHead className="text-center">Phone</TableHead>
+              <TableHead className="text-center">Courses & Batches</TableHead>
+              <TableHead className="text-center">Branch</TableHead>
+              <TableHead className="text-center">Divisions</TableHead>
+              <TableHead className="text-center">Status</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+
+          <TableBody>
+            {students.map((student: Student, index: number) => (
+              <TableRow key={student?.id}>
+                <TableCell className="text-center">{(page - 1) * 15 + (index + 1)}</TableCell>
+                <TableCell className="text-center">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Badge
+                        variant="default"
+                        role="button"
+                        tabIndex={0}
+                        className="cursor-pointer select-none"
+                      >
+                        Action
+                      </Badge>
+                    </DropdownMenuTrigger>
+
+                    <DropdownMenuContent align="center">
+                      <PermissionGuard requiredPermission="view-students">
+                        <DropdownMenuItem asChild>
+                          <Link
+                            href={`/lms/students/${student?.id}`}
+                            className="flex items-center cursor-pointer"
+                          >
+                            <Eye className="mr-2 h-4 w-4" />
+                            Details
+                          </Link>
+                        </DropdownMenuItem>
+                      </PermissionGuard>
+
+                      <PermissionGuard requiredPermission="edit-students">
+                        <DropdownMenuItem asChild>
+                          <Link
+                            href={`/lms/students/${student?.id}/edit`}
+                            className="flex items-center cursor-pointer"
+                          >
+                            <Pencil className="mr-2 h-4 w-4" />
+                            Manage
+                          </Link>
+                        </DropdownMenuItem>
+                      </PermissionGuard>
+
+                      <PermissionGuard requiredPermission="delete-students">
+                        <DropdownMenuItem asChild>
+                          <DeleteButton id={student?.id} />
+                        </DropdownMenuItem>
+                      </PermissionGuard>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </TableCell>
+                <TableCell className="text-center">
+                  <div className="flex justify-center">
+                    <Avatar className="h-8 w-8 bg-gray-300 rounded-full overflow-hidden">
+                      <AvatarImage
+                        src={student?.profile_image || "/images/profile_avatar.png"}
+                        alt={student?.name}
+                      />
+                    </Avatar>
+                  </div>
+                </TableCell>
+                <TableCell className="text-center">
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium leading-none">{student?.name}</p>
+                    <p className="text-xs text-muted-foreground">{student?.email}</p>
+                  </div>
+                </TableCell>
+                <TableCell className="text-center">{student?.phone}</TableCell>
+                <TableCell className="text-center">
+                  {student?.courses?.map((course, idx) => (
+                    <div key={idx} className="text-xs">
+                      {course.title} - {course.batch}
+                    </div>
+                  ))}
+                </TableCell>
+                <TableCell className="text-center">{student?.branches}</TableCell>
+                <TableCell className="text-center">{student?.divisions}</TableCell>
+                <TableCell className="text-center">
+                  <div className="flex flex-col items-center gap-1">
+                    <Badge variant={student?.status === "PAID_COURSE_ENROLLED" ? "default" : "secondary"}>
+                      {student?.status}
+                    </Badge>
+                    {student?.is_govt === 1 && (
+                      <Badge variant="outline" className="text-blue-600 border-blue-600">Govt</Badge>
+                    )}
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
       {paginationData && (
         <div className="mt-4">
           <Pagination pagination={paginationData} />
         </div>
       )}
-    </div>
+    </>
   );
 };
 

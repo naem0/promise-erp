@@ -25,7 +25,6 @@ interface NewsFeedFormProps {
 interface FormValues {
   title: string;
   news_link: string;
-  entry_date: string;
   status: string;
   image?: FileList;
 }
@@ -46,7 +45,6 @@ export default function NewsFeedForm({ title, newsFeed }: NewsFeedFormProps) {
     defaultValues: {
       title: newsFeed?.title || "",
       news_link: newsFeed?.news_link || "",
-      entry_date: newsFeed?.entry_date || new Date().toISOString().split('T')[0],
       status: newsFeed?.status.toString() || "1",
       image: undefined,
     },
@@ -82,7 +80,6 @@ export default function NewsFeedForm({ title, newsFeed }: NewsFeedFormProps) {
     const formData = new FormData();
     formData.append("title", values.title.trim());
     formData.append("news_link", values.news_link.trim());
-    formData.append("entry_date", values.entry_date);
     formData.append("status", values.status);
 
     if (values.image && values.image.length > 0) {
@@ -156,22 +153,13 @@ export default function NewsFeedForm({ title, newsFeed }: NewsFeedFormProps) {
             <Input
               type="url"
               placeholder="https://example.com/news"
-              {...register("news_link")} 
+              {...register("news_link")}
             />
             {errors.news_link && <p className="text-sm text-red-500 mt-1">{errors.news_link.message}</p>}
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Entry Date */}
-          <div>
-            <Label className="block text-sm font-medium mb-1">Entry Date <span className="text-red-500">*</span></Label>
-            <Input
-              type="date"
-              {...register("entry_date")}
-            />
-            {errors.entry_date && <p className="text-sm text-red-500 mt-1">{errors.entry_date.message}</p>}
-          </div>
           {/* Status */}
           <div>
             <Label className="block text-sm font-medium mb-1">Status <span className="text-red-500">*</span></Label>

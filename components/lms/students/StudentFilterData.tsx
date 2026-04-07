@@ -10,8 +10,8 @@ export default async function StudentFilterData() {
 
     return (
         <StudentFilter
-            divisions={divisionsRes.data.divisions}
-            branches={branchesRes.data.branches}
+            divisions={divisionsRes?.data?.divisions}
+            branches={branchesRes?.data?.branches}
         />
     )
 }

@@ -63,6 +63,7 @@ const CategoriesData = async ({
   
 
   return (
+    <>
     <div className="rounded-md border">
       <Table>
         <TableHeader>
@@ -132,15 +133,14 @@ const CategoriesData = async ({
             </TableRow>
           ))}
         </TableBody>
-      </Table>
- 
-      {paginationData && (
+      </Table>    
+    </div>
+    {paginationData && (
         <div className="mt-4">
           <Pagination pagination={paginationData} />
         </div>
       )}
-    </div>
-    
+    </>
   );
 }
 export default CategoriesData;

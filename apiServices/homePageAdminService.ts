@@ -1258,7 +1258,7 @@ export interface NewsFeed {
   title: string;
   news_link: string;
   image?: string | null;
-  entry_date: string;
+  created_at: string;
   status: number;
 }
 

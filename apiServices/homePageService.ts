@@ -265,7 +265,7 @@ export interface NewsFeedItem {
   id: number;
   news_link: string;
   image: string;
-  entry_date: string;
+  created_at: string;
   title: string;
 }
 

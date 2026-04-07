@@ -148,9 +148,9 @@ export default function StudentFilter({
                 <SelectValue placeholder="Division" />
               </SelectTrigger>
               <SelectContent>
-                {divisions.map((division) => (
-                  <SelectItem key={division.id} value={String(division.id)}>
-                    {division.name}
+                {divisions?.map((division) => (
+                  <SelectItem key={division?.id} value={String(division?.id)}>
+                    {division?.name}
                   </SelectItem>
                 ))}
               </SelectContent>

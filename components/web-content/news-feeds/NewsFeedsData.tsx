@@ -56,7 +56,7 @@ const NewsFeedsData = async ({
 
   const newsFeeds = results?.data?.news_feeds || [];
   const paginationData = results?.data?.pagination;
-  
+
   if (!newsFeeds || newsFeeds.length === 0) {
     return <NotFoundComponent message={results?.message || "No news feeds found."} />;
   }
@@ -71,7 +71,7 @@ const NewsFeedsData = async ({
             <TableHead className="text-center">Image</TableHead>
             <TableHead className="text-center">Title</TableHead>
             <TableHead className="text-center">News Link</TableHead>
-            <TableHead className="text-center">Entry Date</TableHead>
+            <TableHead className="text-center">Created At</TableHead>
             <TableHead className="text-center">Status</TableHead>
           </TableRow>
         </TableHeader>
@@ -138,7 +138,7 @@ const NewsFeedsData = async ({
                   </a>
                 </TableCell>
                 <TableCell className="text-center">
-                  {new Date(item.entry_date).toLocaleDateString()}
+                  {new Date(item.created_at).toLocaleDateString()}
                 </TableCell>
                 <TableCell className="text-center">
                   <Badge variant={item.status === 1 ? "outline" : "destructive"}>
