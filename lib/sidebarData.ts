@@ -347,11 +347,11 @@ export const sidebarData = {
               url: "/lms/careers",
               permissions: ["view-careers"],
             },
-            // {
-            //   title: "Job Applications",
-            //   url: "#",
-            //   permissions: ["view-job-applications"],
-            // },
+            {
+              title: "Job Applications",
+              url: "/web-content/job-applies",
+              permissions: ["view-job-applications"],
+            },
             // {
             //   title: "Interviews",
             //   url: "#",

@@ -6,6 +6,8 @@ import { Toaster } from "@/components/ui/sonner";
 
 import "./globals.css";
 import StoreProvider from "@/store/StoreProvider";
+import { Tooltip } from "radix-ui";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -76,8 +78,10 @@ export default function RootLayout({
         <StoreProvider>
           <SessionProviderWrapper>
             <PermissionProvider>
-              {children}
-              <Toaster />
+              <TooltipProvider>
+                {children}
+                <Toaster />
+              </TooltipProvider>
             </PermissionProvider>
           </SessionProviderWrapper>
         </StoreProvider>
