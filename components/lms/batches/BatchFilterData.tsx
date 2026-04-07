@@ -13,9 +13,9 @@ export default async function BatchFilterData() {
 
     return (
         <BatchFilter
-            divisions={divisionsRes.data.divisions}
-            districts={districtsRes.data.districts}
-            branches={branchesRes.data.branches}
+            divisions={divisionsRes?.data?.divisions}
+            districts={districtsRes?.data?.districts}
+            branches={branchesRes?.data?.branches}
         />
     )
 }

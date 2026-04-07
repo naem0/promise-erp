@@ -93,7 +93,7 @@ const CategoriesData = async ({
                     </DropdownMenuTrigger>
 
                     <DropdownMenuContent align="center">
-                      <PermissionGuard requiredPermission="edit-course-categories">
+                      <PermissionGuard requiredPermission="edit-career-categories">
                         <DropdownMenuItem asChild>
                           <Link
                             href={`/lms/categories/${category?.id}/edit`}
@@ -105,7 +105,7 @@ const CategoriesData = async ({
                         </DropdownMenuItem>
                       </PermissionGuard>
 
-                      <PermissionGuard requiredPermission="delete-course-categories">
+                      <PermissionGuard requiredPermission="delete-career-categories">
                         <DropdownMenuItem asChild>
                           <DeleteButton id={category?.id} />
                         </DropdownMenuItem>

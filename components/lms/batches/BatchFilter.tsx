@@ -174,7 +174,7 @@ export default function BatchFilter({
                                 <SelectValue placeholder="District" />
                             </SelectTrigger>
                             <SelectContent>
-                                {districts.map((district) => (
+                                {districts?.map((district) => (
                                     <SelectItem key={district.id} value={String(district.id)}>
                                         {district.name}
                                     </SelectItem>
