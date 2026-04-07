@@ -2,69 +2,118 @@
   "routes": [
     { "path": "/lms/courses", "permissions": ["view-courses"] },
     { "path": "/lms/courses/add", "permissions": ["create-courses"] },
-    { "path": "/lms/courses/edit", "permissions": ["update-courses"], "isDynamic": true },
+    { "path": "/lms/courses/edit", "permissions": ["edit-courses"], "isDynamic": true },
+
     { "path": "/lms/categories", "permissions": ["view-course-categories"] },
     { "path": "/lms/categories/add", "permissions": ["create-course-categories"] },
+    { "path": "/lms/categories/edit", "permissions": ["edit-course-categories"], "isDynamic": true },
+
     { "path": "/lms/batches", "permissions": ["view-batches"] },
     { "path": "/lms/batches/add", "permissions": ["create-batches"] },
+    { "path": "/lms/batches/edit", "permissions": ["edit-batches"], "isDynamic": true },
+
     { "path": "/lms/facilities", "permissions": ["view-course-facilities"] },
     { "path": "/lms/facilities/add", "permissions": ["create-course-facilities"] },
+    { "path": "/lms/facilities/edit", "permissions": ["edit-course-facilities"], "isDynamic": true },
+
     { "path": "/lms/faqs", "permissions": ["view-course-faqs"] },
     { "path": "/lms/faqs/add", "permissions": ["create-course-faqs"] },
+    { "path": "/lms/faqs/edit", "permissions": ["edit-course-faqs"], "isDynamic": true },
+
     { "path": "/lms/coupons", "permissions": ["view-coupons"] },
     { "path": "/lms/coupons/add", "permissions": ["create-coupons"] },
+    { "path": "/lms/coupons/edit", "permissions": ["edit-coupons"], "isDynamic": true },
+
     { "path": "/lms/who-can-join", "permissions": ["view-course-joins"] },
     { "path": "/lms/who-can-join/add", "permissions": ["create-course-joins"] },
+    { "path": "/lms/who-can-join/edit", "permissions": ["sync-course-joins"], "isDynamic": true },
+
     { "path": "/lms/reviews", "permissions": ["view-reviews"] },
     { "path": "/lms/reviews/add", "permissions": ["create-reviews"] },
+    { "path": "/lms/reviews/edit", "permissions": ["edit-reviews"], "isDynamic": true },
+
     { "path": "/lms/tools", "permissions": ["view-course-tools"] },
     { "path": "/lms/tools/add", "permissions": ["create-course-tools"] },
+    { "path": "/lms/tools/edit", "permissions": ["edit-course-tools"], "isDynamic": true },
+
     { "path": "/lms/branches", "permissions": ["view-branches"] },
     { "path": "/lms/branches/add", "permissions": ["create-branches"] },
+    { "path": "/lms/branches/edit", "permissions": ["edit-branches"], "isDynamic": true },
+
     { "path": "/lms/blogs", "permissions": ["view-blogs"] },
     { "path": "/lms/blogs/add", "permissions": ["create-blogs"] },
+    { "path": "/lms/blogs/edit", "permissions": ["edit-blogs"], "isDynamic": true },
     
     { "path": "/lms/employees", "permissions": ["view-employees"] },
     { "path": "/lms/employees/add", "permissions": ["create-employees"] },
-    { "path": "/lms/employees/edit", "permissions": ["update-employees"], "isDynamic": true },
+    { "path": "/lms/employees/edit", "permissions": ["edit-employees"], "isDynamic": true },
+
     { "path": "/lms/students", "permissions": ["view-students"] },
     { "path": "/lms/students/add", "permissions": ["create-students"] },
+    { "path": "/lms/students/edit", "permissions": ["edit-students"], "isDynamic": true },
 
     { "path": "/lms/teachers", "permissions": ["view-teachers"] },
     { "path": "/lms/teachers/add", "permissions": ["create-teachers"] },
-    { "path": "/lms/teachers/edit", "permissions": ["update-teachers"], "isDynamic": true },
+    { "path": "/lms/teachers/edit", "permissions": ["edit-teachers"], "isDynamic": true },
     
     { "path": "/lms/enrollments", "permissions": ["view-enrollments"] },
     { "path": "/lms/enrollments/add", "permissions": ["create-enrollments"] },
+    { "path": "/lms/enrollments/edit", "permissions": ["edit-enrollments"], "isDynamic": true },
+
     { "path": "/lms/careers", "permissions": ["view-careers"] },
     { "path": "/lms/careers/add", "permissions": ["create-careers"] },
+    { "path": "/lms/careers/edit", "permissions": ["edit-careers"], "isDynamic": true },
     
     { "path": "/crm/categories", "permissions": ["view-crm-categories"] },
     { "path": "/crm/categories/add", "permissions": ["create-crm-categories"] },
+    { "path": "/crm/categories/edit", "permissions": ["edit-crm-categories"], "isDynamic": true },
+
     { "path": "/districts", "permissions": ["view-districts"] },
     { "path": "/districts/add", "permissions": ["create-districts"] },
+    { "path": "/districts/edit", "permissions": ["edit-districts"], "isDynamic": true },
+
     { "path": "/divisions", "permissions": ["view-divisions"] },
     { "path": "/divisions/add", "permissions": ["create-divisions"] },
+    { "path": "/divisions/edit", "permissions": ["edit-divisions"], "isDynamic": true },
+
     { "path": "/access-control/roles", "permissions": ["view-roles"] },
     { "path": "/access-control/permissions", "permissions": ["view-permissions"] },
     
+    
     { "path": "/web-content/stats", "permissions": ["view-stats"] },
     { "path": "/web-content/stats/add", "permissions": ["create-stats"] },
+    { "path": "/web-content/stats/edit", "permissions": ["edit-stats"], "isDynamic": true },
+
     { "path": "/web-content/blog-categories", "permissions": ["view-blog-categories"] },
     { "path": "/web-content/blog-categories/add", "permissions": ["create-blog-categories"] },
+    { "path": "/web-content/blog-categories/edit", "permissions": ["edit-blog-categories"], "isDynamic": true },
     { "path": "/web-content/hero-section", "permissions": ["view-hero-sections"] },
     { "path": "/web-content/hero-section/add", "permissions": ["create-hero-sections"] },
+    { "path": "/web-content/hero-section/edit", "permissions": ["edit-hero-sections"], "isDynamic": true },
     { "path": "/web-content/common-sections", "permissions": ["view-sections"] },
     { "path": "/web-content/common-sections/add", "permissions": ["create-sections"] },
+    { "path": "/web-content/common-sections/edit", "permissions": ["edit-sections"], "isDynamic": true },
     { "path": "/web-content/opportunities", "permissions": ["view-opportunities"] },
     { "path": "/web-content/opportunities/add", "permissions": ["create-opportunities"] },
+    { "path": "/web-content/opportunities/edit", "permissions": ["edit-opportunities"], "isDynamic": true },
     { "path": "/web-content/video-galleries", "permissions": ["view-video-galleries"] },
     { "path": "/web-content/video-galleries/add", "permissions": ["create-video-galleries"] },
+    { "path": "/web-content/video-galleries/edit", "permissions": ["edit-video-galleries"], "isDynamic": true },
+
     { "path": "/web-content/our-partners", "permissions": ["view-partners"] },
     { "path": "/web-content/our-partners/add", "permissions": ["create-partners"] },
+    { "path": "/web-content/our-partners/edit", "permissions": ["edit-partners"], "isDynamic": true },
+
     { "path": "/web-content/news-feeds", "permissions": ["view-news-feeds"] },
     { "path": "/web-content/news-feeds/add", "permissions": ["create-news-feeds"] },
+    { "path": "/web-content/news-feeds/edit", "permissions": ["edit-news-feeds"], "isDynamic": true },
+
     { "path": "/web-content/career-categories", "permissions": ["view-career-categories"] },
-    { "path": "/web-content/career-categories/add", "permissions": ["create-career-categories"] }
+    { "path": "/web-content/career-categories/add", "permissions": ["create-career-categories"] },
+    { "path": "/web-content/career-categories/edit", "permissions": ["edit-career-categories"], "isDynamic": true },
+
+    { "path": "/web-content/job-applies", "permissions": ["view-job-applications"] },
+    { "path": "/web-content/job-applies/add", "permissions": ["create-job-applications"] },
+    { "path": "/web-content/job-applies/edit", "permissions": ["edit-job-applications"], "isDynamic": true }
   ]
 }
