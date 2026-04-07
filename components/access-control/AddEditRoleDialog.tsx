@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { X } from "lucide-react";
 import { toast } from "sonner";
 
@@ -30,6 +31,7 @@ import {
     updateRole,
     getRoleById,
 } from "@/apiServices/rolePermissionService";
+import { getUserWiseByRole, RoleWiseUserList } from "@/apiServices/rolePermissionService";
 
 interface AddEditRoleDialogProps {
     open: boolean;
@@ -55,6 +57,7 @@ const AddEditRoleDialog: React.FC<AddEditRoleDialogProps> = ({
         RolePermissionModule[]
     >([]);
     const [selectedPermissions, setSelectedPermissions] = useState<string[]>([]);
+    const [roleWiseUsers, setRoleWiseUsers] = useState<RoleWiseUserList[]>([]);
     const [isPending, startTransition] = useTransition();
 
     //===== Fetch all permissions list ======
@@ -171,6 +174,30 @@ const AddEditRoleDialog: React.FC<AddEditRoleDialogProps> = ({
         });
     };
 
+    // =====Start Fetch role wise users =====
+    useEffect(() => {
+        if (!token || !roleId) return;
+
+        startTransition(async () => {
+            try {
+                const res = await getUserWiseByRole(roleId, token);
+                if (res.success) {
+                    setRoleWiseUsers(res?.data?.users || []);
+                } else {
+                    setRoleWiseUsers([]);
+                }
+            } catch (error: unknown) {
+                if (error instanceof Error) {
+                    console.error("getUserWiseByRole error:", error);
+                }
+            }
+        });
+    }, [token, roleId]);
+
+    console.log("roleWiseUsers--->,", roleWiseUsers);
+
+    // =====End Fetch role wise users =====
+
     //====== Mobile permission row=======
     const MobilePermissionRow = ({
         module,
@@ -212,7 +239,7 @@ const AddEditRoleDialog: React.FC<AddEditRoleDialogProps> = ({
     return (
         <AlertDialog open={open} onOpenChange={onOpenChange}>
             <AlertDialogContent className="sm:max-w-5xl max-h-[90vh] overflow-hidden flex flex-col w-[95vw] mx-2 p-0">
-                <AlertDialogHeader className="sticky top-0 z-10 bg-white border-b px-4 py-3">
+                <AlertDialogHeader className="shrink-0 sticky top-0 z-10 bg-white border-b px-4 py-3">
                     <div className="flex items-center justify-between">
                         <AlertDialogTitle className="text-lg sm:text-xl">
                             {roleId ? "Edit Role" : "Add Role"}
@@ -226,133 +253,189 @@ const AddEditRoleDialog: React.FC<AddEditRoleDialogProps> = ({
                     </div>
                 </AlertDialogHeader>
 
-                <div className="flex-1 overflow-y-auto px-4 py-3">
-                    <div className="flex flex-col gap-4">
-                        <div className="space-y-2">
-                            <Label className="text-sm font-medium">Role Name</Label>
-                            <input
-                                value={roleName}
-                                onChange={(e) => setRoleName(e.target.value)}
-                                className="w-full border rounded-lg px-3 py-2.5 bg-white text-sm"
-                                placeholder="Enter role name"
-                            />
-                        </div>
-
-                        <div>
-                            <h3 className="text-base sm:text-lg font-semibold mb-3">
-                                Role Permissions
-                            </h3>
-
-                            <div className="hidden sm:block">
-                                <Card>
-                                    <CardContent className="p-0">
-                                        <Table>
-                                            <TableHeader>
-                                                <TableRow>
-                                                    <TableHead>Module</TableHead>
-                                                    <TableHead className="text-center">
-                                                        Permissions
-                                                    </TableHead>
-                                                </TableRow>
-                                            </TableHeader>
-                                            <TableBody>
-                                                {isPending ? (
-                                                    <TableRow>
-                                                        <TableCell colSpan={2} className="text-center">
-                                                            <h1 className="text-xl font-bold">Loading...</h1>
-                                                        </TableCell>
-                                                    </TableRow>
-                                                ) : rolePermissionList.length > 0 ? (
-                                                    rolePermissionList.map((module) => (
-                                                        <TableRow key={module.module_title}>
-                                                            <TableCell className="font-bold text-base capitalize">
-                                                                {module.module_title}
-                                                            </TableCell>
-                                                            <TableCell>
-                                                                <div className="flex gap-4 flex-wrap justify-start items-center">
-                                                                    <div className="flex items-center gap-1">
-                                                                        <Checkbox
-                                                                            id={module.module_title}
-                                                                            className="cursor-pointer"
-                                                                            checked={isModuleAllSelected(module)}
-                                                                            onCheckedChange={() =>
-                                                                                toggleModulePermissions(module)
-                                                                            }
-                                                                        />
-                                                                        <Label htmlFor={module.module_title} className="text-base font-semibold cursor-pointer">
-                                                                            All
-                                                                        </Label>
-                                                                    </div>
-
-                                                                    {module.module_permission.map((perm) => (
-                                                                        <div
-                                                                            key={perm.id}
-                                                                            className="flex items-center gap-1"
-                                                                        >
-                                                                            <Checkbox
-                                                                                className="cursor-pointer"
-                                                                                id={perm.name}
-                                                                                checked={selectedPermissions.includes(
-                                                                                    perm.name,
-                                                                                )}
-                                                                                onCheckedChange={() =>
-                                                                                    togglePermission(perm.name)
-                                                                                }
-                                                                            />
-                                                                            <Label htmlFor={perm.name} className="text-md cursor-pointer">
-                                                                                {perm.name}
-                                                                            </Label>
-                                                                        </div>
-                                                                    ))}
-                                                                </div>
-                                                            </TableCell>
-                                                        </TableRow>
-                                                    ))
-                                                ) : (
-                                                    <TableRow>
-                                                        <TableCell colSpan={2} className="text-center">
-                                                            <h1>
-                                                                No permissions Data Currently Not Available
-                                                            </h1>
-                                                        </TableCell>
-                                                    </TableRow>
-                                                )}
-                                            </TableBody>
-                                        </Table>
-                                    </CardContent>
-                                </Card>
-                            </div>
-
-                            <div className="sm:hidden">
-                                {isPending ? (
-                                    <div className="text-center">
-                                        <h1 className="text-lg font-bold">Loading...</h1>
-                                    </div>
-                                ) : rolePermissionList.length > 0 ? (
-                                    rolePermissionList.map((module) => (
-                                        <MobilePermissionRow
-                                            key={module.module_title}
-                                            module={module}
-                                        />
-                                    ))
-                                ) : (
-                                    <div className="text-center">
-                                        <h1 className="text-lg font-bold">No permissions Data Currently Not Available</h1>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
+                <Tabs defaultValue="role" className="w-full flex-1 overflow-hidden flex flex-col">
+                    <div className="px-4 pt-3 shrink-0">
+                        <TabsList className="grid w-full grid-cols-2">
+                            <TabsTrigger className="cursor-pointer" value="role">{roleId ? "Edit Role" : "Add Role"}</TabsTrigger>
+                            <TabsTrigger className="cursor-pointer" value="users">Role Wise User</TabsTrigger>
+                        </TabsList>
                     </div>
-                </div>
 
-                <AlertDialogFooter className="sticky bottom-0 bg-white border-t px-4 py-3">
-                    <Button variant="outline" className="bg-red-500 text-white" onClick={() => onOpenChange(false)}>
-                        Close
-                    </Button>
-                    <Button onClick={handleSave} disabled={isPending}>
-                        {isPending ? "Saving..." : "Save Changes"}
-                    </Button>
-                </AlertDialogFooter>
+                    <TabsContent value="role" className="flex-1 overflow-hidden flex flex-col mt-0 data-[state=inactive]:hidden">
+                        <div className="flex-1 overflow-y-auto px-4 py-3">
+                            <div className="flex flex-col gap-4">
+                                <div className="space-y-2">
+                                    <Label className="text-sm font-medium">Role Name</Label>
+                                    <input
+                                        value={roleName}
+                                        onChange={(e) => setRoleName(e.target.value)}
+                                        className="w-full border rounded-lg px-3 py-2.5 bg-white text-sm"
+                                        placeholder="Enter role name"
+                                    />
+                                </div>
+
+                                <div>
+                                    <h3 className="text-base sm:text-lg font-semibold mb-3">
+                                        Role Permissions
+                                    </h3>
+
+                                    <div className="hidden sm:block">
+                                        <Card>
+                                            <CardContent className="p-0">
+                                                <Table>
+                                                    <TableHeader>
+                                                        <TableRow>
+                                                            <TableHead>Module</TableHead>
+                                                            <TableHead className="text-center">
+                                                                Permissions
+                                                            </TableHead>
+                                                        </TableRow>
+                                                    </TableHeader>
+                                                    <TableBody>
+                                                        {isPending ? (
+                                                            <TableRow>
+                                                                <TableCell colSpan={2} className="text-center">
+                                                                    <h1 className="text-xl font-bold">Loading...</h1>
+                                                                </TableCell>
+                                                            </TableRow>
+                                                        ) : rolePermissionList.length > 0 ? (
+                                                            rolePermissionList.map((module) => (
+                                                                <TableRow key={module.module_title}>
+                                                                    <TableCell className="font-bold text-base capitalize">
+                                                                        {module.module_title}
+                                                                    </TableCell>
+                                                                    <TableCell>
+                                                                        <div className="flex gap-4 flex-wrap justify-start items-center">
+                                                                            <div className="flex items-center gap-1">
+                                                                                <Checkbox
+                                                                                    id={module.module_title}
+                                                                                    className="cursor-pointer"
+                                                                                    checked={isModuleAllSelected(module)}
+                                                                                    onCheckedChange={() =>
+                                                                                        toggleModulePermissions(module)
+                                                                                    }
+                                                                                />
+                                                                                <Label htmlFor={module.module_title} className="text-base font-semibold cursor-pointer">
+                                                                                    All
+                                                                                </Label>
+                                                                            </div>
+
+                                                                            {module.module_permission.map((perm) => (
+                                                                                <div
+                                                                                    key={perm.id}
+                                                                                    className="flex items-center gap-1"
+                                                                                >
+                                                                                    <Checkbox
+                                                                                        className="cursor-pointer"
+                                                                                        id={perm.name}
+                                                                                        checked={selectedPermissions.includes(
+                                                                                            perm.name,
+                                                                                        )}
+                                                                                        onCheckedChange={() =>
+                                                                                            togglePermission(perm.name)
+                                                                                        }
+                                                                                    />
+                                                                                    <Label htmlFor={perm.name} className="text-md cursor-pointer">
+                                                                                        {perm.name}
+                                                                                    </Label>
+                                                                                </div>
+                                                                            ))}
+                                                                        </div>
+                                                                    </TableCell>
+                                                                </TableRow>
+                                                            ))
+                                                        ) : (
+                                                            <TableRow>
+                                                                <TableCell colSpan={2} className="text-center">
+                                                                    <h1>
+                                                                        No permissions Data Currently Not Available
+                                                                    </h1>
+                                                                </TableCell>
+                                                            </TableRow>
+                                                        )}
+                                                    </TableBody>
+                                                </Table>
+                                            </CardContent>
+                                        </Card>
+                                    </div>
+
+                                    <div className="sm:hidden">
+                                        {isPending ? (
+                                            <div className="text-center">
+                                                <h1 className="text-lg font-bold">Loading...</h1>
+                                            </div>
+                                        ) : rolePermissionList.length > 0 ? (
+                                            rolePermissionList.map((module) => (
+                                                <MobilePermissionRow
+                                                    key={module.module_title}
+                                                    module={module}
+                                                />
+                                            ))
+                                        ) : (
+                                            <div className="text-center">
+                                                <h1 className="text-lg font-bold">No permissions Data Currently Not Available</h1>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <AlertDialogFooter className="sticky bottom-0 bg-white border-t px-4 py-3 shrink-0">
+                            <Button variant="outline" className="bg-red-500 text-white" onClick={() => onOpenChange(false)}>
+                                Close
+                            </Button>
+                            <Button onClick={handleSave} disabled={isPending}>
+                                {isPending ? "Saving..." : "Save Changes"}
+                            </Button>
+                        </AlertDialogFooter>
+                    </TabsContent>
+
+                    <TabsContent value="users" className="flex-1 overflow-hidden flex flex-col mt-0 data-[state=inactive]:hidden">
+                        <div className="flex-1 overflow-y-auto px-4 py-3 flex items-center justify-center text-muted-foreground">
+                            <Card className="w-full">
+                                <CardContent className="p-0">
+                                    <Table className="w-full">
+                                        <TableHeader>
+                                            <TableRow>
+                                                <TableHead>Name</TableHead>
+                                                <TableHead>Email</TableHead>
+                                            </TableRow>
+                                        </TableHeader>
+
+                                        <TableBody>
+                                            {isPending ? (
+                                                <TableRow>
+                                                    <TableCell colSpan={2} className="text-center">
+                                                        Loading...
+                                                    </TableCell>
+                                                </TableRow>
+                                            ) : roleWiseUsers?.length > 0 ? (
+                                                roleWiseUsers?.map((user) => (
+                                                    <TableRow key={user?.id}>
+                                                        <TableCell>{user?.name}</TableCell>
+                                                        <TableCell>{user?.email}</TableCell>
+                                                    </TableRow>
+                                                ))
+                                            ) : (
+                                                <TableRow>
+                                                    <TableCell colSpan={2} className="text-center">
+                                                        No Users Found
+                                                    </TableCell>
+                                                </TableRow>
+                                            )}
+                                        </TableBody>
+                                    </Table>
+                                </CardContent>
+                            </Card>
+                        </div>
+                        <AlertDialogFooter className="sticky bottom-0 bg-white border-t px-4 py-3 shrink-0">
+                            <Button variant="outline" className="bg-red-500 text-white" onClick={() => onOpenChange(false)}>
+                                Close
+                            </Button>
+                        </AlertDialogFooter>
+                    </TabsContent>
+                </Tabs>
             </AlertDialogContent>
         </AlertDialog>
     );
