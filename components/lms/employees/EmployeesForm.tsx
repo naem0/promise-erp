@@ -41,7 +41,7 @@ interface FormValues {
     blood_group: string;
     designation_id: string;
     department_id: string;
-    branch_id: string;
+    branch_ids: string[];
     join_date: string;
     experience: string;
     display_order: string;
@@ -91,7 +91,7 @@ export default function EmployeesForm({
             blood_group: employee?.blood_group || "",
             designation_id: employee?.designation?.id?.toString() || "",
             department_id: employee?.department?.id?.toString() || "",
-            branch_id: employee?.branch?.id?.toString() || "",
+            branch_ids: employee?.branches?.map(b => b.id.toString()) || [],
             join_date: employee?.joining_date || "",
             experience: employee?.experience || "",
             display_order: employee?.display_order?.toString() || "1",
@@ -129,8 +129,8 @@ export default function EmployeesForm({
             if (key !== "profile_image" && value !== undefined && value !== null) {
                 if (key === "address") {
                     formData.append("present_address", value as string);
-                } else if (key === "tool_ids" && Array.isArray(value)) {
-                    value.forEach(id => formData.append("tool_ids[]", id));
+                } else if ((key === "tool_ids" || key === "branch_ids") && Array.isArray(value)) {
+                    value.forEach(id => formData.append(`${key}[]`, id));
                 } else {
                     formData.append(key, value as string);
                 }
@@ -363,25 +363,53 @@ export default function EmployeesForm({
                     </div>
 
                     {/* Branch & Joining Date */}
-                    <div>
-                        <label className="block text-sm font-medium mb-1">Branch <span className="text-red-500">*</span></label>
-                        <Controller
-                            name="branch_id"
-                            control={control}
-                            render={({ field }) => (
-                                <Select value={field.value} onValueChange={field.onChange}>
-                                    <SelectTrigger className="w-full">
-                                        <SelectValue placeholder="Select a branch" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {branches.map(b => (
-                                            <SelectItem key={b.id} value={b.id.toString()}>{b.name}</SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            )}
-                        />
-                        {errors.branch_id && <p className="text-sm text-red-500 mt-1">{errors.branch_id.message}</p>}
+                    <div className="md:col-span-2">
+                        <label className="block text-sm font-medium mb-1">Branches <span className="text-red-500">*</span></label>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-2">
+                            {branches.map((branch) => (
+                                <Controller
+                                    key={branch.id}
+                                    name="branch_ids"
+                                    control={control}
+                                    render={({ field }) => {
+                                        const isChecked = field.value?.includes(branch.id.toString());
+                                        return (
+                                            <div
+                                                onClick={() => {
+                                                    const current = field.value || [];
+                                                    const updated = isChecked
+                                                        ? current.filter((id) => id !== branch.id.toString())
+                                                        : [...current, branch.id.toString()];
+                                                    field.onChange(updated);
+                                                }}
+                                                className={`
+                                                    group relative flex items-center p-3 border rounded-xl cursor-pointer transition-all duration-200
+                                                    ${isChecked
+                                                        ? "border-green-500 bg-green-50/40"
+                                                        : "border-gray-200 hover:border-gray-300 bg-white"
+                                                    }
+                                                `}
+                                            >
+                                                <div className={`
+                                                    w-4 h-4 rounded border flex items-center justify-center transition-colors mr-3
+                                                    ${isChecked ? "bg-green-600 border-green-600" : "bg-white border-gray-300 group-hover:border-gray-400"}
+                                                `}>
+                                                    {isChecked && (
+                                                        <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={4} d="M5 13l4 4L19 7" />
+                                                        </svg>
+                                                    )}
+                                                </div>
+                                                <span className={`text-sm font-medium truncate ${isChecked ? "text-green-900" : "text-gray-700"}`}>
+                                                    {branch.name}
+                                                </span>
+                                            </div>
+                                        );
+                                    }}
+                                />
+                            ))}
+                        </div>
+                        {errors.branch_ids && <p className="text-sm text-red-500 mt-1">{errors.branch_ids.message}</p>}
                     </div>
                     <div>
                         <label className="block text-sm font-medium mb-1">Joining Date</label>

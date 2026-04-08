@@ -194,7 +194,6 @@ const AddEditRoleDialog: React.FC<AddEditRoleDialogProps> = ({
         });
     }, [token, roleId]);
 
-    console.log("roleWiseUsers--->,", roleWiseUsers);
 
     // =====End Fetch role wise users =====
 

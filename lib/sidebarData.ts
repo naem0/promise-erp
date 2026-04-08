@@ -245,11 +245,11 @@ export const sidebarData = {
               url: "/lms/blogs",
               permissions: ["view-blogs"],
             },
-            {
-              title: "Notices",
-              url: "/web-content/notices",
-              permissions: ["view-news-feeds"],
-            },
+            // {
+            //   title: "Notices",
+            //   url: "/web-content/notices",
+            //   permissions: ["view-news-feeds"],
+            // },
             {
               title: "Hero Sections",
               url: "/web-content/hero-section",

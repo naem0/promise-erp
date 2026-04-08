@@ -117,7 +117,7 @@ const CareerCategoriesData = async ({
                       </Badge>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="center">
-                      <PermissionGuard requiredPermission="edit-career-category">
+                      <PermissionGuard requiredPermission="edit-career-categories">
                         <DropdownMenuItem asChild>
                           <Link
                             href={`/web-content/career-categories/${career_category?.id}/edit`}
@@ -129,7 +129,7 @@ const CareerCategoriesData = async ({
                         </DropdownMenuItem>
                       </PermissionGuard>
 
-                      <PermissionGuard requiredPermission="delete-career-category">
+                      <PermissionGuard requiredPermission="delete-career-categories">
                         <DropdownMenuItem asChild>
                           <DeleteButton
                             id={career_category?.id}

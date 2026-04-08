@@ -61,6 +61,7 @@ const VideoGalleryData = async ({
   }
 
   return (
+    <>
     <div className="rounded-md border">
       <Table>
         <TableHeader>
@@ -94,7 +95,7 @@ const VideoGalleryData = async ({
                     </DropdownMenuTrigger>
 
                     <DropdownMenuContent align="center">
-                      <PermissionGuard requiredPermission="edit-video-gallery">
+                      <PermissionGuard requiredPermission="edit-video-galleries">
                         <DropdownMenuItem asChild>
                           <Link
                             href={`/web-content/video-galleries/${item.id}/edit`}
@@ -106,7 +107,7 @@ const VideoGalleryData = async ({
                         </DropdownMenuItem>
                       </PermissionGuard>
 
-                      <PermissionGuard requiredPermission="delete-video-gallery">
+                      <PermissionGuard requiredPermission="delete-video-galleries">
                         <DropdownMenuItem asChild>
                           <DeleteButton id={item.id} />
                         </DropdownMenuItem>
@@ -150,12 +151,15 @@ const VideoGalleryData = async ({
         </TableBody>
       </Table>
 
-      {paginationData && (
+      
+    </div>
+    {paginationData && (
         <div className="mt-4">
           <Pagination pagination={paginationData} />
         </div>
       )}
-    </div>
+    </>
+    
   );
 };
 

@@ -107,7 +107,7 @@ const HeroSectionData = async ({
                       </DropdownMenuTrigger>
 
                       <DropdownMenuContent align="center">
-                        <PermissionGuard requiredPermission="edit-hero-section">
+                        <PermissionGuard requiredPermission="edit-hero-sections">
                           <DropdownMenuItem asChild>
                             <Link
                               href={`/web-content/hero-section/${item.id}/edit`}
@@ -119,7 +119,7 @@ const HeroSectionData = async ({
                           </DropdownMenuItem>
                         </PermissionGuard>
 
-                        <PermissionGuard requiredPermission="delete-hero-section">
+                        <PermissionGuard requiredPermission="delete-hero-sections">
                           <DropdownMenuItem asChild>
                             <DeleteButton id={item.id} />
                           </DropdownMenuItem>

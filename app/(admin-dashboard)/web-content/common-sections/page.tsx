@@ -16,7 +16,7 @@ const CommonSectionsPage = ({
     <div className="mx-auto space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-semibold tracking-tight">Common Sections</h1>
-        <PermissionGuard requiredPermission="create-common-sections">
+        <PermissionGuard requiredPermission="create-sections">
           <Button asChild>
               <Link href="/web-content/common-sections/add">  
                   <PlusCircle className="w-4 h-4 mr-2" />

@@ -95,7 +95,7 @@ const NewsFeedsData = async ({
                     </DropdownMenuTrigger>
 
                     <DropdownMenuContent align="center">
-                      <PermissionGuard requiredPermission="edit-news-feed">
+                      <PermissionGuard requiredPermission="edit-news-feeds">
                         <DropdownMenuItem asChild>
                           <Link
                             href={`/web-content/news-feeds/${item.id}/edit`}
@@ -107,7 +107,7 @@ const NewsFeedsData = async ({
                         </DropdownMenuItem>
                       </PermissionGuard>
 
-                      <PermissionGuard requiredPermission="delete-news-feed">
+                      <PermissionGuard requiredPermission="delete-news-feeds">
                         <DropdownMenuItem asChild>
                           <DeleteButton id={item.id} />
                         </DropdownMenuItem>

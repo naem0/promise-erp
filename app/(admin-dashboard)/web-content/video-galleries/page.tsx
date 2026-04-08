@@ -16,7 +16,7 @@ const VideoGalleriesPage = ({
     <div className="mx-auto space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-semibold tracking-tight">Video Galleries</h1>
-        <PermissionGuard requiredPermission="create-video-gallery">
+        <PermissionGuard requiredPermission="create-video-galleries">
           <Button asChild>
               <Link href="/web-content/video-galleries/add">  
                   <PlusCircle className="w-4 h-4 mr-2" />

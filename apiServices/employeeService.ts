@@ -60,7 +60,7 @@ export interface Employee {
   profile_image: string;
   display_order?: number;
   probation_period?: number;
-  branch: EmployeeBranch;
+  branches: EmployeeBranch[];
   department: EmployeeDepartment;
   role?: EmployeeRole;
   nid_no?: string;

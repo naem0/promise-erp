@@ -16,7 +16,7 @@ const NewsFeedsPage = ({
     <div className="mx-auto space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-semibold tracking-tight">News Feeds</h1>
-        <PermissionGuard requiredPermission="create-news-feed">
+        <PermissionGuard requiredPermission="create-news-feeds">
           <Button asChild>
               <Link href="/web-content/news-feeds/add">  
                   <PlusCircle className="w-4 h-4 mr-2" />
