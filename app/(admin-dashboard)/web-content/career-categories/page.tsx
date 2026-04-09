@@ -17,7 +17,7 @@ const CareerCategoriesPage = ({ searchParams }: CareerCategoryParams) => {
         <div className="mx-auto space-y-6">
             <div className="flex justify-between items-center">
                 <h1 className="text-2xl font-semibold tracking-tight">Career Categories</h1>
-                <PermissionGuard requiredPermission="create-career-category">
+                <PermissionGuard requiredPermission="create-career-categories">
                     <Button asChild>
                         <Link href="/web-content/career-categories/add">
                             <PlusCircle className="w-4 h-4 mr-2" />

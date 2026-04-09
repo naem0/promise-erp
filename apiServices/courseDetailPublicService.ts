@@ -134,7 +134,7 @@ export interface ApiResponse {
 
 export async function getCourseDetailBySlug(
   slug: string
-): Promise<ApiResponse> {
+): Promise<ApiResponse | null> {
   "use cache";
   cacheTag("course-detail");
 
@@ -144,6 +144,11 @@ export async function getCourseDetailBySlug(
         "Content-Type": "application/json",
       },
     });
+
+    if (res.status === 404) {
+      console.warn("No course found.");
+      return null;
+    }
 
     if (!res.ok) {
       throw new Error(`Failed to fetch course details: ${res.statusText}`);

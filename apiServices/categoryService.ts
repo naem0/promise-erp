@@ -254,7 +254,7 @@ export async function deleteCategory(id: number): Promise<SingleCategoryResponse
 
 // functions for home page getHomeCourseCategories ---
 
-export async function getHomeCourseCategories(): Promise<CategoriesResponse> {
+export async function getHomeCourseCategories(): Promise<CategoriesResponse | null> {
   // "use cache";
   // cacheTag("course-categories");
 
@@ -263,6 +263,11 @@ export async function getHomeCourseCategories(): Promise<CategoriesResponse> {
     const res = await fetch(
       `${API_BASE}/public/course-categories/with-count`
     );
+
+    if (res.status === 404) {
+      console.warn("Home Course Categories API returned 404 Not Found");
+      return null;
+    }
 
     if (!res.ok) {
       throw new Error(

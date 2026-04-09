@@ -392,9 +392,14 @@ export interface CourseSearchResponse {
 // End Home page Course Search get API --
 
 // Home Hero section get API
-export async function getLatestHeroSection(): Promise<HeroSectionResponse> {
+export async function getLatestHeroSection(): Promise<HeroSectionResponse | null> {
   try {
     const res = await fetch(`${API_BASE}/public/hero-section/latest`);
+
+    if (res.status === 404) {
+      console.warn("No hero section found.");
+      return null;
+    }
 
     if (!res.ok) {
       throw new Error(
@@ -415,9 +420,14 @@ export async function getLatestHeroSection(): Promise<HeroSectionResponse> {
 
 // Home page CountDown get API
 
-export async function getLatestCountDown(): Promise<CountDownResponse> {
+export async function getLatestCountDown(): Promise<CountDownResponse | null> {
   try {
     const res = await fetch(`${API_BASE}/public/stats/latest`);
+
+    if (res.status === 404) {
+      console.warn("No countdown found.");
+      return null;
+    }
 
     if (!res.ok) {
       throw new Error(`Countdown API error: ${res.status} ${res.statusText}`);
@@ -504,6 +514,11 @@ export async function getPublicBranchList(): Promise<HeaderBranchListResponse> {
 export async function fetchAllPublicTeachers(): Promise<TeacherApiResponse | null> {
   try {
     const res = await fetch(`${API_BASE}/public/teachers-list`);
+
+    if (res.status === 404) {
+      console.warn("No teachers found.");
+      return null;
+    }
 
     if (!res.ok) {
       throw new Error(
@@ -610,6 +625,11 @@ export async function fetchPublicCompanyServices(): Promise<ServicesApiResponse 
   try {
     const res = await fetch(`${API_BASE}/public/company-services`);
 
+    if (res.status === 404) {
+      console.warn("No company services found.");
+      return null;
+    }
+
     if (!res.ok) {
       throw new Error(
         `fetchPublicCompanyServices API error: ${res.status} ${res.statusText}`,
@@ -707,6 +727,11 @@ export async function fetchPublicNewsFeeds(
     const queryString = urlParams.toString();
     const res = await fetch(`${API_BASE}/public/news-feeds?${queryString}`);
 
+    if (res.status === 404) {
+      console.warn("No news feeds found.");
+      return null; // Return null if the resource is not found
+    }
+
     if (!res.ok) {
       throw new Error(
         `fetchPublicNewsFeeds API error: ${res.status} ${res.statusText}`,
@@ -728,6 +753,11 @@ export async function fetchPublicNewsFeeds(
 export async function fetchPublicOpportunities(): Promise<OpportunityApiResponse | null> {
   try {
     const res = await fetch(`${API_BASE}/public/public-opportunities`);
+
+    if (res.status === 404) {
+      console.warn("No opportunities found.");
+      return null;
+    }
 
     if (!res.ok) {
       throw new Error(
@@ -767,9 +797,15 @@ export async function fetchPublicHomeBlog(): Promise<BlogApiResponse | null> {
 }
 
 // Home Govt Course Section get API
-export async function getPublicGovtCourseSection(): Promise<GovtCourseResponse> {
+export async function getPublicGovtCourseSection(): Promise<GovtCourseResponse | null> {
   try {
     const res = await fetch(`${API_BASE}/public/govt-course-section`);
+
+    if (res.status === 404) {
+      console.warn("No govt course section found.");
+      return null;
+    }
+
     if (!res.ok) {
       throw new Error(
         `Govt Course Section API failed — HTTP ${res.status} (${res.statusText})`,
@@ -789,9 +825,14 @@ export async function getPublicGovtCourseSection(): Promise<GovtCourseResponse> 
   }
 }
 // Home Get Newsletter Section --
-export async function getPublicNewsletterSection(): Promise<getNewsletterItemResponse> {
+export async function getPublicNewsletterSection(): Promise<getNewsletterItemResponse | null> {
   try {
     const res = await fetch(`${API_BASE}/public/newsletter-section`);
+
+    if (res.status === 404) {
+      console.warn("No newsletter section found.");
+      return null;
+    }
 
     if (!res.ok) {
       throw new Error(

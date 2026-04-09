@@ -3,9 +3,10 @@ import Link from "next/link";
 
 const OurCoursesLink = async () => {
   let categories;
+  let categoriesResponse;
   try {
-    const categoriesResponse = await getHomeCourseCategories();
-    categories = categoriesResponse.data?.categories || [];
+     categoriesResponse = await getHomeCourseCategories();
+    categories = categoriesResponse?.data?.categories || [];
   } catch (error: unknown) {
     if (error instanceof Error) {
       return (

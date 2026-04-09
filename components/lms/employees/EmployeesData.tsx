@@ -177,7 +177,7 @@ const EmployeesData = async ({
                                     {employee?.department?.name || "—"}
                                 </TableCell>
                                 <TableCell className="text-center">
-                                    {employee?.branch?.name || "—"}
+                                    {employee?.branches?.map((b) => b.name).join(", ") || "—"}
                                 </TableCell>
                                 <TableCell className="text-center">
                                     {employee?.role?.name || "—"}

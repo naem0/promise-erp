@@ -3,12 +3,30 @@ import SectionTitle from "@/components/common/SectionTitle";
 import Image from "next/image";
 import { fetchPublicCompanyServices } from "@/apiServices/homePageService";
 import { cacheTag } from "next/cache";
+import ErrorComponent from "@/components/common/ErrorComponent";
 
 const HomeServiceList = async () => {
   "use cache";
   cacheTag("public-services");
-  const servicesData = await fetchPublicCompanyServices();
+
+  let servicesData;
+  try {
+     servicesData = await fetchPublicCompanyServices();
+  } catch (error:unknown) {
+    if (error instanceof Error) {
+      console.error("Error fetching public services:", error.message);
+      return <ErrorComponent message={error.message} />;
+    }
+    return <ErrorComponent message="An unexpected error occurred." />;
+  }
+
+  console.log("Fetched services data:", servicesData);
+
   const services = servicesData?.data?.services || [];
+  if (!servicesData || !servicesData?.data || services?.length === 0) {
+    return null;
+  }
+  
   return (
     <section className="py-8 md:py-14 bg-secondary/5">
       <div className="container mx-auto px-4">

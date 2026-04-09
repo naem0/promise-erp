@@ -88,100 +88,101 @@ const CommonSectionsData = async ({
   }
 
   return (
-    <div className="rounded-md border">
-      <Table className="border-b">
-        <TableHeader>
-          <TableRow>
-            <TableHead className="text-center">Sl</TableHead>
-            <TableHead className="text-center">Action</TableHead>
-            <TableHead className="text-center">Image</TableHead>
-            <TableHead className="text-center">Title</TableHead>
-            <TableHead className="text-center">Sub Title</TableHead>
-            <TableHead className="text-center">Type</TableHead>
-            <TableHead className="text-center">Status</TableHead>
-          </TableRow>
-        </TableHeader>
+    <>
+      <div className="rounded-md border">
+        <Table className="border-b">
+          <TableHeader>
+            <TableRow>
+              <TableHead className="text-center">Sl</TableHead>
+              <TableHead className="text-center">Action</TableHead>
+              <TableHead className="text-center">Image</TableHead>
+              <TableHead className="text-center">Title</TableHead>
+              <TableHead className="text-center">Sub Title</TableHead>
+              <TableHead className="text-center">Type</TableHead>
+              <TableHead className="text-center">Status</TableHead>
+            </TableRow>
+          </TableHeader>
 
-        <TableBody>
-          {sections.map((item: CommonSection, index: number) => {
-            return (
-              <TableRow key={item.id}>
-                <TableCell className="text-center">{(page - 1) * 15 + (index + 1)}</TableCell>
-                <TableCell className="text-center">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Badge
-                        variant="default"
-                        role="button"
-                        tabIndex={0}
-                        className="cursor-pointer select-none"
-                      >
-                        Action
-                      </Badge>
-                    </DropdownMenuTrigger>
+          <TableBody>
+            {sections.map((item: CommonSection, index: number) => {
+              return (
+                <TableRow key={item.id}>
+                  <TableCell className="text-center">{(page - 1) * 15 + (index + 1)}</TableCell>
+                  <TableCell className="text-center">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Badge
+                          variant="default"
+                          role="button"
+                          tabIndex={0}
+                          className="cursor-pointer select-none"
+                        >
+                          Action
+                        </Badge>
+                      </DropdownMenuTrigger>
 
-                    <DropdownMenuContent align="center">
-                      <PermissionGuard requiredPermission="edit-common-sections">
-                        <DropdownMenuItem asChild>
-                          <Link
-                            href={`/web-content/common-sections/${item.id}/edit`}
-                            className="flex items-center cursor-pointer"
-                          >
-                            <Pencil className="mr-2 h-4 w-4" />
-                            Manage
-                          </Link>
-                        </DropdownMenuItem>
-                      </PermissionGuard>
+                      <DropdownMenuContent align="center">
+                        <PermissionGuard requiredPermission="edit-sections">
+                          <DropdownMenuItem asChild>
+                            <Link
+                              href={`/web-content/common-sections/${item.id}/edit`}
+                              className="flex items-center cursor-pointer"
+                            >
+                              <Pencil className="mr-2 h-4 w-4" />
+                              Manage
+                            </Link>
+                          </DropdownMenuItem>
+                        </PermissionGuard>
 
-                      <PermissionGuard requiredPermission="delete-common-sections">
-                        <DropdownMenuItem asChild>
-                          <DeleteButton
-                            id={item.id}
-                            deleteAction={deleteCommonSection}
-                            itemName="common section"
-                          />
-                        </DropdownMenuItem>
-                      </PermissionGuard>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
-                <TableCell className="font-medium flex items-center justify-center">
-                  <Image
-                    src={item.image || "/images/placeholder.png"}
-                    alt={item.title || `Section ${item.id}`}
-                    width={40}
-                    height={40}
-                    className="object-cover"
-                  />
-                </TableCell>
-                <TableCell className="font-medium text-center max-w-[200px] truncate">
-                  {item.title}
-                </TableCell>
-                <TableCell className="font-medium text-center max-w-[200px] truncate">
-                  {item.sub_title}
-                </TableCell>
-                <TableCell className="text-center">
-                  <Badge className={getTypeBadgeColor(item.type)}>
-                    {item.type}
-                  </Badge>
-                </TableCell>
-                <TableCell className="text-center">
-                  <Badge variant={item.status === 1 ? "outline" : "destructive"}>
-                    {item.status === 1 ? "Active" : "Inactive"}
-                  </Badge>
-                </TableCell>
-              </TableRow>
-            );
-          })}
-        </TableBody>
-      </Table>
-
+                        <PermissionGuard requiredPermission="delete-sections">
+                          <DropdownMenuItem asChild>
+                            <DeleteButton
+                              id={item.id}
+                              deleteAction={deleteCommonSection}
+                              itemName="common section"
+                            />
+                          </DropdownMenuItem>
+                        </PermissionGuard>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                  <TableCell className="font-medium flex items-center justify-center">
+                    <Image
+                      src={item.image || "/images/placeholder.png"}
+                      alt={item.title || `Section ${item.id}`}
+                      width={40}
+                      height={40}
+                      className="object-cover"
+                    />
+                  </TableCell>
+                  <TableCell className="font-medium text-center max-w-[200px] truncate">
+                    {item.title}
+                  </TableCell>
+                  <TableCell className="font-medium text-center max-w-[200px] truncate">
+                    {item.sub_title}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <Badge className={getTypeBadgeColor(item.type)}>
+                      {item.type}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <Badge variant={item.status === 1 ? "outline" : "destructive"}>
+                      {item.status === 1 ? "Active" : "Inactive"}
+                    </Badge>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </div>
       {paginationData && (
         <div className="mt-4 py-3">
           <Pagination pagination={paginationData} />
         </div>
       )}
-    </div>
+    </>
   );
 };
 

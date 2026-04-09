@@ -394,6 +394,45 @@ export async function getPublicDivisionList(): Promise<PublicDivisionApiResponse
 
 // ===============================End web site Public Division List API ===============================
 
+// ===============================Start web site Public Branch List API ===============================
+
+export interface PublicBranch {
+  id: number;
+  name: string;
+  code?: string;
+}
+
+export interface PublicBranchListApiResponse {
+  success: boolean;
+  message: string;
+  code: number;
+  data: { branches: PublicBranch[] };
+  errors?: Record<string, string[]>;
+}
+
+export async function getPublicBranchListAll(): Promise<PublicBranchListApiResponse> {
+  try {
+    // Adding no-cache or revalidate if needed, but fetch defaults should be fine
+    const res = await fetch(`${API_BASE}/public/branch-list`);
+
+    if (!res.ok) {
+      throw new Error(
+        `getPublicBranchListAll API error: ${res.status} ${res.statusText}`,
+      );
+    }
+
+    const data: PublicBranchListApiResponse = await res.json();
+    return data;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error fetching public branch list:", error.message);
+      throw new Error(error.message);
+    }
+    throw new Error("Unknown error occurred while fetching public branch list.");
+  }
+}
+// ===============================End web site Public Branch List API ===============================
+
 // ===============================Start web site Public Branch Statistics API =============================
 export interface BranchStatisticsData {
   total_divisions: number;

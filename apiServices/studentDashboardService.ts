@@ -656,6 +656,12 @@ export interface StudentCourseInfo {
   slug: string;
   featured_image?: string | null;
   ratings: number;
+  enrollment_id: number;
+  payment_status: number;
+  price: number;
+  total_paid: number;
+  due_amount: number;
+
 }
 export interface StudentCoursesBatch {
   id: number;
@@ -684,13 +690,13 @@ export interface StudentMyCoursesResponse {
   errors?: Record<string, string[]>;
 }
 
-export async function getStudentMyCourses({
+export async function getStudentMyCourses(
+  token: string,
+  {
   params = {},
 }: {
   params?: Record<string, unknown>;
 }): Promise<StudentMyCoursesResponse> {
-  const session = await getServerSession(authOptions);
-  const token = session?.accessToken;
 
   if (!token) {
     throw new Error("Unauthorized: Access token not found");
@@ -1389,7 +1395,7 @@ export async function getPublicFreeSeminarBySlug(
         "An unknown error occurred while fetching public free seminar",
       );
     }
-    
+
   }
 }
 
@@ -1680,3 +1686,108 @@ export async function updateStudentEarning(
   }
 }
 // End update student earning
+
+
+// Start El payment-methods List
+export interface PaymentMethod {
+  id: number;
+  name: string;
+  type: number;
+  image?: string;
+  status: number;
+}
+
+export interface PaymentMethodListResponse {
+  success: boolean;
+  message: string;
+  code: number;
+  data: PaymentMethod[];
+}
+
+export async function getElPaymentMethods(): Promise<PaymentMethodListResponse> {
+
+  try {
+    const response = await fetch(`${API_BASE}/public/payment-methods/el`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(
+        `Failed to fetch payment methods (${response.status} ${response.statusText})`,
+      );
+    }
+
+    const data: PaymentMethodListResponse = await response.json();
+    return data;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("getElPaymentMethods Error:", error.message);
+      throw new Error(`Error fetching payment methods: ${error.message}`);
+    }
+    throw new Error("An unknown error occurred while fetching payment methods");
+  }
+}
+// End El payment-methods List
+
+export interface CourseDuePaymentRequestPayload {
+  enrollment_id: number;
+  paid_amount: number;
+  payment_method: number;
+  payment_number: string;
+  transaction_id: string;
+  comment?: string;
+}
+export interface DuePaymentDetails {
+  id: number;
+  title: string;
+  image?: string;
+  price: number;
+  installment_type: string;
+  paid_amount: number;
+  payment_date: string;
+  due: number;
+  status: "Partial Payment" | "paid" | "pending" | "refunded";
+  branch?: string;
+  batch?: string;
+}
+
+export interface CourseDuePaymentRequestResponse {
+  success: boolean;
+  message: string;
+  code: number;
+  data?: DuePaymentDetails;
+  errors?: Record<string, string[]>;
+}
+
+export async function CourseDuePaymentRequests(
+  payload: CourseDuePaymentRequestPayload,
+  token: string,
+): Promise<CourseDuePaymentRequestResponse> {
+  if (!token) {
+    throw new Error("Unauthorized: Access token not found");
+  }
+
+  try {
+    const response = await fetch(`${API_BASE}/student-panel/payment-requests`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const data: CourseDuePaymentRequestResponse = await response.json();
+    return data;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("CourseDuePaymentRequests Error:", error.message);
+      throw new Error(`Error submitting payment request: ${error.message}`);
+    }
+    throw new Error("An unknown error occurred while submitting payment request");
+  }
+}
+// End Course Due Payment Requests

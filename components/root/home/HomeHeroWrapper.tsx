@@ -9,11 +9,15 @@ const HomeHeroWrapper = async () => {
   try {
     heroBannerData = await getLatestHeroSection();
   } catch (error: unknown) {
+    console.error("Error fetching hero banner:", error);
     if (error instanceof Error) {
       console.error("Error fetching hero banner:", error.message);
       return <ErrorComponent message={error.message} />;
     }
     return <ErrorComponent message="An unexpected error occurred." />;
+  }
+  if (!heroBannerData) {
+    return null;
   }
 
   return <HomeHeroSection heroBannerData={heroBannerData} />;

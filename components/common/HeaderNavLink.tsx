@@ -38,12 +38,22 @@ const HeaderNavLink = async ({
 
   // Fetch categories for dropdown
   let categories: Category[] = [];
+  let categoriesResponse;
   try {
-    const categoriesResponse = await getHomeCourseCategories();
-    categories = categoriesResponse.data?.categories || [];
+    categoriesResponse = await getHomeCourseCategories();
+    
   } catch (error) {
     console.error("Failed to fetch categories:", error);
   }
+  categories = categoriesResponse?.data?.categories || [];
+  if (
+    !categoriesResponse ||
+    !categoriesResponse?.data ||
+    categories?.length === 0
+  ) {
+    return null;
+  }
+
   return (
     <nav className={`hidden lg:flex items-center justify-between w-full my-3`}>
       <div className="flex items-center justify-center gap-4 xl:gap-6 w-full">
@@ -81,7 +91,11 @@ const HeaderNavLink = async ({
                   ) : link?.name === "About" ? (
                     aboutDropdownLinks?.map((item) => (
                       <DropdownMenuItem key={item.href}>
-                        <Link href={item.href} prefetch={true} className="w-full">
+                        <Link
+                          href={item.href}
+                          prefetch={true}
+                          className="w-full"
+                        >
                           {item?.name}
                         </Link>
                       </DropdownMenuItem>

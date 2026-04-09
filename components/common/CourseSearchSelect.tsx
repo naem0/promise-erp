@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState, useTransition } from 'react'
 import { Combobox } from '@/components/ui/combobox'
 import { getPublicCoursesAll, Course } from '@/apiServices/courseService'
 
@@ -20,11 +20,10 @@ export default function CourseSearchSelect({
   className
 }: CourseSearchSelectProps) {
   const [courses, setCourses] = useState<Course[]>([])
-  const [loading, setLoading] = useState(false)
+  const [isPending, startTransition] = useTransition()
 
   useEffect(() => {
-    async function fetchCourses() {
-      setLoading(true)
+    startTransition(async () => {
       try {
         const res = await getPublicCoursesAll()
         if (res.success) {
@@ -34,11 +33,8 @@ export default function CourseSearchSelect({
         }
       } catch (error) {
         console.error("Failed to fetch courses:", error)
-      } finally {
-        setLoading(false)
       }
-    }
-    fetchCourses()
+    })
   }, [])
 
   const options = (courses || []).map(course => ({
@@ -51,10 +47,10 @@ export default function CourseSearchSelect({
       options={options}
       value={value}
       onValueChange={onValueChange}
-      placeholder={loading ? "Loading courses..." : placeholder}
+      placeholder={isPending ? "Loading courses..." : placeholder}
       searchPlaceholder="Search course..."
-      emptyMessage={loading ? "Loading..." : "No courses found"}
-      disabled={disabled || loading}
+      emptyMessage={isPending ? "Loading..." : "No courses found"}
+      disabled={disabled || isPending}
       className={className}
     />
   )

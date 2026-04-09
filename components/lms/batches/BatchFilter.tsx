@@ -20,6 +20,7 @@ import { Division } from "@/apiServices/divisionService"
 
 import { District } from "@/apiServices/districtService"
 import { Search, FilterX } from "lucide-react"
+import BranchSearchSelect from "@/components/common/BranchSearchSelect"
 
 interface FilterFormValues {
     search?: string
@@ -189,18 +190,11 @@ export default function BatchFilter({
                     name="branch_id"
                     control={control}
                     render={({ field }) => (
-                        <Select onValueChange={field.onChange} value={field.value || ""}>
-                            <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Branch" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {branches.map((branch) => (
-                                    <SelectItem key={branch.id} value={String(branch.id)}>
-                                        {branch.name}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                        <BranchSearchSelect
+                            value={field.value || ""}
+                            onValueChange={field.onChange}
+                            placeholder="Search Branch"
+                        />
                     )}
                 />
 
@@ -209,8 +203,8 @@ export default function BatchFilter({
                     name="course_id"
                     control={control}
                     render={({ field }) => (
-                        <CourseSearchSelect 
-                            value={field.value || ""} 
+                        <CourseSearchSelect
+                            value={field.value || ""}
                             onValueChange={field.onChange}
                             placeholder="Select Course"
                         />

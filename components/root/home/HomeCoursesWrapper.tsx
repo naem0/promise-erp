@@ -29,6 +29,7 @@ const HomeCoursesWrapper = () => {
           };
 
           const res = await getPublicCoursesList(params);
+          // console.log("Courses fetched:=====", res);
           if (res.success) {
             setCoursesData(res ?? null);
           } else {
@@ -46,6 +47,10 @@ const HomeCoursesWrapper = () => {
 
   if (isPending) {
     return <HomeCourseSkeleton />;
+  }
+  console.log("Rendering HomeCourses with data:", coursesData);
+  if (!coursesData || !coursesData?.data || coursesData?.data?.courses?.length === 0) {
+    return null;
   }
 
   return (

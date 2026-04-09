@@ -19,7 +19,7 @@ const HeroSectionsPage = ({
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-semibold tracking-tight">Hero Sections</h1>
 
-        <PermissionGuard requiredPermission="create-hero-section">
+        <PermissionGuard requiredPermission="create-hero-sections">
           <Button asChild>
             <Link href="/web-content/hero-section/add">
               <PlusCircle className="w-4 h-4 mr-2" />

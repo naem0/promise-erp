@@ -3,6 +3,7 @@ import {
   NewsFeedItem,
 } from "@/apiServices/homePageService";
 import ErrorComponent from "@/components/common/ErrorComponent";
+import NotFoundComponent from "@/components/common/NotFoundComponent";
 // import NotFoundComponent from "@/components/common/NotFoundComponent";
 import SectionTitle from "@/components/common/SectionTitle";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
@@ -33,9 +34,9 @@ const NewsfeedsArchive = async () => {
     );
   }
   const newsItems: NewsFeedItem[] = newsData?.data?.news_feeds || [];
-  // if (!newsItems.length) {
-  //   return <NotFoundComponent message={newsData?.message || "No news found"} />;
-  // }
+  if (!newsItems.length) {
+    return <NotFoundComponent message={newsData?.message || "No news found"} />;
+  }
   return (
     <section className="py-8 md:py-14 bg-secondary/5">
       <div className="container mx-auto px-4">

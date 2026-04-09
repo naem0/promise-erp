@@ -21,9 +21,9 @@ const CourseDetailsWrapper = async ({ slug }: CourseDetailsWrapperProps) => {
   let course;
 
   try {
-    const response: ApiResponse = await getCourseDetailBySlug(slug);
+    const response: ApiResponse | null = await getCourseDetailBySlug(slug);
 
-    if (!response.success || !response.data) {
+    if (!response || !response.success || !response?.data) {
       notFound();
       return <ErrorComponent message="Failed to load course details." />;
     }
