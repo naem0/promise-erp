@@ -27,13 +27,10 @@ export async function generateMetadata({ params }: CourseDetailPageProps) {
   const { slug } = await params;
 
   try {
-    const response: ApiResponse = await getCourseDetailBySlug(slug);
+    const response: ApiResponse | null = await getCourseDetailBySlug(slug);
 
-    if (!response.success || !response.data) {
-      return {
-        title: "Course Not Found",
-        description: "The course does not exist.",
-      };
+    if (!response || !response.success || !response?.data) {
+      return null;
     }
 
     const course = response.data;
