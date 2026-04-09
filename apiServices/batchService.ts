@@ -3,7 +3,7 @@
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import { revalidateTag } from "next/cache";
-import {ApiResponse } from "@/lib/apiErrorHandler";
+import { ApiResponse } from "@/lib/apiErrorHandler";
 import { PaginationType } from "@/types/pagination";
 
 
@@ -48,6 +48,7 @@ export interface Batch {
   instructors: BatchInstructor[];
   after_discount: number | string;
   teacher_ids?: number[];
+  whatsapp_group_link?: string; // optional WhatsApp group link
 }
 
 
@@ -72,7 +73,7 @@ export interface BatchSingleResponse {
 export interface BatchResponseType {
   success: boolean;
   message: string;
-  errors?: { [key: string]: string[] | string };data: Batch;
+  errors?: { [key: string]: string[] | string }; data: Batch;
   code: number;
 }
 
@@ -90,6 +91,7 @@ export interface CreateBatchRequest {
   apply_end_date: string;
   status: number;
   teacher_ids: number[];
+  whatsapp_group_link?: string;
 }
 
 // ==========================
@@ -166,12 +168,12 @@ export async function getBatches(
     return res.json();
   } catch (error: unknown) {
     console.error("Error in getBatches:", error);
-      if (error instanceof Error) {
-        throw new Error(error.message);
-      }else {
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    } else {
       throw new Error("Failed to fetch batches.");
+    }
   }
-}
 }
 
 
@@ -392,7 +394,7 @@ export async function deleteBatch(id: number): Promise<ApiResponse> {
       },
     });
 
-    const result =await res.json();
+    const result = await res.json();
 
     // Revalidate cache
     revalidateTag("batches-list", "max");

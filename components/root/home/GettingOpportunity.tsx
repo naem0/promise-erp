@@ -6,14 +6,34 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Card, CardContent } from "@/components/ui/card";
 import { cacheTag } from "next/cache";
 import Image from "next/image";
-import { cacheLife } from 'next/cache'
+import { cacheLife } from "next/cache";
+import ErrorComponent from "@/components/common/ErrorComponent";
 
 const GettingOpportunity = async () => {
   "use cache";
   cacheTag("public-opportunity");
-  cacheLife('seconds')
-  const opportunitiesData = await fetchPublicOpportunities();
-  const opportunities: OpportunityItem[] = opportunitiesData?.data?.opportunities || [];
+  cacheLife("seconds");
+
+  let opportunitiesData;
+  try {
+    opportunitiesData = await fetchPublicOpportunities();
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error fetching opportunities:", error.message);
+      return <ErrorComponent message={error.message} />;
+    }
+    return <ErrorComponent message="An unexpected error occurred." />;
+  }
+  const opportunities: OpportunityItem[] =
+    opportunitiesData?.data?.opportunities || [];
+
+  if (
+    !opportunitiesData ||
+    !opportunitiesData?.data ||
+    opportunities?.length === 0
+  ) {
+    return null;
+  }
 
   return (
     <section className="py-8 md:py-14">
@@ -22,7 +42,10 @@ const GettingOpportunity = async () => {
           <div className="">
             <AspectRatio ratio={20 / 13} className="w-full relative">
               <Image
-                src={opportunitiesData?.data?.section_image || "/images/placeholder_img.jpg"}
+                src={
+                  opportunitiesData?.data?.section_image ||
+                  "/images/placeholder_img.jpg"
+                }
                 alt={opportunitiesData?.data?.section_title || ""}
                 fill
                 // width={600}
@@ -50,7 +73,9 @@ const GettingOpportunity = async () => {
                   <CardContent className="flex items-center gap-3 px-0 py-1">
                     <div className="shrink-0">
                       <Image
-                        src={opportunity?.image || "/images/placeholder_img.jpg"}
+                        src={
+                          opportunity?.image || "/images/placeholder_img.jpg"
+                        }
                         alt={opportunity?.title}
                         width={50}
                         height={50}

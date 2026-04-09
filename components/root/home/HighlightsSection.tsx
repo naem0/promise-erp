@@ -19,6 +19,9 @@ const HighlightsSection = async () => {
     }
     throw new Error("Unknown error occurred while fetching stats");
   }
+  if (!stats || stats.length === 0) {
+    return null;
+  }
 
   return (
     <section className="py-8 md:py-14 ">

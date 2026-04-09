@@ -8,12 +8,32 @@ import {
   GovtCourseResponse,
 } from "@/apiServices/homePageService";
 import { cacheTag } from "next/cache";
+import ErrorComponent from "@/components/common/ErrorComponent";
 
 export default async function HomeGovtCourse() {
   "use cache";
   cacheTag("public-govt-course");
-  const govtCourseData: GovtCourseResponse = await getPublicGovtCourseSection();
+
+  let govtCourseData: GovtCourseResponse | null = null;
+  try {
+    govtCourseData = await getPublicGovtCourseSection();
+  } catch (error: unknown) {
+    console.error("Error fetching govt course:", error);
+    if (error instanceof Error) {
+      console.error("Error fetching govt course:", error.message);
+      return <ErrorComponent message={error.message} />;
+    }
+    return <ErrorComponent message="An unexpected error occurred." />;
+  }
+
   const govtCourseInfo = govtCourseData?.data || {};
+
+  console.log("--------- Govt Course Info ---------", govtCourseInfo);
+  console.log("--------- ---------", govtCourseInfo);
+
+  if (!govtCourseInfo || !govtCourseData) {
+    return null;
+  }
 
   return (
     <section className="py-8 md:py-14 bg-secondary/5">

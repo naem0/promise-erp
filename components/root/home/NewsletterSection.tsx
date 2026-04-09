@@ -51,8 +51,7 @@ const NewsletterSection = () => {
       (async () => {
         try {
           const res = await getPublicNewsletterSection();
-          if (!res.success) {
-            toast.error(res.message);
+          if (!res?.success) {
             return;
           } else {
             setSubscriptionData(res);
