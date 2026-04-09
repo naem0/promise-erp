@@ -7,20 +7,36 @@ import { cacheTag } from "next/cache";
 import VideoStoriesCard from "./VideoStoriesCard";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import NotFoundComponent from "@/components/common/NotFoundComponent";
+import ErrorComponent from "@/components/common/ErrorComponent";
 
 const VideoStories = async () => {
   "use cache";
   cacheTag("public-video-galleries");
-  const storyData = await fetchPublicVideoGalleries();
+  let storyData;
+  try {
+    storyData = await fetchPublicVideoGalleries();
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error fetching public video galleries:", error.message);
+      return (
+        <div className="text-center text-red-500">
+          <ErrorComponent message={error.message} />
+        </div>
+      );
+    } else {
+      console.error("Error fetching public video galleries:", error);
+      return (
+        <div className="text-center text-red-500">
+          <ErrorComponent message="An unexpected error occurred." />
+        </div>
+      );
+    }
+  }
+
   const stories: SuccessStoryItem[] = storyData?.data?.video_galleries || [];
 
-  if (!stories.length) {
-    return (
-      <NotFoundComponent
-        message={storyData?.message || "No video galleries found"}
-      />
-    );
+  if (!storyData || !storyData?.data || stories?.length === 0) {
+    return null;
   }
 
   return (

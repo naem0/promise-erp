@@ -34,9 +34,10 @@ const NewsfeedsArchive = async () => {
     );
   }
   const newsItems: NewsFeedItem[] = newsData?.data?.news_feeds || [];
-  if (!newsItems.length) {
-    return <NotFoundComponent message={newsData?.message || "No news found"} />;
+  if (!newsData || !newsData?.data || newsItems?.length === 0) {
+    return null;
   }
+  
   return (
     <section className="py-8 md:py-14 bg-secondary/5">
       <div className="container mx-auto px-4">
@@ -49,13 +50,18 @@ const NewsfeedsArchive = async () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 h-full">
           <Card className="p-3 py-6 h-full relative">
             {/* Main Featured News */}
-            <h3 className="text-center text-secondary text-lg lg:text-2xl font-semibold">{newsItems[0].title}</h3>
+            <h3 className="text-center text-secondary text-lg lg:text-2xl font-semibold">
+              {newsItems[0].title}
+            </h3>
             <Link
               href={newsItems[0].news_link || "#"}
               className="group h-full "
               target="_blank"
             >
-              <AspectRatio ratio={1 / 1} className="w-full relative overflow-hidden">
+              <AspectRatio
+                ratio={1 / 1}
+                className="w-full relative overflow-hidden"
+              >
                 <Image
                   src={newsItems[0].image || "/images/placeholder_img.jpg"}
                   alt={newsItems[0].news_link || "News Image"}
@@ -78,8 +84,13 @@ const NewsfeedsArchive = async () => {
                 target="_blank"
               >
                 <Card className="p-3 py-4 h-full gap-2">
-                  <h3 className="text-center text-secondary text-sm font-semibold">{item.title}</h3>
-                  <AspectRatio ratio={1 / 1} className="w-full relative overflow-hidden">
+                  <h3 className="text-center text-secondary text-sm font-semibold">
+                    {item.title}
+                  </h3>
+                  <AspectRatio
+                    ratio={1 / 1}
+                    className="w-full relative overflow-hidden"
+                  >
                     <Image
                       src={item.image || "/images/placeholder_img.jpg"}
                       alt={item.news_link}

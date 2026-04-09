@@ -56,9 +56,8 @@ const NewsletterSection = () => {
           } else {
             setSubscriptionData(res);
           }
-        } catch (error) {
+        } catch (error: unknown) {
           console.error("Newsletter fetch failed:", error);
-          toast.error("Could not load subscription section");
         }
       })();
     });

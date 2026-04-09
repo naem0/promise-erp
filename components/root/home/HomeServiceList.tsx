@@ -20,7 +20,6 @@ const HomeServiceList = async () => {
     return <ErrorComponent message="An unexpected error occurred." />;
   }
 
-  console.log("Fetched services data:", servicesData);
 
   const services = servicesData?.data?.services || [];
   if (!servicesData || !servicesData?.data || services?.length === 0) {

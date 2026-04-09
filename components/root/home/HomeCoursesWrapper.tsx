@@ -48,7 +48,7 @@ const HomeCoursesWrapper = () => {
   if (isPending) {
     return <HomeCourseSkeleton />;
   }
-  console.log("Rendering HomeCourses with data:", coursesData);
+
   if (!coursesData || !coursesData?.data || coursesData?.data?.courses?.length === 0) {
     return null;
   }

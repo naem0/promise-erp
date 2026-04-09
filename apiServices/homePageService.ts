@@ -471,6 +471,11 @@ export async function getHomePageAllBranches(): Promise<BranchApiResponse | null
   try {
     const res = await fetch(`${API_BASE}/public/our-branches`);
 
+    if (res.status === 404) {
+      console.warn("No branches found.");
+      return null;
+    }
+
     if (!res.ok) {
       throw new Error(
         `fetchAllBranches API error: ${res.status} ${res.statusText}`,
@@ -555,6 +560,11 @@ export async function fetchPublicFeaturedReviews(
     const res = await fetch(
       `${API_BASE}/public/reviews-featured?${queryString}`,
     );
+
+    if (res.status === 404) {
+      console.warn("No reviews found.");
+      return null;
+    }
 
     if (!res.ok) {
       throw new Error(
@@ -653,6 +663,12 @@ export async function fetchPublicCompanyServices(): Promise<ServicesApiResponse 
 export async function fetchPublicVideoGalleries(): Promise<SuccessStoryApiResponse | null> {
   try {
     const res = await fetch(`${API_BASE}/public/video-galleries`);
+
+    console.log("fetchPublicVideoGalleries API response status:", res.status);
+    if (res.status === 404) {
+      console.warn("No video galleries found.");
+      return null;
+    }
 
     if (!res.ok) {
       throw new Error(
