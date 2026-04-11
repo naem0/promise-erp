@@ -28,9 +28,6 @@ export default async function HomeGovtCourse() {
 
   const govtCourseInfo = govtCourseData?.data || {};
 
-  console.log("--------- Govt Course Info ---------", govtCourseInfo);
-  console.log("--------- ---------", govtCourseInfo);
-
   if (!govtCourseInfo || !govtCourseData) {
     return null;
   }

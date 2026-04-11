@@ -51,7 +51,7 @@ const StoriesCard = async ({ searchParams }: StoriesCardProps) => {
             </div>
           )}
         </div>
-        {totalPages && (
+        {totalPages && totalPages.per_page > 30 && (
           <div className="mt-6">
             <Pagination pagination={totalPages} />
           </div>

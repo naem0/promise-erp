@@ -521,10 +521,16 @@ export interface ChairmanMessageResponse {
   data: ChairmanMessage[];
   errors?: Record<string, string[]>;
 }
-export async function getPublicAllExecutives(): Promise<ChairmanMessageResponse> {
+export async function getPublicAllExecutives(): Promise<ChairmanMessageResponse | null> {
   try {
     const url = `${API_BASE}/public/chairman-message`;
     const res = await fetch(url);
+
+    if (res.status === 404) {
+      console.warn("No chairman messages found.");
+      return null;
+    }
+    
     if (!res.ok) {
       throw new Error(`Failed to fetch public employees — HTTP ${res.status}`);
     }

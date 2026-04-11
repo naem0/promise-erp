@@ -20,11 +20,11 @@ const FreeSeminarDetailsWrapper = async ({
   try {
     const constseminarRes = await getPublicFreeSeminarBySlug(slug);
 
-    if (!constseminarRes.success || !constseminarRes.data) {
-      notFound();
+    if (!constseminarRes || !constseminarRes.success || !constseminarRes?.data) {
+      return null
     }
 
-    seminar = constseminarRes.data;
+    seminar = constseminarRes?.data;
   } catch (error: unknown) {
     if (error instanceof Error) {
       return (

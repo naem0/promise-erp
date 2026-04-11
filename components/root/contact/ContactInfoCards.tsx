@@ -26,7 +26,7 @@ const ContactInfoCards = async () => {
       );
     }
   }
-  const { email, phone, address, office_hours } = contactInfo.data;
+  const { email, phone, address, office_hours } = contactInfo?.data || {};
 
   const contactDetails = [
     {

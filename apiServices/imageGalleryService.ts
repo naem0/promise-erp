@@ -30,7 +30,7 @@ export interface ImageGalleryResponse {
 
 export async function getPublicImageGallery(
   params: Record<string, unknown> = {},
-): Promise<ImageGalleryResponse> {
+): Promise<ImageGalleryResponse | null> {
   try {
     const urlParams = new URLSearchParams();
 
@@ -48,6 +48,12 @@ export async function getPublicImageGallery(
     const res = await fetch(
       `${API_BASE}/public/image-galleries?${queryString}`,
     );
+    
+    if (res.status === 404) {
+      console.warn("No image galleries found.");
+      return null;
+    }
+
     if (!res.ok) {
       throw new Error(
         `Failed to fetch image gallery: ${res.statusText} (${res.status})`,

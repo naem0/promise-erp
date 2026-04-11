@@ -2,11 +2,36 @@ import SectionTitle from "@/components/common/SectionTitle";
 import OurBranches from "./OurBranches";
 import { getHomePageAllBranches } from "@/apiServices/homePageService";
 import { cacheTag } from "next/cache";
+import ErrorComponent from "@/components/common/ErrorComponent";
 
 const OurBranchesWrapper = async () => {
   "use cache";
   cacheTag("public-branches");
-  const branches = await getHomePageAllBranches();
+
+  let branches;
+  try {
+    branches = await getHomePageAllBranches();
+  } catch (error: unknown) {
+    console.error("Error fetching branches:", error);
+    if (error instanceof Error) {
+      console.error("Error fetching branches:", error.message);
+      return (
+        <div className="text-center text-red-500">
+          <ErrorComponent message={error.message} />
+        </div>
+      );
+    } else {
+      return (
+        <div className="text-center text-red-500">
+          <ErrorComponent message="An unexpected error occurred." />
+        </div>
+      );
+    }
+  }
+
+  if (!branches || !branches?.data || branches?.data?.branches?.length === 0) {
+    return null;
+  }
 
   return (
     <section className="py-8 md:py-14">
@@ -16,7 +41,7 @@ const OurBranchesWrapper = async () => {
           subtitle={branches?.data?.section_subtitle}
           iswhite={false}
         />
-          <OurBranches branchesData={branches} />
+        <OurBranches branchesData={branches} />
       </div>
     </section>
   );

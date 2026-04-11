@@ -1,6 +1,6 @@
 import ErrorComponent from "@/components/common/ErrorComponent";
 import ImageGalleryCardItems from "./ImageGalleryCardItems";
-import { getPublicImageGallery } from "@/apiServices/imageGalleryService";
+import { getPublicImageGallery, ImageGalleryResponse } from "@/apiServices/imageGalleryService";
 import NotFoundComponent from "@/components/common/NotFoundComponent";
 import Pagination from "@/components/common/Pagination";
 import { PaginationType } from "@/types/pagination";
@@ -14,7 +14,7 @@ const ImageGalleryCard = async ({ searchParams }: ImageGalleryPageProps) => {
     per_page: queryParams.per_page ? Number(queryParams.per_page) : 30,
     page: queryParams.page ? Number(queryParams.page) : 1,
   };
-  let eventsData;
+  let eventsData:ImageGalleryResponse | null;
   try {
     eventsData = await getPublicImageGallery(params);
   } catch (error: unknown) {
@@ -33,7 +33,7 @@ const ImageGalleryCard = async ({ searchParams }: ImageGalleryPageProps) => {
     }
   }
   const events = eventsData?.data?.image_galleries || [];
-  const totalPage: PaginationType | undefined = eventsData?.data?.pagination;
+const totalPage: PaginationType | null = eventsData?.data?.pagination || null;
 
   return (
     <section className="py-8 md:py-14">
@@ -51,7 +51,8 @@ const ImageGalleryCard = async ({ searchParams }: ImageGalleryPageProps) => {
             </div>
           )}
         </div>
-        {totalPage && (
+        
+        {totalPage && totalPage?.per_page > 30 && (
           <div className="flex justify-center mt-8">
             <Pagination pagination={totalPage} />
           </div>

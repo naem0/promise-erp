@@ -56,9 +56,13 @@ const TrainerItemWrapper = async ({ searchParams }: TrainersParams) => {
           ))
         )}
       </div>
-      <div className="pt-8">
-        <Pagination pagination={totalPages} />
-      </div>
+      {
+        totalPages?.per_page > 30 && (
+          <div className="flex justify-center mt-8">
+            <Pagination pagination={totalPages} />
+          </div>
+        )
+      }
     </section>
   );
 };

@@ -24,9 +24,14 @@ export interface ContactPageInfoApiResponse {
   data: ContactPageInfo;
   errors?: Record<string, string[]>;
 }
-export async function getPublicContactPageInfo(): Promise<ContactPageInfoApiResponse> {
+export async function getPublicContactPageInfo(): Promise<ContactPageInfoApiResponse | null> {
   try {
     const res = await fetch(`${API_BASE}/public/contact-page`);
+
+    if (res.status === 404) {
+      console.warn("No contact page info found.");
+      return null;  
+    }
 
     if (!res.ok) {
       throw new Error(
