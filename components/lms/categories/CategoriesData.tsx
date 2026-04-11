@@ -72,6 +72,8 @@ const CategoriesData = async ({
             <TableHead>Action</TableHead>
             <TableHead>Image</TableHead>
             <TableHead>Name</TableHead>
+            <TableHead>Meta Title</TableHead>
+            <TableHead>Meta Tags</TableHead>
             <TableHead>Status</TableHead>
           </TableRow>
         </TableHeader>
@@ -94,7 +96,7 @@ const CategoriesData = async ({
                     </DropdownMenuTrigger>
 
                     <DropdownMenuContent align="center">
-                      <PermissionGuard requiredPermission="edit-career-categories">
+                      <PermissionGuard requiredPermission="edit-course-categories">
                         <DropdownMenuItem asChild>
                           <Link
                             href={`/lms/categories/${category?.id}/edit`}
@@ -106,7 +108,7 @@ const CategoriesData = async ({
                         </DropdownMenuItem>
                       </PermissionGuard>
 
-                      <PermissionGuard requiredPermission="delete-career-categories">
+                      <PermissionGuard requiredPermission="delete-course-categories">
                         <DropdownMenuItem asChild>
                           <DeleteButton id={category?.id} />
                         </DropdownMenuItem>
@@ -124,6 +126,22 @@ const CategoriesData = async ({
                 />
               </TableCell>
               <TableCell className="font-medium">{category?.name}</TableCell>
+              <TableCell className="text-sm text-muted-foreground">
+                {category.meta_title || <span className="italic text-xs text-muted-foreground">—</span>}
+              </TableCell>
+              <TableCell>
+                {category.meta_tag && category.meta_tag.length > 0 ? (
+                  <div className="flex flex-wrap gap-1">
+                    {category.meta_tag.map((tag) => (
+                      <Badge key={tag} variant="secondary" className="text-xs">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                ) : (
+                  <span className="italic text-xs text-muted-foreground">—</span>
+                )}
+              </TableCell>
               <TableCell>
                 <Badge variant={category.status === 1 ? "outline" : "destructive"}>
                   {category.status === 1 ? "Active" : "Inactive"}

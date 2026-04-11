@@ -4,11 +4,13 @@ import { Controller, useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Camera } from "lucide-react";
+import { Camera, X, Plus } from "lucide-react";
 import { toast } from "sonner";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectContent,
@@ -30,8 +32,12 @@ interface CategoryFormProps {
 
 interface FormValues {
   name: string;
+  slug: string;
   status: string;
   image?: FileList;
+  meta_title: string;
+  meta_description: string;
+  schema: string;
 }
 
 export default function CategoryForm({ title, category }: CategoryFormProps) {
@@ -39,9 +45,11 @@ export default function CategoryForm({ title, category }: CategoryFormProps) {
   const isEdit = !!category;
 
   const [previewImage, setPreviewImage] = useState<string | null>(
-    category?.image || null,
+    category?.image || null
   );
   const [imageRemoved, setImageRemoved] = useState(false);
+  const [metaTags, setMetaTags] = useState<string[]>(category?.meta_tag || []);
+  const [tagInput, setTagInput] = useState("");
 
   const {
     register,
@@ -55,28 +63,33 @@ export default function CategoryForm({ title, category }: CategoryFormProps) {
   } = useForm<FormValues>({
     defaultValues: {
       name: category?.name || "",
+      slug: category?.slug || "",
       status: category?.status?.toString() || "1",
+      meta_title: category?.meta_title || "",
+      meta_description: category?.meta_description || "",
+      schema: category?.schema || "",
     },
   });
 
   const imageFile = watch("image");
 
-  /* =========================
-     Load edit data
-  ========================== */
+  /* ── Load edit data ── */
   useEffect(() => {
     if (category) {
       reset({
         name: category.name,
+        slug: category.slug || "",
         status: category.status.toString(),
+        meta_title: category.meta_title || "",
+        meta_description: category.meta_description || "",
+        schema: category.schema || "",
       });
       setPreviewImage(category.image || null);
+      setMetaTags(category.meta_tag || []);
     }
   }, [category, reset]);
 
-  /* =========================
-     Image preview
-  ========================== */
+  /* ── Image preview ── */
   useEffect(() => {
     if (imageFile && imageFile.length > 0) {
       const file = imageFile[0];
@@ -89,32 +102,37 @@ export default function CategoryForm({ title, category }: CategoryFormProps) {
     }
   }, [imageFile]);
 
-  /* =========================
-     Server error → field
-  ========================== */
-  const setFormError = (field: string, message: string) => {
-    setError(field as keyof FormValues, {
-      type: "server",
-      message,
-    });
+  /* ── Tag helpers ── */
+  const handleAddTag = () => {
+    const trimmed = tagInput.trim();
+    if (trimmed && !metaTags.includes(trimmed)) {
+      setMetaTags((prev) => [...prev, trimmed]);
+      setTagInput("");
+    }
   };
 
-  /* =========================
-     Submit Handler
-  ========================== */
-  const submitHandler = async (values: FormValues) => {
-    // Manual check to prevent Server Action crash on oversized files
-    if (values.image && values.image.length > 0) {
-      const file = values.image[0];
-      if (file.size > 5 * 1000 * 1000) { // Safety buffer for 5MB limit
-        setError("image", { type: "manual", message: "The image may not be greater than 5MB" });
-        return;
-      }
-    }
+  const handleRemoveTag = (tag: string) => {
+    setMetaTags((prev) => prev.filter((t) => t !== tag));
+  };
 
+  const handleTagKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleAddTag();
+    }
+  };
+
+  /* ── Submit ── */
+  const submitHandler = async (values: FormValues) => {
     const formData = new FormData();
     formData.append("name", values.name.trim());
+    formData.append("slug", values.slug.trim());
     formData.append("status", values.status);
+    formData.append("meta_title", values.meta_title || "");
+    formData.append("meta_description", values.meta_description || "");
+    formData.append("schema", values.schema || "");
+
+    metaTags.forEach((tag) => formData.append("meta_tag[]", tag));
 
     if (values.image?.length) {
       formData.append("image", values.image[0]);
@@ -122,127 +140,277 @@ export default function CategoryForm({ title, category }: CategoryFormProps) {
       formData.append("image", "");
     }
 
-    const res = isEdit
-      ? await updateCategory(category!.id, formData)
-      : await createCategory(formData);
+    try {
+      const res = isEdit
+        ? await updateCategory(category!.id, formData)
+        : await createCategory(formData);
 
-    /* ===== SUCCESS ===== */
-    if (res.success) {
-      toast.success(
-        res.message ||
-          (isEdit
-            ? "Category updated successfully!"
-            : "Category created successfully!"),
-      );
-      router.push("/lms/categories");
-      return;
+      if (res.success) {
+        toast.success( res.message || (isEdit ? "Category updated successfully!" : "Category created successfully!"));
+        
+        reset();
+        setMetaTags([]);
+        setPreviewImage(null);
+        
+        router.push("/lms/categories");
+      } else {
+        if (res.errors) {
+          toast.error(res.message || "Failed to save category");
+          Object.entries(res.errors).forEach(([field, messages]) => {
+            const message = Array.isArray(messages) ? messages[0] : messages;
+            setError(field as keyof FormValues, {
+              type: "server",
+              message: message as string,
+            });
+          });
+        } else {
+          toast.error(res.message || "Failed to save category");
+        }
+      }
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("An unexpected error occurred.");
+      }
     }
-
-    /* ===== FIELD ERRORS (from API) ===== */
-    if (res.errors) {
-      Object.entries(res.errors).forEach(([field, messages]) => {
-        const message = Array.isArray(messages) ? messages[0] : messages;
-        setFormError(field, message as string);
-      });
-    }
-  };
-
-  const handleImageRemove = () => {
-    setPreviewImage(null);
-    setImageRemoved(true);
-    setValue("image", undefined);
   };
 
   return (
-    <div className="max-w-md mx-auto bg-card border rounded-2xl p-6 shadow-sm">
-      <h2 className="text-xl font-semibold mb-6 text-center">{title}</h2>
+    <div className="bg-card border rounded-2xl p-6 shadow-sm">
+      <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => router.back()}
+          className="p-0 h-auto"
+        >
+          <span className="text-xl">{"<"}</span>
+        </Button>
+        {title}
+      </h2>
 
-      <form onSubmit={handleSubmit(submitHandler)} className="space-y-5">
-        {/* Name */}
-        <div>
-          <label className="text-sm font-medium">Category Name</label>
-          <Input {...register("name")} placeholder="Enter a category name" />
-          {errors.name && (
-            <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
-          )}
-        </div>
+      <form onSubmit={handleSubmit(submitHandler)} className="space-y-6">
+        {/* Image Upload */}
+        <div className="flex justify-start">
+          <div className="relative">
+            <div className="w-48 h-32 relative rounded-lg overflow-hidden border-2 border-dashed flex items-center justify-center bg-muted">
+              {previewImage ? (
+                <Image
+                  src={previewImage}
+                  alt="Category image preview"
+                  fill
+                  className="object-cover"
+                />
+              ) : (
+                <div className="flex flex-col items-center gap-1 text-muted-foreground">
+                  <Camera className="w-6 h-6" />
+                  <span className="text-xs">Category Image</span>
+                </div>
+              )}
+            </div>
 
-        {/* Status */}
-        <div>
-          <label className="text-sm font-medium">Status</label>
-          <Controller
-            name="status"
-            control={control}
-            render={({ field }) => (
-              <Select value={field.value} onValueChange={field.onChange}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="1">Active</SelectItem>
-                  <SelectItem value="0">Inactive</SelectItem>
-                </SelectContent>
-              </Select>
-            )}
-          />
-          {errors.status && (
-            <p className="text-red-500 text-sm mt-1">{errors.status.message}</p>
-          )}
-        </div>
+            <label
+              htmlFor="category-image"
+              className="absolute bottom-1 right-1 bg-green-600 p-2 rounded-full cursor-pointer hover:bg-green-700 transition"
+            >
+              <Camera className="w-4 h-4 text-white" />
+            </label>
+            <input
+              id="category-image"
+              type="file"
+              accept="image/*"
+              className="hidden"
+              {...register("image")}
+            />
 
-        {/* Image */}
-        <div>
-          <label className="text-sm font-medium">Image</label>
-
-          <Input
-            type="file"
-            accept="image/*"
-            className="hidden"
-            id="image"
-            {...register("image")}
-          />
-
-          {previewImage ? (
-            <div className="relative w-fit">
-              <Image
-                src={previewImage}
-                alt="Preview"
-                width={410}
-                height={150}
-                className="rounded-xl"
-              />
+            {previewImage && (
               <Button
                 type="button"
-                size="sm"
-                variant="destructive"
-                className="absolute top-1 right-1"
-                onClick={handleImageRemove}
+                className="absolute top-1 left-1 bg-red-600 p-2 rounded-full cursor-pointer hover:bg-red-700 transition"
+                onClick={() => {
+                  setPreviewImage(null);
+                  setImageRemoved(true);
+                  setValue("image", undefined);
+                  toast.success("Image removed");
+                }}
               >
-                Remove
+                <X className="w-4 h-4 text-white" />
               </Button>
-            </div>
-          ) : (
-            <label
-              htmlFor="image"
-              className="border-2 border-dashed rounded-lg p-6 block cursor-pointer text-center"
-            >
-              <Camera className="mx-auto mb-2 text-gray-400" />
-              Click to upload image
-            </label>
-          )}
-
+            )}
+          </div>
           {errors.image && (
-            <p className="text-red-500 text-sm mt-1">{errors.image.message}</p>
+            <p className="text-sm text-red-500 mt-2">{errors.image.message}</p>
           )}
         </div>
 
-        <Button disabled={isSubmitting} className="w-full">
-          {isSubmitting
-            ? "Submitting..."
-            : isEdit
-              ? "Update Category"
-              : "Add Category"}
-        </Button>
+        {/* Main Fields Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+          {/* Name */}
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              Category Name<span className="text-red-500">*</span>
+            </label>
+            <Input {...register("name")} placeholder="Enter a category name" />
+            {errors.name && (
+              <p className="text-sm text-red-500 mt-1">{errors.name.message}</p>
+            )}
+          </div>
+
+          {/* Slug */}
+          <div>
+            <label className="block text-sm font-medium mb-1">Slug</label>
+            <Input
+              {...register("slug")}
+              placeholder="e.g. web-and-software-development"
+            />
+            {errors.slug && (
+              <p className="text-sm text-red-500 mt-1">{errors.slug.message}</p>
+            )}
+          </div>
+
+          {/* Status */}
+          <div>
+            <label className="block text-sm font-medium mb-1">Status</label>
+            <Controller
+              name="status"
+              control={control}
+              render={({ field }) => (
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="1">Active</SelectItem>
+                    <SelectItem value="0">Inactive</SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            {errors.status && (
+              <p className="text-sm text-red-500 mt-1">
+                {errors.status.message}
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* SEO Section */}
+        <div className="border rounded-xl p-5 space-y-4">
+          <h3 className="text-base font-semibold text-foreground">
+            SEO Settings
+          </h3>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+            {/* Meta Title */}
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                Meta Title
+              </label>
+              <Input
+                placeholder="SEO meta title"
+                {...register("meta_title")}
+              />
+              {errors.meta_title && (
+                <p className="text-sm text-red-500 mt-1">
+                  {errors.meta_title.message}
+                </p>
+              )}
+            </div>
+
+            {/* Meta Tags */}
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                Meta Tags
+              </label>
+              <div className="flex gap-2">
+                <Input
+                  placeholder="Add tag and press Enter"
+                  value={tagInput}
+                  onChange={(e) => setTagInput(e.target.value)}
+                  onKeyDown={handleTagKeyDown}
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleAddTag}
+                  className="shrink-0"
+                >
+                  <Plus className="w-4 h-4" />
+                </Button>
+              </div>
+              {metaTags.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {metaTags.map((tag) => (
+                    <Badge
+                      key={tag}
+                      variant="secondary"
+                      className="flex items-center gap-1 cursor-pointer"
+                      onClick={() => handleRemoveTag(tag)}
+                    >
+                      {tag}
+                      <X className="w-3 h-3" />
+                    </Badge>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Meta Description */}
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium mb-1">
+                Meta Description
+              </label>
+              <Textarea
+                placeholder="SEO meta description"
+                {...register("meta_description")}
+                rows={2}
+              />
+              {errors.meta_description && (
+                <p className="text-sm text-red-500 mt-1">
+                  {errors.meta_description.message}
+                </p>
+              )}
+            </div>
+
+            {/* Schema */}
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium mb-1">
+                Schema (JSON-LD)
+              </label>
+              <Textarea
+                placeholder='<script type="application/ld+json">...</script>'
+                {...register("schema")}
+                rows={3}
+              />
+              {errors.schema && (
+                <p className="text-sm text-red-500 mt-1">
+                  {errors.schema.message}
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Actions */}
+        <div className="flex justify-end gap-3 pt-4">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => router.back()}
+            className="rounded-lg border-green-600 text-green-600"
+          >
+            Cancel
+          </Button>
+          <Button
+            type="submit"
+            disabled={isSubmitting}
+            className="bg-green-600 hover:bg-green-700 text-white px-8 rounded-lg"
+          >
+            {isSubmitting ? "Submitting..." : isEdit ? "Update" : "Add"}
+          </Button>
+        </div>
       </form>
     </div>
   );

@@ -13,7 +13,11 @@ export interface Category {
   slug: string;
   status: number;
   image?: string | null;
-  total_course?: number | string;
+  meta_title?: string;
+  meta_description?: string;
+  meta_tag?: string[];
+  schema?: string;
+  total_course?: number;
 }
 
 
@@ -44,12 +48,20 @@ export interface CreateCategoryRequest {
   name?: string;
   status?: number;
   image?: string | null;
+  meta_title?: string;
+  meta_description?: string;
+  meta_tag?: string[];
+  schema?: string;
 }
 
 export interface UpdateCategoryRequest {
   name?: string;
   status?: number;
   image?: string | null;
+  meta_title?: string;
+  meta_description?: string;
+  meta_tag?: string[];
+  schema?: string;
 }
 
 

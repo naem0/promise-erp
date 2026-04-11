@@ -106,6 +106,7 @@ export const sidebarData = {
             {
               title: "Free Seminars",
               url: "/lms/free-seminars",
+              permissions: ["view-free-seminars"],
             },
             {
               title: "Branches",
