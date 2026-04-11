@@ -1368,7 +1368,7 @@ export interface PublicFreeSeminarBySlugResponse {
 }
 export async function getPublicFreeSeminarBySlug(
   slug: string,
-): Promise<PublicFreeSeminarBySlugResponse> {
+): Promise<PublicFreeSeminarBySlugResponse | null> {
   try {
     const response = await fetch(`${API_BASE}/public/free-seminars/${slug}`, {
       method: "GET",
@@ -1376,6 +1376,11 @@ export async function getPublicFreeSeminarBySlug(
         "Content-Type": "application/json",
       },
     });
+
+    if (response.status === 404) {
+      console.warn("No free seminar found.");
+      return null;
+    }
 
     if (!response.ok) {
       throw new Error(

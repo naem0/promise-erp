@@ -118,15 +118,20 @@ export interface JobCircularDetailsApiResponse {
   success: boolean;
   message: string;
   code: number;
-  data: JobCircularDetails;
+  data?: JobCircularDetails;
   errors?: Record<string, string[]>;
 }
 
 export async function getPublicJobCircularBySlug(
   slug: string,
-): Promise<JobCircularDetailsApiResponse> {
+): Promise<JobCircularDetailsApiResponse | null> {
   try {
     const res = await fetch(`${API_BASE}/public/careers/${slug}`);
+
+    if (res.status === 404) {
+      console.warn("No job circular found.");
+      return null;
+    }
 
     if (!res.ok) {
       throw new Error(

@@ -1,5 +1,5 @@
 import FreeSeminarDetailsWrapper from "@/components/root/free-seminars/FreeSeminarDetailsWrapper";
-import { getFreeSeminarByPublicPage } from "@/apiServices/studentDashboardService";
+import { getFreeSeminarByPublicPage, PublicFreeSeminarBySlugResponse } from "@/apiServices/studentDashboardService";
 import {
   getPublicFreeSeminarBySlug,
 } from "@/apiServices/studentDashboardService";
@@ -25,13 +25,10 @@ export async function generateMetadata({ params }: FreeSeminarDetailsPageProps) 
   const { slug } = await params;
 
   try {
-    const response = await getPublicFreeSeminarBySlug(slug);
+    const response: PublicFreeSeminarBySlugResponse | null = await getPublicFreeSeminarBySlug(slug);
 
-    if (!response.success || !response.data) {
-      return {
-        title: "Seminar Not Found",
-        description: "The seminar does not exist.",
-      };
+    if (!response || !response.success || !response.data) {
+      return null;
     }
 
     const seminar = response.data;
