@@ -92,7 +92,7 @@ export default function CategoryFilter() {
         <div className="relative col-span-1 lg:col-span-2">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input 
-            placeholder="Search categories..." 
+            placeholder="Search by name or slug..." 
             className="pl-10"
             {...register("search")}
           />
