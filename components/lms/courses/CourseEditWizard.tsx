@@ -74,7 +74,7 @@ export default function CourseEditWizard({ courseId }: CourseEditWizardProps) {
       {/* Header with Back Button */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl font-bold tracking-tight">Edit Course</h2>
-        <Button variant="outline" onClick={() => router.push('/lms/courses')}>
+        <Button variant="outline" className='border-primary' onClick={() => router.push('/lms/courses')}>
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back to Courses
         </Button>

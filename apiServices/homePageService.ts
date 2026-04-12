@@ -492,11 +492,14 @@ export async function getHomePageAllBranches(): Promise<BranchApiResponse | null
     throw new Error("Unknown error occurred while our branches");
   }
 }
-export async function getPublicBranchList(): Promise<HeaderBranchListResponse> {
+export async function getPublicBranchList(): Promise<HeaderBranchListResponse | null> {
   try {
-    const res = await fetch(`${API_BASE}/public/branch-list`, {
-      cache: "no-store",
-    });
+    const res = await fetch(`${API_BASE}/public/branch-list`);
+
+   if (res.status === 404) {
+      console.warn("No branches found.");
+      return null;
+    }
 
     if (!res.ok) {
       throw new Error(

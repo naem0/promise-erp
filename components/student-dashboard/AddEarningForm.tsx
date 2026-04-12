@@ -19,7 +19,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Progress } from "@/components/ui/progress"; // যদি progress component থাকে
 
 import {
   getAllJobTitlesForEarning,
@@ -34,7 +33,7 @@ import Image from "next/image";
 interface AddEarningFormValues {
   earning_site_id: number;
   payment_method_id: number;
-  job_title_id: number;
+  career_category_id: number;
   amount_usd: number | null;
   amount_bdt: number | null;
   earned_at: string;
@@ -51,11 +50,10 @@ const AddEarningForm = () => {
 
   const [isPending, startTransition] = useTransition();
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
-  const [uploadProgress, setUploadProgress] = useState<number>(0); // যদি progress দেখাতে চান
 
   const [marketplaces, setMarketplaces] = useState<JobTitleEarningItem[]>([]);
   const [paymentMethods, setPaymentMethods] = useState<JobTitleEarningItem[]>(
-    []
+    [],
   );
   const [jobTitles, setJobTitles] = useState<JobTitleEarningItem[]>([]);
 
@@ -73,7 +71,7 @@ const AddEarningForm = () => {
     defaultValues: {
       earning_site_id: undefined,
       payment_method_id: undefined,
-      job_title_id: undefined,
+      career_category_id: undefined,
       amount_usd: null,
       amount_bdt: null,
       earned_at: "",
@@ -84,7 +82,7 @@ const AddEarningForm = () => {
   // Watch select fields to clear errors when they change
   const watchedEarningSiteId = watch("earning_site_id");
   const watchedPaymentMethodId = watch("payment_method_id");
-  const watchedJobTitleId = watch("job_title_id");
+  const watchedJobTitleId = watch("career_category_id");
   const watchedEarningImages = watch("earning_images");
 
   /* =======================
@@ -151,10 +149,10 @@ const AddEarningForm = () => {
   }, [watchedPaymentMethodId, errors.payment_method_id, clearErrors]);
 
   useEffect(() => {
-    if (watchedJobTitleId && errors.job_title_id) {
-      clearErrors("job_title_id");
+    if (watchedJobTitleId && errors.career_category_id) {
+      clearErrors("career_category_id");
     }
-  }, [watchedJobTitleId, errors.job_title_id, clearErrors]);
+  }, [watchedJobTitleId, errors.career_category_id, clearErrors]);
 
   /* =======================
      Fetch dropdown data
@@ -165,15 +163,23 @@ const AddEarningForm = () => {
     const fetchDropdowns = async () => {
       try {
         const res = await getAllJobTitlesForEarning(token);
-        if (res.success) {
+        if (!res || !res.success || !res.data) {
+          console.error("Failed to fetch dropdowns");
+          return;
+        }
+        if (res?.success) {
           setMarketplaces(res.data?.marketplaces || []);
           setPaymentMethods(res.data?.payment_methods || []);
           setJobTitles(res.data?.job_titles || []);
         } else {
-          toast.error(res.message || "Failed to load dropdowns");
+         console.error("Failed to fetch dropdowns:", res.message || "Unknown error");
         }
-      } catch (error) {
-        console.error("Dropdown fetch error:", error);
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          console.error("Dropdown fetch error:", error.message);
+        } else {
+          console.error("Dropdown fetch error:", error);
+        }
       }
     };
 
@@ -192,7 +198,7 @@ const AddEarningForm = () => {
 
         formData.append("earning_site_id", String(values.earning_site_id));
         formData.append("payment_method_id", String(values.payment_method_id));
-        formData.append("job_title_id", String(values.job_title_id));
+        formData.append("career_category_id", String(values.career_category_id));
         formData.append("amount_usd", String(values.amount_usd));
         formData.append("amount_bdt", String(values.amount_bdt));
         formData.append("earned_at", values.earned_at);
@@ -201,22 +207,7 @@ const AddEarningForm = () => {
           formData.append("earning_images[]", file);
         });
 
-        // Simulate upload progress (optional)
-        setUploadProgress(0);
-        const interval = setInterval(() => {
-          setUploadProgress((prev) => {
-            if (prev >= 90) {
-              clearInterval(interval);
-              return prev;
-            }
-            return prev + 10;
-          });
-        }, 100);
-
         const res = await addStudentEarning(formData, token);
-
-        clearInterval(interval);
-        setUploadProgress(100);
 
         if (!res.success && res.errors) {
           Object.entries(res.errors).forEach(([field, messages]) => {
@@ -236,21 +227,19 @@ const AddEarningForm = () => {
         reset({
           earning_site_id: undefined,
           payment_method_id: undefined,
-          job_title_id: undefined,
+          career_category_id: undefined,
           amount_usd: null,
           amount_bdt: null,
           earned_at: "",
           earning_images: undefined,
         });
         setPreviewUrls([]);
-        setUploadProgress(0);
 
         setTimeout(() => {
           router.push("/student/myearnings/all-list");
         }, 1000);
       } catch {
         toast.error("Failed to submit earning");
-        setUploadProgress(0);
       }
     });
   };
@@ -348,20 +337,20 @@ const AddEarningForm = () => {
               <div className="flex-1 space-y-2">
                 <Label>Job Title</Label>
                 <Controller
-                  name="job_title_id"
+                  name="career_category_id"
                   control={control}
                   render={({ field }) => (
                     <Select
                       onValueChange={(value) => {
                         field.onChange(Number(value));
-                        if (errors.job_title_id) {
-                          clearErrors("job_title_id");
+                        if (errors.career_category_id) {
+                          clearErrors("career_category_id");
                         }
                       }}
                       value={field.value ? String(field.value) : undefined}
                     >
                       <SelectTrigger
-                        className={`w-full ${errors.job_title_id ? "border-red-500" : ""}`}
+                        className={`w-full ${errors.career_category_id ? "border-red-500" : ""}`}
                       >
                         <SelectValue placeholder="Select job title" />
                       </SelectTrigger>
@@ -375,9 +364,9 @@ const AddEarningForm = () => {
                     </Select>
                   )}
                 />
-                {errors.job_title_id && (
+                {errors.career_category_id && (
                   <p className="text-sm text-red-500">
-                    {errors.job_title_id.message}
+                    {errors.career_category_id.message}
                   </p>
                 )}
               </div>
@@ -501,31 +490,20 @@ const AddEarningForm = () => {
                   </div>
                 </div>
               )}
-
-              {/* Upload Progress (Optional) */}
-              {uploadProgress > 0 && uploadProgress < 100 && (
-                <div className="space-y-2">
-                  <Label>Uploading... {uploadProgress}%</Label>
-                  <Progress value={uploadProgress} className="w-full" />
-                </div>
-              )}
             </div>
 
             {/* Submit */}
             <div className="flex justify-end">
-              <Button
+              <Button asChild
                 type="submit"
-                disabled={isPending || uploadProgress > 0}
+                disabled={isPending}
                 className="min-w-32"
               >
                 {isPending ? (
-                  <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  <span className="flex items-center gap-2">
                     Submitting...
-                  </div>
-                ) : uploadProgress > 0 ? (
-                  `Uploading... ${uploadProgress}%`
-                ) : (
+                  </span>
+                ): (
                   "Submit"
                 )}
               </Button>

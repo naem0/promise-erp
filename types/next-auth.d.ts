@@ -11,7 +11,7 @@ declare module "next-auth" {
       email: string
       image: string
       roles: string[];
-      permissions: string[];
+      permissions?: string[];
     } & DefaultSession["user"]
     accessToken: string
     expiresAt: string
@@ -23,7 +23,7 @@ declare module "next-auth" {
     email: string
     image: string
     roles: string[];
-    permissions: string[];
+    permissions?: string[];
     accessToken: string
     expiresAt: string
   }
@@ -36,7 +36,7 @@ declare module "next-auth/jwt" {
     email: string
     image: string
     roles: string[];
-    permissions: string[];
+    permissions?: string[];
     accessToken: string
     expiresAt: string
   }

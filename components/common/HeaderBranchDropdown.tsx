@@ -28,6 +28,7 @@ const HeaderBranchDropdown = () => {
       const fetchBranchList = async () => {
         try {
           const res = await getPublicBranchList();
+          if (!res) return;
           if (res.success) {
             setBranchList(res?.data?.branches || []);
 

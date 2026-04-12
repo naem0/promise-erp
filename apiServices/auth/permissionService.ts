@@ -21,7 +21,7 @@ export interface PermissionResponse {
 
 
 export const fetchMyPermissions = cache(
-  async (token: string): Promise<PermissionResponse> => {
+  async (token: string): Promise<PermissionResponse | null> => {
     if (!token) throw new Error("Unauthorized: Access token not found");
     try {
     const res = await fetch(`${API_BASE}/my-permissions`, {
@@ -30,6 +30,11 @@ export const fetchMyPermissions = cache(
         "Content-Type": "application/json",
       },
     });
+
+    if(res.status === 401 || res.status === 403) {
+      console.warn("No permission data found.");
+      return null;
+    }
 
     if (!res.ok) {
       throw new Error(res.statusText);

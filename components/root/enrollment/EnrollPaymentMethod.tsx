@@ -1,39 +1,23 @@
-
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { EnrollmentsData, postEnrollmentSubmit } from "@/apiServices/studentEnrollmentService";
+import {
+  EnrollmentsData,
+  postEnrollmentSubmit,
+} from "@/apiServices/studentEnrollmentService";
+import { getElPaymentMethods } from "@/apiServices/studentDashboardService";
 
-type PaymentGateway = "paylater" | "rocket" | "nagad" | "bkash";
-/**
- * Backend expects number
- * 0 = paylater
- * 1 = rocket
- * 2 = nagad
- * 3 = bkash
- */
-const paymentMethodMap: Record<PaymentGateway, number> = {
-  paylater: 0,
-  rocket: 1,
-  nagad: 2,
-  bkash: 3,
+type PaymentGateway = {
+  id: number;
+  name: string;
+  image?: string;
+  type: number;
 };
-
-const gateways: {
-  id: PaymentGateway;
-  img: string;
-  alt: string;
-}[] = [
-  { id: "bkash", img: "/images/payment1.png", alt: "bKash" },
-  { id: "nagad", img: "/images/payment2.png", alt: "Nagad" },
-  { id: "rocket", img: "/images/payment3.png", alt: "Rocket" },
-  { id: "paylater", img: "/images/payment4.png", alt: "Pay Later" },
-];
 
 interface Props {
   enrollmentDetails: EnrollmentsData;
@@ -46,12 +30,40 @@ const EnrollPaymentMethod = ({
   savedCouponCode,
   token,
 }: Props) => {
-  const [selectedMethod, setSelectedMethod] = useState<PaymentGateway | null>(null);
+  const [gateways, setGateways] = useState<PaymentGateway[]>([]);
+  const [selectedMethod, setSelectedMethod] = useState<PaymentGateway | null>(
+    null,
+  );
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
+  useEffect(() => {
+    const loadPaymentMethods = async () => {
+      try {
+        const res = await getElPaymentMethods();
+        if (!res || !res.success || !res.data) {
+          console.warn("No payment methods data found.");
+          return;
+        }
+        if (res?.data?.length === 0) {
+          console.warn("Payment methods list is empty.");
+        }else {
+          setGateways(res?.data);
+        }
+      } catch (error:unknown) {
+        if (error instanceof Error) {
+          console.error("Error fetching payment methods:", error.message);
+        }else {
+          console.error("Unknown error occurred while fetching payment methods");
+        }
+      }
+    };
+
+    loadPaymentMethods();
+  }, []);
+
   const handleSelectMethod = (method: PaymentGateway) => {
-    if (method !== "paylater") {
+    if (method.name.toLowerCase() !== "pay later") {
       toast.info("Currently Pay Later is available. Please select Pay Later.");
       return;
     }
@@ -71,13 +83,16 @@ const EnrollPaymentMethod = ({
 
     startTransition(async () => {
       try {
-        const res = await postEnrollmentSubmit({
-          batch_id: enrollmentDetails.batch.id,
-          coupon_code: savedCouponCode,
-          payment_method: paymentMethodMap[selectedMethod],
-          payment_type: 0, // 0 = full payment
-          partial_payment_amount: 0,
-        }, token);
+        const res = await postEnrollmentSubmit(
+          {
+            batch_id: enrollmentDetails.batch.id,
+            coupon_code: savedCouponCode,
+            payment_method: selectedMethod?.id,
+            payment_type: 0, // 0 = full payment
+            partial_payment_amount: 0,
+          },
+          token,
+        );
 
         if (res.success) {
           toast.success(res?.data?.message || "Enrollment successful");
@@ -86,14 +101,12 @@ const EnrollPaymentMethod = ({
         } else {
           toast.error(res?.message || "Payment failed");
         }
-      } catch (error:unknown) {
+      } catch (error: unknown) {
         console.log("Enrollment submission failed", error);
-        toast.error("Enrollment submission failed");  
-        
+        toast.error("Enrollment submission failed");
       }
     });
   };
-
 
   return (
     <Card className="py-0">
@@ -107,23 +120,25 @@ const EnrollPaymentMethod = ({
 
           <div className="space-y-3 mb-6">
             {gateways.map((gateway) => (
+              
               <button
+                type="button"
                 key={gateway.id}
-                onClick={() => handleSelectMethod(gateway.id)}
-                className={`w-full h-14 rounded-lg flex items-center px-6 bg-white transition-all
-                  ${
-                    selectedMethod === gateway.id
-                      ? "ring-2 ring-primary ring-offset-2"
-                      : "ring-2 ring-secondary"
-                  }`}
+                onClick={() => handleSelectMethod(gateway)}
+                className={`w-full h-14 rounded-lg flex items-center px-6 bg-white transition-all  ${
+                  selectedMethod?.id === gateway.id
+                    ? "ring-2 ring-primary ring-offset-2"
+                    : "ring-2 ring-secondary"
+                }`}
               >
+                <span className="relative w-[200px] h-8 flex items-center justify-center">
                 <Image
-                  src={gateway.img}
-                  alt={gateway.alt}
-                  width={110}
-                  height={40}
-                  className="object-contain"
+                  src={gateway?.image || "/images/default-payment.png"}
+                  alt={gateway?.name}
+                  fill
+                  className="object-scale-down w-full"
                 />
+                </span>
               </button>
             ))}
           </div>
@@ -133,7 +148,9 @@ const EnrollPaymentMethod = ({
             disabled={!selectedMethod || isPending}
             className="w-full capitalize"
           >
-            {isPending ? "Processing..." : `Pay Now (${selectedMethod})`}
+            {isPending
+              ? "Processing..."
+              : `Pay Now ${selectedMethod?.name || ""}`}
           </Button>
         </div>
       </CardContent>
@@ -142,4 +159,3 @@ const EnrollPaymentMethod = ({
 };
 
 export default EnrollPaymentMethod;
-

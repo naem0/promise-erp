@@ -21,9 +21,10 @@ const CouponsData = async ({
   searchParams: { [key: string]: string | string[] | undefined };
 }) => {
   const page = typeof searchParams.page === "string" ? parseInt(searchParams.page) : 1;
-
+  const per_page = typeof searchParams.per_page === "string" ? parseInt(searchParams.per_page) : 15;
   const params: Record<string, unknown> = {
     page,
+    per_page,
     search: typeof searchParams.search === "string" ? searchParams.search : undefined,
     sort_order: typeof searchParams.sort_order === "string" ? searchParams.sort_order : "desc",
     status: typeof searchParams.status === "string" ? searchParams.status : undefined,
@@ -50,11 +51,11 @@ const CouponsData = async ({
 
   return (
     <>
-      <div className="rounded-xl border bg-card overflow-hidden shadow-sm overflow-x-auto">
+      <div className="rounded-xl border bg-card overflow-hidden shadow-sm overflow-x-auto mb-6">
         <Table>
           <TableHeader className="bg-muted/50">
             <TableRow>
-              <TableHead className="w-[50px] font-bold">#</TableHead>
+              <TableHead className="w-[50px] font-bold">SI</TableHead>
               <TableHead className="w-[100px] text-center font-bold">Action</TableHead>
               <TableHead className="min-w-[150px] font-bold">Title</TableHead>
               <TableHead className="font-bold">Code</TableHead>
@@ -67,7 +68,7 @@ const CouponsData = async ({
           <TableBody>
             {coupons.map((coupon: CouponItem, index: number) => (
               <TableRow key={`coupon-${coupon.id || index}`}>
-                <TableCell className="font-medium">{(page - 1) * 15 + (index + 1)}</TableCell>
+                <TableCell className="font-medium">{(page - 1) * per_page + (index + 1)}</TableCell>
                 <TableCell className="text-center">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -124,8 +125,8 @@ const CouponsData = async ({
         </Table>
       </div>
 
-      {pagination && (
-        <div className="mt-4">
+      {pagination?.has_more_pages && (
+        <div className="mt-4 pb-6">
           <Pagination pagination={pagination} />
         </div>
       )}

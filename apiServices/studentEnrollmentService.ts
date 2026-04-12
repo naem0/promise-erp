@@ -147,6 +147,10 @@ export async function getEnrollmentDetails(slug: string, token: string): Promise
       }
     );
 
+    if(res.status === 404) {
+      console.error("Enrollment API Error: Not Found");
+      return null; 
+    }
 
     if (!res.ok) {
       throw new Error(`Failed to fetch enrollment details ${res.status} (${res.statusText}`);

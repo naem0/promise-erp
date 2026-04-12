@@ -29,12 +29,11 @@ const EmployeesData = async ({
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) => {
     const resolvedSearchParams = await searchParams;
-    const page =
-        typeof resolvedSearchParams.page === "string"
-            ? Number(resolvedSearchParams.page)
-            : 1;
+    const page = typeof resolvedSearchParams.page === "string" ? Number(resolvedSearchParams.page): 1;
+    const per_page = typeof resolvedSearchParams.per_page === "string" ? Number(resolvedSearchParams.per_page) : 15;
     const params = {
         page,
+        per_page,
         search:
             typeof resolvedSearchParams.search === "string"
                 ? resolvedSearchParams.search
@@ -83,7 +82,6 @@ const EmployeesData = async ({
 
     const employees = results?.data?.employees || [];
     const paginationData = results?.data?.pagination;
-
     if (!employees.length) {
         return (
             <NotFoundComponent message={results?.message || "No employees found."} />
@@ -114,7 +112,7 @@ const EmployeesData = async ({
                         {employees.map((employee: Employee, index: number) => (
                             <TableRow key={employee?.id}>
                                 <TableCell className="text-center">
-                                    {(page - 1) * 15 + (index + 1)}
+                                    {(page - 1) * per_page + (index + 1)}
                                 </TableCell>
                                 <TableCell className="text-center">
                                     <DropdownMenu>
@@ -216,11 +214,12 @@ const EmployeesData = async ({
                     </TableBody>
                 </Table>
             </div>
-            {paginationData && (
-                <div className="mt-4">
+            {paginationData?.has_more_pages && (
+                <div className="mt-4 pb-6">
                     <Pagination pagination={paginationData} />
                 </div>
             )}
+
         </>
     );
 };

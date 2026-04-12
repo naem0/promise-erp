@@ -30,7 +30,7 @@ export const authOptions:NextAuthOptions = {
           email: data.user.email,
           image: data.user.image,
           roles: data.roles,
-          permissions: Array.isArray(data.permissions) ? data.permissions : [],
+          // permissions: Array.isArray(data.permissions) ? data.permissions : [],
           accessToken: data.access_token,
           expiresAt: data.expires_at,
         };
@@ -47,7 +47,7 @@ export const authOptions:NextAuthOptions = {
         token.email = user.email;
         token.image = user.image;
         token.roles = user.roles;
-        token.permissions = user.permissions;
+        // token.permissions = user.permissions;
         token.accessToken = user.accessToken;
         token.expiresAt = user.expiresAt;
       }
@@ -69,7 +69,7 @@ export const authOptions:NextAuthOptions = {
         session.user.email = token.email;
         session.user.image = token.image;
         session.user.roles = token.roles;
-        session.user.permissions = token.permissions;
+        // session.user.permissions = token.permissions;
       }
       session.accessToken = token.accessToken;
       session.expiresAt = token.expiresAt;

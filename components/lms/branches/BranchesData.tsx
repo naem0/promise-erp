@@ -25,13 +25,6 @@ import DeleteBranchButton from "@/components/lms/branches/DeleteBranchButton";
 import Pagination from "@/components/common/Pagination";
 import PermissionGuard from "@/components/auth/PermissionGuard";
 
-/* ---------------------- Interfaces ---------------------- */
-
-export interface District {
-  id: number;
-  name: string;
-}
-
 
 /* ---------------------- Component ---------------------- */
 
@@ -40,9 +33,17 @@ export default async function BranchesData({
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const params = await searchParams;
-  const page = Number(params.page) || 1;
-  
+  const resolvedParams = await searchParams;
+  const page = typeof resolvedParams.page === "string" ? Number(resolvedParams.page) : 1;
+  const per_page = typeof resolvedParams.per_page === "string" ? Number(resolvedParams.per_page) : 15;
+  const params = {
+    page,
+    per_page,
+    search: typeof resolvedParams.search === "string" ? resolvedParams.search : undefined,
+    sort_by: typeof resolvedParams.sort_by === "string" ? resolvedParams.sort_by : undefined,
+    sort_order: typeof resolvedParams.sort_order === "string" ? resolvedParams.sort_order : undefined,
+  };
+
   let data;
   try {
     data = await getBranches(params);
@@ -66,7 +67,7 @@ export default async function BranchesData({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>#</TableHead>
+              <TableHead>SI</TableHead>
               <TableHead className="text-center">Action</TableHead>
               <TableHead>Branch Name</TableHead>
               <TableHead>District</TableHead>
@@ -139,8 +140,11 @@ export default async function BranchesData({
           </TableBody>
         </Table>
       </div>
-
-      <Pagination pagination={pagination} />
+      {pagination?.has_more_pages && (
+        <div className="my-4">
+          <Pagination pagination={pagination} />
+        </div>
+      )}
     </>
   );
 }

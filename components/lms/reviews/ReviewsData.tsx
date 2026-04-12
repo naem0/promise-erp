@@ -30,13 +30,12 @@ const ReviewsData = async ({
 }) => {
   const resolvedSearchParams = await searchParams;
 
-  const page =
-    typeof resolvedSearchParams?.page === "string"
-      ? Number(resolvedSearchParams.page)
-      : 1;
+  const page = typeof resolvedSearchParams?.page === "string" ? Number(resolvedSearchParams.page): 1;
+  const per_page = typeof resolvedSearchParams?.per_page === "string" ? Number(resolvedSearchParams.per_page) : 15;
 
   const params = {
     page,
+    per_page,
     search:
       typeof resolvedSearchParams?.search === "string"
         ? resolvedSearchParams.search
@@ -91,7 +90,7 @@ const ReviewsData = async ({
 
   return (
     <>
-      <div className="rounded-md border">
+      <div className="rounded-md border mb-6">
         <Table>
           <TableHeader>
             <TableRow>
@@ -110,7 +109,7 @@ const ReviewsData = async ({
             {reviews.map((review: Review, index: number) => (
               <TableRow key={review.id}>
                 <TableCell className="text-center">
-                  {(page - 1) * 15 + (index + 1)}
+                  {(page - 1) * per_page + (index + 1)}
                 </TableCell>
 
                 {/* ACTION */}
@@ -207,8 +206,8 @@ const ReviewsData = async ({
           </TableBody>
         </Table>
       </div>
-      {pagination && (
-        <div className="mt-4">
+      {pagination?.has_more_pages && (
+        <div className="mt-4 pb-6">
           <Pagination pagination={pagination} />
         </div>
       )}

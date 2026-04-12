@@ -1078,10 +1078,6 @@ export async function changeStudentPasswordClient(
 
     const data: ChangePasswordResponse = await res.json();
 
-    if (!res.ok) {
-      return data;
-    }
-
     return data;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -1096,7 +1092,7 @@ export async function changeStudentPasswordClient(
 // Client-side function for getting student profile (for use in client components)
 export async function getStudentProfileClient(
   accessToken: string,
-): Promise<StudentProfileResponse> {
+): Promise<StudentProfileResponse | null> {
   try {
     const res = await fetch(`${API_BASE}/student-panel/profile`, {
       method: "GET",
@@ -1105,6 +1101,11 @@ export async function getStudentProfileClient(
         "Content-Type": "application/json",
       },
     });
+
+    if (res.status === 404) {
+      console.warn("Student profile not found.");
+      return null;
+    }
 
     if (!res.ok) {
       throw new Error(
@@ -1117,7 +1118,7 @@ export async function getStudentProfileClient(
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error("getStudentProfileClient Error:", error.message);
-      throw error;
+      throw new Error("Error fetching student profile");
     }
     throw new Error("Unknown error occurred while fetching student profile");
   }
@@ -1158,17 +1159,11 @@ export async function updateStudentProfileClient(
       method: "POST",
       headers: {
         Authorization: `Bearer ${accessToken}`,
-        // Don't set Content-Type header, browser will set it with boundary for FormData
       },
       body: formData,
     });
 
     const data: UpdateProfileResponse = await res.json();
-
-    if (!res.ok) {
-      return data;
-    }
-
     return data;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -1502,7 +1497,7 @@ export interface JobTitleEarningItemResponse {
 
 export async function getAllJobTitlesForEarning(
   token?: string,
-): Promise<JobTitleEarningItemResponse> {
+): Promise<JobTitleEarningItemResponse | null> {
   if (!token) {
     throw new Error("Unauthorized: Access token not found");
   }
@@ -1518,6 +1513,11 @@ export async function getAllJobTitlesForEarning(
         },
       },
     );
+
+    if(response.status === 404) {
+      console.warn("No job title earning data found.");
+      return null;
+    }
 
     if (!response.ok) {
       throw new Error(
@@ -1709,7 +1709,7 @@ export interface PaymentMethodListResponse {
   data: PaymentMethod[];
 }
 
-export async function getElPaymentMethods(): Promise<PaymentMethodListResponse> {
+export async function getElPaymentMethods(): Promise<PaymentMethodListResponse | null> {
 
   try {
     const response = await fetch(`${API_BASE}/public/payment-methods/el`, {
@@ -1719,6 +1719,10 @@ export async function getElPaymentMethods(): Promise<PaymentMethodListResponse> 
       },
     });
 
+    if(response.status === 404) {
+      console.warn("No EL payment methods found.");
+      return null;
+    }
     if (!response.ok) {
       throw new Error(
         `Failed to fetch payment methods (${response.status} ${response.statusText})`,

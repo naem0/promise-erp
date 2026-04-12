@@ -19,11 +19,12 @@ export default async function EnrollmentsData({
 }: {
     searchParams: { [key: string]: string | string[] | undefined };
 }) {
-    const page =
-        typeof searchParams.page === "string" ? Number(searchParams.page) : 1;
+    const page = typeof searchParams.page === "string" ? Number(searchParams.page) : 1;
+    const per_page = typeof searchParams.per_page === "string" ? Number(searchParams.per_page) : 15;
 
     const params = {
         page,
+        per_page,
         search:
             typeof searchParams.search === "string"
                 ? searchParams.search
@@ -44,7 +45,6 @@ export default async function EnrollmentsData({
             typeof searchParams.course_id === "string"
                 ? searchParams.course_id
                 : undefined,
-        per_page: 15
     };
 
     let data;
@@ -97,7 +97,7 @@ export default async function EnrollmentsData({
                     <TableBody>
                         {enrollments?.map((enrollment, i) => (
                             <TableRow key={enrollment?.id || i}>
-                                <TableCell className="text-center">{(page - 1) * 15 + (i + 1)}</TableCell>
+                                <TableCell className="text-center">{(page - 1) * per_page + (i + 1)}</TableCell>
                                 <TableCell className="text-center">
                                     {enrollment?.id && (
                                         <EnrollmentActionMenu
@@ -140,7 +140,7 @@ export default async function EnrollmentsData({
                     </TableBody>
                 </Table>
             </div >
-            {paginationData && (
+            {paginationData?.has_more_pages && (
                 <div className="mt-4">
                     <Pagination pagination={paginationData} />
                 </div>

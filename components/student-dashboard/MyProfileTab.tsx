@@ -69,15 +69,20 @@ const MyProfileTab = () => {
       return
     }
 
-    const token = session.accessToken
+    const token = session?.accessToken
 
     startTransition(async () => {
       try {
         const response = await getStudentProfileClient(token)
-        setProfileData(response.data)
+        if (!response || !response.success || !response.data) {
+          console.warn("No profile data found for the student.")
+          return
+        }
+        
+        setProfileData(response?.data)
 
-        if (response.success && response.data) {
-          const profile: StudentProfile = response.data
+        if (response.success && response?.data) {
+          const profile: StudentProfile = response?.data
           // Set form values
           setValue("name", profile.name || "")
           setValue("phone", profile.phone || "")
@@ -179,12 +184,10 @@ const MyProfileTab = () => {
           formData.append("linkedin", data.linkedin)
         }
 
-        // Add profile image if selected
         if (profileImageFile) {
           formData.append("profile_image", profileImageFile)
         }
 
-        // Add educations as JSON string
         formData.append("educations", JSON.stringify(educationsPayload))
 
         const token = session.accessToken
@@ -195,11 +198,8 @@ const MyProfileTab = () => {
 
         const response = await updateStudentProfileClient(formData, token)
 
-        if (response.success) {
+        if (response?.success) {
           toast.success(response.message || "Profile updated successfully!")
-
-          // Update profile image from API response → dispatch to Redux
-          // This syncs HeaderContent avatar in real-time (no page refresh needed)
           if (response.data?.profile_image) {
             const newImageUrl = response.data.profile_image
             console.log(" MyProfileTab component--->:", newImageUrl)
@@ -209,7 +209,6 @@ const MyProfileTab = () => {
             setProfileImageFile(null)
           }
 
-          // Refresh form fields from updated profile data
           if (response.data) {
             const profile = response.data
             setValue("name", profile.name || "")
