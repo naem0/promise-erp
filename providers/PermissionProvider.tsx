@@ -1,61 +1,73 @@
 "use client";
 
-import React, {
-    createContext,
-    useContext,
-    useEffect,
-    useState,
-} from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { fetchMyPermissions } from "@/apiServices/auth/permissionService";
 
 interface PermissionContextType {
-    permissions: string[];
-    loading: boolean;
-    refreshPermissions: () => Promise<void>;
+  permissions: string[];
+  loading: boolean;
+  refreshPermissions: () => Promise<void>;
 }
 
-const PermissionContext = createContext<PermissionContextType | undefined>(undefined);
+const PermissionContext = createContext<PermissionContextType | undefined>(
+  undefined,
+);
 
-export function PermissionProvider({ children }: { children: React.ReactNode }) {
-    const { data: session, status } = useSession();
+export function PermissionProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const { data: session, status } = useSession();
+  const token = session?.accessToken;
 
-    const [permissions, setPermissions] = useState<string[]>([]);
+  const [permissions, setPermissions] = useState<string[]>([]);
 
-    const fetchPermissions = async () => {
-        if (!session?.accessToken) return;
-        try {
-            const { data } = await fetchMyPermissions(session.accessToken);
-            setPermissions(data?.permissions ?? []);
-        } catch (error) {
-            console.error("fetchPermissions Error:", error);
-            setPermissions([]);
-        }
-    };
+  const fetchPermissions = async () => {
+    if (!token) return;
+    try {
+      const response = await fetchMyPermissions(token);
+      if (!response || !response?.success || !response?.data) {
+        console.warn("No permission data found.");
+        return;
+      }
+      if (response?.success && response?.data) {
+        setPermissions(response.data.permissions ?? []);
+      } else {
+        setPermissions([]);
+      }
+    } catch (error) {
+      console.error("fetchPermissions Error:", error);
+      setPermissions([]);
+    }
+  };
 
-    useEffect(() => {
-        if (status === "authenticated" && session?.accessToken) {
-            fetchPermissions();
-        }
+  useEffect(() => {
+    if (status === "authenticated" && token) {
+    fetchPermissions();
+  } else if (status === "unauthenticated") {
+    setPermissions([]);
+  }
+  }, [status, token]);
 
-        if (status === "unauthenticated") {
-            setPermissions([]);
-        }
-    }, [status, session?.accessToken]);
+  const loading = status === "loading";
 
-    const loading = status === "loading"
-
-    return (
-        <PermissionContext.Provider value={{ permissions, loading, refreshPermissions: fetchPermissions }}>
-            {children}
-        </PermissionContext.Provider>
-    );
+  return (
+    <PermissionContext.Provider
+      value={{ permissions, loading, refreshPermissions: fetchPermissions }}
+    >
+      {children}
+    </PermissionContext.Provider>
+  );
 }
 
 export function usePermissionContext() {
-    const context = useContext(PermissionContext);
-    if (context === undefined) {
-        throw new Error("usePermissionContext must be used within a PermissionProvider");
-    }
-    return context;
+  const context = useContext(PermissionContext);
+  if (context === undefined) {
+    throw new Error(
+      "usePermissionContext must be used within a PermissionProvider",
+    );
+  }
+  return context;
 }

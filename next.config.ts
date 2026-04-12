@@ -1,7 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  
   // Production optimizations
   compress: true,
   poweredByHeader: false,
@@ -97,6 +96,26 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "elt-back.promisemart.com",
         pathname: "/storage/images/**",
+      },
+      {
+        protocol: "https",
+        hostname: "images.seeklogo.com",
+      },
+      {
+        protocol: "https",
+        hostname: "images.seeklogo.com",
+      },
+      {
+        protocol: "https",
+        hostname: "nagad.com.bd",
+      },
+      {
+        protocol: "https",
+        hostname: "coderstrust.global",
+      },
+      {
+        protocol: "https",
+        hostname: "coderstrust.global",
       },
     ],
   },

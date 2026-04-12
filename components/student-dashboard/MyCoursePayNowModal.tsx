@@ -74,6 +74,11 @@ const MyCoursePayNowModal = ({ course, isUpdatedCourse, setIsUpdatedCourse }: My
         const fetchPaymentMethods = async () => {
             try {
                 const res = await getElPaymentMethods();
+                if (!res || !res.success || !res.data) {
+                    console.warn("No payment methods data found.");
+                    setPaymentMethods([]);
+                    return;
+                }
                 if (res?.success) {
                     setPaymentMethods(res.data || []);
                 }

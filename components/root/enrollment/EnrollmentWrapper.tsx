@@ -33,6 +33,9 @@ const EnrollmentWrapper = ({ slug }: Props) => {
     startTransition(async () => {
       try {
         const res = await getEnrollmentDetails(slug, token);
+        if (!res || !res.success || !res.data) {
+          return;
+        }
 
         if (res?.success) {
           setEnrollmentDetails(res);
