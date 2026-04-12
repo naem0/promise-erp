@@ -25,8 +25,10 @@ const FaqsData = async ({
 }) => {
   const resolvedSearchParams = await searchParams;
   const page = typeof resolvedSearchParams.page === "string" ? Number(resolvedSearchParams.page) : 1;
+  const per_page = typeof resolvedSearchParams.per_page === "string" ? Number(resolvedSearchParams.per_page) : 15;
   const params = {
     page,
+    per_page,
     search:
       typeof resolvedSearchParams.search === "string"
         ? resolvedSearchParams.search
@@ -65,74 +67,78 @@ const FaqsData = async ({
 
 
   return (
-    <div className="rounded-md border">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="text-center">Sl</TableHead>
-            <TableHead className="text-center">Action</TableHead>
-            <TableHead className="text-center">Question</TableHead>
-            <TableHead className="text-center">Answer</TableHead>
-            <TableHead className="text-center">Status</TableHead>
-          </TableRow>
-        </TableHeader>
-
-        <TableBody>
-          {faqs.map((faq: Faq, index: number) => (
-            <TableRow key={faq?.id}>
-              <TableCell className="text-center">{(page - 1) * 15 + (index + 1)}</TableCell>
-              <TableCell className="text-center">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Badge
-                      variant="default"
-                      role="button"
-                      tabIndex={0}
-                      className="cursor-pointer select-none"
-                    >
-                      Action
-                    </Badge>
-                  </DropdownMenuTrigger>
-
-                  <DropdownMenuContent align="center">
-                    <PermissionGuard requiredPermission="sync-course-faqs">
-                      <DropdownMenuItem asChild>
-                        <Link
-                          href={`/lms/faqs/${faq?.id}/edit`}
-                          className="flex items-center cursor-pointer"
-                        >
-                          <Pencil className="mr-2 h-4 w-4" />
-                          Manage
-                        </Link>
-                      </DropdownMenuItem>
-                    </PermissionGuard>
-
-                    <PermissionGuard requiredPermission="delete-course-faqs">
-                      <DropdownMenuItem asChild>
-                        <DeleteButton id={faq?.id} />
-                      </DropdownMenuItem>
-                    </PermissionGuard>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </TableCell>
-              <TableCell className="font-medium text-center">{faq?.question}</TableCell>
-              <TableCell className="font-medium text-center">{faq?.answer}</TableCell>
-              <TableCell className="text-center">
-                <Badge variant={faq.status === 1 ? "outline" : "destructive"}>
-                  {faq.status === 1 ? "Active" : "Inactive"}
-                </Badge>
-              </TableCell>
-
+    <>
+      <div className="rounded-md border mb-6">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="text-center">Sl</TableHead>
+              <TableHead className="text-center">Action</TableHead>
+              <TableHead className="text-center">Question</TableHead>
+              <TableHead className="text-center">Answer</TableHead>
+              <TableHead className="text-center">Status</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-      {paginationData && (
-        <div className="mt-4">
+          </TableHeader>
+
+          <TableBody>
+            {faqs.map((faq: Faq, index: number) => (
+              <TableRow key={faq?.id}>
+                <TableCell className="text-center">{(page - 1) * per_page + (index + 1)}</TableCell>
+                <TableCell className="text-center">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Badge
+                        variant="default"
+                        role="button"
+                        tabIndex={0}
+                        className="cursor-pointer select-none"
+                      >
+                        Action
+                      </Badge>
+                    </DropdownMenuTrigger>
+
+                    <DropdownMenuContent align="center">
+                      <PermissionGuard requiredPermission="sync-course-faqs">
+                        <DropdownMenuItem asChild>
+                          <Link
+                            href={`/lms/faqs/${faq?.id}/edit`}
+                            className="flex items-center cursor-pointer"
+                          >
+                            <Pencil className="mr-2 h-4 w-4" />
+                            Manage
+                          </Link>
+                        </DropdownMenuItem>
+                      </PermissionGuard>
+
+                      <PermissionGuard requiredPermission="delete-course-faqs">
+                        <DropdownMenuItem asChild>
+                          <DeleteButton id={faq?.id} />
+                        </DropdownMenuItem>
+                      </PermissionGuard>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </TableCell>
+                <TableCell className="font-medium text-center">{faq?.question}</TableCell>
+                <TableCell className="font-medium text-center">{faq?.answer}</TableCell>
+                <TableCell className="text-center">
+                  <Badge variant={faq.status === 1 ? "outline" : "destructive"}>
+                    {faq.status === 1 ? "Active" : "Inactive"}
+                  </Badge>
+                </TableCell>
+
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+      {paginationData?.has_more_pages && (
+        <div className="mt-4 pb-6">
           <Pagination pagination={paginationData} />
         </div>
       )}
-    </div>
+    </>
+
+
   );
 }
 export default FaqsData;

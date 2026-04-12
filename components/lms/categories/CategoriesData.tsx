@@ -18,17 +18,18 @@ import Image from "next/image";
 import Pagination from "@/components/common/Pagination";
 import PermissionGuard from "@/components/auth/PermissionGuard";
 
-
 const CategoriesData = async ({
 
   searchParams,
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-})=> {
+}) => {
   const resolvedSearchParams = await searchParams;
   const page = typeof resolvedSearchParams.page === "string" ? Number(resolvedSearchParams.page) : 1;
+  const per_page = typeof resolvedSearchParams.per_page === "string" ? Number(resolvedSearchParams.per_page) : 15;
   const params = {
     page,
+    per_page,
     search:
       typeof resolvedSearchParams.search === "string"
         ? resolvedSearchParams.search
@@ -46,7 +47,7 @@ const CategoriesData = async ({
   let results;
   try {
     results = await getCategories(params);
-    
+
   } catch (error: unknown) {
     if (error instanceof Error) {
       return <ErrorComponent message={error.message} />;
@@ -60,29 +61,29 @@ const CategoriesData = async ({
   if (!categories.length) {
     return <NotFoundComponent message={results?.message} title="Category List" />;
   }
-  
+
 
   return (
     <>
-    <div className="rounded-md border">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Sl</TableHead>
-            <TableHead>Action</TableHead>
-            <TableHead>Image</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Meta Title</TableHead>
-            <TableHead>Meta Tags</TableHead>
-            <TableHead>Status</TableHead>
-          </TableRow>
-        </TableHeader>
+      <div className="rounded-md border mb-6">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Sl</TableHead>
+              <TableHead>Action</TableHead>
+              <TableHead>Image</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Meta Title</TableHead>
+              <TableHead>Meta Tags</TableHead>
+              <TableHead>Status</TableHead>
+            </TableRow>
+          </TableHeader>
 
-        <TableBody>
-          {categories.map((category: Category , index: number) => (
-            <TableRow key={category?.id}>
-              <TableCell>{(page-1) * 15 + (index + 1)}</TableCell>
-              <TableCell>
+          <TableBody>
+            {categories.map((category: Category, index: number) => (
+              <TableRow key={category?.id}>
+                <TableCell>{(page - 1) * per_page + (index + 1)}</TableCell>
+                <TableCell>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Badge
@@ -115,46 +116,46 @@ const CategoriesData = async ({
                       </PermissionGuard>
                     </DropdownMenuContent>
                   </DropdownMenu>
-              </TableCell>
-              <TableCell className="font-medium">
-                <Image
-                  src={category.image || "/images/placeholder.png"}
-                  alt={category?.name}
-                  width={40}
-                  height={40}
-                  className="object-cover"
-                />
-              </TableCell>
-              <TableCell className="font-medium">{category?.name}</TableCell>
-              <TableCell className="text-sm text-muted-foreground">
-                {category.meta_title || <span className="italic text-xs text-muted-foreground">—</span>}
-              </TableCell>
-              <TableCell>
-                {category.meta_tag && category.meta_tag.length > 0 ? (
-                  <div className="flex flex-wrap gap-1">
-                    {category.meta_tag.map((tag) => (
-                      <Badge key={tag} variant="secondary" className="text-xs">
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
-                ) : (
-                  <span className="italic text-xs text-muted-foreground">—</span>
-                )}
-              </TableCell>
-              <TableCell>
-                <Badge variant={category.status === 1 ? "outline" : "destructive"}>
-                  {category.status === 1 ? "Active" : "Inactive"}
-                </Badge>
-              </TableCell>
-              
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>    
-    </div>
-    {paginationData && (
-        <div className="mt-4">
+                </TableCell>
+                <TableCell className="font-medium">
+                  <Image
+                    src={category.image || "/images/placeholder.png"}
+                    alt={category?.name}
+                    width={40}
+                    height={40}
+                    className="object-cover"
+                  />
+                </TableCell>
+                <TableCell className="font-medium">{category?.name}</TableCell>
+                <TableCell className="text-sm text-muted-foreground">
+                  {category.meta_title || <span className="italic text-xs text-muted-foreground">—</span>}
+                </TableCell>
+                <TableCell>
+                  {category.meta_tag && category.meta_tag.length > 0 ? (
+                    <div className="flex flex-wrap gap-1">
+                      {category.meta_tag.map((tag) => (
+                        <Badge key={tag} variant="secondary" className="text-xs">
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+                  ) : (
+                    <span className="italic text-xs text-muted-foreground">—</span>
+                  )}
+                </TableCell>
+                <TableCell>
+                  <Badge variant={category.status === 1 ? "outline" : "destructive"}>
+                    {category.status === 1 ? "Active" : "Inactive"}
+                  </Badge>
+                </TableCell>
+
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+      {paginationData?.has_more_pages && (
+        <div className="mt-4 pb-6">
           <Pagination pagination={paginationData} />
         </div>
       )}

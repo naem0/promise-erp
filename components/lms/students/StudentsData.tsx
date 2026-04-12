@@ -24,8 +24,10 @@ const StudentsData = async ({
 }) => {
   const resolvedSearchParams = await searchParams;
   const page = typeof resolvedSearchParams.page === "string" ? Number(resolvedSearchParams.page) : 1;
+  const per_page = typeof resolvedSearchParams.per_page === "string" ? Number(resolvedSearchParams.per_page) : 15;
   const params = {
     page,
+    per_page,
     search:
       typeof resolvedSearchParams.search === "string"
         ? resolvedSearchParams.search
@@ -99,7 +101,7 @@ const StudentsData = async ({
           <TableBody>
             {students.map((student: Student, index: number) => (
               <TableRow key={student?.id}>
-                <TableCell className="text-center">{(page - 1) * 15 + (index + 1)}</TableCell>
+                <TableCell className="text-center">{(page - 1) * per_page + (index + 1)}</TableCell>
                 <TableCell className="text-center">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -187,7 +189,7 @@ const StudentsData = async ({
           </TableBody>
         </Table>
       </div>
-      {paginationData && (
+      {paginationData && paginationData.last_page > 1 && (
         <div className="mt-4">
           <Pagination pagination={paginationData} />
         </div>

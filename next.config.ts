@@ -117,6 +117,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "coderstrust.global",
       },
+      {
+        protocol: "https",
+        hostname: "elt-back.promisemart.com",
+      },
     ],
   },
 

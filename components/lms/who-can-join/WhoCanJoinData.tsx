@@ -23,8 +23,10 @@ const WhoCanJoinData = async ({
 }) => {
   const resolvedSearchParams = await searchParams;
   const page = typeof resolvedSearchParams.page === "string" ? Number(resolvedSearchParams.page) : 1;
+  const per_page = typeof resolvedSearchParams.per_page === "string" ? Number(resolvedSearchParams.per_page) : 15;
   const params = {
     page,
+    per_page,
     search:
       typeof resolvedSearchParams.search === "string"
         ? resolvedSearchParams.search
@@ -56,77 +58,80 @@ const WhoCanJoinData = async ({
 
   const joins = results?.data?.joins || [];
   const paginationData = results?.data?.pagination;
+  console.log("WhoCanJoinData - pagination data:", paginationData);
 
   if (!joins.length) {
     return <NotFoundComponent message={results?.message || "No joins found."} />;
   }
 
   return (
-    <div className="rounded-md border">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="text-center">Sl</TableHead>
-            <TableHead className="text-center">Action</TableHead>
-            <TableHead className="text-center">Title</TableHead>
-            <TableHead className="text-center">Status</TableHead>
-          </TableRow>
-        </TableHeader>
-
-        <TableBody>
-          {joins.map((join: JoinType, index: number) => (
-            <TableRow key={join?.id}>
-              <TableCell className="text-center">{(page - 1) * 15 + (index + 1)}</TableCell>
-              <TableCell className="text-center">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Badge
-                      variant="default"
-                      role="button"
-                      tabIndex={0}
-                      className="cursor-pointer select-none"
-                    >
-                      Action
-                    </Badge>
-                  </DropdownMenuTrigger>
-
-                  <DropdownMenuContent align="center">
-                    <PermissionGuard requiredPermission="sync-course-joins">
-                      <DropdownMenuItem asChild>
-                        <Link
-                          href={`/lms/who-can-join/${join?.id}/edit`}
-                          className="flex items-center cursor-pointer"
-                        >
-                          <Pencil className="mr-2 h-4 w-4" />
-                          Manage
-                        </Link>
-                      </DropdownMenuItem>
-                    </PermissionGuard>
-
-                    <PermissionGuard requiredPermission="delete-course-joins">
-                      <DropdownMenuItem asChild>
-                        <DeleteButton id={join?.id} />
-                      </DropdownMenuItem>
-                    </PermissionGuard>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </TableCell>
-              <TableCell className="font-medium text-center">{join?.title}</TableCell>
-              <TableCell className="text-center">
-                <Badge variant={join.status === 1 ? "outline" : "destructive"}>
-                  {join.status === 1 ? "Active" : "Inactive"}
-                </Badge>
-              </TableCell>
+    <>
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="text-center">Sl</TableHead>
+              <TableHead className="text-center">Action</TableHead>
+              <TableHead className="text-center">Title</TableHead>
+              <TableHead className="text-center">Status</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-      {paginationData && (
-        <div className="mt-4">
+          </TableHeader>
+
+          <TableBody>
+            {joins.map((join: JoinType, index: number) => (
+              <TableRow key={join?.id}>
+                <TableCell className="text-center">{(page - 1) * per_page + (index + 1)}</TableCell>
+                <TableCell className="text-center">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Badge
+                        variant="default"
+                        role="button"
+                        tabIndex={0}
+                        className="cursor-pointer select-none"
+                      >
+                        Action
+                      </Badge>
+                    </DropdownMenuTrigger>
+
+                    <DropdownMenuContent align="center">
+                      <PermissionGuard requiredPermission="sync-course-joins">
+                        <DropdownMenuItem asChild>
+                          <Link
+                            href={`/lms/who-can-join/${join?.id}/edit`}
+                            className="flex items-center cursor-pointer"
+                          >
+                            <Pencil className="mr-2 h-4 w-4" />
+                            Manage
+                          </Link>
+                        </DropdownMenuItem>
+                      </PermissionGuard>
+
+                      <PermissionGuard requiredPermission="delete-course-joins">
+                        <DropdownMenuItem asChild>
+                          <DeleteButton id={join?.id} />
+                        </DropdownMenuItem>
+                      </PermissionGuard>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </TableCell>
+                <TableCell className="font-medium text-center">{join?.title}</TableCell>
+                <TableCell className="text-center">
+                  <Badge variant={join.status === 1 ? "outline" : "destructive"}>
+                    {join.status === 1 ? "Active" : "Inactive"}
+                  </Badge>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+      {paginationData?.has_more_pages && (
+        <div className="my-4">
           <Pagination pagination={paginationData} />
         </div>
       )}
-    </div>
+    </>
   );
 };
 

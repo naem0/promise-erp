@@ -109,7 +109,7 @@ export default async function BatchesData({
           </TableHeader>
 
           <TableBody>
-            {batches.map((batch, i) => (
+            {batches?.map((batch, i) => (
               <TableRow key={batch?.id}>
                 <TableCell className="text-center">{(page - 1) * 15 + (i + 1)}</TableCell>
                 <TableCell className="text-center">
