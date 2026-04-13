@@ -28,8 +28,9 @@ export default async function BatchesData({
 }: {
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
-  const page =
-    typeof searchParams.page === "string" ? Number(searchParams.page) : 1;
+  const page = typeof searchParams.page === "string" ? Number(searchParams.page) : 1;
+
+
 
   const params = {
     page,
@@ -81,6 +82,7 @@ export default async function BatchesData({
 
   const batches = data?.data?.batches;
   const paginationData = data?.data?.pagination;
+  console.log("BatchesData -> data", data);
 
   if (batches.length === 0) {
     return <NotFoundComponent message={data?.message} title="Batch List" />;
@@ -109,7 +111,7 @@ export default async function BatchesData({
           </TableHeader>
 
           <TableBody>
-            {batches?.map((batch, i) => (
+            {batches && batches?.map((batch, i) => (
               <TableRow key={batch?.id}>
                 <TableCell className="text-center">{(page - 1) * 15 + (i + 1)}</TableCell>
                 <TableCell className="text-center">
