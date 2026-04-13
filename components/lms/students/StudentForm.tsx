@@ -437,7 +437,7 @@ export default function StudentForm({
                         <SelectValue placeholder="Select a branch" />
                       </SelectTrigger>
                       <SelectContent>
-                        {branches.map((b) => (
+                        {branches?.map((b) => (
                           <SelectItem key={b.id} value={b.id.toString()}>
                             {b.name}
                           </SelectItem>

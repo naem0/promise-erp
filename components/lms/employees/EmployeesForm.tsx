@@ -366,7 +366,7 @@ export default function EmployeesForm({
                     <div className="md:col-span-2">
                         <label className="block text-sm font-medium mb-1">Branches <span className="text-red-500">*</span></label>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-2">
-                            {branches.map((branch) => (
+                            {branches?.map((branch) => (
                                 <Controller
                                     key={branch.id}
                                     name="branch_ids"

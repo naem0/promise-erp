@@ -125,7 +125,7 @@ export default function FreeSeminarsFilter({ branches, categories }: FreeSeminar
                 <SelectValue placeholder="All Branches" />
               </SelectTrigger>
               <SelectContent>
-                {branches.map((b) => (
+                {branches?.map((b) => (
                   <SelectItem key={b.id} value={String(b.id)}>
                     {b.name}
                   </SelectItem>

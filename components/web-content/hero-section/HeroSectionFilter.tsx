@@ -121,7 +121,7 @@ export default function HeroSectionFilter({ branches }: { branches: Branch[] }) 
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Branches</SelectItem>
-                {Array.isArray(branches) && branches.map((branch) => (
+                {Array.isArray(branches) && branches?.map((branch) => (
                   <SelectItem key={branch.id} value={branch.id.toString()}>
                     {String(branch.name)}
                   </SelectItem>

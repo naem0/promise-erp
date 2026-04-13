@@ -251,7 +251,7 @@ export default function BatchForm({ title, batch }: BatchFormProps) {
                                             checked={branches.length > 0 && (field.value?.length || 0) === branches.length}
                                             onChange={(e) => {
                                                 if (e.target.checked) {
-                                                    field.onChange(branches.map((b) => b.id.toString()));
+                                                    field.onChange(branches?.map((b) => b.id.toString()));
                                                 } else {
                                                     field.onChange([]);
                                                 }
@@ -263,7 +263,7 @@ export default function BatchForm({ title, batch }: BatchFormProps) {
                                         </Label>
                                     </div>
                                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                                        {branches.map((branch) => (
+                                        {branches?.map((branch) => (
                                             <div key={branch.id} className={`flex items-center space-x-2 p-2 rounded-md hover:bg-primary/50 transition-colors border ${field.value?.includes(branch.id.toString()) ? "bg-primary/50" : "border-transparent"}`}>
                                                 <input
                                                     type="checkbox"

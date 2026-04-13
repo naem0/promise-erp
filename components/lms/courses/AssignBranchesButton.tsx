@@ -37,7 +37,7 @@ const AssignBranchesButton: React.FC<AssignBranchesButtonProps> = ({
 
   useEffect(() => {
     if (dialogOpen) {
-      setSelectedBranchIds(initialAssignedBranches.map((b) => b.id));
+      setSelectedBranchIds(initialAssignedbranches?.map((b) => b.id));
       fetchBranches();
     }
   }, [dialogOpen, initialAssignedBranches]);
@@ -110,7 +110,7 @@ const AssignBranchesButton: React.FC<AssignBranchesButtonProps> = ({
 
         {!loading && !error && branches.length > 0 && (
           <div className="grid grid-cols-2 gap-4 py-4 max-h-[400px] overflow-y-auto">
-            {branches.map((branch) => (
+            {branches?.map((branch) => (
               <div key={branch.id} className="flex items-center space-x-2">
                 <Checkbox
                   checked={selectedBranchIds.includes(branch.id)}

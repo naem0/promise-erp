@@ -197,7 +197,7 @@ export default function GroupForm({ title, onSubmit, group }: GroupFormProps) {
                                 <SelectValue placeholder={isLoading ? "Loading..." : "Select Division"} />
                             </SelectTrigger>
                             <SelectContent>
-                                {divisions.map((division) => (
+                                {divisions?.map((division) => (
                                     <SelectItem key={division.id} value={division.id.toString()}>
                                         {division.name}
                                     </SelectItem>
@@ -243,7 +243,7 @@ export default function GroupForm({ title, onSubmit, group }: GroupFormProps) {
                                 <SelectValue placeholder="Select Branch" />
                             </SelectTrigger>
                             <SelectContent>
-                                {branches.map((branch) => (
+                                {branches?.map((branch) => (
                                     <SelectItem key={branch.id} value={branch.id.toString()}>
                                         {branch.name}
                                     </SelectItem>

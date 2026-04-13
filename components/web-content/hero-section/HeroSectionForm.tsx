@@ -162,7 +162,7 @@ export default function HeroSectionForm({ title, onSubmit, heroSection }: HeroSe
                       <SelectValue placeholder="Select Branch" />
                     </SelectTrigger>
                     <SelectContent>
-                      {branches.map((branch) => (
+                      {branches?.map((branch) => (
                         <SelectItem key={branch.id} value={branch.id.toString()}>
                           {String(branch.name)}
                         </SelectItem>

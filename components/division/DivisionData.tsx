@@ -65,7 +65,7 @@ const DivisionData = async ({
         </TableHeader>
 
         <TableBody>
-          {divisions.map((division: Division , index: number) => (
+          {divisions?.map((division: Division , index: number) => (
             <TableRow key={division.id}>
               <TableCell>{index + 1}</TableCell>
               <TableCell className="text-center">

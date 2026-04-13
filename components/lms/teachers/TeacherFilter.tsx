@@ -149,7 +149,7 @@ export default function TeacherFilter({
                                 <SelectValue placeholder="Division" />
                             </SelectTrigger>
                             <SelectContent>
-                                {divisions.map((division) => (
+                                {divisions?.map((division) => (
                                     <SelectItem key={division.id} value={String(division.id)}>
                                         {division.name}
                                     </SelectItem>
@@ -169,7 +169,7 @@ export default function TeacherFilter({
                                 <SelectValue placeholder="Branch" />
                             </SelectTrigger>
                             <SelectContent>
-                                {branches.map((branch) => (
+                                {branches?.map((branch) => (
                                     <SelectItem key={branch.id} value={String(branch.id)}>
                                         {branch.name}
                                     </SelectItem>

@@ -214,7 +214,7 @@ export default function ChapterForm({
                                     <SelectValue placeholder="Select branch" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    {branches.map((br) => (
+                                    {branches?.map((br) => (
                                         <SelectItem key={br.id} value={br.id.toString()}>
                                             {br.name}
                                         </SelectItem>

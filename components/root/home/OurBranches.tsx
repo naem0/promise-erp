@@ -37,7 +37,7 @@ const OurBranches = ({ branchesData }: BranchesDataProps) => {
       className="w-full max-w-full relative"
     >
       <CarouselContent className="py-4">
-        {branches.map((branche) => (
+        {branches?.map((branche) => (
           <CarouselItem
             key={branche?.id}
             className="basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4"
