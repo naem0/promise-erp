@@ -37,7 +37,7 @@ const AssignBranchesButton: React.FC<AssignBranchesButtonProps> = ({
 
   useEffect(() => {
     if (dialogOpen) {
-      setSelectedBranchIds(initialAssignedbranches?.map((b) => b.id));
+      setSelectedBranchIds(initialAssignedBranches?.map((b) => b.id));
       fetchBranches();
     }
   }, [dialogOpen, initialAssignedBranches]);
