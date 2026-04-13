@@ -80,12 +80,12 @@ export default async function BatchesData({
     }
   }
 
-  const batches = data?.data?.batches;
+  const batches = Array.isArray(data?.data?.batches) ? data.data.batches : [];
   const paginationData = data?.data?.pagination;
   console.log("BatchesData -> data", data);
 
   if (batches.length === 0) {
-    return <NotFoundComponent message={data?.message} title="Batch List" />;
+    return <NotFoundComponent message={data?.message || "No batches found"} title="Batch List" />;
   }
 
   return (

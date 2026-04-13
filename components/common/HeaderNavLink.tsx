@@ -4,7 +4,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ChevronDown, LogOut, Phone } from "lucide-react";
+import { ChevronDown, Phone } from "lucide-react";
 import { AuthButtons, NavLink } from "./HeaderContent";
 import Link from "next/link";
 import {
@@ -41,18 +41,17 @@ const HeaderNavLink = async ({
   let categoriesResponse;
   try {
     categoriesResponse = await getHomeCourseCategories();
+    categories = categoriesResponse?.data?.categories || [];
     
-  } catch (error) {
-    console.error("Failed to fetch categories:", error);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error(error.message);
+      console.error(error.name);
+    }else {
+      console.error("Failed to fetch categories:", error);
+    }
   }
-  categories = categoriesResponse?.data?.categories || [];
-  if (
-    !categoriesResponse ||
-    !categoriesResponse?.data ||
-    categories?.length === 0
-  ) {
-    return null;
-  }
+  
 
   return (
     <nav className={`hidden lg:flex items-center justify-between w-full my-3`}>
