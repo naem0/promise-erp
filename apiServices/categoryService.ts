@@ -267,9 +267,6 @@ export async function deleteCategory(id: number): Promise<SingleCategoryResponse
 // functions for home page getHomeCourseCategories ---
 
 export async function getHomeCourseCategories(): Promise<CategoriesResponse | null> {
-  // "use cache";
-  // cacheTag("course-categories");
-
   try {
 
     const res = await fetch(
@@ -291,10 +288,11 @@ export async function getHomeCourseCategories(): Promise<CategoriesResponse | nu
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error("Home Course Categories API Error:", error.message);
-      throw new Error("Error fetching home course categories");
+      console.error(error.stack);
+      console.error(error.name);
+      throw error;
     } else {
       throw new Error("Error fetching home course categories");
     }
-
   }
 }
