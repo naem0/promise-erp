@@ -81,7 +81,7 @@ export default async function BranchesData({
           </TableHeader>
 
           <TableBody>
-            {branches.map((branch: Branch, i: number) => (
+            {branches?.map((branch: Branch, i: number) => (
               <TableRow key={branch.id}>
                 <TableCell>{i + 1}</TableCell>
 

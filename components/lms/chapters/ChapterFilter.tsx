@@ -164,7 +164,7 @@ export default function ChapterFilter({
                                 <SelectValue placeholder="Branch" />
                             </SelectTrigger>
                             <SelectContent>
-                                {branches.map((branch) => (
+                                {branches?.map((branch) => (
                                     <SelectItem key={branch.id} value={String(branch.id)}>
                                         {branch.name}
                                     </SelectItem>

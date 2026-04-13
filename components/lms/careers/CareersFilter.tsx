@@ -264,7 +264,7 @@ export default function CareersFilter({
               </SelectTrigger>
               <SelectContent>
                 {branches.length > 0 ? (
-                  branches.map((branch) => (
+                  branches?.map((branch) => (
                     <SelectItem key={branch.id} value={String(branch.id)}>
                       {branch.name}
                     </SelectItem>

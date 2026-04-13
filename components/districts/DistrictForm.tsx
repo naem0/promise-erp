@@ -106,7 +106,7 @@ export default function DistrictForm({ title, onSubmit, district }: DistrictForm
                   <SelectValue placeholder={isLoading ? "Loading divisions..." : "Select Division"} />
                 </SelectTrigger>
                 <SelectContent>
-                  {divisions.map((division) => (
+                  {divisions?.map((division) => (
                     <SelectItem key={division.id} value={division.id.toString()}>
                       {division.name}
                     </SelectItem>

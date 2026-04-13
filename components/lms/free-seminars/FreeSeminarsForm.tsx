@@ -380,7 +380,7 @@ export default function FreeSeminarForm({
                         <SelectValue placeholder="Select Branch" />
                       </SelectTrigger>
                       <SelectContent>
-                        {branches.map((b) => (
+                        {branches?.map((b) => (
                           <SelectItem key={b.id} value={b.id.toString()}>
                             {b.name}
                           </SelectItem>

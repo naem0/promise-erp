@@ -44,7 +44,7 @@
 //                     {branches.length === 0 ? (
 //                         <NotFoundComponent message={result?.message || "No branches found"} />
 //                     ) : (
-//                         branches.map((branch: WebBranch) => (
+//                         branches?.map((branch: WebBranch) => (
 //                             <BranchCard
 //                                 key={branch.id}
 //                                 branchInfo={branch}
@@ -129,7 +129,7 @@ const BranchesClient = async ({ searchParams }: BranchesPageProps) => {
               />
             </div>
           ) : (
-            branches.map((branch: WebBranch) => (
+            branches?.map((branch: WebBranch) => (
               <BranchCard key={branch.id} branchInfo={branch} />
             ))
           )}

@@ -31,15 +31,16 @@ export default async function CoursesData({
 }) {
   const resolvedSearchParams = await searchParams;
   const page = typeof resolvedSearchParams.page === "string" ? Number(resolvedSearchParams.page) : 1;
+  const per_page = typeof resolvedSearchParams.per_page === "string" ? Number(resolvedSearchParams.per_page) : 15;
 
   const params = {
     page,
+    per_page,
     search: typeof resolvedSearchParams.search === "string" ? resolvedSearchParams.search : undefined,
     sort_order: typeof resolvedSearchParams.sort_order === "string" ? resolvedSearchParams.sort_order : undefined,
     level: typeof resolvedSearchParams.level === "string" ? resolvedSearchParams.level : undefined,
     branch_id: typeof resolvedSearchParams.branch_id === "string" ? resolvedSearchParams.branch_id : undefined,
     category_id: typeof resolvedSearchParams.category_id === "string" ? resolvedSearchParams.category_id : undefined,
-    per_page: 15,
   };
 
   let data;
@@ -55,6 +56,8 @@ export default async function CoursesData({
 
   const courses = data.data.courses;
   const pagination = data.data.pagination;
+  console.log("CoursesData - Fetched pagination:", pagination);
+
 
   if (courses.length === 0) {
     return <NotFoundComponent message={data?.message} title="Course List" />;

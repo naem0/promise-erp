@@ -367,7 +367,7 @@ export default function CareerForm({
                                         <SelectValue placeholder="Select Branch" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        {branches.map((branch) => (
+                                        {branches?.map((branch) => (
                                             <SelectItem key={branch.id} value={branch.id.toString()}>
                                                 {branch.name}
                                             </SelectItem>
