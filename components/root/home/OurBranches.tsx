@@ -70,8 +70,8 @@ const OurBranches = ({ branchesData }: BranchesDataProps) => {
                 <div className="text-secondary/80 text-sm flex items-start gap-2 text-left">
                   <Phone className="w-4 h-4 mt-1" />
                   <div className="flex flex-col">
-                    {Array.isArray(branche?.phone) && branche.phone.length > 0
-                      ? branche.phone.map((phone: string, index: number) => (
+                    {Array.isArray(branche?.phone) && branche?.phone?.length > 0
+                      ? branche?.phone?.map((phone: string, index: number) => (
                           <span key={index}>{phone}</span>
                         ))
                       : "01332-852500"}
@@ -82,8 +82,8 @@ const OurBranches = ({ branchesData }: BranchesDataProps) => {
                 <ul className="text-secondary/80 text-sm flex flex-col gap-1">
                   <li className="flex flex-col items-center gap-2">
                     {/* <Mail className="w-4 h-4" /> */}
-                    {Array.isArray(branche?.email) && branche.email.length > 0 ? (
-                      branche.email.map((email: string, index: number) => (
+                    {Array.isArray(branche?.email) && branche?.email?.length > 0 ? (
+                      branche?.email?.map((email: string, index: number) => (
                         <span key={index}>
                           {email}
                         </span>
