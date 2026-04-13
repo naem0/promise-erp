@@ -46,13 +46,13 @@ const AboutBranchList = ({ branchInfo }: BranchCardProps) => {
           <span className="leading-snug">{address}</span>
         </div>
         <div className="space-y-1">
-          {phone.length > 0 && (
+          {phone?.length > 0 && (
             <div className="flex items-center gap-2 text-sm text-black">
               <Phone className="h-4 w-4 shrink-0" />
               <span>{phone.join(" - ")}</span>
             </div>
           )}
-          {email.length > 0 && (
+          {email?.length > 0 && (
             <div className="flex items-center gap-2 text-sm text-black">
               <Mail className="h-4 w-4 shrink-0" />
               <span>{email.join(" - ")}</span>
@@ -62,7 +62,7 @@ const AboutBranchList = ({ branchInfo }: BranchCardProps) => {
       </CardContent>
 
       {/* Call button */}
-      {phone.length > 0 && (
+      {phone?.length > 0 && (
         <CardFooter className="flex items-end p-0">
           <Link
             href={`tel:${phone[0]}`}
