@@ -16,7 +16,7 @@ const SectionTitle = ({
           iswhite ? "text-white" : "text-secondary"
         }`}
       >
-        {title || "Title Not Found"}
+        {title || null }
       </h2>
 
       {/* {subtitle && ( */}
