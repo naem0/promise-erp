@@ -14,7 +14,7 @@ import { useEffect, useState } from "react";
 import { Branch, getBranches } from "@/apiServices/branchService";
 import { Course, getCourses } from "@/apiServices/courseService";
 import { getTeachers } from "@/apiServices/teacherService";
-import { addBatch, Batch, CreateBatchRequest, updateBatch } from "@/apiServices/batchService";
+import { addBatch, Batch, updateBatch } from "@/apiServices/batchService";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Teacher } from "@/apiServices/teacherService";
@@ -47,7 +47,6 @@ interface FormValues {
 
 export default function BatchForm({ title, batch }: BatchFormProps) {
     const [branches, setBranches] = useState<Branch[]>([]);
-    const [courses, setCourses] = useState<Course[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [teachers, setTeachers] = useState<Teacher[]>([]);
     const router = useRouter();
@@ -134,9 +133,6 @@ export default function BatchForm({ title, batch }: BatchFormProps) {
                 if (branchesRes.success) {
                     setBranches(branchesRes.data?.branches || []);
                 }
-                if (coursesRes.success) {
-                    setCourses(coursesRes.data?.courses || []);
-                }
             } catch (error) {
                 console.error("Error loading initial data:", error);
             } finally {
@@ -150,6 +146,7 @@ export default function BatchForm({ title, batch }: BatchFormProps) {
         const baseData = {
             ...values,
             course_id: Number(values.course_id),
+            branch_id: Number(values.branch_ids[0]),
             price: Number(values.price),
             discount: Number(values.discount),
             is_online: Number(values.is_online),
@@ -160,45 +157,26 @@ export default function BatchForm({ title, batch }: BatchFormProps) {
         };
 
         try {
-            if (batch) {
-                const formData: CreateBatchRequest = { ...baseData, branch_id: Number(values.branch_ids[0] || 0) };
-                const res = await updateBatch(batch.id, formData);
-                if (res.success) {
-                    reset();
-                    toast.success(res.message);
-                    router.push("/lms/batches");
-                } else {
-                    if (res.errors) {
-                        Object.entries(res.errors).forEach(([field, messages]) => {
-                            if (messages && (Array.isArray(messages) ? messages.length > 0 : !!messages)) {
-                                const message = Array.isArray(messages) ? messages[0] : messages;
-                                setError(field as keyof FormValues, { type: "server", message: message as string });
-                            }
-                        });
-                    } else {
-                        toast.error(res.message || "Something went wrong. Please try again.");
-                    }
-                }
-                return;
-            }
 
-            const branchIds = values.branch_ids || [];
-            const results = await Promise.all(
-                branchIds.map((branchIdStr) => {
-                    const formData: CreateBatchRequest = { ...baseData, branch_id: Number(branchIdStr) };
-                    return addBatch(formData);
-                })
-            );
+            const res = batch ? await updateBatch(batch.id, baseData) : await addBatch(baseData);
 
-            const allSuccess = results.every((r) => r.success);
-            if (allSuccess) {
+            if (res.success) {
                 reset();
-                toast.success("Batches created successfully.");
+                toast.success(res.message);
                 router.push("/lms/batches");
             } else {
-                const firstError = results.find((r) => !r.success);
-                toast.error(firstError?.message || "Failed to create some batches.");
+                if (res.errors) {
+                    Object.entries(res.errors).forEach(([field, messages]) => {
+                        if (messages && (Array.isArray(messages) ? messages.length > 0 : !!messages)) {
+                            const message = Array.isArray(messages) ? messages[0] : messages;
+                            setError(field as keyof FormValues, { type: "server", message: message as string });
+                        }
+                    });
+                } else {
+                    toast.error(res.message || "Something went wrong. Please try again.");
+                }
             }
+            return;
         } catch (error) {
             console.error("Error submitting batch:", error);
             if (error instanceof Error) {
@@ -228,6 +206,7 @@ export default function BatchForm({ title, batch }: BatchFormProps) {
                                         value={field.value || ""}
                                         onValueChange={field.onChange}
                                         placeholder="Select Course"
+                                        defaultValue={batch?.course_id?.toString()}
                                     />
                                 )}
                             />

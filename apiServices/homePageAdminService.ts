@@ -18,7 +18,6 @@ export interface Branch {
 
 export interface HeroSection {
   id: number;
-  branch: Branch;
   title: string;
   subtitle: string;
   description: string;
@@ -153,7 +152,12 @@ export async function createHeroSection(
   try {
     const session = await getServerSession(authOptions);
     const token = session?.accessToken;
-    if (!token) throw new Error("No valid session or access token found.");
+    if (!token) {
+      return {
+        success: false,
+        message: "No valid session or access token found.",
+      };
+    }
 
     const url = `${API_BASE}/hero-sections`;
     const response = await fetch(url, {
@@ -169,12 +173,11 @@ export async function createHeroSection(
 
     return result;
   } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error("Error in createHeroSection:", error.message);
-      throw new Error("Error creating hero section");
-    } else {
-      throw new Error("Error creating hero section");
-    }
+    console.error("Error in createHeroSection:", error);
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : "Error creating hero section",
+    };
   }
 }
 
@@ -189,7 +192,12 @@ export async function updateHeroSection(
   try {
     const session = await getServerSession(authOptions);
     const token = session?.accessToken;
-    if (!token) throw new Error("No valid session or access token found.");
+    if (!token) {
+      return {
+        success: false,
+        message: "No valid session or access token found.",
+      };
+    }
 
     formData.append("_method", "PUT");
 
@@ -207,12 +215,11 @@ export async function updateHeroSection(
 
     return result;
   } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error("Error in updateHeroSection:", error.message);
-      throw new Error("Error updating hero section");
-    } else {
-      throw new Error("Error updating hero section");
-    }
+    console.error("Error in updateHeroSection:", error);
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : "Error updating hero section",
+    };
   }
 }
 

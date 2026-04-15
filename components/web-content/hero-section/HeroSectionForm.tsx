@@ -13,7 +13,6 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useEffect, useState } from "react";
 import { HeroSection } from "@/apiServices/homePageAdminService";
-import { getBranches, Branch } from "@/apiServices/branchService";
 import { Camera, Trash2 } from "lucide-react";
 import Image from "next/image";
 
@@ -28,7 +27,6 @@ interface HeroSectionFormProps {
 }
 
 interface FormValues {
-  branch_id: string;
   title: string;
   subtitle: string;
   description: string;
@@ -43,7 +41,6 @@ interface FormValues {
 
 export default function HeroSectionForm({ title, onSubmit, heroSection }: HeroSectionFormProps) {
   const [previewImage, setPreviewImage] = useState<string | null>(heroSection?.background_image || null);
-  const [branches, setBranches] = useState<Branch[]>([]);
 
   const {
     register,
@@ -55,7 +52,6 @@ export default function HeroSectionForm({ title, onSubmit, heroSection }: HeroSe
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
     defaultValues: {
-      branch_id: heroSection?.branch?.id?.toString() || "",
       title: heroSection?.title || "",
       subtitle: heroSection?.subtitle || "",
       description: heroSection?.description || "",
@@ -76,17 +72,8 @@ export default function HeroSectionForm({ title, onSubmit, heroSection }: HeroSe
   };
 
   useEffect(() => {
-    getBranches({ per_page: 100 }).then((res) => {
-      if (res.success) {
-        setBranches(res.data.branches);
-      }
-    });
-  }, []);
-
-  useEffect(() => {
     if (heroSection) {
       reset({
-        branch_id: heroSection.branch?.id?.toString() || "",
         title: heroSection.title,
         subtitle: heroSection.subtitle,
         description: heroSection.description || "",
@@ -114,7 +101,6 @@ export default function HeroSectionForm({ title, onSubmit, heroSection }: HeroSe
 
   const submitHandler = async (values: FormValues) => {
     const formData = new FormData();
-    formData.append("branch_id", values.branch_id);
     formData.append("title", values.title.trim());
     formData.append("subtitle", values.subtitle.trim());
     formData.append("description", values.description.trim());
@@ -135,8 +121,6 @@ export default function HeroSectionForm({ title, onSubmit, heroSection }: HeroSe
     });
   };
 
-  console.log(errors)
-
   const handleImageRemove = () => {
     setPreviewImage(null);
     const fileInput = document.getElementById("background_image") as HTMLInputElement;
@@ -150,30 +134,6 @@ export default function HeroSectionForm({ title, onSubmit, heroSection }: HeroSe
 
         <form onSubmit={handleSubmit(submitHandler)} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Branch */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Select Branch</label>
-              <Controller
-                name="branch_id"
-                control={control}
-                render={({ field }) => (
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select Branch" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {branches?.map((branch) => (
-                        <SelectItem key={branch.id} value={branch.id.toString()}>
-                          {String(branch.name)}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
-              />
-              {errors.branch_id && <p className="text-xs text-red-500">{String(errors.branch_id.message)}</p>}
-            </div>
-
             {/* Status */}
             <div className="space-y-2">
               <label className="text-sm font-medium">Status</label>

@@ -9,16 +9,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { Search, FilterX } from "lucide-react";
 
-import { Branch } from "@/apiServices/branchService";
-
 interface FilterFormValues {
   search?: string;
   sort_order?: string;
   status?: string;
-  branch_id?: string;
 }
 
-export default function HeroSectionFilter({ branches }: { branches: Branch[] }) {
+export default function HeroSectionFilter() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -28,7 +25,6 @@ export default function HeroSectionFilter({ branches }: { branches: Branch[] }) 
       search: searchParams.get("search") || "",
       sort_order: searchParams.get("sort_order") || "",
       status: searchParams.get("status") || "",
-      branch_id: searchParams.get("branch_id") || "",
     },
   });
 
@@ -65,15 +61,13 @@ export default function HeroSectionFilter({ branches }: { branches: Branch[] }) 
       search: "",
       sort_order: "",
       status: "",
-      branch_id: "all",
     });
   };
 
   const currentSearch = searchParams.get("search") || "";
   const currentSortOrder = searchParams.get("sort_order") || "";
   const currentStatus = searchParams.get("status") || "";
-  const currentBranchId = searchParams.get("branch_id") || "";
-  const hasActiveFilters = currentSearch !== "" || currentSortOrder !== "" || currentStatus !== "" || currentBranchId !== "";
+  const hasActiveFilters = currentSearch !== "" || currentSortOrder !== "" || currentStatus !== "";
 
   return (
     <div className="p-6 mb-6 border rounded-xl bg-card shadow-sm">
@@ -93,7 +87,7 @@ export default function HeroSectionFilter({ branches }: { branches: Branch[] }) 
         )}
       </div>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-2">
         {/* Search Input */}
         <div className="relative col-span-1 lg:col-span-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -103,33 +97,6 @@ export default function HeroSectionFilter({ branches }: { branches: Branch[] }) 
             {...register("search")}
           />
         </div>
-
-        {/* Branch Filter */}
-        <Controller
-          name="branch_id"
-          control={control}
-          render={({ field }) => (
-            <Select
-              onValueChange={(value) => {
-                field.onChange(value);
-                handleSelectChange("branch_id")(value);
-              }}
-              value={field.value}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Filter by Branch" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Branches</SelectItem>
-                {Array.isArray(branches) && branches?.map((branch) => (
-                  <SelectItem key={branch.id} value={branch.id.toString()}>
-                    {String(branch.name)}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
-        />
 
         <div className="grid grid-cols-2 gap-4">
           <Controller

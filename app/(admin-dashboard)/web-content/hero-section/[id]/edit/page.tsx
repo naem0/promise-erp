@@ -40,6 +40,7 @@ export default function EditHeroSectionPage({ params }: { params: Promise<{ id: 
     setFormError: (field: string, message: string) => void
   ) => {
     const res = await updateHeroSection(Number(resolvedParams.id), formData)
+    console.log('Update response:', res)
 
     if (res.success) {
       handleFormSuccess(res.message || 'Hero section updated successfully!')
