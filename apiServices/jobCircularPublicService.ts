@@ -51,7 +51,7 @@ export interface JobCircularApiResponse {
 
 export async function getPublicJobCircular(
   params: Record<string, unknown> = {},
-): Promise<JobCircularApiResponse> {
+): Promise<JobCircularApiResponse | null> {
   try {
     const urlParams = new URLSearchParams();
 
@@ -67,6 +67,11 @@ export async function getPublicJobCircular(
     const queryString = urlParams.toString();
 
     const res = await fetch(`${API_BASE}/public/careers?${queryString}`);
+
+    if (res.status === 404) {
+      console.error("Error in getPublicJobCircular:", res);
+      return null
+    }
     if (!res.ok) {
       throw new Error(
         `Failed to fetch job circular: ${res.statusText} (${res.status})`,
