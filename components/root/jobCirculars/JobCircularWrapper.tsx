@@ -25,6 +25,7 @@ const JobCircularWrapper = async ({ searchParams }: SearchParamsProps) => {
 
   try {
     jobCircularData = await getPublicJobCircular(params);
+    console.log("====>>", jobCircularData)
   } catch (error: unknown) {
     if (error instanceof Error) {
       return (
@@ -45,16 +46,22 @@ const JobCircularWrapper = async ({ searchParams }: SearchParamsProps) => {
     }
   }
 
-  const jobCirculars: JobCircularData = jobCircularData?.data || {};
-  const paginationData: PaginationType =
-    jobCircularData?.data?.pagination || {};
+  if (!jobCircularData || !jobCircularData?.data) {
+    return null;
+  }
+
+  const jobCirculars: JobCircularData | null = jobCircularData?.data || null;
+  const paginationData: PaginationType | null =
+    jobCircularData?.data?.pagination || null;
   const totalJobCirculars = jobCirculars?.careers || [];
+
+  console.log("pagi",paginationData)
 
   return (
     <>
       <JobCircularSearch jobCirculars={jobCirculars} />
       <JobCircularsData totalJobCirculars={totalJobCirculars} />
-      {paginationData.per_page > 30 && (
+      {paginationData?.per_page > 30 && (
         <div className="py-3">
           <Pagination pagination={paginationData} />
         </div>
