@@ -1494,3 +1494,227 @@ export async function deleteNewsFeed(
 }
 
 //news-feeds service ts file ended here
+
+//image gallery service ts file started here
+
+// ============================================================
+// Interfaces 
+// ============================================================
+export interface ImageGallery {
+  id: number;
+  title: string;
+  images: string[];
+  type: number;
+  status: number;
+}
+export interface ImageGalleriesResponse {
+  success: boolean;
+  message: string;
+  code: number;
+  data: {
+    total_image_galleries: number;
+    image_galleries: ImageGallery[];
+    pagination: PaginationType;
+  };
+  errors?: Record<string, string[]>;
+}
+export interface SingleImageGalleryResponse {
+  success: boolean;
+  message: string;
+  code?: number;
+  data?: ImageGallery | null;
+  errors?: Record<string, string[] | string>;
+}
+
+// ============================================================
+// GET Image Galleries (Paginated)
+// ============================================================
+
+export async function getImageGalleriesCached(
+  token: string,
+  params: Record<string, unknown> = {}
+): Promise<ImageGalleriesResponse> {
+  "use cache";
+  cacheTag("image-galleries-list");
+
+  try {
+    const urlParams = new URLSearchParams();
+
+    for (const key in params) {
+      if (params[key] !== undefined && params[key] !== null) {
+        urlParams.append(key, params[key]!.toString());
+      }
+    }
+
+    const res = await fetch(
+      `${API_BASE}/image-galleries?${urlParams.toString()}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const data: ImageGalleriesResponse = await res.json();
+    return data;
+  } catch (error: unknown) {
+    console.error("Error in getImageGalleriesCached:", error);
+    if (error instanceof Error) {
+      throw new Error("Error fetching image galleries");
+    } else {
+      throw new Error("Error fetching image galleries");
+    }
+  }
+}
+
+export async function getImageGalleries(
+  params: Record<string, unknown> = {}
+): Promise<ImageGalleriesResponse> {
+  try {
+    const session = await getServerSession(authOptions);
+    const token = session?.accessToken;
+    if (!token) throw new Error("No valid session or access token found.");
+
+    return await getImageGalleriesCached(token, params);
+  } catch (error: unknown) {
+    console.error("Error in getImageGalleries:", error);
+    if (error instanceof Error) {
+      throw new Error("Error fetching image galleries");
+    } else {
+      throw new Error("Error fetching image galleries");
+    }
+  }
+}
+
+// ============================================================
+// GET Image Gallery by ID
+// ============================================================
+
+export async function getImageGalleryById(id: number): Promise<SingleImageGalleryResponse> {
+  try {
+    const session = await getServerSession(authOptions);
+    const token = session?.accessToken;
+    if (!token) throw new Error("No valid session or access token found.");
+
+    const res = await fetch(`${API_BASE}/image-galleries/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    const data: SingleImageGalleryResponse = await res.json();
+    return data;
+  } catch (error: unknown) {
+    console.error("Error in getImageGalleryById:", error);
+    if (error instanceof Error) {
+      throw new Error("Error fetching image gallery");
+    } else {
+      throw new Error("Error fetching image gallery");
+    }
+  }
+}
+
+// ============================================================
+// CREATE Image Gallery
+// ============================================================
+export async function createImageGallery(formData: FormData): Promise<SingleImageGalleryResponse> {
+  try {
+    const session = await getServerSession(authOptions);
+    const token = session?.accessToken;
+    if (!token) throw new Error("No valid session or access token found.");
+
+    const url = `${API_BASE}/image-galleries`;
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
+
+    const result = await response.json();
+
+    updateTag("image-galleries-list");
+    return result;
+  } catch (error: unknown) {
+    console.error("Error in createImageGallery:", error);
+    if (error instanceof Error) {
+      throw new Error("Error creating image gallery");
+    } else {
+      throw new Error("Error creating image gallery");
+    }
+  }
+}
+
+// ============================================================
+// UPDATE Image Gallery
+// ============================================================
+export async function updateImageGallery(
+  id: number,
+  formData: FormData
+): Promise<SingleImageGalleryResponse> {
+  try {
+    const session = await getServerSession(authOptions);
+    const token = session?.accessToken;
+    if (!token) throw new Error("No valid session or access token found.");
+
+    formData.append("_method", "PUT");
+    const res = await fetch(`${API_BASE}/image-galleries/${id}`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
+
+    const result = await res.json();
+
+    updateTag("image-galleries-list");
+
+    return result;
+  } catch (error: unknown) {
+    console.error("Error in updateImageGallery:", error);
+    if (error instanceof Error) {
+      throw new Error("Error updating image gallery");
+    } else {
+      throw new Error("Error updating image gallery");
+    }
+  }
+}
+
+// ============================================================
+// DELETE Image Gallery
+// ============================================================
+export async function deleteImageGallery(
+  id: number
+): Promise<SingleImageGalleryResponse> {
+  try {
+    const session = await getServerSession(authOptions);
+
+    const token = session?.accessToken;
+    if (!token) throw new Error("No valid session or access token found.");
+
+    const res = await fetch(`${API_BASE}/image-galleries/${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    const result = await res.json();
+
+    updateTag("image-galleries-list");
+    return result;
+  } catch (error: unknown) {
+    console.error("Error in deleteImageGallery:", error);
+    if (error instanceof Error) {
+      throw new Error("Error deleting image gallery");
+    } else {
+      throw new Error("Error deleting image gallery");
+    }
+  }
+}
+
+//image gallery service ts file ended here

@@ -108,11 +108,7 @@ export const sidebarData = {
               url: "/lms/free-seminars",
               permissions: ["view-free-seminars"],
             },
-            {
-              title: "Branches",
-              url: "/lms/branches",
-              permissions: ["view-branches"],
-            },
+            
             // {
             //   title: "Blogs",
             //   url: "/lms/blogs",
@@ -267,9 +263,14 @@ export const sidebarData = {
               permissions: ["view-opportunities"],
             },
             {
-              title: "Video Gallery",
+              title: "Video Galleries",
               url: "/web-content/video-galleries",
               permissions: ["view-video-galleries"],
+            },
+            {
+              title: "Image Galleries",
+              url: "/web-content/image-galleries",
+              permissions: ["view-image-galleries"],
             },
             {
               title: "Our Partners",
@@ -280,6 +281,11 @@ export const sidebarData = {
               title: "News & Updates",
               url: "/web-content/news-feeds",
               permissions: ["view-news-feeds"],
+            },
+            {
+              title: "Branches",
+              url: "/lms/branches",
+              permissions: ["view-branches"],
             },
             
           ],
