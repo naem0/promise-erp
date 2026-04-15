@@ -33,8 +33,10 @@ const HeroSectionData = async ({
 }) => {
   const resolvedSearchParams = await searchParams;
     const page =  typeof resolvedSearchParams.page === "string" ? Number(resolvedSearchParams.page) : 1;
+    const per_page = typeof resolvedSearchParams.per_page === "string" ? Number(resolvedSearchParams.per_page) : 15;
   const params = {
-    page: page,
+    page,
+    per_page,
     search:
       typeof resolvedSearchParams.search === "string"
         ? resolvedSearchParams.search
@@ -47,11 +49,6 @@ const HeroSectionData = async ({
       typeof resolvedSearchParams.status === "string"
         ? resolvedSearchParams.status
         : undefined,
-    branch_id:
-      typeof resolvedSearchParams.branch_id === "string"
-        ? resolvedSearchParams.branch_id
-        : undefined,
-    per_page: 15,
   };
 
   let results;
@@ -81,7 +78,6 @@ const HeroSectionData = async ({
               <TableHead>Sl</TableHead>
               <TableHead>Action</TableHead>
               <TableHead>Image / Video</TableHead>
-              <TableHead>Branch</TableHead>
               <TableHead>Title</TableHead>
               <TableHead>Subtitle</TableHead>
               <TableHead>Status</TableHead>
@@ -92,7 +88,7 @@ const HeroSectionData = async ({
             {heroSections.map((item: HeroSection, index: number) => {
               return (
                 <TableRow key={item.id}>
-                  <TableCell>{(page - 1) * 15 + index + 1}</TableCell>
+                  <TableCell>{(page - 1) * per_page + index + 1}</TableCell>
                   <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -138,7 +134,6 @@ const HeroSectionData = async ({
                       className="h-10 w-16 border rounded object-cover"
                     />
                   </TableCell>
-                  <TableCell>{item.branch?.name}</TableCell>
                   <TableCell
                     className="max-w-[200px] truncate"
                     title={item.title}
@@ -164,7 +159,7 @@ const HeroSectionData = async ({
           </TableBody>
         </Table>
       </div>
-      {pagination && (
+      {pagination?.has_more_pages && (
         <div className="mt-4">
           <Pagination pagination={pagination} />
         </div>

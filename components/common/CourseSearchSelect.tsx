@@ -10,6 +10,7 @@ interface CourseSearchSelectProps {
   placeholder?: string
   disabled?: boolean
   className?: string
+  defaultValue?: string
 }
 
 export default function CourseSearchSelect({
@@ -17,7 +18,8 @@ export default function CourseSearchSelect({
   onValueChange,
   placeholder = "Select course (optional)...",
   disabled = false,
-  className
+  className,
+  defaultValue
 }: CourseSearchSelectProps) {
   const [courses, setCourses] = useState<Course[]>([])
   const [isPending, startTransition] = useTransition()
@@ -52,6 +54,7 @@ export default function CourseSearchSelect({
       emptyMessage={isPending ? "Loading..." : "No courses found"}
       disabled={disabled || isPending}
       className={className}
+      defaultValue={defaultValue}
     />
   )
 }
