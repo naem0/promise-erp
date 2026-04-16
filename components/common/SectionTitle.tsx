@@ -25,7 +25,7 @@ const SectionTitle = ({
             iswhite ? "text-white" : "text-black/75"
           }`}
         >
-          {subtitle || "Subtitle Not Found"}
+          {subtitle || ""}
         </p>
       {/* )} */}
     </div>

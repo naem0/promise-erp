@@ -13,6 +13,8 @@ import {
 } from "@/components/ui/carousel";
 import Image from "next/image";
 import { BranchApiResponse } from "@/apiServices/homePageService";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 interface BranchesDataProps {
   branchesData: BranchApiResponse | null;
@@ -20,6 +22,7 @@ interface BranchesDataProps {
 const OurBranches = ({ branchesData }: BranchesDataProps) => {
 
   const branches = branchesData?.data?.branches || [];
+  console.log("----->branches", branches);
   const plugin = useRef(
       Autoplay({
         delay: 2000,
@@ -42,32 +45,32 @@ const OurBranches = ({ branchesData }: BranchesDataProps) => {
             key={branche?.id}
             className="basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4"
           >
-            <Card className="group h-full shadow-lg border border-secondary/30 rounded-2xl hover:-translate-y-2 hover:shadow-xl transition-all duration-300">
-              <CardContent className="flex flex-col items-center gap-4 p-6 text-center">
-                <div className="bg-secondary/10 border border-secondary/40 p-4 mt-4 mx-auto rounded-full shadow-md w-[100px] h-[100px] flex items-center justify-center">
+            <Card className="group h-full bg-white hover:bg-primary shadow-lg py-0 border border-secondary/30 rounded-2xl hover:-translate-y-2 hover:shadow-xl transition-all duration-300">
+              <CardContent className="flex flex-col items-center gap-2 p-4 text-center">
+                <div className="bg-white mx-auto rounded-full shadow-md w-[60px] h-[60px] flex items-center justify-center p-2">
                   <Image
                     src="/images/home/branch-icon.png"
                     alt={branche?.name}
-                    width={60}
-                    height={60}
-                    className="object-contain"
+                    width={40}
+                    height={40}
+                    className="object-scale-down"
                   />
                 </div>
 
                 {/* Name */}
-                <h3 className="text-xl font-bold text-secondary">
+                <h3 className="text-xl font-bold text-secondary group-hover:text-white">
                   {branche?.name}
                 </h3>
 
                 {/* Address */}
-                <p className="text-secondary/80 text-sm flex items-start gap-2 text-left">
+                <p className="text-secondary/80 group-hover:text-white text-sm flex items-start gap-2 text-left">
                   <MapPin className="w-10 h-10 mt-1" />
                   {branche?.address ||
                     "Khaja IT Park, 2nd to 7th Floor, Kallyanpur Bus Stop, Mirpur Road, Dhaka-1207."}
                 </p>
 
                 {/* Phone */}
-                <div className="text-secondary/80 text-sm flex items-start gap-2 text-left">
+                <div className="text-secondary/80 group-hover:text-white text-sm flex items-start gap-2 text-left">
                   <Phone className="w-4 h-4 mt-1" />
                   <div className="flex flex-col">
                     {Array.isArray(branche?.phone) && branche?.phone?.length > 0
@@ -79,8 +82,8 @@ const OurBranches = ({ branchesData }: BranchesDataProps) => {
                 </div>
 
                 {/* Email */}
-                <ul className="text-secondary/80 text-sm flex flex-col gap-1">
-                  <li className="flex flex-col items-center gap-2">
+                <ul className="text-secondary/80 group-hover:text-white text-sm flex flex-col gap-1">
+                  <li className="flex flex-col items-center gap-1">
                     {/* <Mail className="w-4 h-4" /> */}
                     {Array.isArray(branche?.email) && branche?.email?.length > 0 ? (
                       branche?.email?.map((email: string, index: number) => (
@@ -93,6 +96,13 @@ const OurBranches = ({ branchesData }: BranchesDataProps) => {
                     )}
                   </li>
                 </ul>
+                <div className="pt-4">
+                  <Button className="w-fit group-hover:bg-white hover:bg-white hover:text-black group-hover:text-black" asChild>
+                    <Link href={`${branche?.google_map}`}>
+                      View Branch
+                    </Link>
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           </CarouselItem>
@@ -100,8 +110,8 @@ const OurBranches = ({ branchesData }: BranchesDataProps) => {
       </CarouselContent>
 
       {/* Arrows */}
-      <CarouselPrevious className="absolute cursor-pointer left-0 md:-left-4 top-1/2 -translate-y-1/2 bg-primary hover:bg-primary/80 text-white hover:text-white rounded-full border-none shadow-md" />
-      <CarouselNext className="absolute cursor-pointer right-0 md:-right-4 top-1/2 -translate-y-1/2 bg-primary hover:bg-primary/80 text-white hover:text-white rounded-full border-none shadow-md" />
+      <CarouselPrevious className="absolute cursor-pointer left-0 md:-left-4 top-1/2 -translate-y-1/2 bg-primary hover:bg-primary/80 text-white group-hover:text-white rounded-full border-none shadow-md" />
+      <CarouselNext className="absolute cursor-pointer right-0 md:-right-4 top-1/2 -translate-y-1/2 bg-primary hover:bg-primary/80 text-white group-hover:text-white rounded-full border-none shadow-md" />
     </Carousel>
   );
 };

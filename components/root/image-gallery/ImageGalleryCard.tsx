@@ -52,7 +52,7 @@ const totalPage: PaginationType | null = eventsData?.data?.pagination || null;
           )}
         </div>
         
-        {totalPage && totalPage?.per_page > 30 && (
+        {totalPage && totalPage?.has_more_pages && (
           <div className="flex justify-center mt-8">
             <Pagination pagination={totalPage} />
           </div>

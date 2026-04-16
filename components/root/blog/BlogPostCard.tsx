@@ -8,7 +8,7 @@ interface BlogPostCardProps {
 const BlogPostCard = ({blogInfoData}:BlogPostCardProps) => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
-      {blogInfoData?.map((blog) => (
+      {blogInfoData?.slice(1)?.map((blog) => (
         <BlogCardItems key={blog?.id} post={blog} />
       ))}
     </div>

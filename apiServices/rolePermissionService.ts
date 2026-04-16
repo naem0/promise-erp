@@ -492,7 +492,7 @@ export async function getAllUserlist(token: string | undefined): Promise<UserLis
   }
 
   try {
-    const url = `${API_BASE}/users/public-list`;
+    const url = `${API_BASE}/users/all-user-list`;
     const res = await fetch(url, {
       method: "GET",
       headers: {

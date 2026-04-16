@@ -21,6 +21,12 @@ interface BranchCardProps {
   branchInfo: WebBranch;
 }
 
+// ✅ Extract iframe src from API string
+const getSrc = (html: string) => {
+  const match = html?.match(/src="([^"]+)"/);
+  return match ? match[1] : "";
+};
+
 const BranchCard = ({ branchInfo }: BranchCardProps) => {
   const { name, address, phone = [], email = [], google_map } = branchInfo;
 
@@ -29,12 +35,10 @@ const BranchCard = ({ branchInfo }: BranchCardProps) => {
       {/* Map section */}
       <div className="relative h-[162px] w-full xl:w-[200px] shrink-0 overflow-hidden rounded-lg shadow border border-primary/50">
         <iframe
-          src={google_map || "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3651.0!2d90.3654!3d23.7808!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjPCsDQ2JzUxLjAiTiA5MMKwMjEnNTUuNCJF!5e0!3m2!1sen!2sbd!4v1620000000000!5m2!1sen!2sbd"}
-          className="w-full h-full border-0 grayscale-20"
+          src={getSrc(google_map) || "/images/placeholder_img.jpg"}
+          className="w-full h-full border-0"
           loading="lazy"
           referrerPolicy="no-referrer-when-downgrade"
-          title={`${name} Location`}
-          allowFullScreen
         />
       </div>
 
