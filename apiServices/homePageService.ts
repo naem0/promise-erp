@@ -60,6 +60,7 @@ export interface Branch {
   address?: string | null;
   phone?: string[] | null;
   email?: string[] | null;
+  google_map?: string;
 }
 
 export interface BranchList {
