@@ -33,13 +33,21 @@ const BranchCard = ({ branchInfo }: BranchCardProps) => {
   return (
     <Card className="flex flex-col xl:flex-row gap-4 px-4 py-3 bg-primary/10 transition-colors border border-primary/50 rounded-lg ">
       {/* Map section */}
-      <div className="relative h-[162px] w-full xl:w-[200px] shrink-0 overflow-hidden rounded-lg shadow border border-primary/50">
-        <iframe
-          src={getSrc(google_map) || "/images/placeholder_img.jpg"}
-          className="w-full h-full border-0"
-          loading="lazy"
-          referrerPolicy="no-referrer-when-downgrade"
-        />
+      <div className="relative h-[162px] w-full xl:w-[200px] shrink-0 rounded-lg shadow border border-primary/50 overflow-hidden">
+        {getSrc(google_map) ? (
+          <iframe
+            src={getSrc(google_map)}
+            className="w-full h-full border-0"
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+          />
+        ) : (
+          <img
+            src="/images/placeholder_img.jpg"
+            alt={name}
+            className="w-full h-full object-cover"
+          />
+        )}
       </div>
 
       {/* Info section */}

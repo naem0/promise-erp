@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 interface CommonHeroBannerProps {
-  title: string;
+  title?: string;
   subtitle?: string;
   bgImage: string;
 }
@@ -16,7 +16,7 @@ const CommonHeroBanner = ({
       {/* Optimized Background Image */}
       <Image
         src={bgImage}
-        alt={title}
+        alt={title || ""}
         fill
         priority
         quality={80}
@@ -27,7 +27,7 @@ const CommonHeroBanner = ({
       />
 
       {/* Overlay */}
-      <div className="absolute inset-0 bg-secondary/50" />
+      {/* <div className="absolute inset-0 bg-secondary/20" /> */}
 
       {/* Content */}
       <div className="relative z-10 max-w-full md:max-w-3xl">

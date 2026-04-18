@@ -149,8 +149,10 @@ export async function updateStats(
       throw new Error("No valid session or access token found.");
     }
 
+    formData.append("_method", "PUT");
+
     const res = await fetch(`${API_BASE}/stats/${id}`, {
-      method: "PUT",
+      method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
       },
