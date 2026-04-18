@@ -83,7 +83,6 @@ const RegisterForm = () => {
     },
   });
 
-
   const clearFieldError = (field: keyof FormData) => {
     if (errors[field]) clearErrors(field);
   };
@@ -115,7 +114,9 @@ const RegisterForm = () => {
             router.push("/dashboard");
           }
         } else {
-          router.push(`/login${redirectPath ? `?redirect=${encodeURIComponent(redirectPath)}` : ""}`);
+          router.push(
+            `/login${redirectPath ? `?redirect=${encodeURIComponent(redirectPath)}` : ""}`,
+          );
         }
 
         return;
@@ -151,24 +152,27 @@ const RegisterForm = () => {
 
   return (
     <div className="w-full">
-      <Card className="max-w-[500px] shadow-xl mx-auto">
+      <Card className="shadow-none border-0 mx-auto bg-white/80 backdrop-blur-lg">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-semibold">Registration</CardTitle>
+          <CardTitle className="text-2xl font-semibold text-primary">
+            Registration
+          </CardTitle>
           <CardDescription>
             Create an account to start your learning journey today
           </CardDescription>
         </CardHeader>
 
-        <CardContent>
+        <CardContent className="px-6 lg:px-12">
           <form onSubmit={handleSubmit(onSubmit)} noValidate>
-            <FieldGroup>
+            <FieldGroup className="gap-4">
               {/* Name */}
               <Field>
                 <FieldLabel>Full Name *</FieldLabel>
                 <Input
                   {...register("name")}
+                  placeholder="Enter your name"
                   onChange={() => clearFieldError("name")}
-                  className={errors.name ? "border-destructive" : ""}
+                  className={`border-primary/40 h-12 ${errors.name ? "border-destructive" : ""}`}
                 />
                 <FieldError>{errors.name?.message}</FieldError>
               </Field>
@@ -178,9 +182,10 @@ const RegisterForm = () => {
                 <FieldLabel>Email *</FieldLabel>
                 <Input
                   type="email"
+                  placeholder="Enter your email"
                   {...register("email")}
                   onChange={() => clearFieldError("email")}
-                  className={errors.email ? "border-destructive" : ""}
+                  className={`border-primary/40 h-12 ${errors.email ? "border-destructive" : ""}`}
                 />
                 <FieldError>{errors.email?.message}</FieldError>
               </Field>
@@ -191,7 +196,8 @@ const RegisterForm = () => {
                 <Input
                   {...register("phone")}
                   onChange={() => clearFieldError("phone")}
-                  className={errors.phone ? "border-destructive" : ""}
+                  placeholder="Enter your phone number"
+                  className={`border-primary/40 h-12 ${errors.phone ? "border-destructive" : ""}`}
                 />
                 <FieldError>{errors.phone?.message}</FieldError>
               </Field>
@@ -203,8 +209,9 @@ const RegisterForm = () => {
                   <Input
                     type={showPassword ? "text" : "password"}
                     {...register("password")}
+                    placeholder="Enter your password"
                     onChange={() => clearFieldError("password")}
-                    className={errors.password ? "border-destructive" : ""}
+                    className={`border-primary/40 h-12 ${errors.password ? "border-destructive" : ""}`}
                   />
                   <button
                     type="button"
@@ -223,9 +230,10 @@ const RegisterForm = () => {
                 <div className="relative">
                   <Input
                     type={showConfirmPassword ? "text" : "password"}
+                    placeholder="Confirm your password"
                     {...register("password_confirmation")}
                     onChange={() => clearFieldError("password_confirmation")}
-                    className={errors.password_confirmation ? "border-destructive" : ""}
+                    className={`border-primary/40 h-12 ${errors.password_confirmation ? "border-destructive" : ""}`}
                   />
                   <button
                     type="button"
@@ -239,11 +247,10 @@ const RegisterForm = () => {
               </Field>
 
               {/* Submit */}
-              <Field>
+              <Field className="w-fit mx-auto">
                 <Button
                   type="submit"
-                  className="w-full"
-                  size="lg"
+                  className="cursor-pointer"
                   disabled={isLoading}
                 >
                   {isLoading ? (
@@ -255,16 +262,27 @@ const RegisterForm = () => {
                   )}
                 </Button>
               </Field>
+              <div className="flex flex-col gap-1 mt-2">
+                <FieldDescription className="text-center font-semibold ">
+                  By Sign Up, You agree to our,{" "}
+                  <Link
+                    href="#"
+                    className="text-primary font-extrabold"
+                  >
+                    Terms and Conditions
+                  </Link>
+                </FieldDescription>
 
-              <FieldDescription className="text-center">
-                Already have an account?{" "}
-                <Link
-                  href={`/login${redirectPath ? `?redirect=${encodeURIComponent(redirectPath)}` : ""}`}
-                  className="text-blue-600 hover:underline"
-                >
-                  Login
-                </Link>
-              </FieldDescription>
+                <FieldDescription className="text-center font-bold ">
+                  Already have an account?{" "}
+                  <Link
+                    href={`/login${redirectPath ? `?redirect=${encodeURIComponent(redirectPath)}` : ""}`}
+                    className="text-primary font-extrabold "
+                  >
+                    Login
+                  </Link>
+                </FieldDescription>
+              </div>
             </FieldGroup>
           </form>
         </CardContent>
