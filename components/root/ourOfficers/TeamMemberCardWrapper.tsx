@@ -29,7 +29,17 @@ const TeamMemberCardWrapper = async ({ isAbout =false }: Props) => {
   }
 
   const members: ChairmanMessage[] = memberDatas?.data || [];
-  const displayMembers = isAbout ? members.slice(0, 1) : members;
+
+  // Sort: type === 1 first, type === 2 last
+  const sortedMembers = [...members].sort((a, b) => {
+    if (a.type === 1 && b.type !== 1) return -1;
+    if (a.type !== 1 && b.type === 1) return 1;
+    if (a.type === 2 && b.type !== 2) return 1;
+    if (a.type !== 2 && b.type === 2) return -1;
+    return 0;
+  });
+
+  const displayMembers = isAbout ? sortedMembers.slice(0, 1) : sortedMembers;
   return (
     <>
       <div className="grid grid-cols-1 gap-8">
