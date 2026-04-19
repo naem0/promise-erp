@@ -16,6 +16,7 @@ export interface Faq {
   id: number;
   question: string;
   answer: string;
+  type: number;
   status: number;
 }
 

@@ -1,30 +1,33 @@
-"use client";
+import BranchesForm from "@/components/lms/branches/BranchesForm";
+import { getDistricts } from "@/apiServices/districtService";
+import ErrorComponent from "@/components/common/ErrorComponent";
 
-import { addBranch } from "@/apiServices/branchService";
-import { useRouter } from "next/navigation";
-import BranchForm from "@/components/lms/branches/BranchAddForm";
-import { handleFormErrors, handleFormSuccess } from "@/lib/formErrorHandler";
-import { UseFormSetError } from "react-hook-form";
-import { ApiErrorResponse } from "@/lib/apiErrorHandler";
+export default async function BranchesAddPage() {
+    let districts;
 
-export default function AddBranchPage() {
-  const router = useRouter();
-
-  const handleSubmit = async (
-    formData: any | FormData,
-    setFormError: (field: string, message: string) => void,
-    resetForm: () => void
-  ) => {
-    const res = await addBranch(formData);
-
-    if (res.success) {
-      handleFormSuccess(res.message || "Branch added successfully!");
-      resetForm();
-      router.push("/lms/branches");
-    } else {
-      handleFormErrors(res as ApiErrorResponse, setFormError as UseFormSetError<any>);
+    try {
+        const res = await getDistricts({ per_page: 999 });
+        districts = res?.data?.districts || [];
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            return (
+                <div className="py-8 md:py-12">
+                    <ErrorComponent message={`Error fetching districts: ${error.message}`} />
+                </div>
+            );
+        } else {
+            return (
+                <div className="py-8 md:py-12">
+                    <ErrorComponent message={`An unknown error occurred while fetching districts.`} />
+                </div>
+            );
+        }
     }
-  };
 
-  return <BranchForm title="Add New Branch" onSubmit={handleSubmit} />;
+    return (
+        <BranchesForm
+            title="Add Branch"
+            districts={districts}
+        />
+    );
 }

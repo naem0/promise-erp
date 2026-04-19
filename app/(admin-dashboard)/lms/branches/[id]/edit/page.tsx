@@ -1,71 +1,57 @@
-"use client";
+import BranchesForm from "@/components/lms/branches/BranchesForm";
+import { getBranchById } from "@/apiServices/branchService";
+import { getDistricts } from "@/apiServices/districtService";
+import ErrorComponent from "@/components/common/ErrorComponent";
+import NotFoundComponent from "@/components/common/NotFoundComponent";
 
-import {
-  getBranchById,
-  updateBranch,
-  Branch,
-} from "@/apiServices/branchService";
-import BranchForm from "@/components/lms/branches/BranchAddForm";
-import { useRouter } from "next/navigation";
-import { useEffect, useState, use } from "react";
-import { handleFormErrors, handleFormSuccess } from "@/lib/formErrorHandler";
-import { UseFormSetError } from "react-hook-form";
-import { ApiErrorResponse } from "@/lib/apiErrorHandler";
+interface PageProps {
+    params: Promise<{ id: string }>;
+}
 
-export default function EditBranchPage({params}: {params: Promise<{ id: string }>}) {
-  //  unwrap the async params
-  const resolvedParams = use(params);
-  const router = useRouter();
-  const [branch, setBranch] = useState<Branch | null>(null);
-  const [error, setError] = useState<string | null>(null);
+export default async function EditBranchPage({ params }: PageProps) {
+    const { id } = await params;
 
-  //  Fetch branch by ID once params are resolved
-  useEffect(() => {
-    const fetchBranch = async () => {
-      try {
-        const response = await getBranchById(resolvedParams.id);
-        setBranch(response?.data);
-      } catch (error: unknown) {
+    // Fetch branch
+    let branchRes;
+    try {
+        branchRes = await getBranchById(id);
+    } catch (error: unknown) {
         if (error instanceof Error) {
-          setError(error.message);
-        } else {
-          setError("An unexpected error occurred.");
+            return <ErrorComponent message={error.message} />;
         }
-      }
-    };
-
-    fetchBranch();
-  }, [resolvedParams.id]);
-
-  // Handle JSON form submit
-  const handleSubmit = async (
-    formData: { [key: string]: string | string[] | undefined },
-    setFormError: (field: string, message: string) => void,
-    resetForm: () => void
-  ) => {
-    const res = await updateBranch(resolvedParams.id, formData);
-
-    if (res.success) {
-      handleFormSuccess(res.message || "Branch updated successfully!");
-      router.push("/lms/branches");
-    } else {
-      handleFormErrors(res as ApiErrorResponse, setFormError as UseFormSetError<Branch>);
+        return <ErrorComponent message="An unexpected error occurred." />;
     }
-  };
 
-  if (error) {
-    return <div className="text-red-600">Error: {error}</div>;
-  }
+    if (!branchRes?.data) {
+        return <NotFoundComponent message={branchRes?.message || "Branch not found."} />;
+    }
 
-  if (!branch) {
-    return <div>Loading branch details...</div>;
-  }
+    // Fetch districts
+    let districts;
+    try {
+        const res = await getDistricts({ per_page: 999 });
+        districts = res?.data?.districts || [];
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            return (
+                <div className="py-8 md:py-12">
+                    <ErrorComponent message={`Error fetching districts: ${error.message}`} />
+                </div>
+            );
+        } else {
+            return (
+                <div className="py-8 md:py-12">
+                    <ErrorComponent message={`An unknown error occurred while fetching districts.`} />
+                </div>
+            );
+        }
+    }
 
-  return (
-    <BranchForm
-      title="Edit Branch"
-      onSubmit={handleSubmit}
-      initialData={branch}
-    />
-  );
+    return (
+        <BranchesForm
+            title="Edit Branch"
+            branch={branchRes.data}
+            districts={districts}
+        />
+    );
 }
