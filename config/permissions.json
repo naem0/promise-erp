@@ -16,9 +16,9 @@
     { "path": "/lms/facilities/add", "permissions": ["create-course-facilities"] },
     { "path": "/lms/facilities/edit", "permissions": ["edit-course-facilities"], "isDynamic": true },
 
-    { "path": "/lms/faqs", "permissions": ["view-course-faqs"] },
-    { "path": "/lms/faqs/add", "permissions": ["create-course-faqs"] },
-    { "path": "/lms/faqs/edit", "permissions": ["edit-course-faqs"], "isDynamic": true },
+    { "path": "/lms/faqs", "permissions": ["view-faq-sections"] },
+    { "path": "/lms/faqs/add", "permissions": ["create-faq-sections"] },
+    { "path": "/lms/faqs/edit", "permissions": ["edit-faq-sections"], "isDynamic": true },
     
      { "path": "/lms/free-seminars", "permissions": ["view-free-seminars"] },
      { "path": "/lms/free-seminars/add", "permissions": ["create-free-seminars"] },

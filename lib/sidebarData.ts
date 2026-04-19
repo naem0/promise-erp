@@ -81,7 +81,7 @@ export const sidebarData = {
             {
               title: "FAQs",
               url: "/lms/faqs",
-              permissions: ["view-course-faqs"],
+              permissions: ["view-faq-sections"],
             },
             {
               title: "Coupons",

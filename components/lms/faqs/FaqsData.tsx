@@ -1,4 +1,3 @@
-
 import ErrorComponent from "@/components/common/ErrorComponent";
 import NotFoundComponent from "@/components/common/NotFoundComponent";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -16,6 +15,7 @@ import { Faq, getFaqs } from "@/apiServices/faqsService";
 import DeleteButton from "./DeleteButton";
 import Pagination from "@/components/common/Pagination";
 import PermissionGuard from "@/components/auth/PermissionGuard";
+import { truncate } from "@/lib/utils";
 
 
 const FaqsData = async ({
@@ -41,6 +41,10 @@ const FaqsData = async ({
       typeof resolvedSearchParams.sort_order === "string"
         ? resolvedSearchParams.sort_order
         : undefined,
+    type:
+      typeof resolvedSearchParams.type === "string"
+        ? resolvedSearchParams.type
+        : undefined,
     status:
       typeof resolvedSearchParams.status === "string"
         ? resolvedSearchParams.status
@@ -61,6 +65,7 @@ const FaqsData = async ({
 
   const faqs = results?.data?.faq_sections || [];
   const paginationData = results?.data?.pagination;
+  console.log("paginationData", paginationData);
   if (!faqs.length) {
     return <NotFoundComponent message={results?.message || "No faqs found."} />;
   }
@@ -76,6 +81,7 @@ const FaqsData = async ({
               <TableHead className="text-center">Action</TableHead>
               <TableHead className="text-center">Question</TableHead>
               <TableHead className="text-center">Answer</TableHead>
+              <TableHead className="text-center">Type</TableHead>
               <TableHead className="text-center">Status</TableHead>
             </TableRow>
           </TableHeader>
@@ -98,7 +104,7 @@ const FaqsData = async ({
                     </DropdownMenuTrigger>
 
                     <DropdownMenuContent align="center">
-                      <PermissionGuard requiredPermission="sync-course-faqs">
+                      <PermissionGuard requiredPermission="edit-faq-sections">
                         <DropdownMenuItem asChild>
                           <Link
                             href={`/lms/faqs/${faq?.id}/edit`}
@@ -110,7 +116,7 @@ const FaqsData = async ({
                         </DropdownMenuItem>
                       </PermissionGuard>
 
-                      <PermissionGuard requiredPermission="delete-course-faqs">
+                      <PermissionGuard requiredPermission="delete-faq-sections">
                         <DropdownMenuItem asChild>
                           <DeleteButton id={faq?.id} />
                         </DropdownMenuItem>
@@ -119,7 +125,17 @@ const FaqsData = async ({
                   </DropdownMenu>
                 </TableCell>
                 <TableCell className="font-medium text-center">{faq?.question}</TableCell>
-                <TableCell className="font-medium text-center">{faq?.answer}</TableCell>
+                <TableCell className="font-medium text-center">
+                  <div
+                    className="line-clamp-3"
+                    dangerouslySetInnerHTML={{ __html: truncate(faq?.answer ?? "", 60) }}
+                  />
+                </TableCell>
+                <TableCell className="text-center">
+                  <Badge variant={faq.type === 1 ? "secondary" : faq.type === 2 ? "default" : "outline"}>
+                    {faq.type === 1 ? "Course FAQ" : faq.type === 2 ? "Contact FAQ" : "Unknown"}
+                  </Badge>
+                </TableCell>
                 <TableCell className="text-center">
                   <Badge variant={faq.status === 1 ? "outline" : "destructive"}>
                     {faq.status === 1 ? "Active" : "Inactive"}
@@ -131,7 +147,7 @@ const FaqsData = async ({
           </TableBody>
         </Table>
       </div>
-      {paginationData?.has_more_pages && (
+      {paginationData?.last_page > 1 && (
         <div className="mt-4 pb-6">
           <Pagination pagination={paginationData} />
         </div>

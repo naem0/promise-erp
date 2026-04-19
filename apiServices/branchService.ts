@@ -15,6 +15,8 @@ const API_BASE =
 ================================== */
 
 export interface SocialLink {
+  id?: number;
+  branch_id?: number;
   title: string;
   url: string;
 }
@@ -22,17 +24,23 @@ export interface SocialLink {
 export interface Branch {
   id: number;
   name: string;
-  division_id: number;
-  address?: string | null;
-  phone?: string[] | null;
-  email?: string[] | null;
-  google_map?: string | null;
-  social_links?: SocialLink[] | null;
-  student_count: number;
-  teacher_count: number;
-  employee_count: number;
+  code?: string;
+  district_id?: number;
+  division_id?: number;
+  address?: string;
+  phone?: string[];
+  email?: string[];
+  google_map?: string;
+  social_links?: SocialLink[] ;
+  student_count?: number;
+  teacher_count?: number;
+  employee_count?: number ;
 
   district?: {
+    id: number;
+    name: string;
+  };
+  division?: {
     id: number;
     name: string;
   };
@@ -40,12 +48,13 @@ export interface Branch {
 
 export interface BranchCreate {
   name: string;
-  district_id: number;
-  address?: string | null;
-  phone?: string[] | null;
-  email?: string[] | null;
-  google_map?: string | null;
-  social_links?: SocialLink[] | null;
+  code?: string;
+  district_id?: number;
+  address?: string ;
+  phone?: string[];
+  email?: string[];
+  google_map?: string;
+  social_links?: SocialLink[] ;
 }
 export interface BranchResponse {
   success: boolean;
@@ -219,7 +228,7 @@ export async function updateBranch(
     }
 
     const res = await fetch(`${API_BASE}/branches/${id}`, {
-      method: "PATCH",
+      method: "PUT",
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
