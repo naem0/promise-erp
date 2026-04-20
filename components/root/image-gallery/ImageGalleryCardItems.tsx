@@ -32,10 +32,15 @@ interface ImageGalleryCardItemsProps {
 }
 
 const ImageGalleryCardItems = ({ event }: ImageGalleryCardItemsProps) => {
-  const plugin = React.useRef(
-    Autoplay({ delay: 3000, stopOnInteraction: false })
+  const plugin = React.useMemo(
+    () =>
+      Autoplay({
+        delay: 3000,
+        stopOnInteraction: false,
+      }),
+    []
   );
-
+  const [open, setOpen] = React.useState(false);
   const images = event?.images || [];
 
   // Card-এর মতো 2x2 grid-এ প্রথম ৪টি image দেখাবে
@@ -43,9 +48,14 @@ const ImageGalleryCardItems = ({ event }: ImageGalleryCardItemsProps) => {
   while (gridImages.length < 4) {
     gridImages.push(images[0] || "/images/placeholder_img.jpg");
   }
+  React.useEffect(() => {
+    if (open) {
+      plugin.reset();
+    }
+  }, [open, plugin]);
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Card className="flex flex-col h-full py-0 cursor-pointer hover:shadow-lg transition overflow-hidden gap-1">
           {/* 2x2 Image Grid — card-এর মতো */}
@@ -82,9 +92,9 @@ const ImageGalleryCardItems = ({ event }: ImageGalleryCardItemsProps) => {
         {images.length > 0 && (
           <div className="flex flex-col items-center justify-center p-3 md:p-6 lg:p-10">
             <Carousel
-              plugins={[plugin.current]}
-              onMouseEnter={plugin.current.stop}
-              onMouseLeave={plugin.current.reset}
+              plugins={[plugin]}
+              onMouseEnter={plugin.stop}
+              onMouseLeave={plugin.reset}
               opts={{
                 align: "center",
                 loop: true,

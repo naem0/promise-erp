@@ -1,3 +1,4 @@
+import CommonHeroBannerSkeleton from "@/components/common/web-common/CommonHeroBannerSkeleton";
 import VideoGalleryBanner from "@/components/root/videoGallery/VideoGalleryBanner";
 import VideoGallerySkeleton from "@/components/root/videoGallery/VideoGallerySkeleton";
 import VideoGalleryWrapper from "@/components/root/videoGallery/VideoGalleryWrapper";
@@ -9,7 +10,9 @@ interface VideoGalleryPageProps {
 const VideoGalleryPage = ({ searchParams }: VideoGalleryPageProps) => {
   return (
     <>
-      <VideoGalleryBanner />
+      <Suspense fallback={<CommonHeroBannerSkeleton />}>
+        <VideoGalleryBanner />
+      </Suspense>
       <Suspense fallback={<VideoGallerySkeleton />}>
         <VideoGalleryWrapper searchParams={searchParams} />
       </Suspense>

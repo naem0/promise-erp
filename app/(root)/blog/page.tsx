@@ -5,6 +5,7 @@ import { Loader2 } from "lucide-react";
 import { Suspense } from "react";
 import { Metadata } from "next";
 import BlogSidebarSkeleton from "@/components/root/blog/BlogSidebarSkeleton";
+import CommonHeroBannerSkeleton from "@/components/common/web-common/CommonHeroBannerSkeleton";
 
 interface BlogPageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -60,7 +61,9 @@ export async function generateMetadata({
 const BlogPage = ({ searchParams }: BlogPageProps) => {
   return (
     <>
-      <BloggWrapperBanner />
+      <Suspense fallback={<CommonHeroBannerSkeleton />}>
+        <BloggWrapperBanner />
+      </Suspense>
       <section className="">
         <div className="container mx-auto px-4 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">

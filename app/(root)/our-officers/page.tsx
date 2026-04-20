@@ -1,3 +1,4 @@
+import CommonHeroBannerSkeleton from "@/components/common/web-common/CommonHeroBannerSkeleton";
 import EmployeeCategory from "@/components/root/ourOfficers/EmployeeCategory";
 import WrapperHeroBanner from "@/components/root/ourOfficers/WrapperHeroBanner";
 import TeamMemberCardWrapper from "@/components/root/ourOfficers/TeamMemberCardWrapper";
@@ -9,7 +10,9 @@ import { Spinner } from "@/components/ui/spinner";
 const OurOfficersPage = () => {
   return (
     <section className="w-full">
-      <WrapperHeroBanner />
+      <Suspense fallback={<CommonHeroBannerSkeleton />}>
+        <WrapperHeroBanner />
+      </Suspense>
 
       <div className="container mx-auto px-4">
         <EmployeeCategory />

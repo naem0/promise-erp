@@ -615,9 +615,13 @@ export async function SubscribeToNewsletter(
 }
 
 // Home page affiliate Partner section get API --
-export async function fetchHomeAffiliatePartners(): Promise<PartnersApiResponse> {
+export async function fetchHomeAffiliatePartners(): Promise<PartnersApiResponse | null> {
   try {
     const res = await fetch(`${API_BASE}/public/partners`);
+    if (res.status === 404) {
+      console.warn("No partners found.");
+      return null;
+    }
 
     if (!res.ok) {
       throw new Error(`Partners API error: ${res.status} ${res.statusText}`);

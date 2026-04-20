@@ -11,8 +11,22 @@ export default async function AffiliatesClientsPage() {
 
   "use cache";
   cacheTag("affiliates-clients");
-  const affiliatesData: PartnersApiResponse =
-    await fetchHomeAffiliatePartners();
+
+  let affiliatesData: PartnersApiResponse | null = null;
+  try {
+    affiliatesData = await fetchHomeAffiliatePartners();
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.log("Request aborted");
+    }
+    else {
+      console.log(error);
+    }
+  }
+  if (!affiliatesData || affiliatesData.success === false || !affiliatesData?.data) {
+    return null;
+  }
+
   const affiliates = affiliatesData?.data?.partners?.affiliate || [];
   const clients = affiliatesData?.data?.partners?.client || [];
   const concerns = affiliatesData?.data?.partners?.concern || [];

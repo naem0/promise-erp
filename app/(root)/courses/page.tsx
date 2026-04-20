@@ -5,6 +5,7 @@ import HeaderBanner from "@/components/root/courseList/HeaderBanner";
 import CourseListWrapper from "@/components/root/courseList/CourseListWrapper";
 import { Card } from "@/components/ui/card";
 import CourseFilterSkeleton from "@/components/root/courseList/CourseFilterSkeleton";
+import CommonHeroBannerSkeleton from "@/components/common/web-common/CommonHeroBannerSkeleton";
 
 interface CoursesPageProps {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -12,7 +13,9 @@ interface CoursesPageProps {
 const CoursesPage = ({ searchParams }: CoursesPageProps) => {
   return (
     <>
-      <HeaderBanner />
+      <Suspense fallback={<CommonHeroBannerSkeleton />}>
+        <HeaderBanner />
+      </Suspense>
       <div className="container mx-auto px-4 py-10 md:py-16">
         <Card className="py-2 px-2 mb-4 md:mb-4">
           <h2 className="text-2xl md:text-4xl text-center capitalize font-bold text-secondary ">

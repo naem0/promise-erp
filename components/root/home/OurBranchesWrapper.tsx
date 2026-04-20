@@ -34,7 +34,7 @@ const OurBranchesWrapper = async () => {
   }
 
   return (
-    <section className="py-8 md:py-14">
+    <section className="py-8 md:py-14 bg-secondary/5">
       <div className="container mx-auto px-4">
         <SectionTitle
           title={branches?.data?.section_title}

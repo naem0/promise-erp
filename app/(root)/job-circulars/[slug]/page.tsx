@@ -1,9 +1,11 @@
+import { Suspense } from "react";
 import {
   getPublicJobCircular,
   getPublicJobCircularBySlug,
   JobCircularDetails,
 } from "@/apiServices/jobCircularPublicService";
 import ErrorComponent from "@/components/common/ErrorComponent";
+import CommonHeroBannerSkeleton from "@/components/common/web-common/CommonHeroBannerSkeleton";
 import JobApplicationForm from "@/components/root/jobCirculars/JobApplicationForm";
 import JobBySlugWrapperBanner from "@/components/root/jobCirculars/JobBySlugWrapperBanner";
 import JobInfoBySlugWrapper from "@/components/root/jobCirculars/JobInfoBySlugWrapper";
@@ -51,7 +53,9 @@ const JobCircularBySlugdPage = async ({ params }: JobCircularParams) => {
 
   return (
     <>
-      <JobBySlugWrapperBanner />
+      <Suspense fallback={<CommonHeroBannerSkeleton />}>
+        <JobBySlugWrapperBanner />
+      </Suspense>
       <div className="container mx-auto px-4 py-8 md:py-12">
         <div className="pb-10">
           <h1 className="text-center text-secondary capitalize font-bold text-2xl lg:text-4xl">

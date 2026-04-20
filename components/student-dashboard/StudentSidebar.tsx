@@ -19,6 +19,7 @@ import {
   DollarSign,
   Calendar,
   User,
+  MessageSquare,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -63,6 +64,12 @@ export function StudentSidebar() {
       url: "/student/certificate",
       icon: Award,
       isActive: pathname.startsWith("/student/certificate"),
+    },
+    {
+      title: "Reviews",
+      url: "/student/reviews",
+      icon: MessageSquare,
+      isActive: pathname.startsWith("/student/reviews"),
     },
     {
       title: "Due Payments",

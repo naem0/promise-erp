@@ -5,7 +5,6 @@ import CareerDevelopmentBlog from "@/components/root/home/CareerDevelopmentBlog"
 import NewsfeedsArchive from "@/components/root/home/NewsfeedsArchive";
 import NewsletterSection from "@/components/root/home/NewsletterSection";
 import VideoStories from "@/components/root/home/VideoStories";
-// import AffiliatesAndClients from "@/components/root/home/AffiliatesAndClients";
 import { Suspense } from "react";
 import HomeHeroSkeleton from "@/components/common/HomeHeroSkeleton";
 import HomeHeroWrapper from "@/components/root/home/HomeHeroWrapper";
@@ -24,12 +23,13 @@ import GovtCourseSkeleton from "@/components/common/GovtCourseSkeleton";
 import OpportunitySkeletone from "@/components/common/OpportunitySkeletone";
 import VideoStorySkeleton from "@/components/common/VideoStorySkeleton";
 import BlogSkeleton from "@/components/common/BlogSkeleton";
-// import PartnerSkeleton from "@/components/common/PartnerSkeleton";
 import TeacherListSkeleton from "@/components/common/TeacherListSkeleton";
 import StudentSuccessSkeleton from "@/components/common/StudentSuccessSkeleton";
 import NewsfeedsArchiveSkeleton from "@/components/common/NewsfeedsArchiveSkeleton";
 import NewsletterSkeleton from "@/components/common/NewsletterSkeleton";
 import BackToTop from "@/components/common/BackToTop";
+import HomeMembersSection from "@/components/root/home/HomeMembersSection";
+import HomeMemberSkeleton from "@/components/root/home/HomeMemberSkeleton";
 
 const HomePage = () => {
   return (
@@ -70,9 +70,9 @@ const HomePage = () => {
       <Suspense fallback={<NewsfeedsArchiveSkeleton />}>
         <NewsfeedsArchive />
       </Suspense>
-      {/* <Suspense fallback={<PartnerSkeleton />}>
-        <AffiliatesAndClients />
-      </Suspense> */}
+      <Suspense fallback={<HomeMemberSkeleton />}>
+        <HomeMembersSection />
+      </Suspense>
       <Suspense fallback={<BranchesSkeleton />}>
         <OurBranchesWrapper />
       </Suspense>
