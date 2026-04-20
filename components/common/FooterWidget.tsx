@@ -24,7 +24,7 @@ const FooterWidget = () => {
     { name: "Terms & Conditions", href: "#" },
 
   ];
-  
+
   return (
     <section className="py-8 md:py-12 px-4 bg-secondary text-white">
       <div className="container mx-auto">
@@ -51,10 +51,10 @@ const FooterWidget = () => {
                 <Link href="https://www.facebook.com/elaeltd.official" target="_blank" className=" text-white">
                   <Facebook size={20} />
                 </Link>
-                <Link href="https://x.com/elaeltdofficial" target="_blank" className=" text-white">
+                <Link href="https://www.linkedin.com/company/e-learning-and-earning-ltd/" target="_blank" className=" text-white">
                   <Linkedin size={20} />
                 </Link>
-                <Link href="https://www.linkedin.com/company/e-learning-and-earning-ltd/" target="_blank" className=" text-white">
+                <Link href="https://x.com/elaeltdofficial" target="_blank" className=" text-white">
                   <Twitter size={20} />
                 </Link>
                 <Link href="https://www.youtube.com/@elaeltd.official" target="_blank" className=" text-white">
@@ -91,7 +91,7 @@ const FooterWidget = () => {
             <Suspense fallback={null}>
               <OurCoursesLink />
             </Suspense>
-            
+
           </div>
 
           {/* Contact Us */}
@@ -127,7 +127,7 @@ const FooterWidget = () => {
         </div>
         <div className="flex justify-center text-base text-white pt-4 border-t border-primary-foreground/20">
           {/* <CopyRight /> */}
-            © 2026 E-Learning and Earning Ltd. All Rights Reserved
+          © 2026 E-Learning and Earning Ltd. All Rights Reserved
         </div>
       </div>
     </section>

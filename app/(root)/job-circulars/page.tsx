@@ -1,3 +1,4 @@
+import CommonHeroBannerSkeleton from "@/components/common/web-common/CommonHeroBannerSkeleton";
 import JobCircularJoinUs from "@/components/root/jobCirculars/JobCircularJoinUs";
 import JobCircularWrapper from "@/components/root/jobCirculars/JobCircularWrapper";
 import JobWrapperHeroBanner from "@/components/root/jobCirculars/JobWrapperHeroBanner";
@@ -9,7 +10,9 @@ interface SearchParamsProps {
 const JobCircularsPage = ({ searchParams }: SearchParamsProps) => {
   return (
     <>
-      <JobWrapperHeroBanner />
+      <Suspense fallback={<CommonHeroBannerSkeleton />}>
+        <JobWrapperHeroBanner />
+      </Suspense>
       <Suspense fallback={<div className="h-40 w-full bg-muted animate-pulse rounded-xl" />}>
         <JobCircularWrapper searchParams={searchParams} />
       </Suspense>

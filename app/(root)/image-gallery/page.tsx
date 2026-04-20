@@ -1,3 +1,4 @@
+import CommonHeroBannerSkeleton from "@/components/common/web-common/CommonHeroBannerSkeleton";
 import ImagCardSkeleton from "@/components/root/image-gallery/ImagCardSkeleton";
 import ImageGalleryBanner from "@/components/root/image-gallery/ImageGalleryBanner";
 import ImageGalleryCard from "@/components/root/image-gallery/ImageGalleryCard";
@@ -9,7 +10,9 @@ interface ImageGalleryPageProps {
 const ImageGalleryPage = ({ searchParams }: ImageGalleryPageProps) => {
   return (
     <>
-      <ImageGalleryBanner />
+      <Suspense fallback={<CommonHeroBannerSkeleton />}>
+        <ImageGalleryBanner />
+      </Suspense>
       <Suspense fallback={<ImagCardSkeleton />}>
         <ImageGalleryCard searchParams={searchParams} />
       </Suspense>

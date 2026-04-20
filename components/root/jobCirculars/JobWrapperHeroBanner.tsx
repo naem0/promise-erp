@@ -1,11 +1,27 @@
-import CommonHeroBanner from "@/components/common/CommonHeroBanner"
+import { fetchCommonBannerSectionData } from "@/apiServices/webAllPageBanner";
+import CommonHeroBanner from "@/components/common/CommonHeroBanner";
+import ErrorComponent from "@/components/common/ErrorComponent";
 
-const JobWrapperHeroBanner = () => {
+const JobWrapperHeroBanner = async () => {
+  let bannerData:any
+  try {
+    bannerData = await fetchCommonBannerSectionData({ type: "job_banner" });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      return <ErrorComponent message={bannerData?.message || "Failed to fetch banner data"} />;
+    } else {
+      return <ErrorComponent message="Failed to fetch banner data" />;
+    }
+  }
+  if (!bannerData?.success || !bannerData?.data) {
+    return null;
+  }
+  const branchBanner = bannerData?.data?.sections;
   return (
     <CommonHeroBanner
-      title="Build Your Future With Us"
-      subtitle="Join our team of passionate educators and innovators. We're building the next generation of skilled professionals."
-      bgImage="/images/hero-banner/courselist.png"
+      title={branchBanner?.[0]?.title}
+      subtitle={branchBanner?.[0]?.sub_title}
+      bgImage={branchBanner?.[0]?.image}
     />
   )
 }

@@ -1,3 +1,4 @@
+import CommonHeroBannerSkeleton from "@/components/common/web-common/CommonHeroBannerSkeleton";
 import StoriesBannerWrapper from "@/components/root/success-stories/StoriesBannerWrapper";
 import StoriesCard from "@/components/root/success-stories/StoriesCard";
 import StoriesSectionSkeleton from "@/components/root/success-stories/StoriesSectionSkeleton";
@@ -9,7 +10,9 @@ interface SuccessStoriesPageProps {
 const SuccessStoriesPage = ({ searchParams }: SuccessStoriesPageProps) => {
   return (
     <>
-      <StoriesBannerWrapper />
+      <Suspense fallback={<CommonHeroBannerSkeleton />}>
+        <StoriesBannerWrapper />
+      </Suspense>
       <Suspense fallback={<StoriesSectionSkeleton />}>
         <StoriesCard searchParams={searchParams} />
       </Suspense>

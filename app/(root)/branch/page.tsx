@@ -1,3 +1,4 @@
+import CommonHeroBannerSkeleton from "@/components/common/web-common/CommonHeroBannerSkeleton";
 import BannerWrapper from "@/components/root/Branche/BannerWrapper";
 import BranchState from "@/components/root/Branche/BranchState";
 import BranchStateSkeleton from "@/components/root/Branche/BranchStateSkeleton";
@@ -13,7 +14,9 @@ interface BranchesPageProps {
 const BranchesPage = ({ searchParams }: BranchesPageProps) => {
   return (
     <>
-      <BannerWrapper />
+      <Suspense fallback={<CommonHeroBannerSkeleton />}>
+        <BannerWrapper />
+      </Suspense>
       <Suspense fallback={<BranchStateSkeleton />}>
         <BranchState />
       </Suspense>

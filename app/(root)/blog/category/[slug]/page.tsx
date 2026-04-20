@@ -6,6 +6,7 @@ import { Metadata } from "next";
 import { redirect } from "next/navigation";
 import BlogCategoryPostWrapper from "@/components/root/blog/BlogCategoryPostWrapper";
 import BlogSidebarSkeleton from "@/components/root/blog/BlogSidebarSkeleton";
+import CommonHeroBannerSkeleton from "@/components/common/web-common/CommonHeroBannerSkeleton";
 
 interface BlogPageProps {
   params: Promise<{ slug: string }>;
@@ -42,7 +43,9 @@ export default async function BlogCategoryPage({
 
   return (
     <>
-      <BloggCategoryWrapperBanner />
+      <Suspense fallback={<CommonHeroBannerSkeleton />}>
+        <BloggCategoryWrapperBanner />
+      </Suspense>
 
       <section>
         <div className="container mx-auto px-4 py-8">

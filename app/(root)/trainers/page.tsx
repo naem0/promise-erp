@@ -1,3 +1,4 @@
+import CommonHeroBannerSkeleton from "@/components/common/web-common/CommonHeroBannerSkeleton";
 import HighlightsSkeleton from "@/components/common/HighlightsSkeleton";
 import HighlightsSection from "@/components/root/home/HighlightsSection";
 import TrainerItemWrapper from "@/components/root/trainers/TrainerItemWrapper";
@@ -12,7 +13,9 @@ interface TrainersPageProps {
 const TrainersPage = ({ searchParams }: TrainersPageProps) => {
   return (
     <>
-      <TrainerWrapperHeroBanner />
+      <Suspense fallback={<CommonHeroBannerSkeleton />}>
+        <TrainerWrapperHeroBanner />
+      </Suspense>
       <div className="container mx-auto px-4">
         {/* <TrainerStates /> */}
         <Suspense fallback={<HighlightsSkeleton />}>

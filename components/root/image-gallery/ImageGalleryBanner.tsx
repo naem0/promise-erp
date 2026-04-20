@@ -1,12 +1,28 @@
 import CommonHeroBanner from '@/components/common/CommonHeroBanner'
-import React from 'react'
+import { fetchCommonBannerSectionData } from '@/apiServices/webAllPageBanner'
+import ErrorComponent from '@/components/common/ErrorComponent';
 
-const ImageGalleryBanner = () => {
+const ImageGalleryBanner = async () => {
+  let bannerData
+  try {
+    bannerData = await fetchCommonBannerSectionData({ type: "image_gallery_banner" });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      return <ErrorComponent message={bannerData?.message || "Failed to fetch banner data"} />;
+    } else {
+      return <ErrorComponent message="Failed to fetch banner data" />;
+    }
+  }
+  if (!bannerData?.success || !bannerData?.data) {
+    return null;
+  }
+  const imageGalleryBanner = bannerData?.data?.sections;
+
   return (
     <CommonHeroBanner
-      title="Image Gallery"
-      subtitle="Dedicated professionals driving excellence in IT education and training across Bangladesh"
-      bgImage="/images/hero-banner/VideoGallery.png"
+      title={imageGalleryBanner[0]?.title || ""}
+      subtitle={imageGalleryBanner[0]?.sub_title || ""}
+      bgImage={imageGalleryBanner[0]?.image}
     />
   )
 }

@@ -4,11 +4,14 @@ import ContactInfoCards from "@/components/root/contact/ContactInfoCards";
 import ContactInfoCardsSkeleton from "@/components/root/contact/ContactInfoCardsSkeleton";
 import WrapperHeroBanner from "@/components/root/contact/WrapperHeroBanner";
 import { Suspense } from "react";
+import CommonHeroBannerSkeleton from "@/components/common/web-common/CommonHeroBannerSkeleton";
 
 const ContactPage = () => {
   return (
     <>
-      <WrapperHeroBanner />
+      <Suspense fallback={<CommonHeroBannerSkeleton />}>
+        <WrapperHeroBanner />
+      </Suspense>
       <Suspense fallback={<ContactInfoCardsSkeleton />}>
         <ContactInfoCards />
       </Suspense>

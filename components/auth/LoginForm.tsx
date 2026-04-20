@@ -19,6 +19,7 @@ import {
   FieldGroup,
   FieldLabel,
   FieldDescription,
+  FieldError,
 } from "@/components/ui/field";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -67,39 +68,38 @@ const LoginForm = () => {
 
   return (
     <div className="w-full">
-      <Card className="max-w-[500px] shadow-xl mx-auto">
+      <Card className="shadow-none border-0 mx-auto bg-white/80 backdrop-blur-lg">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Login</CardTitle>
+          <CardTitle className="text-2xl font-semibold text-primary">Login</CardTitle>
           <CardDescription>
             Log in to manage your courses and progress
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <FieldGroup>
+        <CardContent className="px-6 lg:px-12">
+          <form onSubmit={handleSubmit(onSubmit)} noValidate>
+            <FieldGroup className="gap-4">
               <Field>
-                <FieldLabel htmlFor="email_or_phone ">
-                  Email or Phone<span className="text-red-500">*</span>
+                <FieldLabel>
+                  Email or Phone *
                 </FieldLabel>
                 <Input
                   id="email_or_phone"
                   type="string"
                   placeholder="Enter your email or phone"
                   {...register("email_or_phone", {
-                    required: "email or  phone  is required",
+                    required: "email or phone is required",
                   })}
                   defaultValue={process.env.NEXT_PUBLIC_ADMIN_EMAIL}
+                  className={`border-primary/40 h-12 ${errors.email_or_phone ? "border-destructive" : ""}`}
                 />
                 {errors.email_or_phone && (
-                  <FieldDescription className="text-red-500">
-                    {errors.email_or_phone.message}
-                  </FieldDescription>
+                  <FieldError>{errors.email_or_phone.message}</FieldError>
                 )}
               </Field>
 
               <Field>
-                <FieldLabel htmlFor="password">
-                  Password<span className="text-red-500">*</span>
+                <FieldLabel>
+                  Password *
                 </FieldLabel>
                 <div className="relative">
                   <Input
@@ -110,6 +110,7 @@ const LoginForm = () => {
                       required: "Password is required",
                     })}
                     defaultValue={process.env.NEXT_PUBLIC_ADMIN_PASSWORD}
+                    className={`border-primary/40 h-12 ${errors.password ? "border-destructive" : ""}`}
                   />
                   <span
                     onClick={() => setShowPassword(!showPassword)}
@@ -119,46 +120,44 @@ const LoginForm = () => {
                   </span>
                 </div>
                 {errors.password && (
-                  <FieldDescription className="text-red-500">
-                    {errors.password.message}
-                  </FieldDescription>
+                  <FieldError>{errors.password.message}</FieldError>
                 )}
                 <FieldDescription className="flex justify-end mt-1">
                   <Link
                     href="/forgot-password"
-                    className="text-blue-600 hover:underline"
+                    className="text-primary font-bold hover:underline"
                   >
                     Forgot Password?
                   </Link>
                 </FieldDescription>
               </Field>
 
-              <Field orientation="horizontal">
+              <Field className="w-fit mx-auto">
                 <Button
-                  className="w-auto mx-auto"
-                  variant="default"
-                  size="default"
+                  className="cursor-pointer"
                   type="submit"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? (
-                    <>
+                    <span className="flex gap-2 items-center">
                       <Spinner /> Login...
-                    </>
+                    </span>
                   ) : (
                     "Login"
                   )}
                 </Button>
               </Field>
-              <FieldDescription className="px-6 text-center">
-                Don’t have an account?{" "}
-                <Link
-                  className="text-blue-600 hover:underline"
-                  href={`/register${redirectPath ? `?redirect=${encodeURIComponent(redirectPath)}` : ""}`}
-                >
-                  Register
-                </Link>
-              </FieldDescription>
+              <div className="flex flex-col gap-1 mt-2">
+                <FieldDescription className="text-center font-bold">
+                  Don’t have an account?{" "}
+                  <Link
+                    className="text-primary font-extrabold"
+                    href={`/register${redirectPath ? `?redirect=${encodeURIComponent(redirectPath)}` : ""}`}
+                  >
+                    Register
+                  </Link>
+                </FieldDescription>
+              </div>
             </FieldGroup>
           </form>
         </CardContent>

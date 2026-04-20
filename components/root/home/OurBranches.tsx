@@ -22,7 +22,6 @@ interface BranchesDataProps {
 const OurBranches = ({ branchesData }: BranchesDataProps) => {
 
   const branches = branchesData?.data?.branches || [];
-  console.log("----->branches", branches);
   const plugin = useRef(
       Autoplay({
         delay: 2000,
