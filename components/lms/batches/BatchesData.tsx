@@ -22,6 +22,7 @@ import Link from "next/link";
 import DeleteButton from "./DeleteBatchButton";
 import Pagination from "@/components/common/Pagination";
 import PermissionGuard from "@/components/auth/PermissionGuard";
+import { truncate } from "@/lib/utils";
 
 export default async function BatchesData({
   searchParams,
@@ -172,7 +173,9 @@ export default async function BatchesData({
                   </DropdownMenu>
                 </TableCell>
                 <TableCell className="font-medium text-center">{batch.name}</TableCell>
-                <TableCell className="text-center">{batch.course?.title}</TableCell>
+                <TableCell className="text-center" title={batch.course?.title || "N/A"}>
+                  {truncate(batch.course?.title || "N/A", 30)}
+                </TableCell>
                 <TableCell className="text-center">{batch?.branch?.name || "N/A"}</TableCell>
                 <TableCell className="text-center">
                   {batch.is_online === 1 ? (
@@ -184,7 +187,7 @@ export default async function BatchesData({
                 <TableCell className="text-right">{batch.price} ৳</TableCell>
                 <TableCell className="text-right">
                   {batch.discount_type === "percentage"
-                    ? `${batch.discount}%`
+                    ? `${batch.discount || "0"} %`
                     : `${batch.discount || "0"} ৳`}
                 </TableCell>
                 <TableCell className="text-right font-semibold text-primary">

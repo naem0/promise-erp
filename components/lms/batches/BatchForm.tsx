@@ -64,8 +64,8 @@ export default function BatchForm({ title, batch }: BatchFormProps) {
             name: batch?.name || "",
             course_id: batch?.course_id?.toString() || "",
             branch_ids: batch?.branch_id ? [batch.branch_id.toString()] : [], // initialize with existing branch if editing
-            price: batch ? parseFloat(batch.price?.toString() || "") : null,
-            discount: batch ? parseFloat(batch.discount?.toString() || "") : null,
+            price: batch ? parseFloat(batch.price?.toString() || "") : 0,
+            discount: batch ? parseFloat(batch.discount?.toString() || "") : 0,
             discount_type: batch?.discount_type || "percentage",
             duration: batch?.duration || "",
             start_date: batch?.start_date_raw || "",
@@ -194,7 +194,7 @@ export default function BatchForm({ title, batch }: BatchFormProps) {
             </CardHeader>
 
             <CardContent>
-                <form onSubmit={handleSubmit(submitHandler)} className="grid gap-6">
+                <form onSubmit={handleSubmit(submitHandler)} className="grid gap-2">
                     <div className="grid grid-cols-1 gap-4">
                         <div className="grid gap-2 relative pb-5">
                             <Label htmlFor="course_id">Course<span className="text-red-500">*</span></Label>
@@ -216,62 +216,65 @@ export default function BatchForm({ title, batch }: BatchFormProps) {
                         </div>
                     </div>
 
-                    <div className="grid gap-2 relative pb-5">
-                        <Label htmlFor="branch_ids">Branches<span className="text-red-500">*</span></Label>
-                        <Controller
-                            name="branch_ids"
-                            control={control}
-                            render={({ field }) => (
-                                <div className="border rounded-md p-4 max-h-60 overflow-y-auto bg-muted/20">
-                                    <div className="flex items-center space-x-2 p-2 mb-2 rounded-md border-b pb-3 bg-accent/10">
-                                        <input
-                                            type="checkbox"
-                                            id="branch-select-all"
-                                            checked={branches.length > 0 && (field.value?.length || 0) === branches.length}
-                                            onChange={(e) => {
-                                                if (e.target.checked) {
-                                                    field.onChange(branches?.map((b) => b.id.toString()));
-                                                } else {
-                                                    field.onChange([]);
-                                                }
-                                            }}
-                                            className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
-                                        />
-                                        <Label htmlFor="branch-select-all" className="text-sm font-semibold leading-none cursor-pointer w-full">
-                                            Select All
-                                        </Label>
+                    {/* Only show branch selection when creating a new batch, not when editing */}
+                    {!batch && (
+                        <div className="grid gap-2 relative pb-5">
+                            <Label htmlFor="branch_ids">Branches<span className="text-red-500">*</span></Label>
+                            <Controller
+                                name="branch_ids"
+                                control={control}
+                                render={({ field }) => (
+                                    <div className="border rounded-md p-4 max-h-60 overflow-y-auto bg-muted/20">
+                                        <div className="flex items-center space-x-2 p-2 mb-2 rounded-md border-b pb-3 bg-accent/10">
+                                            <input
+                                                type="checkbox"
+                                                id="branch-select-all"
+                                                checked={branches.length > 0 && (field.value?.length || 0) === branches.length}
+                                                onChange={(e) => {
+                                                    if (e.target.checked) {
+                                                        field.onChange(branches?.map((b) => b.id.toString()));
+                                                    } else {
+                                                        field.onChange([]);
+                                                    }
+                                                }}
+                                                className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
+                                            />
+                                            <Label htmlFor="branch-select-all" className="text-sm font-semibold leading-none cursor-pointer w-full">
+                                                Select All
+                                            </Label>
+                                        </div>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                                            {branches?.map((branch) => (
+                                                <div key={branch.id} className={`flex items-center space-x-2 p-2 rounded-md hover:bg-primary/50 transition-colors border ${field.value?.includes(branch.id.toString()) ? "bg-primary/50" : "border-transparent"}`}>
+                                                    <input
+                                                        type="checkbox"
+                                                        id={`branch-${branch.id}`}
+                                                        checked={field.value?.includes(branch.id.toString())}
+                                                        onChange={(e) => {
+                                                            const current = field.value || [];
+                                                            const idStr = branch.id.toString();
+                                                            if (e.target.checked) {
+                                                                field.onChange([...current, idStr]);
+                                                            } else {
+                                                                field.onChange(current.filter((id) => id !== idStr));
+                                                            }
+                                                        }}
+                                                        className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
+                                                    />
+                                                    <Label htmlFor={`branch-${branch.id}`} className="text-sm font-medium leading-none cursor-pointer w-full">
+                                                        {branch.name}
+                                                    </Label>
+                                                </div>
+                                            ))}
+                                        </div>
                                     </div>
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                                        {branches?.map((branch) => (
-                                            <div key={branch.id} className={`flex items-center space-x-2 p-2 rounded-md hover:bg-primary/50 transition-colors border ${field.value?.includes(branch.id.toString()) ? "bg-primary/50" : "border-transparent"}`}>
-                                                <input
-                                                    type="checkbox"
-                                                    id={`branch-${branch.id}`}
-                                                    checked={field.value?.includes(branch.id.toString())}
-                                                    onChange={(e) => {
-                                                        const current = field.value || [];
-                                                        const idStr = branch.id.toString();
-                                                        if (e.target.checked) {
-                                                            field.onChange([...current, idStr]);
-                                                        } else {
-                                                            field.onChange(current.filter((id) => id !== idStr));
-                                                        }
-                                                    }}
-                                                    className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
-                                                />
-                                                <Label htmlFor={`branch-${branch.id}`} className="text-sm font-medium leading-none cursor-pointer w-full">
-                                                    {branch.name}
-                                                </Label>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
+                                )}
+                            />
+                            {errors.branch_ids && (
+                                <p className="text-xs text-red-500 absolute bottom-0 left-0">{errors.branch_ids.message}</p>
                             )}
-                        />
-                        {errors.branch_ids && (
-                            <p className="text-xs text-red-500 absolute bottom-0 left-0">{errors.branch_ids.message}</p>
-                        )}
-                    </div>
+                        </div>
+                    )}
 
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
