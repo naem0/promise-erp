@@ -169,6 +169,7 @@ export default function OurPartnersForm({ title, partner }: OurPartnersFormProps
                     <SelectItem value="1">Affiliate</SelectItem>
                     <SelectItem value="2">Concern</SelectItem>
                     <SelectItem value="3">Client</SelectItem>
+                    <SelectItem value="4">Member</SelectItem>
                   </SelectContent>
                 </Select>
               )}

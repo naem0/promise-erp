@@ -497,7 +497,7 @@ export async function getPublicBranchList(): Promise<HeaderBranchListResponse | 
   try {
     const res = await fetch(`${API_BASE}/public/branch-list`);
 
-   if (res.status === 404) {
+    if (res.status === 404) {
       console.warn("No branches found.");
       return null;
     }
@@ -912,3 +912,54 @@ export async function getPublicCourseSearch({
     throw new Error("Unknown error occurred while fetching course search");
   }
 }
+// End Home page service
+
+// Start Home page Members section get API --
+export interface MemberItem {
+  id: number;
+  image?: string;
+  title: string;
+  status?: number;
+  partner_type: number
+}
+export interface PartnerData {
+  partner_type: number;
+  total_partners: number;
+  partners: MemberItem[];
+}
+export interface MemberApiResponse {
+  success: boolean;
+  message: string;
+  code: number;
+  data?: PartnerData;
+  errors?: Record<string, string[]>;
+}
+
+export async function getMembersByType(typeId: number): Promise<MemberApiResponse | null> {
+  try {
+    const res = await fetch(
+      `${API_BASE}/public/partners/type/${typeId}`
+    );
+
+    if (res.status === 404) {
+      console.warn("No partners found.");
+      return null;
+    }
+
+    if (!res.ok) {
+      throw new Error(
+        `getMembersByType API error: ${res.status} ${res.statusText}`
+      );
+    }
+
+    const data: MemberApiResponse = await res.json();
+    return data;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error fetching partners:", error.message);
+      return null;
+    }
+    throw new Error("Unknown error occurred while fetching partners");
+  }
+}
+// End Home page Members section get API --
