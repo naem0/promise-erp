@@ -33,7 +33,6 @@ const NewsFeedsCard = async ({ searchParams }: NewFeedsPageProps) => {
   }
   const newsItems = newsData?.data?.news_feeds || [];
   const totalPage = newsData?.data?.pagination || null;
-  console.log("newsItems===>", newsItems);
   return (
     <section className="py-8 md:py-14">
       <div className="container mx-auto px-4">
@@ -50,7 +49,7 @@ const NewsFeedsCard = async ({ searchParams }: NewFeedsPageProps) => {
             </div>
           )}
         </div>
-        {totalPage && totalPage.per_page > 30 && (
+        {totalPage && totalPage.per_page > 28 && (
           <div className="flex justify-center mt-8">
             <Pagination pagination={totalPage} />
           </div>

@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
-import { Star, X } from "lucide-react";
+import { Loader2, Star, X } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -19,6 +19,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { CourseShortList, CreateReviewPayload, createNewStudentReview, getStudentCourseShortLists } from "@/apiServices/studentDashboardService";
+import { useSession } from "next-auth/react";
+import { toast } from "sonner";
 
 interface ReviewModalProps {
   open: boolean;
@@ -27,14 +30,14 @@ interface ReviewModalProps {
   initialData?: {
     courseId: string;
     rating: number;
-    comment: string;
+    feedback: string;
   };
 }
 
 type FormData = {
   courseId: string;
   rating: number;
-  comment: string;
+  feedback: string;
 };
 
 export default function ReviewModal({
@@ -43,18 +46,51 @@ export default function ReviewModal({
   mode,
   initialData,
 }: ReviewModalProps) {
+  const { data: session, status } = useSession()
+  const token = session?.accessToken;
+  // start course list fetch
+  const [courses, setCourses] = useState<CourseShortList[]>([]);
+  const [courseLoading, setCourseLoading] = useState(false)
+
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      if (status !== "authenticated" || !token) return;
+      setCourseLoading(true)
+      try {
+        const courseLists = await getStudentCourseShortLists(token);
+        if (courseLists?.success) {
+          setCourses(courseLists?.data?.courses);
+        }
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          console.error(error.message)
+        } else {
+          console.error(error)
+        }
+      } finally {
+        setCourseLoading(false)
+      }
+    }
+    fetchCourses();
+  }, [token])
+
+  // end course list fetch
+
+  // create student review with react hook form 
   const {
     handleSubmit,
     control,
     reset,
     setValue,
     watch,
+    setError,
     formState: { errors },
   } = useForm<FormData>({
     defaultValues: {
       courseId: "",
       rating: 0,
-      comment: "",
+      feedback: "",
     },
   });
 
@@ -67,14 +103,61 @@ export default function ReviewModal({
       reset({
         courseId: "",
         rating: 0,
-        comment: "",
+        feedback: "",
       });
     }
   }, [open, initialData, reset]);
 
-  const onSubmit = (data: FormData) => {
-    console.log("Submit review:", data);
-    onOpenChange(false);
+  const [submitting, setSubmitting] = useState(false);
+
+  const onSubmit = async (data: FormData) => {
+    if (!token) return;
+
+    // Find the selected course to get its batch_id
+    const selectedCourse = courses.find(
+      (c) => String(c.course_id) === data.courseId
+    );
+
+    if (!selectedCourse) {
+      setError("courseId", { message: "Selected course not found" });
+      return;
+    }
+
+    const payload: CreateReviewPayload = {
+      batch_id: selectedCourse.batch_id,
+      rating: data.rating,
+      feedback: data.feedback,
+      status: 0,
+      is_featured: 0,
+    };
+
+    setSubmitting(true);
+    try {
+      const response = await createNewStudentReview(payload, token);
+
+      if (response?.success) {
+        toast.success(response?.message || "Student Review created successfully");
+        onOpenChange(false);
+        reset();
+      } else {
+        // Surface server-side field errors — show toast for every error message
+        if (response?.errors) {
+          const errorMessages = Object.values(response.errors).flat();
+          errorMessages.forEach((msg) => {
+            toast.error(msg);
+          });
+        } else {
+          toast.error(response?.message || "Something went wrong. Please try again.");
+        }
+      }
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error("createNewStudentReview Error:", error.message);
+      }
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -100,9 +183,24 @@ export default function ReviewModal({
                     <SelectValue placeholder="Select a course" />
                   </SelectTrigger>
                   <SelectContent className="rounded-lg shadow-xl border-slate-100">
-                    <SelectItem value="1">Professional Graphics Design</SelectItem>
-                    <SelectItem value="2">Web Development Mastery</SelectItem>
-                    <SelectItem value="3">Digital Marketing Essentials</SelectItem>
+                    {
+                      courseLoading ? (
+                        <div className="flex items-center justify-center py-2">
+                          <Loader2 className="animate-spin" size={24} />
+                        </div>
+                      ) : courses?.length === 0 ? (
+                        <div className="flex items-center justify-center py-2">
+                          <p className="text-sm text-slate-500">No courses found</p>
+                        </div>
+                      ) : (
+                        courses?.map((course) => (
+                          <SelectItem key={course?.course_id} value={String(course?.course_id)}>
+                            {course?.course_name}
+                          </SelectItem>
+                        ))
+                      )
+                    }
+
                   </SelectContent>
                 </Select>
               )}
@@ -125,11 +223,10 @@ export default function ReviewModal({
                 >
                   <Star
                     size={36}
-                    className={`${
-                      star <= rating
-                        ? "fill-yellow-400 text-yellow-400"
-                        : "fill-slate-50 text-slate-200"
-                    } cursor-pointer transition-colors`}
+                    className={`${star <= rating
+                      ? "fill-yellow-400 text-yellow-400"
+                      : "fill-slate-50 text-slate-200"
+                      } cursor-pointer transition-colors`}
                   />
                 </button>
               ))}
@@ -142,7 +239,7 @@ export default function ReviewModal({
           {/* Review Textarea */}
           <div className="space-y-2.5">
             <Controller
-              name="comment"
+              name="feedback"
               control={control}
               rules={{ required: "Review text is required" }}
               render={({ field }) => (
@@ -153,8 +250,8 @@ export default function ReviewModal({
                 />
               )}
             />
-            {errors.comment && (
-              <p className="text-xs text-red-500 font-medium ml-1">{errors.comment.message}</p>
+            {errors.feedback && (
+              <p className="text-xs text-red-500 font-medium ml-1">{errors.feedback.message}</p>
             )}
           </div>
 
@@ -171,9 +268,17 @@ export default function ReviewModal({
             )}
             <Button
               type="submit"
+              disabled={submitting}
               className="cursor-pointer"
             >
-              {mode === "add" ? "Add" : "Update"}
+              {submitting ? (
+                <span className="flex items-center gap-2">
+                  <Loader2 className="animate-spin" size={16} />
+                  {mode === "add" ? "Adding..." : "Updating..."}
+                </span>
+              ) : (
+                mode === "add" ? "Add" : "Update"
+              )}
             </Button>
           </div>
         </form>

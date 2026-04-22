@@ -17,10 +17,6 @@ const OurOfficersPage = () => {
       <div className="container mx-auto px-4">
         <EmployeeCategory />
 
-        <h2 className="text-2xl md:text-4xl text-center font-bold text-secondary mb-10 max-w-fit mx-auto border-b-2 border-secondary pb-2">
-          Executive Management
-        </h2>
-
         <div className="mx-auto max-w-5xl mb-10">
           <Suspense fallback={<TeamMemberCardSkeleton />}>
             <TeamMemberCardWrapper isAbout={false} />
