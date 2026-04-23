@@ -17,7 +17,7 @@ const CommonHeroBanner = ({
       {/* Optimized Background Image */}
       <AspectRatio ratio={16 / 2.5}>
         <Image
-          src={bgImage || "/images/Our Branches blue.svg"}
+          src={bgImage || "/images/Our Branch Final.svg"}
           alt={title || ""}
           fill
           priority

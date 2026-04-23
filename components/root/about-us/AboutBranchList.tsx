@@ -6,6 +6,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import Link from "next/link";
+import Image from "next/image";
 interface WebBranch {
   id: number;
   name: string;
@@ -18,23 +19,36 @@ interface BranchCardProps {
   branchInfo: WebBranch;
 }
 const AboutBranchList = ({ branchInfo }: BranchCardProps) => {
-    const { name, address, phone = [], email = [], google_map } = branchInfo;
+  const { name, address, phone = [], email = [], google_map } = branchInfo;
   return (
     <Card className="flex flex-col xl:flex-row gap-4 px-4 py-3 bg-primary/10 transition-colors border border-primary/50 rounded-lg ">
       {/* Map section */}
-      <div className="relative h-[162px] w-full xl:w-[200px] shrink-0 overflow-hidden rounded-lg shadow border border-primary/50">
-        <iframe
-          src={
-            google_map ||
-            "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3651.0!2d90.3654!3d23.7808!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjPCsDQ2JzUxLjAiTiA5MMKwMjEnNTUuNCJF!5e0!3m2!1sen!2sbd!4v1620000000000!5m2!1sen!2sbd"
-          }
-          className="w-full h-full border-0 grayscale-20"
-          loading="lazy"
-          referrerPolicy="no-referrer-when-downgrade"
-          title={`${name} Location`}
-          allowFullScreen
-        />
-      </div>
+      {
+        google_map ? (
+          <div className="relative h-[162px] w-full xl:w-[200px] shrink-0 overflow-hidden rounded-lg shadow border border-primary/50">
+            <iframe
+              src={
+                google_map
+              }
+              className="w-full h-full border-0 grayscale-20"
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title={`${name} Location`}
+              allowFullScreen
+            />
+          </div>
+        ) : (
+          <div className="w-full h-full relative">
+            <Image
+              src="/images/placeholder_img.jpg"
+              alt={name}
+              fill
+              className="w-full h-full object-cover"
+            />
+          </div>
+        )
+      }
+
 
       {/* Info section */}
       <CardContent className="flex-1 px-2 flex flex-col py-1">

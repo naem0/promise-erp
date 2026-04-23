@@ -7,6 +7,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import Link from "next/link";
+import Image from "next/image";
 
 interface WebBranch {
   id: number;
@@ -42,11 +43,14 @@ const BranchCard = ({ branchInfo }: BranchCardProps) => {
             referrerPolicy="no-referrer-when-downgrade"
           />
         ) : (
-          <img
-            src="/images/placeholder_img.jpg"
-            alt={name}
-            className="w-full h-full object-cover"
-          />
+          <div className="w-full h-full relative">
+            <Image
+              src="/images/placeholder_img.jpg"
+              alt={name}
+              fill
+              className="w-full h-full object-cover"
+            />
+          </div>
         )}
       </div>
 

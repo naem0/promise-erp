@@ -282,6 +282,13 @@ export const sidebarData = {
               url: "/web-content/news-feeds",
               permissions: ["view-news-feeds"],
             },
+
+            {
+              title: "Contact Page",
+              url: "/web-content/contact-page",
+              permissions: ["view-contact-pages"],
+            },
+            
             {
               title: "Branches",
               url: "/lms/branches",

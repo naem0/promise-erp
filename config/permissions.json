@@ -118,6 +118,10 @@
 
     { "path": "/web-content/job-applies", "permissions": ["view-job-applications"] },
     { "path": "/web-content/job-applies/add", "permissions": ["create-job-applications"] },
-    { "path": "/web-content/job-applies/edit", "permissions": ["edit-job-applications"], "isDynamic": true }
+    { "path": "/web-content/job-applies/edit", "permissions": ["edit-job-applications"], "isDynamic": true },
+    
+    { "path": "/web-content/contact-page", "permissions": ["view-contact-pages"] },
+    { "path": "/web-content/contact-page/add", "permissions": ["create-contact-pages"] },
+    { "path": "/web-content/contact-page/edit", "permissions": ["edit-contact-pages"], "isDynamic": true }  
   ]
 }

@@ -57,12 +57,12 @@ const HeaderNavLink = async ({
     <nav className={`hidden lg:flex items-center justify-between w-full my-3`}>
       <div className="flex items-center justify-center gap-4 xl:gap-6 w-full">
         {navLinks?.map((link) => (
-          <div key={link.name}>
+          <div key={link?.name}>
             {link.hasDropdown ? (
               <DropdownMenu>
                 <DropdownMenuTrigger>
                   <Link
-                    href={link.href}
+                    href={link?.href}
                     className="flex items-center gap-1 text-base font-semibold ease-in-out black-color"
                   >
                     {link?.name}

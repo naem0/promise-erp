@@ -693,10 +693,10 @@ export interface StudentMyCoursesResponse {
 export async function getStudentMyCourses(
   token: string,
   {
-  params = {},
-}: {
-  params?: Record<string, unknown>;
-}): Promise<StudentMyCoursesResponse> {
+    params = {},
+  }: {
+    params?: Record<string, unknown>;
+  }): Promise<StudentMyCoursesResponse> {
 
   if (!token) {
     throw new Error("Unauthorized: Access token not found");
@@ -1514,7 +1514,7 @@ export async function getAllJobTitlesForEarning(
       },
     );
 
-    if(response.status === 404) {
+    if (response.status === 404) {
       console.warn("No job title earning data found.");
       return null;
     }
@@ -1719,7 +1719,7 @@ export async function getElPaymentMethods(): Promise<PaymentMethodListResponse |
       },
     });
 
-    if(response.status === 404) {
+    if (response.status === 404) {
       console.warn("No EL payment methods found.");
       return null;
     }
@@ -1800,3 +1800,228 @@ export async function CourseDuePaymentRequests(
   }
 }
 // End Course Due Payment Requests
+
+// ============================================================
+// Start Student Reviews
+// ============================================================
+
+export interface ReviewUser {
+  id: number;
+  name: string;
+  profile_image?: string;
+}
+export interface ReviewBatch {
+  id: number;
+  name: string;
+}
+export interface ReviewCourse {
+  id: number;
+  name: string;
+}
+export interface StudentReview {
+  id: number;
+  user: ReviewUser;
+  batch: ReviewBatch;
+  course: ReviewCourse;
+  rating: number;
+  feedback: string;
+  status: number;
+  is_featured: number;
+  created_at: string;
+}
+
+export interface StudentReviewsData {
+  total_reviews: number;
+  reviews: StudentReview[];
+  pagination: PaginationType;
+}
+
+export interface StudentReviewsApiResponse {
+  success: boolean;
+  message: string;
+  code: number;
+  data: StudentReviewsData;
+  errors?: Record<string, string[]>;
+}
+
+export async function getStudentReviews({
+  params = {},
+}: {
+  params?: Record<string, unknown>;
+}): Promise<StudentReviewsApiResponse | null> {
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+
+  if (!token) {
+    throw new Error("Unauthorized: Access token not found");
+  }
+
+  const urlParams = new URLSearchParams();
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== "") {
+      urlParams.append(key, String(value));
+    }
+  });
+
+  const queryString = urlParams.toString();
+  console.log("reviews params===>", queryString)
+
+  try {
+    const res = await fetch(
+      `${API_BASE}/reviews${queryString ? `?${queryString}` : ""}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      },
+    );
+
+    if (res.status === 404) {
+      console.warn("No reviews found.");
+      return null;
+    }
+
+    if (!res.ok) {
+      throw new Error(
+        `StudentReviews API Error: ${res.status} ${res.statusText}`,
+      );
+    }
+
+    const data: StudentReviewsApiResponse = await res.json();
+    return data;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("getStudentReviews Error:", error.message);
+      throw error;
+    }
+    throw new Error("Unknown error occurred while fetching student reviews");
+  }
+}
+// End Student Reviews
+
+
+// Start Student Course Short Lists
+
+export interface CourseShortList {
+  course_id: number;
+  course_name: string;
+  batch_id: number;
+  batch_name: string;
+}
+
+export interface CourseShortListsData {
+  courses: CourseShortList[];
+  pagination: PaginationType;
+}
+
+export interface CourseShortListsApiResponse {
+  success: boolean;
+  message: string;
+  code: number;
+  data: CourseShortListsData;
+  errors?: Record<string, string[]>;
+}
+
+export async function getStudentCourseShortLists(token: string): Promise<CourseShortListsApiResponse | null> {
+
+  if (!token) {
+    throw new Error("Unauthorized: Access token not found");
+  }
+
+  try {
+    const res = await fetch(
+      `${API_BASE}/student-panel/my-courses/short`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      },
+    );
+
+    if (res.status === 404) {
+      console.warn("No reviews found.");
+      return null;
+    }
+
+    if (!res.ok) {
+      throw new Error(
+        `getStudentCourseShortLists API Error: ${res.status} ${res.statusText}`,
+      );
+    }
+
+    const data: CourseShortListsApiResponse = await res.json();
+    return data;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("getStudentCourseShortLists Error:", error.message);
+      throw error;
+    }
+    throw new Error("Unknown error occurred while fetching student course");
+  }
+}
+
+// End Student Course Short Lists
+
+
+// Start Create New Student Review
+export interface CreateNewStudentReviewData {
+  id: number;
+  user: ReviewUser;
+  batch: ReviewBatch;
+  course: ReviewCourse;
+  rating: number;
+  feedback: string;
+  status: number;
+  is_featured: number;
+  created_at: string;
+}
+
+export interface CreateStudentReviewApiResponse {
+  success: boolean;
+  message: string;
+  code: number;
+  data: CreateNewStudentReviewData;
+  errors?: Record<string, string[]>;
+}
+export interface CreateReviewPayload {
+  batch_id: number;
+  user_id?: number;
+  rating: number;
+  feedback: string;
+  status: number; // 0 = pending, 1 = approved
+  is_featured: number; // 0 = no, 1 = yes
+}
+
+export async function createNewStudentReview(
+  payload: CreateReviewPayload,
+  token: string,
+): Promise<CreateStudentReviewApiResponse> {
+
+  if (!token) {
+    throw new Error("Unauthorized: Access token not found");
+  }
+  try {
+    const res = await fetch(`${API_BASE}/reviews`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const data: CreateStudentReviewApiResponse = await res.json();
+    return data;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error creating review:", error.message);
+      throw error;
+    }
+    throw new Error("Unknown error occurred while creating review");
+  }
+}
+// End Create New Student Review
