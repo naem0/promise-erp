@@ -28,28 +28,28 @@ const ContactInfoCards = async () => {
   }
   const { email, phone, address, office_hours } = contactInfo?.data || {};
 
-  const contactDetails = [
-    {
-      icon: Mail,
-      title: "Email Us",
-      details: email ? email.split(",") : [],
-    },
-    {
-      icon: Phone,
-      title: "Call Us",
-      details: phone ? phone.split(",") : [],
-    },
-    {
-      icon: MapPin,
-      title: "Visit Us",
-      details: address ? [address] : [],
-    },
-    {
-      icon: Clock,
-      title: "Office Hours",
-      details: office_hours ? [office_hours] : [],
-    },
-  ];
+const contactDetails = [
+  {
+    icon: Mail,
+    title: "Email Us",
+    details: Array.isArray(email) ? email : [],
+  },
+  {
+    icon: Phone,
+    title: "Call Us",
+    details: Array.isArray(phone) ? phone : [],
+  },
+  {
+    icon: MapPin,
+    title: "Visit Us",
+    details: address ? [address] : [],
+  },
+  {
+    icon: Clock,
+    title: "Office Hours",
+    details: office_hours ? [office_hours] : [],
+  },
+];
   return (
     <section className="py-8 md:py-12">
       <div className="container mx-auto">

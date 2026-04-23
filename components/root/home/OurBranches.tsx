@@ -22,6 +22,7 @@ interface BranchesDataProps {
 const OurBranches = ({ branchesData }: BranchesDataProps) => {
 
   const branches = branchesData?.data?.branches || [];
+  console.log("====>>", branches);
   const plugin = useRef(
       Autoplay({
         delay: 2000,
@@ -97,7 +98,7 @@ const OurBranches = ({ branchesData }: BranchesDataProps) => {
                 </ul>
                 <div className="pt-4">
                   <Button className="w-fit group-hover:bg-white hover:bg-white hover:text-black group-hover:text-black" asChild>
-                    <Link href={`${branche?.google_map}`}>
+                    <Link href={`https://www.google.com/maps/embed?pb=${branche?.google_map}`}>
                       View Branch
                     </Link>
                   </Button>
