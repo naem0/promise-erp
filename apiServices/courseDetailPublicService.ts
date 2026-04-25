@@ -51,6 +51,7 @@ export interface CourseLearning {
 
 export interface Chapter {
   id: number;
+  description?: string;
   title: string;
   lessons: Lesson[];
 }
@@ -58,6 +59,7 @@ export interface Chapter {
 export interface Lesson {
   id: number;
   title: string;
+  description?: string;
 }
 
 export interface CourseInstructor {
@@ -97,7 +99,11 @@ export interface CourseDetail {
   id: number;
   category_id: number;
   title: string;
+  sub_title: string;
+  short_description: string;
   slug: string;
+  level: string;
+  about_support: string;
   total_certified?: number;
   description: string;
   featured_image?: string;
@@ -111,6 +117,7 @@ export interface CourseDetail {
   course_type: "free" | "govt" | "paid" | null;
   is_collaboration: boolean;
   category: Category;
+  total_prerecorded_video: number;
   branch_count: number;
   branches: Branch[];
   batch: Batch;

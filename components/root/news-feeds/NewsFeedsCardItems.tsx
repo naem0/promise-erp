@@ -8,8 +8,8 @@ interface NewsFeedsCardItemsProps {
 }
 const NewsFeedsCardItems = ({ item }: NewsFeedsCardItemsProps) => {
   return (
-    <Card className="shadow-md rounded-lg h-full py-0">
-      <CardContent className="py-4 px-4 ">
+    <Card className="shadow-md rounded-lg h-full py-0 overflow-hidden">
+      <CardContent className="py-4 px-4 overflow-hidden">
         <h4 className="mb-4">
           <Link href={item.news_link || "#"} className="text-base lg:text-xl font-bold">
             {item.title}

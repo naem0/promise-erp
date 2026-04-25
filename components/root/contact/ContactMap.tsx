@@ -12,6 +12,7 @@ const ContactMap = () => {
   const mapEmbedUrl =
     contactInfo?.data?.google_map ??
     "https://maps.app.goo.gl/gMaS3uUo2YVFA3eU7";
+  console.log("mapEmbedUrl===>", mapEmbedUrl);
   return (
     <Card className="h-full py-0">
       <CardHeader className="pt-4">
@@ -34,19 +35,12 @@ const ContactMap = () => {
             title="Office Location"
             allowFullScreen
           />
-
-          {/* Custom Marker Overlay */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-full pointer-events-none">
-            <div className="bg-secondary rounded-full p-2 shadow-lg">
-              <MapPin className="w-5 h-5 text-secondary" />
-            </div>
-          </div>
         </div>
 
         {/* Address Card */}
         <div className="flex items-start gap-3 p-3 bg-secondary/15 rounded-xl">
           <div className="bg-secondary rounded-full p-2 shrink-0">
-            <MapPin className="w-4 h-4 text-white" />
+            <MapPin className="w-6 h-6 text-white" />
           </div>
 
           <div>

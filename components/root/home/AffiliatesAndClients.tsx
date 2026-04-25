@@ -38,19 +38,20 @@ export default async function AffiliatesClientsPage() {
     concerns.length === 0;
 
   if (isEmpty) {
-    return (
-      <section className="py-8 md:py-14 bg-secondary/5">
-        <div className="container mx-auto px-4 text-center">
-          <SectionTitle
-            title={affiliatesData?.data?.section_title}
-            subtitle={affiliatesData?.data?.section_subtitle}
-          />
-          <p className="mt-6 text-gray-500 text-lg">
-            No affiliates or clients available right now.
-          </p>
-        </div>
-      </section>
-    );
+    // return (
+    //   <section className="py-8 md:py-14 bg-secondary/5">
+    //     <div className="container mx-auto px-4 text-center">
+    //       <SectionTitle
+    //         title={affiliatesData?.data?.section_title}
+    //         subtitle={affiliatesData?.data?.section_subtitle}
+    //       />
+    //       <p className="mt-6 text-gray-500 text-lg">
+    //         No affiliates or clients available right now.
+    //       </p>
+    //     </div>
+    //   </section>
+    // );
+    return null;
   }
 
   return (

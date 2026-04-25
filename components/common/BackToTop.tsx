@@ -32,7 +32,7 @@ const BackToTop = () => {
   return (
     <Button
       onClick={scrollToTop}
-      className="fixed bottom-2 right-4 z-50 rounded-full p-6 shadow-lg"
+      className="fixed cursor-pointer bottom-2 right-4 z-50 rounded-full p-6 shadow-lg"
     >
       <ArrowUp size={20} />
     </Button>
