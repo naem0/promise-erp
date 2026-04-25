@@ -2,7 +2,7 @@
 
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { revalidateTag } from "next/cache";
+import { cacheTag, updateTag } from "next/cache";
 import { ApiResponse } from "@/lib/apiErrorHandler";
 import { PaginationType } from "@/types/pagination";
 
@@ -120,7 +120,7 @@ export async function addBatch(batchData: CreateBatchRequest): Promise<BatchResp
 
 
 
-    revalidateTag("batches-list", "max");
+    updateTag("batches-list");
 
     return result;
   } catch (error: unknown) {
@@ -140,6 +140,8 @@ export async function addBatch(batchData: CreateBatchRequest): Promise<BatchResp
 export async function getBatches(
   params: Record<string, unknown> = {}
 ): Promise<BatchResponse> {
+  "use cache: private";
+  cacheTag("batches-list");
   try {
     const session = await getServerSession(authOptions);
     const token = session?.accessToken;
@@ -163,9 +165,12 @@ export async function getBatches(
       }
     });
 
+    if (!res.ok) {
+      throw new Error(`Status: ${res.status} ${res.statusText}`);
+    }
 
-
-    return res.json();
+    const result = await res.json();
+    return result;
   } catch (error: unknown) {
     console.error("Error in getBatches:", error);
     if (error instanceof Error) {
@@ -241,8 +246,8 @@ export async function updateBatch(
 
 
 
-    revalidateTag("batches-list", "max");
-    revalidateTag(`batch-${id}`, "max");
+    updateTag("batches-list");
+    updateTag(`batch-${id}`);
 
     return result;
   } catch (error: unknown) {
@@ -397,8 +402,8 @@ export async function deleteBatch(id: number): Promise<ApiResponse> {
     const result = await res.json();
 
     // Revalidate cache
-    revalidateTag("batches-list", "max");
-    revalidateTag(`batch-${id}`, "max");
+    updateTag("batches-list");
+    updateTag(`batch-${id}`);
 
     return result;
   } catch (error: unknown) {

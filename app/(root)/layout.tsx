@@ -1,6 +1,7 @@
 import MainFooter from "@/components/common/MainFooter";
 import MainHeader from "@/components/common/MainHeader";
 import Link from "next/link";
+import BackToTop from "@/components/common/BackToTop";
 
 export default function RootLayout({
   children,
@@ -37,6 +38,7 @@ export default function RootLayout({
         </div>
       </main>
       <MainFooter />
+      <BackToTop />
     </>
   );
 }

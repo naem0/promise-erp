@@ -20,17 +20,16 @@ interface BranchCardProps {
 }
 const AboutBranchList = ({ branchInfo }: BranchCardProps) => {
   const { name, address, phone = [], email = [], google_map } = branchInfo;
+  console.log("google_map", google_map);
   return (
     <Card className="flex flex-col xl:flex-row gap-4 px-4 py-3 bg-primary/10 transition-colors border border-primary/50 rounded-lg ">
       {/* Map section */}
       {
         google_map ? (
-          <div className="relative h-[162px] w-full xl:w-[200px] shrink-0 overflow-hidden rounded-lg shadow border border-primary/50">
+          <div className="relative h-[162px] w-full xl:w-[200px] shrink-0 rounded-lg shadow border border-primary/50">
             <iframe
-              src={
-                google_map
-              }
-              className="w-full h-full border-0 grayscale-20"
+              src={`https://www.google.com/maps/embed?pb=${google_map}`}
+              className="w-full h-full rounded-lg border-0 grayscale-20"
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
               title={`${name} Location`}
@@ -38,12 +37,12 @@ const AboutBranchList = ({ branchInfo }: BranchCardProps) => {
             />
           </div>
         ) : (
-          <div className="w-full h-full relative">
+          <div className="w-[200px] h-full relative rounded-lg shadow border border-primary/50">
             <Image
               src="/images/placeholder_img.jpg"
               alt={name}
               fill
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover rounded-lg"
             />
           </div>
         )

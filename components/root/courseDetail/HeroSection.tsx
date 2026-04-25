@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { PlayCircle, Clock, Users, HeadphonesIcon, Inbox, GraduationCap } from "lucide-react";
+import { PlayCircle, Clock, Users, HeadphonesIcon, Inbox, GraduationCap, Play } from "lucide-react";
 import { CourseDetail } from "@/apiServices/courseDetailPublicService";
 import Image from "next/image";
 import RatingStars from "@/components/common/RatingStars";
@@ -19,7 +19,7 @@ export const HeroSection = ({ course }: HeroSectionProps) => {
   const discount = course.batch?.discount || 0;
   const hasDiscount = discount > 0 && originalPrice > price;
   const discount_percentage = course.batch?.discount_percentage || 0;
-  const batchId = course?.batch?.id 
+  const batchId = course?.batch?.id
   return (
     <div className="grid lg:grid-cols-2 gap-12 items-center">
       {/* Left Column - Course Info */}
@@ -27,18 +27,23 @@ export const HeroSection = ({ course }: HeroSectionProps) => {
         <Badge className="bg-primary text-primary-foreground mb-4">
           <GraduationCap className="w-5 h-5 mr-1" /> {course.total_certified || 0} Learners Certified
         </Badge>
-        <h1 className="text-4xl font-bold text-foreground mb-4">
-          {course.title}
+        <h1 className="text-2xl lg:text-4xl font-bold text-foreground mb-4">
+          {course?.title}
         </h1>
+        <h4 className="text-secondary mb-2">{course?.sub_title}</h4>
+        <p className="text-muted-foreground mb-2">{course?.short_description}</p>
+        <h3 className="text-primary mb-4">{course?.about_support}</h3>
         <div className="flex items-center gap-2 mb-4">
           <Inbox className="w-4 h-4 mr-1" />
           <span className="text-sm text-primary">{totalReviews} Reviews</span>
           <span>|</span>
           <RatingStars rating={rating} />
           <span className="text-sm text-primary">({rating.toFixed(1)} Rating)</span>
+          <span><Play className="w-4 h-4 mr-1" /> </span>
+          <span className="text-sm text-primary">{course?.total_prerecorded_video || 0} Videos</span>
         </div>
 
-        <div className="flex gap-3 mb-6 flex-wrap">
+        <div className="flex gap-3 mb-3 flex-wrap">
           {course.batch?.start_date ? (
             <Badge variant="secondary" className="py-2 px-6">
               <PlayCircle className="w-4 h-4 mr-1" />
@@ -63,6 +68,12 @@ export const HeroSection = ({ course }: HeroSectionProps) => {
               {course.total_live_class} total live classes
             </Badge>
           ) : null}
+        </div>
+        <div className="mb-4">
+          <Badge variant="secondary" className="py-2 px-6">
+            <Users className="w-4 h-4 mr-1" />
+            Level : {course?.level}
+          </Badge>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">

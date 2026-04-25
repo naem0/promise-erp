@@ -83,7 +83,7 @@ const ImageGalleryCardItems = ({ event }: ImageGalleryCardItemsProps) => {
         </Card>
       </DialogTrigger>
 
-      <DialogContent className="w-[95%] md:max-w-[85%] max-h-[90vh] p-0 overflow-y-auto outline-none transition-all [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+      <DialogContent className="w-[90%] max-h-[90vh] md:max-w-[60%] md:max-h-[80vh] overflow-hidden p-0 ">
         <VisuallyHidden>
           <DialogTitle>{event?.title}</DialogTitle>
         </VisuallyHidden>
@@ -108,15 +108,15 @@ const ImageGalleryCardItems = ({ event }: ImageGalleryCardItemsProps) => {
               </div>
 
               <div className="relative group">
-                <CarouselContent className=" w-full">
+                <CarouselContent className="w-full">
                   {images.map((img, index) => (
                     <CarouselItem key={index} className="basis-full">
-                      <div className="relative w-full h-[50vh] md:h-[60vh] lg:h-[70vh] overflow-hidden rounded-xl bg-black/5">
+                      <div className="relative w-full aspect-[16/8] rounded-xl bg-black/5">
                         <Image
                           src={img}
                           alt={`gallery-${index}`}
                           fill
-                          className="object-cover"
+                          className="object-cover rounded-xl"
                           priority={index === 0}
                         />
                       </div>

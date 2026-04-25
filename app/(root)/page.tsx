@@ -27,7 +27,6 @@ import TeacherListSkeleton from "@/components/common/TeacherListSkeleton";
 import StudentSuccessSkeleton from "@/components/common/StudentSuccessSkeleton";
 import NewsfeedsArchiveSkeleton from "@/components/common/NewsfeedsArchiveSkeleton";
 import NewsletterSkeleton from "@/components/common/NewsletterSkeleton";
-import BackToTop from "@/components/common/BackToTop";
 import HomeMembersSection from "@/components/root/home/HomeMembersSection";
 import HomeMemberSkeleton from "@/components/root/home/HomeMemberSkeleton";
 
@@ -79,7 +78,7 @@ const HomePage = () => {
       <Suspense fallback={<NewsletterSkeleton />}>
         <NewsletterSection />
       </Suspense>
-      <BackToTop />
+      
     </>
   );
 };
