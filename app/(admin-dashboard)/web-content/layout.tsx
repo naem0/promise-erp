@@ -8,7 +8,8 @@ export default function homePageAdminLayout({
   return (
     <div className="min-h-[calc(100vh-64px)] bg-gray-50 p-4">
       <Suspense fallback={null}>
-        {children}      </Suspense>
+        {children}
+      </Suspense>
     </div>
   );
 }
