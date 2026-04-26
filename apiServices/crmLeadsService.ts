@@ -2,7 +2,7 @@
 
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { cacheTag, updateTag } from "next/cache";
+import { cacheLife, cacheTag, updateTag } from "next/cache";
 import { PaginationType } from "@/types/pagination";
 
 const API_BASE =
@@ -12,47 +12,84 @@ const API_BASE =
 // Interfaces
 // =======================
 
-export interface CRMCategory {
+export interface CRMLeadCourse {
   id: number;
   name: string;
-  description: string;
-  image_url?: string;
-  status: number;
-  status_text: string;
-  total_lead: number;
 }
 
-export interface CRMCategoriesResponse {
+export interface CRMLeadCategory {
+  id: number;
+  name: string;
+}
+
+export interface CRMLeadBranch {
+  id: number;
+  name: string;
+}
+
+export interface CRMLead {
+  id: number;
+  name: string;
+  phone: string;
+  email: string;
+  address: string;
+  referrer_name?: string;
+  referrer_phone?: string;
+  course_name?: string;
+  course?: CRMLeadCourse;
+  course_type: number;
+  course_type_text: string;
+  shift: number;
+  shift_text: string;
+  status: number;
+  status_text: string;
+  source: number;
+  source_text: string;
+  fb_lead_id?: string;
+  category?: CRMLeadCategory;
+  branch?: CRMLeadBranch;
+  assigned_consultant?: {
+    id: number;
+    name: string;
+    phone?: string;
+    email: string;
+  };
+  notes?: string;
+  call_count: number;
+  message_count: number;
+  last_date?: string;
+}
+
+export interface CRMLeadsResponse {
   success: boolean;
   message: string;
   code: number;
   data: {
-    total_categories: number;
-    categories: CRMCategory[];
+    total_leads: number;
+    leads: CRMLead[];
     pagination: PaginationType;
   };
   errors?: Record<string, string[]>;
 }
 
-export interface SingleCRMCategoryResponse {
+export interface SingleCRMLeadResponse {
   success: boolean;
   message: string;
   code: number;
-  data: CRMCategory;
+  data: CRMLead;
   errors?: Record<string, string[] | string>;
 }
 
 // =======================
-// GET CATEGORIES (CACHED)
+// GET LEADS (CACHED)
 // =======================
 
-export async function getCRMCategoriesCached(
+export async function getCRMLeadsCached(
   token: string,
   params: Record<string, unknown> = {},
-): Promise<CRMCategoriesResponse> {
-  "use cache";
-  cacheTag("crm-categories-list");
-
+): Promise<CRMLeadsResponse> {
+  "use cache: private";
+  cacheTag("crm-leads-list");
   try {
     const urlParams = new URLSearchParams();
     for (const key in params) {
@@ -61,7 +98,7 @@ export async function getCRMCategoriesCached(
       }
     }
 
-    const res = await fetch(`${API_BASE}/crm/categories?${urlParams.toString()}`, {
+    const res = await fetch(`${API_BASE}/crm/leads?${urlParams.toString()}`, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -69,8 +106,7 @@ export async function getCRMCategoriesCached(
     });
 
     if (!res.ok) {
-        const result = await res.json();
-        return result;
+      throw new Error(`Status: ${res.status} ${res.statusText}`);
     }
     const result = await res.json();
 
@@ -79,40 +115,40 @@ export async function getCRMCategoriesCached(
     if (error instanceof Error) {
       throw new Error(error.message);
     } else {
-      throw new Error("Error fetching CRM categories");
+      throw new Error("Error fetching CRM leads");
     }
   }
 }
 
 // =======================
-// GET CATEGORIES WRAPPER
+// GET LEADS WRAPPER
 // =======================
 
-export async function getCRMCategories(
+export async function getCRMLeads(
   params: Record<string, unknown> = {},
-): Promise<CRMCategoriesResponse> {
+): Promise<CRMLeadsResponse> {
   const session = await getServerSession(authOptions);
   const token = session?.accessToken;
 
   if (!token) throw new Error("No valid session/token");
 
-  return getCRMCategoriesCached(token, params);
+  return getCRMLeadsCached(token, params);
 }
 
 // =======================
-// GET SINGLE CATEGORY
+// GET SINGLE LEAD
 // =======================
 
-export async function getCRMCategoryById(
+export async function getCRMLeadById(
   id: number,
-): Promise<SingleCRMCategoryResponse> {
+): Promise<SingleCRMLeadResponse> {
   try {
     const session = await getServerSession(authOptions);
     const token = session?.accessToken;
 
     if (!token) throw new Error("No valid session/token");
 
-    const res = await fetch(`${API_BASE}/crm/categories/${id}`, {
+    const res = await fetch(`${API_BASE}/crm/leads/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -120,37 +156,36 @@ export async function getCRMCategoryById(
     });
 
     if (!res.ok) {
-        const result = await res.json();
-        return result;
+      throw new Error(`Status: ${res.status} ${res.statusText}`);
     }
 
     const result = await res.json();
 
     return result;
   } catch (error: unknown) {
-    console.error("Error in getCRMCategoryById:", error);
+    console.error("Error in getCRMLeadById:", error);
     if (error instanceof Error) {
-      throw new Error(error.message || "Failed to fetch CRM category");
+      throw new Error(error.message || "Failed to fetch CRM lead");
     } else {
-      throw new Error("Failed to fetch CRM category");
+      throw new Error("Failed to fetch CRM lead");
     }
   }
 }
 
 // =======================
-// CREATE CATEGORY
+// CREATE LEAD
 // =======================
 
-export async function createCRMCategory(
+export async function createCRMLead(
   formData: FormData,
-): Promise<SingleCRMCategoryResponse> {
+): Promise<SingleCRMLeadResponse> {
   try {
     const session = await getServerSession(authOptions);
     const token = session?.accessToken;
 
     if (!token) throw new Error("No valid session/token");
 
-    const res = await fetch(`${API_BASE}/crm/categories`, {
+    const res = await fetch(`${API_BASE}/crm/leads`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -160,38 +195,34 @@ export async function createCRMCategory(
 
     const result = await res.json();
 
-    updateTag("crm-categories-list");
+    updateTag("crm-leads-list");
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error("Error in createCRMCategory:", error);
-      throw new Error(error.message || "Failed to create CRM category");
+      console.error("Error in createCRMLead:", error);
+      throw new Error(error.message || "Failed to create CRM lead");
     } else {
-      throw new Error("Failed to create CRM category");
+      throw new Error("Failed to create CRM lead");
     }
   }
 }
 
 // =======================
-// UPDATE CATEGORY
+// UPDATE LEAD
 // =======================
 
-export async function updateCRMCategory(
+export async function updateCRMLead(
   id: number,
   formData: FormData,
-): Promise<SingleCRMCategoryResponse> {
+): Promise<SingleCRMLeadResponse> {
   try {
     const session = await getServerSession(authOptions);
     const token = session?.accessToken;
 
     if (!token) throw new Error("No valid session/token");
 
-    if (!formData.has("_method")) {
-        formData.append("_method", "PUT");
-    }
-
-    const res = await fetch(`${API_BASE}/crm/categories/${id}`, {
-      method: "POST",
+    const res = await fetch(`${API_BASE}/crm/leads/${id}`, {
+      method: "POST", 
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -200,25 +231,26 @@ export async function updateCRMCategory(
 
     const result = await res.json();
 
-    updateTag("crm-categories-list");
+    updateTag("crm-leads-list");
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error("Error in updateCRMCategory:", error);
-      throw new Error(error.message || "Failed to update CRM category");
+      console.error("Error in updateCRMLead:", error);
+      throw new Error(error.message || "Failed to update CRM lead");
     } else {
-      throw new Error("Failed to update CRM category");
+      throw new Error("Failed to update CRM lead");
     }
   }
 }
 
 // =======================
-// DELETE CATEGORY
+// DELETE LEAD
 // =======================
 
-export async function deleteCRMCategory(
+
+export async function deleteCRMLead(
   id: number,
-): Promise<SingleCRMCategoryResponse> {
+): Promise<SingleCRMLeadResponse> {
   try {
     const session = await getServerSession(authOptions);
     const token = session?.accessToken;
@@ -227,7 +259,7 @@ export async function deleteCRMCategory(
       throw new Error("No valid session/token");
     }
 
-    const res = await fetch(`${API_BASE}/crm/categories/${id}`, {
+    const res = await fetch(`${API_BASE}/crm/leads/${id}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -237,14 +269,14 @@ export async function deleteCRMCategory(
 
     const result = await res.json();
 
-    updateTag("crm-categories-list");
+    updateTag("crm-leads-list");
     return result;
   } catch (error: unknown) {
-    console.error("Error in deleteCRMCategory:", error);
+    console.error("Error in deleteCRMLead:", error);
     if (error instanceof Error) {
       throw new Error(error.message);
     } else {
-      throw new Error("Failed to delete CRM category");
+      throw new Error("Failed to delete CRM lead");
     }
   }
 }

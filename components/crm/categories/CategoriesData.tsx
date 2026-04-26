@@ -33,8 +33,10 @@ const CategoriesData = async ({
         typeof resolvedSearchParams.page === "string"
             ? Number(resolvedSearchParams.page)
             : 1;
+    const per_page = typeof resolvedSearchParams.per_page === "string" ? Number(resolvedSearchParams.per_page) : 15;
     const params = {
         page,
+        per_page,
         search:
             typeof resolvedSearchParams.search === "string"
                 ? resolvedSearchParams.search
@@ -145,7 +147,7 @@ const CategoriesData = async ({
                                 </Badge>
                             </TableCell>
                             <TableCell className="text-center">
-                                {category.total_leads}
+                                {category.total_lead}
                             </TableCell>
                         </TableRow>
                     ))}
@@ -153,7 +155,7 @@ const CategoriesData = async ({
             </Table>
             
         </div>
-        {paginationData && (
+        {paginationData && paginationData.last_page > 1 &&   (
                 <div className="mt-4">
                     <Pagination pagination={paginationData} />
                 </div>

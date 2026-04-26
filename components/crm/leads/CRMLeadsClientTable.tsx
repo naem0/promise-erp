@@ -1,0 +1,449 @@
+"use client";
+
+import { useState, useTransition, useCallback } from "react";
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogFooter,
+    DialogDescription,
+} from "@/components/ui/dialog";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Pencil, UserCheck, Loader2, X } from "lucide-react";
+import Link from "next/link";
+import { toast } from "sonner";
+import { CRMLead } from "@/apiServices/crmLeadsService";
+import { assignLeadsToUser, Consultant } from "@/apiServices/crmLeadsActions";
+import DeleteCRMLeadButton from "./DeleteCRMLeadButton";
+import { truncate } from "@/lib/utils";
+
+
+interface CRMLeadsClientTableProps {
+    leads: CRMLead[];
+    page: number;
+    perPage: number;
+    consultants: Consultant[];
+}
+
+export default function CRMLeadsClientTable({
+    leads,
+    page,
+    perPage,
+    consultants,
+}: CRMLeadsClientTableProps) {
+    const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
+    const [assignModalOpen, setAssignModalOpen] = useState(false);
+    const [selectedUserId, setSelectedUserId] = useState<string>("");
+    const [isPending, startTransition] = useTransition();
+
+    /* ── Selection helpers ── */
+    const allSelected =
+        leads.length > 0 && leads.every((l) => selectedIds.has(l.id));
+    const someSelected = selectedIds.size > 0;
+
+    const toggleAll = useCallback(() => {
+        if (allSelected) {
+            setSelectedIds(new Set());
+        } else {
+            setSelectedIds(new Set(leads.map((l) => l.id)));
+        }
+    }, [allSelected, leads]);
+
+    const toggleOne = useCallback((id: number) => {
+        setSelectedIds((prev) => {
+            const next = new Set(prev);
+            if (next.has(id)) next.delete(id);
+            else next.add(id);
+            return next;
+        });
+    }, []);
+
+    /* ── Assign submit ── */
+    const handleAssign = () => {
+        if (!selectedUserId) {
+            toast.error("Please select a consultant to assign leads to.");
+            return;
+        }
+        if (selectedIds.size === 0) {
+            toast.error("Please select at least one lead.");
+            return;
+        }
+
+        startTransition(async () => {
+            try {
+                const res = await assignLeadsToUser(
+                    Number(selectedUserId),
+                    Array.from(selectedIds),
+                );
+                if (res.success) {
+                    toast.success(
+                        res.message ||
+                        `${res.data.length} lead(s) assigned successfully.`,
+                    );
+                    setSelectedIds(new Set());
+                    setSelectedUserId("");
+                    setAssignModalOpen(false);
+                } else {
+                    toast.error(res.message || "Failed to assign leads.");
+                }
+            } catch (err: unknown) {
+                const message =
+                    err instanceof Error ? err.message : "An unknown error occurred.";
+                toast.error(message);
+            }
+        });
+    };
+
+    return (
+        <>
+            {/* ── Floating action bar when rows are selected ── */}
+            {someSelected && (
+                <div className="flex items-center justify-between rounded-lg border bg-primary/5 px-4 py-2.5 mb-3 shadow-sm">
+                    <span className="text-sm font-medium text-foreground">
+                        {selectedIds.size} lead{selectedIds.size > 1 ? "s" : ""} selected
+                    </span>
+                    <div className="flex items-center gap-2">
+                        <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => setSelectedIds(new Set())}
+                            className="gap-1"
+                        >
+                            <X className="h-3.5 w-3.5" />
+                            Clear
+                        </Button>
+                        <Button
+                            size="sm"
+                            className="gap-1 bg-indigo-600 hover:bg-indigo-700 text-white"
+                            onClick={() => setAssignModalOpen(true)}
+                        >
+                            <UserCheck className="h-3.5 w-3.5" />
+                            Assign to Consultant
+                        </Button>
+                    </div>
+                </div>
+            )}
+
+            {/* ── Table ── */}
+            <div className="rounded-md border">
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead className="w-10 text-center">
+                                <Checkbox
+                                    checked={allSelected}
+                                    onCheckedChange={toggleAll}
+                                    aria-label="Select all leads"
+                                />
+                            </TableHead>
+                            <TableHead className="text-center">Sl</TableHead>
+                            <TableHead className="text-center">Action</TableHead>
+                            <TableHead className="text-center">Name &amp; Email</TableHead>
+                            <TableHead className="text-center">Phone</TableHead>
+                            <TableHead className="text-center">Referrer</TableHead>
+                            <TableHead className="text-center">Course</TableHead>
+                            <TableHead className="text-center">Type</TableHead>
+                            <TableHead className="text-center">Shift</TableHead>
+                            <TableHead className="text-center">Status</TableHead>
+                            <TableHead className="text-center">Source</TableHead>
+                            <TableHead className="text-center">Category</TableHead>
+                            <TableHead className="text-center">Branch</TableHead>
+                            <TableHead className="text-center">Consultant</TableHead>
+                            <TableHead className="text-center">Notes</TableHead>
+                        </TableRow>
+                    </TableHeader>
+
+                    <TableBody>
+                        {leads.map((lead: CRMLead, index: number) => (
+                            <TableRow
+                                key={lead?.id}
+                                data-selected={selectedIds.has(lead.id)}
+                                className={
+                                    selectedIds.has(lead.id)
+                                        ? "bg-indigo-50 dark:bg-indigo-950/20"
+                                        : undefined
+                                }
+                            >
+                                {/* Checkbox */}
+                                <TableCell className="text-center">
+                                    <Checkbox
+                                        checked={selectedIds.has(lead.id)}
+                                        onCheckedChange={() => toggleOne(lead.id)}
+                                        aria-label={`Select lead ${lead.name}`}
+                                    />
+                                </TableCell>
+
+                                {/* Serial */}
+                                <TableCell className="text-center">
+                                    {(page - 1) * perPage + (index + 1)}
+                                </TableCell>
+
+                                {/* Action dropdown */}
+                                <TableCell className="text-center">
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                            <Badge
+                                                variant="default"
+                                                role="button"
+                                                tabIndex={0}
+                                                className="cursor-pointer select-none"
+                                            >
+                                                Action
+                                            </Badge>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent align="center">
+                                            <DropdownMenuItem asChild>
+                                                <Link
+                                                    href={`/crm/leads/${lead?.id}/edit`}
+                                                    className="flex items-center cursor-pointer"
+                                                >
+                                                    <Pencil className="mr-2 h-4 w-4" />
+                                                    Edit
+                                                </Link>
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem asChild>
+                                                <DeleteCRMLeadButton id={lead?.id} />
+                                            </DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
+                                </TableCell>
+
+                                {/* Name,Email & Phone */}
+                                <TableCell className="font-medium text-center">
+                                    <div className="flex flex-col">
+                                        <span>{lead?.name}</span>
+                                        <span className="text-xs text-secondary">
+                                            {lead?.email}
+                                        </span>
+
+                                    </div>
+                                </TableCell>
+
+                                <TableCell className="text-center">
+                                    {lead?.phone || "—"}
+                                </TableCell>
+
+                                {/* Referrer */}
+                                <TableCell className="text-center">
+                                    <div className="flex flex-col text-xs">
+                                        <span className="font-medium text-foreground">
+                                            {lead?.referrer_name || "—"}
+                                        </span>
+                                        <span className="text-muted-foreground">
+                                            {lead?.referrer_phone || ""}
+                                        </span>
+                                    </div>
+                                </TableCell>
+
+                                {/* Course */}
+                                <TableCell className="text-center" title={lead?.course?.name || lead?.course_name || "—"}>
+                                    
+                                    {truncate(lead?.course?.name || lead?.course_name || "—", 30)}
+                                </TableCell>
+
+                                {/* Course type */}
+                                <TableCell className="text-center text-xs">
+                                    <Badge
+                                        variant="outline"
+                                        className={
+                                            lead.course_type === 1
+                                                ? "border-emerald-500 text-emerald-600 bg-emerald-50"
+                                                : lead.course_type === 2
+                                                    ? "border-blue-500 text-blue-600 bg-blue-50"
+                                                    : ""
+                                        }
+                                    >
+                                        {lead?.course_type_text || "—"}
+                                    </Badge>
+                                </TableCell>
+
+                                {/* Shift */}
+                                <TableCell className="text-center text-xs">
+                                    <Badge
+                                        variant="outline"
+                                        className={
+                                            lead.shift === 1
+                                                ? "border-amber-500 text-amber-600 bg-amber-50"
+                                                : lead.shift === 2
+                                                    ? "border-orange-500 text-orange-600 bg-orange-50"
+                                                    : lead.shift === 3
+                                                        ? "border-purple-500 text-purple-600 bg-purple-50"
+                                                        : ""
+                                        }
+                                    >
+                                        {lead?.shift_text || "—"}
+                                    </Badge>
+                                </TableCell>
+
+                                {/* Status */}
+                                <TableCell className="text-center text-xs">
+                                    <Badge
+                                        variant="outline"
+                                        className={
+                                            lead.status === 1
+                                                ? "border-blue-500 text-blue-600 bg-blue-50"
+                                                : lead.status === 2
+                                                    ? "border-yellow-500 text-yellow-600 bg-yellow-50"
+                                                    : lead.status === 3
+                                                        ? "border-emerald-500 text-emerald-600 bg-emerald-50"
+                                                        : lead.status === 4
+                                                            ? "border-indigo-500 text-indigo-600 bg-indigo-50"
+                                                            : lead.status === 5
+                                                                ? "border-violet-500 text-violet-600 bg-violet-50"
+                                                                : lead.status === 6
+                                                                    ? "border-rose-500 text-rose-600 bg-rose-50"
+                                                                    : ""
+                                        }
+                                    >
+                                        {lead?.status_text || "—"}
+                                    </Badge>
+                                </TableCell>
+
+                                {/* Source */}
+                                <TableCell className="text-center text-xs">
+                                    <Badge
+                                        variant="outline"
+                                        className={
+                                            lead.source === 1
+                                                ? "border-slate-500 text-slate-600 bg-slate-50"
+                                                : lead.source === 2
+                                                    ? "border-indigo-600 text-indigo-700 bg-indigo-50"
+                                                    : lead.source === 3
+                                                        ? "border-cyan-500 text-cyan-600 bg-cyan-50"
+                                                        : lead.source === 4
+                                                            ? "border-fuchsia-500 text-fuchsia-600 bg-fuchsia-50"
+                                                            : ""
+                                        }
+                                    >
+                                        {lead?.source_text || "—"}
+                                    </Badge>
+                                </TableCell>
+
+                                <TableCell className="text-center">
+                                    {lead?.category?.name || "—"}
+                                </TableCell>
+
+                                <TableCell className="text-center text-xs">
+                                    {lead?.branch?.name || "—"}
+                                </TableCell>
+
+                                <TableCell className="text-center">
+                                    <div className="flex flex-col text-xs">
+                                        <span className="font-medium text-foreground">
+                                            {lead?.assigned_consultant?.name || "—"}
+                                        </span>
+                                        <span className="text-muted-foreground">
+                                            {lead?.assigned_consultant?.email || ""}
+                                        </span>
+                                    </div>
+                                </TableCell>
+
+                                <TableCell
+                                    className="text-center text-xs max-w-[200px]"
+                                    title={lead?.notes || ""}
+                                >
+                                    { truncate(lead?.notes || "N/A", 20)      }
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </div>
+
+            {/* ── Assign Modal ── */}
+            <Dialog open={assignModalOpen} onOpenChange={setAssignModalOpen}>
+                <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2">
+                            <UserCheck className="h-5 w-5 text-indigo-600" />
+                            Assign Leads to Consultant
+                        </DialogTitle>
+                        <DialogDescription>
+                            Assign{" "}
+                            <strong>{selectedIds.size}</strong> selected lead
+                            {selectedIds.size > 1 ? "s" : ""} to a consultant.
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    <div className="py-2">
+                        <label className="block text-sm font-medium text-foreground mb-2">
+                            Select Consultant
+                        </label>
+                        <Select
+                            value={selectedUserId}
+                            onValueChange={setSelectedUserId}
+                        >
+                            <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Choose a consultant..." />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {consultants.map((consultant) => (
+                                    <SelectItem key={consultant.id} value={String(consultant.id)}>
+                                        <div className="flex flex-col">
+                                            <span className="font-medium">{consultant.name}</span>
+                                            <span className="text-xs text-muted-foreground">
+                                                {consultant.designation_name}
+                                                {consultant.department_name ? ` · ${consultant.department_name}` : ""}
+                                            </span>
+                                        </div>
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+
+                    <DialogFooter className="gap-2">
+                        <Button
+                            variant="outline"
+                            onClick={() => setAssignModalOpen(false)}
+                            disabled={isPending}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                            onClick={handleAssign}
+                            disabled={isPending || !selectedUserId}
+                        >
+                            {isPending ? (
+                                <>
+                                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                    Assigning...
+                                </>
+                            ) : (
+                                <>
+                                    <UserCheck className="h-4 w-4 mr-2" />
+                                    Assign
+                                </>
+                            )}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+        </>
+    );
+}

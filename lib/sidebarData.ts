@@ -411,6 +411,11 @@ export const sidebarData = {
               url: "/crm/categories",
               permissions: ["view-crm-categories"],
             },
+            {
+              title: "Leads",
+              url: "/crm/leads",
+              permissions: ["view-leads"],
+            },
           ],
         },
       ],
