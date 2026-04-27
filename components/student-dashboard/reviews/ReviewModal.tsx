@@ -277,7 +277,7 @@ export default function ReviewModal({
                   {mode === "add" ? "Adding..." : "Updating..."}
                 </span>
               ) : (
-                mode === "add" ? "Add" : "Update"
+                mode === "add" ? "Create Review" : "Update Review"
               )}
             </Button>
           </div>

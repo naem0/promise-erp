@@ -57,9 +57,9 @@ const JobCircularBySlugdPage = async ({ params }: JobCircularParams) => {
         <JobBySlugWrapperBanner />
       </Suspense>
       <div className="container mx-auto px-4 py-8 md:py-12">
-        <div className="pb-10">
-          <h1 className="text-center text-secondary capitalize font-bold text-2xl lg:text-4xl">
-            Post For:- {jobCirculars?.title}
+        <div className="pb-6 lg:pb-10">
+          <h1 className="text-secondary capitalize font-bold text-2xl lg:text-4xl">
+            Post For - {jobCirculars?.title}
           </h1>
         </div>
         <div className="grid lg:grid-cols-3 gap-4">

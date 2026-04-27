@@ -11,7 +11,7 @@ import { ArrowLeft, DollarSign, X, Upload } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
+
 import {
   Select,
   SelectContent,
@@ -26,6 +26,7 @@ import {
   JobTitleEarningItem,
 } from "@/apiServices/studentDashboardService";
 import Image from "next/image";
+import { Button } from "@/components/ui/button";
 
 /* =======================
    Types
@@ -494,19 +495,19 @@ const AddEarningForm = () => {
 
             {/* Submit */}
             <div className="flex justify-end">
-              <Button asChild
-                type="submit"
-                disabled={isPending}
-                className="min-w-32"
-              >
-                {isPending ? (
-                  <span className="flex items-center gap-2">
-                    Submitting...
-                  </span>
-                ): (
-                  "Submit"
-                )}
-              </Button>
+                <Button
+                  type="submit"
+                  disabled={isPending}
+                  className="min-w-32"
+                >
+                  {isPending ? (
+                    <span className="flex items-center gap-2">
+                      Earning Submitting...
+                    </span>
+                  ): (
+                    "Create Earning"
+                  )}
+                </Button>
             </div>
           </form>
         </CardContent>

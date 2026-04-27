@@ -16,7 +16,7 @@ export default function WhoCanJoinPage({
   return (
     <div className="mx-auto space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-semibold tracking-tight">Who Can Join</h1>
+        <h1 className="text-xl lg:text-2xl font-semibold tracking-tight">Who Can Join</h1>
 
         <PermissionGuard requiredPermission="create-course-joins">
           <Button asChild>

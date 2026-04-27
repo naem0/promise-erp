@@ -28,11 +28,11 @@ export default function SocialMediaSection() {
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       {items.map((item, i) => (
         <Card
           key={i}
-          className="px-5 py-8 shadow-md rounded-xl h-full hover:scale-105 transition-transform"
+          className="px-4 py-6 shadow-md rounded-xl h-full hover:scale-105 transition-transform"
         >
           <CardContent className="flex flex-col items-center text-center gap-4 p-0">
             {/* Icon */}

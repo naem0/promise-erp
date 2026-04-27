@@ -13,13 +13,13 @@ export const ToolsSection = ({ tools, title }: { tools: ToolProp[]; title?: stri
   if (tools.length === 0) return null;
 
   return (
-    <Card className="bg-muted/30">
-      <CardContent className="p-8">
-        <h2 className="text-3xl font-bold text-center mb-8 animate-in fade-in duration-500">{title || "Tools & Technologies You Will Master"}</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <Card className="bg-muted/30 py-0">
+      <CardContent className="p-4 lg:p-8">
+        <h2 className="text-xl lg:text-3xl font-bold text-center mb-4 lg:mb-8 animate-in fade-in duration-500">{title || "Tools & Technologies You Will Master"}</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {tools.map((tool, index) => (
             <Card key={tool.id || index} className="text-center hover:scale-105 transition-transform h-full">
-              <CardContent className="p-6">
+              <CardContent className="p-4 lg:p-6">
                 <div className="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4 overflow-hidden">
                   {tool.image ? (
                     <Image
