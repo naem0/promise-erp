@@ -467,6 +467,7 @@ export interface AllOfficeEmployee {
   profile_image?: string;
   display_order: number;
   experience: string;
+  note?: string;
 
 }
 export interface AllOfficeDepartment {

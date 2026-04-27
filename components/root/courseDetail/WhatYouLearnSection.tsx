@@ -14,7 +14,7 @@ export const WhatYouLearnSection = ({ course }: WhatYouLearnSectionProps) => {
   return (
     <Card className="bg-muted/30">
       <CardContent className="p-8">
-        <h2 className="text-3xl font-bold text-center mb-8 animate-in fade-in duration-500">What You'll Learn in This Course</h2>
+        <h2 className="text-xl lg:text-3xl font-bold text-center mb-8 animate-in fade-in duration-500">What You{"'"}ll Learn in This Course</h2>
         <div className="grid md:grid-cols-2 gap-6">
           {learningPoints.map((point, index) => (
             <div

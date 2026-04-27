@@ -105,7 +105,7 @@ export const AuthButtons = ({
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <button className="flex items-center gap-2 rounded-md px-2 py-1.5 hover:bg-accent transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+          <button className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 hover:bg-accent transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
             <Avatar className="h-8 w-8 border-2 border-primary/20">
               <AvatarImage 
                 src={profileImage || "/images/profile_avatar.png"} 

@@ -54,7 +54,7 @@ const HeaderNavLink = async ({
   
 
   return (
-    <nav className={`hidden lg:flex items-center justify-between w-full my-3`}>
+    <nav className={`hidden lg:flex items-center justify-between w-full my-3 px-4`}>
       <div className="flex items-center justify-center gap-4 xl:gap-6 w-full">
         {navLinks?.map((link) => (
           <div key={link?.name}>
@@ -114,7 +114,7 @@ const HeaderNavLink = async ({
         ))}
       </div>
       {isStudentDashboard ? (
-        <div className="flex items-center justify-end gap-2 text-sm">
+        <div className="flex items-center justify-end shrink-0 gap-2 text-sm w-1/6">
           <AuthButtons role={session?.user?.roles} />
         </div>
       ) : (

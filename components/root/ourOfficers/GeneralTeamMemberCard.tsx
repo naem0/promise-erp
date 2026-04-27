@@ -32,17 +32,17 @@ const GeneralTeamMemberCard = async () => {
 
   return (
     <div className="container mx-auto px-4 py-8 md:py-14 space-y-12">
-      {departments.length > 0 ? (
-        departments.map((department) => (
-          <div key={department.department_id ?? "unknown"}>
+      {departments?.length > 0 ? (
+        departments?.map((department) => (
+          <div key={department?.department_id ?? "unknown"}>
             <h2 className="text-2xl md:text-4xl text-center mx-auto border-b-2 font-bold text-secondary max-w-fit mb-10 pb-2">
-              {department.department_name}
+              {department?.department_name}
             </h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 justify-center items-center">
-              {department.employees.map((employee) => (
+              {department.employees?.map((employee) => (
                 <GeneralTeamMemberInfos
-                  key={employee.id}
+                  key={employee?.id}
                   employee={employee}
                 />
               ))}

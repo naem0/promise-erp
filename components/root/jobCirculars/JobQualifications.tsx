@@ -13,7 +13,7 @@ const JobQualifications = ({ jobCirculars }: JobCircularParams) => {
       <div className="h-2 bg-linear-to-r from-secondary via-primary to-secondary rounded-tl-xl rounded-tr-xl "></div>
       <CardHeader className="pb-0">
         <CardTitle className="text-2xl font-bold text-secondary flex items-center gap-2">
-          Qualifications
+          Tools Required
         </CardTitle>
       </CardHeader>
       <CardContent className="pb-4">

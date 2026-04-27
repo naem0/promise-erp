@@ -101,13 +101,16 @@ const EmployeeItemModal = ({ employee, open, onOpenChange }: Props) => {
                 className="object-scale-down "
               />
             </div>
-            <div className=" flex-1">
-              {employee?.name || "Employee Name ---"}
-              <h2 className="text-xl font-semibold">
-                {employee.designation || "Designation ---"}
-              </h2>
-              <p className="text-primary">
-                {employee?.experience || "experience ---"} Experience
+            <div className="flex-1">
+              <h3 className="text-base text-secondary font-bold mb-2">{employee?.name || "Employee Name ---"}</h3>
+              <p className="pb-2">
+                {employee?.designation || "Designation ---"}
+              </p>
+              <p className="pb-2">
+                {employee?.experience || "---"} Years Experience
+              </p>
+              <p className="pb-2">
+                {employee?.note || "---"}
               </p>
             </div>
           </div>

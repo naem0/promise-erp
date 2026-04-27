@@ -100,12 +100,11 @@ export function StudentSidebar() {
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
-        <Link href="/" className="p-2">
+        <Link href="/" className="p-2 relative h-9 w-full" >
           <Image
             src="/images/logo.svg"
             alt="Logo"
-            width={200}
-            height={36}
+            fill
             className="max-w-[162px]"
           />
         </Link>

@@ -76,9 +76,9 @@ const PaymentCard = async () => {
             </span>
           </div> */}
           </CardContent>
-          <CardFooter className="mx-auto">
+          {/* <CardFooter className="mx-auto">
             <DuePaymentPayNow />
-          </CardFooter>
+          </CardFooter> */}
         </Card>
       ))}
     </div>

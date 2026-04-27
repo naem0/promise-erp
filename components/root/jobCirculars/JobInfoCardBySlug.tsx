@@ -61,23 +61,6 @@ const JobInfoCardBySlug = ({ jobCirculars }: JobCircularParams) => {
           </Card>
         ))}
       </div>
-
-      {/* Tools Section */}
-      {jobCirculars.tools && jobCirculars.tools.length > 0 && (
-        <div>
-          <h3 className="text-lg font-semibold mb-2">Tools Required:</h3>
-          <div className="flex flex-wrap gap-2">
-            {jobCirculars.tools.map((tool) => (
-              <span
-                key={tool.id}
-                className="px-3 py-1 bg-primary/20 text-primary rounded-full text-sm font-medium"
-              >
-                {tool.title}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
     </section>
   );
 };
