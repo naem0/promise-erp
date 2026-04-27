@@ -24,6 +24,8 @@ import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import RichTextEditor from "@/components/lms/courses/RichTextEditor";
+
 
 interface CareerFormProps {
     title: string;
@@ -457,10 +459,15 @@ export default function CareerForm({
                     {/* Short Description */}
                     <div className="md:col-span-2">
                         <label className="block text-sm font-medium mb-1">Short Description</label>
-                        <Textarea
-                            placeholder="Brief description of the job position"
-                            {...register("short_description")}
-                            rows={3}
+                        <Controller
+                            name="short_description"
+                            control={control}
+                            render={({ field }) => (
+                                <RichTextEditor
+                                    value={field.value || ""}
+                                    onChange={field.onChange}
+                                />
+                            )}
                         />
                         {errors.short_description && (
                             <p className="text-sm text-red-500 mt-1">{errors.short_description.message}</p>
@@ -470,10 +477,15 @@ export default function CareerForm({
                     {/* Description */}
                     <div className="md:col-span-2">
                         <label className="block text-sm font-medium mb-1">Full Description</label>
-                        <Textarea
-                            placeholder="Detailed job description, responsibilities, requirements..."
-                            {...register("description")}
-                            rows={6}
+                        <Controller
+                            name="description"
+                            control={control}
+                            render={({ field }) => (
+                                <RichTextEditor
+                                    value={field.value || ""}
+                                    onChange={field.onChange}
+                                />
+                            )}
                         />
                         {errors.description && (
                             <p className="text-sm text-red-500 mt-1">{errors.description.message}</p>
