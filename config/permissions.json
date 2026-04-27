@@ -62,6 +62,7 @@
     
     { "path": "/lms/enrollments", "permissions": ["view-enrollments"] },
     { "path": "/lms/enrollments/add", "permissions": ["create-enrollments"] },
+    { "path": "/lms/enrollments/approve", "permissions": ["approve-enrollments"] },
     { "path": "/lms/enrollments/edit", "permissions": ["edit-enrollments"], "isDynamic": true },
 
     { "path": "/lms/careers", "permissions": ["view-careers"] },
