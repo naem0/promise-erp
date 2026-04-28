@@ -214,7 +214,7 @@ const EmployeesData = async ({
                     </TableBody>
                 </Table>
             </div>
-            {paginationData?.has_more_pages && (
+            {paginationData?.last_page > 1 && (
                 <div className="mt-4 pb-6">
                     <Pagination pagination={paginationData} />
                 </div>

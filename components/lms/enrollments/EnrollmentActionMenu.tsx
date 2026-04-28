@@ -19,7 +19,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, Loader2 } from "lucide-react";
+import { CheckCircle2, Eye, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
@@ -81,13 +81,14 @@ export default function EnrollmentActionMenu({
               href={`/lms/enrollments/${enrollmentId}`}
               className="flex items-center cursor-pointer"
             >
+              <Eye className="w-4 h-4" />
               View Details
             </Link>
           </DropdownMenuItem>
         </PermissionGuard>
         
         {!isAlreadyActive && (
-          <PermissionGuard requiredPermission="approve-enrollment">
+         <PermissionGuard requiredPermission="approve-enrollments">
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <DropdownMenuItem

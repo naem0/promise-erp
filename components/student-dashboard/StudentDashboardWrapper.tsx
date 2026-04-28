@@ -24,7 +24,7 @@ const StudentDashboardWrapper = async () => {
 
   return (
     <>
-      <WelcomeBanner />
+      {/* <WelcomeBanner /> */}
 
       {hasCards ? (
         <DashboardStatsGrid cards={cards} />

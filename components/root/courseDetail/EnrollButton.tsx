@@ -51,7 +51,7 @@ const EnrollButton = ({ slug, batchId }: EnrollButtonProps) => {
     <Button
       onClick={handleClick}
       disabled={isPending}
-      className="max-w-full w-full sm:w-[350px]"
+      className="max-w-full w-full sm:w-[350px] cursor-pointer"
     >
       {isEnrolled ? "Continue Course" : "Enroll Now"}
     </Button>

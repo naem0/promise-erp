@@ -14,6 +14,7 @@ import { getEnrollments } from "@/apiServices/enrollmentService";
 import EnrollmentActionMenu from "./EnrollmentActionMenu";
 import { Badge } from "@/components/ui/badge";
 
+
 export default async function EnrollmentsData({
     searchParams,
 }: {
