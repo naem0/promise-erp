@@ -150,7 +150,7 @@ const EnrollPaymentMethod = ({
           >
             {isPending
               ? "Processing..."
-              : `Pay Now ${selectedMethod?.name || ""}`}
+              : ` ${selectedMethod?.name ? selectedMethod?.name: "Pay Now"}`}
           </Button>
         </div>
       </CardContent>

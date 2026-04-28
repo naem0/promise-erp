@@ -11,7 +11,7 @@ const GeneralTeamMemberCardItem = ({ employee }: Props) => {
     <div className="grid md:grid-cols-2 border border-primary rounded-xl shadow-md hover:shadow-lg transition bg-white h-full">
       {/* Avatar */}
       <div className="hidden md:flex items-center justify-end px-2 py-4">
-        <div className="p-3 relative rounded-lg bg-[url(/images/Executive-Management-bg2.png)] bg-no-repeat h-full w-full flex items-center justify-center">
+        <div className="p-3 relative rounded-lg bg-[url(/images/our-officer-card-bg.png)] bg-no-repeat h-full w-full flex items-center justify-center">
           <div className="absolute left-1/3 bg-white rounded-full p-1 h-28 w-28 shadow-md flex justify-center items-center">
             <div className="h-24 w-24 border-4 border-primary relative rounded-full">
               <Image

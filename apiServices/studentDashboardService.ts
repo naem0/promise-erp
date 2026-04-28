@@ -696,7 +696,7 @@ export async function getStudentMyCourses(
     params = {},
   }: {
     params?: Record<string, unknown>;
-  }): Promise<StudentMyCoursesResponse> {
+  }): Promise<StudentMyCoursesResponse | null> {
 
   if (!token) {
     throw new Error("Unauthorized: Access token not found");
@@ -722,6 +722,11 @@ export async function getStudentMyCourses(
       },
     );
 
+    console.log("---------------", res);
+    if (res.status === 404) {
+      console.warn("No courses found.");
+      return null;
+    }
     if (!res.ok) {
       throw new Error(
         `MyCoursesResponse API Error: ${res.status} ${res.statusText}`,

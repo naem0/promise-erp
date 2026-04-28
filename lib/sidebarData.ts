@@ -51,6 +51,11 @@ export const sidebarData = {
               url: "/lms/students",
               permissions: ["view-students"],
             },
+            {
+              title: "Designations",
+              url: "/lms/designations",
+              permissions: ["view-designations"],
+            },
           ],
         },
         {

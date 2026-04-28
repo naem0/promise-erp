@@ -30,7 +30,6 @@ const HomeMembersSection = async () => {
         return null;
     }
 
-    console.log("membersData", membersData)
     return (
         <section className="py-8 md:py-14 ">
             <div className="container mx-auto px-4">
