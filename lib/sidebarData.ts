@@ -421,6 +421,12 @@ export const sidebarData = {
               url: "/crm/leads",
               permissions: ["view-leads"],
             },
+            {
+              title: "Leads History",
+              url: "/crm/leads-history",
+              permissions: ["view-lead-histories"],
+            },
+            
           ],
         },
       ],
