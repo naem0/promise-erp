@@ -56,6 +56,10 @@
     { "path": "/lms/students/add", "permissions": ["create-students"] },
     { "path": "/lms/students/edit", "permissions": ["edit-students"], "isDynamic": true },
 
+    { "path": "/lms/designations", "permissions": ["view-designations"] },
+    { "path": "/lms/designations/add", "permissions": ["create-designations"] },
+    { "path": "/lms/designations/edit", "permissions": ["edit-designations"], "isDynamic": true },
+
     { "path": "/lms/teachers", "permissions": ["view-teachers"] },
     { "path": "/lms/teachers/add", "permissions": ["create-teachers"] },
     { "path": "/lms/teachers/edit", "permissions": ["edit-teachers"], "isDynamic": true },
