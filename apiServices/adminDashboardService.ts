@@ -6,23 +6,59 @@ const API_BASE =
   process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
 
 //   ******* Start getDashboardSummaryStats API *******
-export interface DashboardCardItem {
+export interface DashboardSummaryStatItem {
+  title: string;
+  value: number;
+  count?: number;
+}
+export interface RunningBatch {
+  course: string;
+  batch: string;
+  start_date: string;
+  end_date: string;
+  total_students: number;
+  present_today: number;
+}
+
+export interface DashboardSummaryStat {
+  card_name: string;
+  card_data: DashboardSummaryStatItem[];
+}
+export interface MonthlyBreakdownItem {
   title: string;
   value: number;
 }
-export interface DashboardCard {
-  card_name: string;
-  card_data: DashboardCardItem[];
+export interface DivisionalIncomeItem {
+  title: string;          // Dhaka, Chittagong etc.
+  value: number;
+  period: string;         // Apr
+  total_sell: number;
+  monthly_breakdown: MonthlyBreakdownItem[];
 }
+
+// card
+export interface DivisionalIncomeCard {
+  card_name: string;
+  card_data: DivisionalIncomeItem[];
+}
+
+export interface DashboardSummaryData {
+  summary_stats: DashboardSummaryStat[];
+  charts_analytics: DashboardSummaryStat[];
+  running_batches: RunningBatch[];
+  course_notice_result: DashboardSummaryStat[];
+  divisional_income_report: DivisionalIncomeCard[];
+}
+
 export interface DashboardSummaryApiResponse {
   success: boolean;
   message: string;
   code: number;
-  data: DashboardCard[];
+  data: DashboardSummaryData;
   errors?: Record<string, string[]>;
 }
 
-export async function getDashboardSummaryStats(): Promise<DashboardSummaryApiResponse> {
+export async function getDashboardSummaryStats(): Promise<DashboardSummaryApiResponse | null> {
   const session = await getServerSession(authOptions);
   const token = session?.accessToken;
 
@@ -30,12 +66,22 @@ export async function getDashboardSummaryStats(): Promise<DashboardSummaryApiRes
     if (!token) {
       throw new Error("No valid session or access token found.");
     }
-    const res = await fetch(`${API_BASE}/dashboard/summary-stats`, {
+    const res = await fetch(`${API_BASE}/dashboard/overview`, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
     });
+
+    if (res?.status === 404) {
+      console.warn("No courses found.");
+      return null;
+    }
+
+    if (res?.status === 401) {
+      console.warn("Unauthorized: Access token not found.");
+      return null;
+    }
 
     if (!res.ok) {
       throw new Error(

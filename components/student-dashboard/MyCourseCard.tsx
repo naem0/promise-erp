@@ -59,7 +59,7 @@ const MyCourseCard = ({ course, isUpdatedCourse, setIsUpdatedCourse }: MyCourseC
         {/* Progress bar */}
         <Progress value={course.progress_percentage} className="h-2" />
       </CardContent>
-      <CardFooter className="p-4 pt-0 flex justify-center gap-3">
+      <CardFooter className="p-4 pt-0 flex justify-center gap-3 flex-col items-center">
         {course?.status === "Active" ? (
           <Link
             href={`/student/mycourses/${course?.course?.slug}?batch_id=${course?.batch?.id}`}
