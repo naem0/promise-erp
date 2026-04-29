@@ -12,7 +12,7 @@ const BlogPostWrapper = async ({ searchParams }: BlogPagePropsParams) => {
 
   const queryParams = await searchParams;
   const params = {
-    search: queryParams.search ?? "",
+    search: typeof queryParams.search === "string" ? queryParams.search : "",
     blog_category_id: queryParams.blog_category_id
       ? Number(queryParams.blog_category_id)
       : undefined,
@@ -38,13 +38,16 @@ const BlogPostWrapper = async ({ searchParams }: BlogPagePropsParams) => {
     }
   }
   const blogInfoData = blogInfo?.data?.blogs || [];
-  const pagination = blogInfo?.data?.pagination || {};
+  const pagination = blogInfo?.data?.pagination ?? null;
   if (blogInfoData?.length === 0) {
     return (
       <div className="lg:col-span-8 xl:col-span-9 flex items-center justify-center h-full">
-        <NotFoundComponent message={blogInfo?.message} />
+        <NotFoundComponent message={blogInfo?.message ?? "No data found"} />
       </div>
     );
+  }
+  if (!blogInfo || !blogInfo?.success || !blogInfo?.data) {
+    return null;
   }
   return (
     <div className="lg:col-span-8 xl:col-span-9 space-y-8">

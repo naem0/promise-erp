@@ -29,6 +29,10 @@ const AboutBranch = async () => {
   }
 
   const branches = branchList?.data || [];
+  if (!branchList || !branchList?.success) {
+    return null;
+  }
+
   return (
     <section className="py-8 md:py-12">
       <div className="pb-6">
@@ -50,7 +54,7 @@ const AboutBranch = async () => {
         }
       >
         <div className=" grid grid-cols-1 md:grid-cols-2 gap-4">
-          {branches.length > 0 ? (
+          {branches?.length > 0 ? (
             branches[2]?.branches
               ?.slice(0, 4)
               .map((branch: WebBranch) => (

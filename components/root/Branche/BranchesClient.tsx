@@ -35,7 +35,7 @@ const BranchesClient = async ({ searchParams }: BranchesPageProps) => {
   try {
     // Fetch branches
     const res = await getPublicWebBranches(params);
-    if (res.success) {
+    if (res?.success) {
       result = res;
       divisions = res?.data || [];
       branches = divisions.flatMap((division) => division.branches) || [];
@@ -43,7 +43,7 @@ const BranchesClient = async ({ searchParams }: BranchesPageProps) => {
 
     // Fetch divisions server-side
     const divisionRes = await getPublicDivisionList();
-    if (divisionRes.success) {
+    if (divisionRes?.success) {
       divisionList = divisionRes;
     }
   } catch (error: unknown) {

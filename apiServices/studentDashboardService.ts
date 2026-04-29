@@ -60,7 +60,7 @@ export interface StudentDashboardResponse {
 // get student dashboard
 export async function getStudentDashboard(
   accessToken: string,
-): Promise<StudentDashboardResponse> {
+): Promise<StudentDashboardResponse | null> {
   try {
     const res = await fetch(`${API_BASE}/student-dashboard`, {
       headers: {
@@ -68,6 +68,11 @@ export async function getStudentDashboard(
         Authorization: `Bearer ${accessToken}`,
       },
     });
+
+    if (res.status === 404) {
+      console.warn("No student dashboard found.");
+      return null;
+    }
 
     if (!res.ok) {
       throw new Error(
@@ -117,7 +122,7 @@ export async function getFreeSeminars({
   params = {},
 }: {
   params?: Record<string, unknown>;
-}): Promise<FreeSeminarsApiResponse> {
+}): Promise<FreeSeminarsApiResponse | null> {
   try {
     const session = await getServerSession(authOptions);
     const token = session?.accessToken;
@@ -145,6 +150,11 @@ export async function getFreeSeminars({
         },
       },
     );
+
+    if (res.status === 404) {
+      console.warn("No free seminars found.");
+      return null;
+    }
 
     if (!res.ok) {
       throw new Error(
@@ -205,7 +215,7 @@ export async function getUpcomingCourses({
   params = {},
 }: {
   params?: Record<string, unknown>;
-}): Promise<UpcomingCoursesApiResponse> {
+}): Promise<UpcomingCoursesApiResponse | null> {
   const session = await getServerSession(authOptions);
   const token = session?.accessToken;
 
@@ -230,6 +240,11 @@ export async function getUpcomingCourses({
         },
       },
     );
+
+    if (res.status === 404) {
+      console.warn("No upcoming courses found.");
+      return null;
+    }
 
     if (!res.ok) {
       throw new Error(
@@ -722,7 +737,6 @@ export async function getStudentMyCourses(
       },
     );
 
-    console.log("---------------", res);
     if (res.status === 404) {
       console.warn("No courses found.");
       return null;

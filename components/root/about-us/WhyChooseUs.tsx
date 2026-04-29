@@ -9,7 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
 import Link from "next/link";
 const WhyChooseUs = async () => {
-  let whyChooseUsData: WhyChooseUsApiResponse | undefined;
+  let whyChooseUsData: WhyChooseUsApiResponse | null = null;
   try {
     whyChooseUsData = await getPublicWhyChooseUs();
   } catch (error: unknown) {
@@ -31,6 +31,10 @@ const WhyChooseUs = async () => {
     );
   }
   const whyChooseUs = whyChooseUsData?.data?.why_choose_us || [];
+  if (!whyChooseUsData || !whyChooseUsData?.success || !whyChooseUsData?.data) {
+    return null;
+  }
+
   return (
     <section className="py-8 md:py-12">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
@@ -93,7 +97,7 @@ const WhyChooseUs = async () => {
                 })
               ) : (
                 <div className="py-8 md:py-12">
-                  <NotFoundComponent message={whyChooseUsData.message} />
+                  <NotFoundComponent message={whyChooseUsData.message || " No why choose us found."} />
                 </div>
               )}
             </div>

@@ -24,9 +24,14 @@ export interface WhyChooseUsApiResponse {
   data: WhyChooseUsData;
   errors?: Record<string, string[]>;
 }
-export async function getPublicWhyChooseUs(): Promise<WhyChooseUsApiResponse> {
+export async function getPublicWhyChooseUs(): Promise<WhyChooseUsApiResponse | null> {
   try {
     const res = await fetch(`${API_BASE}/public/why-choose-us`);
+
+    if (res.status === 404) {
+      console.warn("No why choose us found.");
+      return null;
+    }
 
     if (!res.ok) {
       throw new Error(
@@ -66,9 +71,14 @@ export interface LicenseApiResponse {
   errors?: Record<string, string[]>;
 }
 
-export async function getPublicLicensesCertificate(): Promise<LicenseApiResponse> {
+export async function getPublicLicensesCertificate(): Promise<LicenseApiResponse | null> {
   try {
     const res = await fetch(`${API_BASE}/public/licenses`);
+
+    if (res.status === 404) {
+      console.warn("No certificates found.");
+      return null;
+    }
 
     if (!res.ok) {
       throw new Error(
@@ -113,9 +123,14 @@ export interface PublicAchievementApiResponse {
   errors?: Record<string, string[]>;
 }
 
-export async function getPublicAchievements(): Promise<PublicAchievementApiResponse> {
+export async function getPublicAchievements(): Promise<PublicAchievementApiResponse | null> {
   try {
     const res = await fetch(`${API_BASE}/public/achievements`);
+
+    if (res.status === 404) {
+      console.warn("No achievements found.");
+      return null;
+    }
 
     if (!res.ok) {
       throw new Error(
@@ -130,9 +145,7 @@ export async function getPublicAchievements(): Promise<PublicAchievementApiRespo
       console.error("Error fetching Achievements:", error.message);
       throw new Error(error.message);
     }
-    throw new Error(
-      "Unknown error occurred while fetching Achievements",
-    );
+    throw new Error("Unknown error occurred while fetching Achievements");
   }
 }
 //   ******* End getPublicAchievements API *******
@@ -148,7 +161,7 @@ export interface CompanyMission {
   status: number;
 }
 export interface CompanyMissionData {
-  company_mission: CompanyMission[]
+  company_mission: CompanyMission[];
 }
 
 // Main API response type
@@ -159,10 +172,15 @@ export interface CompanyMissionApiResponse {
   data: CompanyMissionData;
   errors?: Record<string, string[]>;
 }
-  
-export async function getPublicCompanyMissionSection(): Promise<CompanyMissionApiResponse> {
+
+export async function getPublicCompanyMissionSection(): Promise<CompanyMissionApiResponse | null> {
   try {
     const res = await fetch(`${API_BASE}/public/company-mission-section`);
+
+    if (res.status === 404) {
+      console.warn("No company mission found.");
+      return null;
+    }
 
     if (!res.ok) {
       throw new Error(
