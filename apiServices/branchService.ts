@@ -332,7 +332,7 @@ export interface WebBranchApiResponse {
 
 export async function getPublicWebBranches(
   params: Record<string, unknown> = {},
-): Promise<WebBranchApiResponse> {
+): Promise<WebBranchApiResponse | null> {
   try {
     const urlParams = new URLSearchParams();
 
@@ -346,6 +346,11 @@ export async function getPublicWebBranches(
     const res = await fetch(
       `${API_BASE}/public/public-divisions?${queryString}`,
     );
+
+    if (res.status === 404) {
+      console.warn("No branches found.");
+      return null;
+    }
 
     if (!res.ok) {
       throw new Error(

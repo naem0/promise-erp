@@ -31,6 +31,13 @@ const CompanyMission = async () => {
   }
 
   const missions = companyMissionData?.data?.company_mission || [];
+  if (
+    !companyMissionData ||
+    !companyMissionData?.success ||
+    !companyMissionData?.data
+  ) {
+    return null;
+  }
 
   return (
     <section className="py-8 md:py-12">

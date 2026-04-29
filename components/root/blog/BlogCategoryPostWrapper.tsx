@@ -14,7 +14,7 @@ const BlogCategoryPostWrapper = async ({
   slug,
   searchParams,
 }: BlogCategoryPostWrapperProps) => {
-    const queryParams = await searchParams;
+  const queryParams = await searchParams;
   const params = {
     per_page: queryParams.per_page ? Number(queryParams.per_page) : 16,
     page: queryParams.page ? Number(queryParams.page) : 1,
@@ -24,10 +24,10 @@ const BlogCategoryPostWrapper = async ({
 
   try {
     if (slug) {
-    blogInfo = await getPublicBlogsByCategorySlug({
-      slug,
-      params,
-    });
+      blogInfo = await getPublicBlogsByCategorySlug({
+        slug,
+        params,
+      });
     }
   } catch (error: unknown) {
     return (
@@ -44,7 +44,7 @@ const BlogCategoryPostWrapper = async ({
   }
 
   const blogInfoData = blogInfo?.data?.blogs || [];
-  const pagination = blogInfo?.data?.pagination;
+  const pagination = blogInfo?.data?.pagination ?? null;
 
   if (blogInfoData.length === 0) {
     return (
@@ -52,6 +52,10 @@ const BlogCategoryPostWrapper = async ({
         <NotFoundComponent message={blogInfo?.message || " No blogs found."} />
       </div>
     );
+  }
+
+  if (!blogInfo || !blogInfo?.success || !blogInfo?.data) {
+    return null;
   }
 
   return (

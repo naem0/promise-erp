@@ -48,7 +48,7 @@ export async function getPublicBlogInfo({
   params = {},
 }: {
   params?: Record<string, unknown>;
-}): Promise<BlogInfoApiResponse> {
+}): Promise<BlogInfoApiResponse | null> {
   try {
     const urlParams = new URLSearchParams();
 
@@ -61,6 +61,11 @@ export async function getPublicBlogInfo({
     const queryString = urlParams.toString();
 
     const res = await fetch(`${API_BASE}/public/blogs?${queryString}`);
+
+    if(res.status === 404) {
+      console.warn("No blogs found.");
+      return null;
+    }
 
     if (!res.ok) {
       throw new Error(
@@ -192,7 +197,7 @@ export async function getPublicBlogsByCategorySlug({
 }: {
   slug: string;
   params?: Record<string, unknown>;
-}): Promise<BlogInfoApiResponse> {
+}): Promise<BlogInfoApiResponse | null> {
   try {
     const urlParams = new URLSearchParams();
 
@@ -208,6 +213,10 @@ export async function getPublicBlogsByCategorySlug({
       `${API_BASE}/public/blogs/category/${slug}?${queryString}`,
     );
 
+    if(res.status === 404) {
+      console.warn("No blogs found.");
+      return null;
+    }
     if (!res.ok) {
       throw new Error(
         `getPublicBlogsByCategorySlug API error: ${res.status} ${res.statusText}`,

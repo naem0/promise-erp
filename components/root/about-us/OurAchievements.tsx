@@ -30,11 +30,21 @@ const OurAchievements = async () => {
   if (!achievements) {
     return (
       <div className="py-8 md:py-12">
-        <NotFoundComponent message={achievementsData?.message || "No achievements found"} />
+        <NotFoundComponent
+          message={achievementsData?.message || "No achievements found"}
+        />
       </div>
     );
   }
-  return <OurAchievementCart  achievements={achievements}/>;
+
+  if (
+    !achievementsData ||
+    !achievementsData?.success ||
+    !achievementsData?.data
+  ) {
+    return null;
+  }
+  return <OurAchievementCart achievements={achievements} />;
 };
 
 export default OurAchievements;

@@ -6,6 +6,7 @@ import {
 import ErrorComponent from "../common/ErrorComponent";
 import NotFoundComponent from "../common/NotFoundComponent";
 import DashboardRunningBatches from "./DashboardRunningBatches";
+import DashboardChartsAnalytics from "./DashboardChartsAnalytics";
 
 const AdminUsersStatWrapper = async () => {
   let summaryStats;
@@ -83,6 +84,10 @@ const AdminUsersStatWrapper = async () => {
           null
         )}
       </div>
+
+      {/* Charts Analytics */}
+      <DashboardChartsAnalytics chartsAnalytics={chartsAnalytics} />
+
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 md:gap-6 px-4 py-5">
         {/* LEFT SIDE (Table) */}
         <div className="xl:col-span-2">

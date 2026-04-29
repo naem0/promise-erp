@@ -32,7 +32,7 @@ const MyCoursesGrid = () => {
 
           const response = await getStudentMyCourses(token, { params });
 
-          if (!response || !response.success || !response.data) {
+          if (!response || !response.success || !response?.data) {
             setError(response?.message || "Something went wrong");
             return;
           }

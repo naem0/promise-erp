@@ -31,6 +31,10 @@ const CertificationsSection = async () => {
 
   const certificates = certificateList?.data?.licenses || [];
 
+  if (!certificateList || !certificateList?.success || !certificateList?.data) {
+    return null;
+  }
+
   return (
     <div className="w-full px-4 py-10 space-y-10">
       <div className="">

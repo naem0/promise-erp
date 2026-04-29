@@ -38,10 +38,10 @@ const chartConfig = [
 
 const AttendanceReportCard = ({ data }: AttendanceReportCardProps) => {
   const attendanceData = data.map((item) => ({
-    course: item.course_title,
-    classes_attended: item.classes_attended,
-    classes_completed: Number(item.classes_completed),
-    total_classes: item.total_classes,
+    course: item?.course_title,
+    classes_attended: item?.classes_attended,
+    classes_completed: Number(item?.classes_completed),
+    total_classes: item?.total_classes,
   }));
 
   return (
@@ -60,7 +60,7 @@ const AttendanceReportCard = ({ data }: AttendanceReportCardProps) => {
                 style={{ backgroundColor: item.color }}
               ></span>
               <span className="text-sm text-secondary font-medium">
-                {item.label}
+                {item?.label}
               </span>
             </div>
           ))}
