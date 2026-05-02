@@ -42,16 +42,16 @@ const HeaderNavLink = async ({
   try {
     categoriesResponse = await getHomeCourseCategories();
     categories = categoriesResponse?.data?.categories || [];
-    
+
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error(error.message);
       console.error(error.name);
-    }else {
+    } else {
       console.error("Failed to fetch categories:", error);
     }
   }
-  
+
 
   return (
     <nav className={`hidden lg:flex items-center justify-between w-full my-3 px-4`}>
@@ -73,10 +73,10 @@ const HeaderNavLink = async ({
                   {link?.name === "Courses" ? (
                     categories?.length > 0 ? (
                       categories?.map((category) => (
-                        <DropdownMenuItem key={category.id}>
+                        <DropdownMenuItem asChild key={category.id}>
                           <Link
                             href={`/courses?category_id=${category.id}`}
-                            className="w-full"
+                            className="w-full cursor-pointer"
                           >
                             {category.name}
                           </Link>
@@ -89,11 +89,11 @@ const HeaderNavLink = async ({
                     )
                   ) : link?.name === "About" ? (
                     aboutDropdownLinks?.map((item) => (
-                      <DropdownMenuItem key={item.href}>
+                      <DropdownMenuItem asChild key={item.href}>
                         <Link
                           href={item.href}
                           prefetch={true}
-                          className="w-full"
+                          className="w-full cursor-pointer"
                         >
                           {item?.name}
                         </Link>

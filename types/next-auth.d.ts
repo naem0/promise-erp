@@ -15,6 +15,7 @@ declare module "next-auth" {
     } & DefaultSession["user"]
     accessToken: string
     expiresAt: string
+    error?: string
   }
 
   interface User {
@@ -26,6 +27,7 @@ declare module "next-auth" {
     permissions?: string[];
     accessToken: string
     expiresAt: string
+    error?: string
   }
 }
 
@@ -39,5 +41,6 @@ declare module "next-auth/jwt" {
     permissions?: string[];
     accessToken: string
     expiresAt: string
+    error?: string
   }
 }

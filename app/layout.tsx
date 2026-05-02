@@ -8,6 +8,7 @@ import "./globals.css";
 import StoreProvider from "@/store/StoreProvider";
 import { Tooltip } from "radix-ui";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import SessionWatcher from "@/components/auth/SessionWatcher";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -77,6 +78,7 @@ export default function RootLayout({
       >
         <StoreProvider>
           <SessionProviderWrapper>
+            <SessionWatcher />
             <PermissionProvider>
               <TooltipProvider>
                 {children}

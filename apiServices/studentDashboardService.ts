@@ -289,7 +289,7 @@ export interface StEarningStateResponse {
   };
 }
 
-export async function getStudentEarningState(): Promise<StEarningStateResponse> {
+export async function getStudentEarningState(): Promise<StEarningStateResponse | null> {
   const session = await getServerSession(authOptions);
   const accessToken = session?.accessToken;
 
@@ -303,6 +303,16 @@ export async function getStudentEarningState(): Promise<StEarningStateResponse> 
         Authorization: `Bearer ${accessToken}`,
       },
     });
+
+    if (res.status === 404) {
+      console.warn("No earning cards found.");
+      return null;
+    } 
+
+    if (res.status === 401) {
+      console.warn("Unauthorized: Invalid access token");
+      return null;
+    }
 
     if (!res.ok) {
       throw new Error(
@@ -341,11 +351,12 @@ export interface EarningsChartApiResponse {
   message: string;
   code: number;
   data: EarningsChartData;
+  errors?: Record<string, string[]>;
 }
 
 export async function getStudentEarningUsdChart(
   accessToken: string,
-): Promise<EarningsChartApiResponse> {
+): Promise<EarningsChartApiResponse | null> {
   if (!accessToken) {
     throw new Error("Unauthorized: No access token found");
   }
@@ -356,6 +367,16 @@ export async function getStudentEarningUsdChart(
         Authorization: `Bearer ${accessToken}`,
       },
     });
+
+
+    if (res.status === 404) {
+      console.warn("No USD chart data found.");
+      return null;
+    }
+
+    if (res.status === 401) {
+      throw new Error("Unauthorized: Invalid access token");
+    }
 
     if (!res.ok) {
       throw new Error(
@@ -378,7 +399,7 @@ export async function getStudentEarningUsdChart(
 // Start get Earning Bdt Charts
 export async function getStudentEarningBdtChart(
   accessToken: string,
-): Promise<EarningsChartApiResponse> {
+): Promise<EarningsChartApiResponse | null> {
   if (!accessToken) {
     throw new Error("Unauthorized: No access token found");
   }
@@ -389,6 +410,15 @@ export async function getStudentEarningBdtChart(
         Authorization: `Bearer ${accessToken}`,
       },
     });
+
+    if (res.status === 404) {
+      console.warn("No BDT chart data found.");
+      return null;
+    }
+
+    if (res.status === 401) {
+      throw new Error("Unauthorized: Invalid access token");
+    }
 
     if (!res.ok) {
       throw new Error(

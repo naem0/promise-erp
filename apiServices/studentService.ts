@@ -53,6 +53,9 @@ export interface StudentResponse {
   code: number;
   data: {
     total_students: number;
+    total_running_students?: number;
+    total_govt_students?: number;
+    total_paid_students?: number;
     students: Student[];
     pagination?: PaginationType;
   };

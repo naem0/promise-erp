@@ -58,7 +58,6 @@ const WhoCanJoinData = async ({
 
   const joins = results?.data?.joins || [];
   const paginationData = results?.data?.pagination;
-  console.log("WhoCanJoinData - pagination data:", paginationData);
 
   if (!joins.length) {
     return <NotFoundComponent message={results?.message || "No joins found."} />;
@@ -126,7 +125,7 @@ const WhoCanJoinData = async ({
           </TableBody>
         </Table>
       </div>
-      {paginationData?.has_more_pages && (
+      {paginationData?.last_page > 1 && (
         <div className="my-4">
           <Pagination pagination={paginationData} />
         </div>

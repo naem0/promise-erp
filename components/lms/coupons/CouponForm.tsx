@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/select";
 import { CouponItem, CreateCouponRequest } from "@/apiServices/couponsService";
 import { Label } from "@/components/ui/label";
+import { useRouter } from "next/navigation";
 
 interface CouponFormProps {
   title: string;
@@ -30,6 +31,7 @@ export default function CouponForm({
   onSubmit,
   coupon,
 }: CouponFormProps) {
+  const router = useRouter()
   const {
     register,
     handleSubmit,
@@ -61,8 +63,17 @@ export default function CouponForm({
 
   return (
     <div className=" mx-auto bg-card border rounded-2xl p-8 shadow-sm">
-      <h2 className="text-2xl font-bold mb-8 text-center">{title}</h2>
+      <div className="flex items-center justify-start mb-8">
+        <Button
+          variant="secondary"
+          onClick={() => router.back()}
+          className="cursor-pointer me-2"
+        >
+          <span className="text-md mr-2">Go Back</span>
+        </Button>
+        <h2 className="text-2xl font-bold">{title}</h2>
 
+      </div>
       <form onSubmit={handleSubmit(submitHandler)} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Title */}
@@ -216,6 +227,7 @@ export default function CouponForm({
           <Button
             type="submit"
             disabled={isSubmitting}
+            className="cursor-pointer"
           >
             {isSubmitting ? (
               <span className="flex items-center gap-2">

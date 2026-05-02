@@ -9,6 +9,8 @@ import {
 } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
+  EarningsChartApiResponse,
+  EarningsChartData,
   EarningsChartItem,
   getStudentEarningUsdChart,
 } from "@/apiServices/studentDashboardService";
@@ -17,11 +19,11 @@ import SectionLoadingSkeleton from "../common/SectionLoadingSkeleton";
 import { useSession } from "next-auth/react";
 
 const EarningsChartUSD = () => {
-  const [earningsDataUSD, setEarningsDataUSD] = useState<EarningsChartItem[]>([]);
+  const [earningsDataUSD, setEarningsDataUSD] = useState<EarningsChartApiResponse | null>(null);
   const [isPending, startTransition] = useTransition();
 
   const { data: session } = useSession();
-    const token = session?.accessToken;
+  const token = session?.accessToken;
 
   useEffect(() => {
     if (!token) return;
@@ -31,7 +33,7 @@ const EarningsChartUSD = () => {
         if (!response?.success) {
           console.error(response?.message);
         } else {
-          setEarningsDataUSD(response?.data?.chart_data || []);
+          setEarningsDataUSD(response);
         }
       } catch (error: unknown) {
         if (error instanceof Error) {
@@ -45,8 +47,10 @@ const EarningsChartUSD = () => {
 
   if (isPending) return <SectionLoadingSkeleton />;
 
-  if (earningsDataUSD.length === 0)
+  const earningsData = earningsDataUSD?.data?.chart_data || [];
+  if (!earningsDataUSD || !earningsDataUSD?.success || !earningsDataUSD?.data || earningsData?.length === 0) {
     return null;
+  }
 
   return (
     <Card className="">
@@ -59,7 +63,7 @@ const EarningsChartUSD = () => {
         <div className="h-[250px] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart
-              data={earningsDataUSD}
+              data={earningsData}
               margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
             >
               <defs>

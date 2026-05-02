@@ -247,8 +247,6 @@ export default function FreeSeminarForm({
         ? await updateFreeSeminar(freeSeminar.id, formData)
         : await createFreeSeminar(formData);
 
-      console.log("res:", res);
-
       if (res.success) {
         toast.success(res.message || "Seminar saved successfully!");
         router.push("/lms/free-seminars");
@@ -284,12 +282,14 @@ export default function FreeSeminarForm({
   return (
     <div className="mx-auto w-full space-y-4">
       <div className="flex items-center space-x-2 text-[#2A334E]">
-        <button
+        <Button
+          type="button"
+          variant="secondary"
           onClick={() => router.back()}
-          className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+          className="cursor-pointer"
         >
-          <ChevronLeft className="w-6 h-6" />
-        </button>
+          <span>Go Back</span>
+        </Button>
         <h1 className="text-2xl font-bold">{title}</h1>
       </div>
 
@@ -842,14 +842,14 @@ export default function FreeSeminarForm({
               type="button"
               variant="outline"
               onClick={() => router.back()}
-              className="px-6"
+              className="px-6 cursor-pointer"
             >
               Cancel
             </Button>
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="px-8 bg-primary hover:bg-[#16a34a]"
+              className="px-8 bg-primary hover:bg-[#16a34a] cursor-pointer"
             >
               {isSubmitting ? "Saving..." : freeSeminar ? "Update Seminar" : "Create Seminar"}
             </Button>

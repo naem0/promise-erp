@@ -100,12 +100,11 @@ export default function FaqForm({ title, faq }: FaqFormProps) {
     <div className="bg-card border rounded-2xl p-6 shadow-sm">
       <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
         <Button
-          variant="ghost"
-          size="sm"
+          variant="secondary"
           onClick={() => router.back()}
-          className="p-0 h-auto"
+          className="cursor-pointer"
         >
-          <span className="text-xl">{"<"}</span>
+          <span className="text-md mr-2">Go Back</span>
         </Button>
         {title}
       </h2>
@@ -144,10 +143,9 @@ export default function FaqForm({ title, faq }: FaqFormProps) {
           />
           {errors && (
             <>
-            <p className="text-sm text-red-500 mt-1">
-              {/* {errors.answer.message} */}
-            </p>
-            {console.log(errors)}
+              <p className="text-sm text-red-500 mt-1">
+                {/* {errors.answer.message} */}
+              </p>
             </>
           )}
         </div>
@@ -221,14 +219,14 @@ export default function FaqForm({ title, faq }: FaqFormProps) {
             type="button"
             variant="outline"
             onClick={() => router.back()}
-            className="rounded-lg border-primary text-green-600"
+            className="rounded-lg border-primary text-green-600 cursor-pointer"
           >
             Cancel
           </Button>
           <Button
             type="submit"
             disabled={isSubmitting}
-            className="bg-primary text-white px-8 rounded-lg"
+            className="bg-primary text-white px-8 rounded-lg cursor-pointer"
           >
             {isSubmitting ? "Submitting..." : isEdit ? "Update FAQ" : "Add FAQ"}
           </Button>

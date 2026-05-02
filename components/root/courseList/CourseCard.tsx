@@ -14,9 +14,16 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import RatingStars from "@/components/common/RatingStars";
 import Link from "next/link";
 
-const CourseCard = ({ course }: { course: Course | PublicCourse }) => {
+const CourseCard = ({ course, branchId }: { course: Course | PublicCourse, branchId?: string }) => {
+  const courseLink =
+    course?.slug
+      ? `/courses/${course.slug}${branchId ? `?branch_id=${String(branchId)}` : ""}`
+      : "#";
+  console.log("course", courseLink);
+  console.log("course--->", course);
+
   return (
-    <Link href={`/courses/${course?.slug}`}>
+    <Link href={courseLink}>
       <Card
         key={course?.id}
         className="transition-all hover:shadow-lg py-0 gap-0 group h-full flex flex-col justify-between"
@@ -56,12 +63,12 @@ const CourseCard = ({ course }: { course: Course | PublicCourse }) => {
 
             <div className="flex items-center gap-1">
               <Clock className="h-4 w-4" />
-              <span>{course.batch?.duration || "N/A"}</span>
+              <span>{course?.batch?.duration || "----"}</span>
             </div>
           </div>
           <div className="flex items-center gap-2">
             {course?.batch?.after_discount &&
-            course?.batch?.after_discount > 0 ? (
+              course?.batch?.after_discount > 0 ? (
               <span className="text-sm text-muted-foreground line-through">
                 ৳ {course.batch.price}
               </span>

@@ -89,10 +89,17 @@ export default function JoinForm({ title, join }: JoinFormProps) {
 
   return (
     <div className="min-h-[calc(100vh-80px)] w-full bg-background flex items-start justify-center py-10 px-4">
-      <div className="w-full max-w-6xl bg-card border rounded-2xl p-10 shadow-md">
-        <h2 className="text-2xl font-semibold mb-8 text-center">
-          {title}
-        </h2>
+      <div className="w-full bg-card border rounded-2xl p-10 shadow-md">
+        <div className="flex items-center justify-start gap-2 mb-8">
+          <Button variant="secondary" onClick={() => router.back()} className="cursor-pointer">
+            <span>
+              Go Back
+            </span>
+          </Button>
+          <h2 className="text-2xl font-semibold ">
+            {title}
+          </h2>
+        </div>
 
         <form onSubmit={handleSubmit(submitHandler)} className="space-y-6">
           {/* Title */}
@@ -144,6 +151,7 @@ export default function JoinForm({ title, join }: JoinFormProps) {
             <Button
               type="submit"
               disabled={isSubmitting}
+              className="cursor-pointer"
             >
               {isSubmitting
                 ? "Submitting..."

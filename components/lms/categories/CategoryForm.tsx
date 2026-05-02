@@ -146,12 +146,12 @@ export default function CategoryForm({ title, category }: CategoryFormProps) {
         : await createCategory(formData);
 
       if (res.success) {
-        toast.success( res.message || (isEdit ? "Category updated successfully!" : "Category created successfully!"));
-        
+        toast.success(res.message || (isEdit ? "Category updated successfully!" : "Category created successfully!"));
+
         reset();
         setMetaTags([]);
         setPreviewImage(null);
-        
+
         router.push("/lms/categories");
       } else {
         if (res.errors) {
@@ -180,12 +180,11 @@ export default function CategoryForm({ title, category }: CategoryFormProps) {
     <div className="bg-card border rounded-2xl p-6 shadow-sm">
       <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
         <Button
-          variant="ghost"
-          size="sm"
+          variant="secondary"
           onClick={() => router.back()}
-          className="p-0 h-auto"
+          className="cursor-pointer"
         >
-          <span className="text-xl">{"<"}</span>
+          <span className="text-sm">Go Back</span>
         </Button>
         {title}
       </h2>
