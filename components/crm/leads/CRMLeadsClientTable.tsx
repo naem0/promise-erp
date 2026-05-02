@@ -142,7 +142,7 @@ export default function CRMLeadsClientTable({
                             onClick={() => setAssignModalOpen(true)}
                         >
                             <UserCheck className="h-3.5 w-3.5" />
-                            Assign to Consultant
+                            Assign to Counsellor
                         </Button>
                     </div>
                 </div>
@@ -162,8 +162,7 @@ export default function CRMLeadsClientTable({
                             </TableHead>
                             <TableHead className="text-center">Sl</TableHead>
                             <TableHead className="text-center">Action</TableHead>
-                            <TableHead className="text-center">Name &amp; Email</TableHead>
-                            <TableHead className="text-center">Phone</TableHead>
+                            <TableHead className="text-center">Name, Phone & Email</TableHead>
                             <TableHead className="text-center">Referrer</TableHead>
                             <TableHead className="text-center">Course</TableHead>
                             <TableHead className="text-center">Type</TableHead>
@@ -172,7 +171,7 @@ export default function CRMLeadsClientTable({
                             <TableHead className="text-center">Source</TableHead>
                             <TableHead className="text-center">Category</TableHead>
                             <TableHead className="text-center">Branch</TableHead>
-                            <TableHead className="text-center">Consultant</TableHead>
+                            <TableHead className="text-center">Counsellor</TableHead>
                             <TableHead className="text-center">Notes</TableHead>
                         </TableRow>
                     </TableHeader>
@@ -234,18 +233,28 @@ export default function CRMLeadsClientTable({
 
                                 {/* Name,Email & Phone */}
                                 <TableCell className="font-medium text-center">
-                                    <div className="flex flex-col">
-                                        <span>{lead?.name}</span>
-                                        <span className="text-xs text-secondary">
-                                            {lead?.email}
+                                    <div className="flex flex-col items-center gap-0.5">
+                                        <span className="font-semibold">
+                                            {lead?.name || "N/A"}
                                         </span>
 
+                                        {lead?.phone && (
+                                            <span className="text-xs text-muted-foreground">
+                                                {lead.phone}
+                                            </span>
+                                        )}
+
+                                        {lead?.email && (
+                                            <span className="text-xs text-secondary">
+                                                {lead.email}
+                                            </span>
+                                        )}
                                     </div>
                                 </TableCell>
 
-                                <TableCell className="text-center">
+                                {/* <TableCell className="text-center">
                                     {lead?.phone || "—"}
-                                </TableCell>
+                                </TableCell> */}
 
                                 {/* Referrer */}
                                 <TableCell className="text-center">
@@ -261,7 +270,7 @@ export default function CRMLeadsClientTable({
 
                                 {/* Course */}
                                 <TableCell className="text-center" title={lead?.course?.name || lead?.course_name || "—"}>
-                                    
+
                                     {truncate(lead?.course?.name || lead?.course_name || "—", 30)}
                                 </TableCell>
 
@@ -366,7 +375,7 @@ export default function CRMLeadsClientTable({
                                     className="text-center text-xs max-w-[200px]"
                                     title={lead?.notes || ""}
                                 >
-                                    { truncate(lead?.notes || "N/A", 20)      }
+                                    {truncate(lead?.notes || "N/A", 20)}
                                 </TableCell>
                             </TableRow>
                         ))}

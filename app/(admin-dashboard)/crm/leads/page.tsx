@@ -1,5 +1,6 @@
 import CRMLeadsData from "@/components/crm/leads/CRMLeadsData";
 import CRMLeadsFilterData from "@/components/crm/leads/CRMLeadsFilterData";
+import CRMLeadsSummaryWrapper from "@/components/crm/leads/CRMLeadsSummaryWrapper";
 import TableSkeleton from "@/components/TableSkeleton";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
@@ -14,7 +15,7 @@ export default function CRMLeadsPage({
     return (
         <div className="mx-auto space-y-6">
             <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-semibold tracking-tight text-slate-800">CRM Leads</h1>
+                <h1 className="text-2xl font-semibold tracking-tight text-slate-800">Leads</h1>
                 <div className="flex justify-end gap-3 pt-4">
                     <Button asChild className="bg-green-600">
                         <Link href="/crm/leads/add">
@@ -25,6 +26,10 @@ export default function CRMLeadsPage({
                 </div>
 
             </div>
+
+            <Suspense fallback={<div>Loading summary...</div>}>
+                <CRMLeadsSummaryWrapper searchParams={searchParams} />
+            </Suspense>
 
             <Suspense fallback={<div>Loading filters...</div>}>
                 <CRMLeadsFilterData />
