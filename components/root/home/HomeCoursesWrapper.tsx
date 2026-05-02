@@ -13,6 +13,7 @@ const HomeCoursesWrapper = () => {
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
   const [coursesData, setCoursesData] = useState<ApiResponse | null>(null);
+  const branchId = searchParams.get("branch_id") ?? "1";
 
   useEffect(() => {
     startTransition(() => {
@@ -21,7 +22,7 @@ const HomeCoursesWrapper = () => {
           const params = {
             per_page: 16,
             sort_order: searchParams.get("sort_order") ?? "desc",
-            branch_id: searchParams.get("branch_id") ?? "1",
+            branch_id: branchId,
             sort_ratings: searchParams.get("sort_ratings") ?? "ratings",
             page: searchParams.get("page")
               ? Number(searchParams.get("page"))
@@ -61,7 +62,7 @@ const HomeCoursesWrapper = () => {
           subtitle={coursesData?.data?.section_subtitle}
           iswhite={false}
         />
-        <HomeCourses coursesData={coursesData} />
+        <HomeCourses coursesData={coursesData} branchId={branchId} />
       </div>
     </section>
   );

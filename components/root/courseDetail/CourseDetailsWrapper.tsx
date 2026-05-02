@@ -15,13 +15,14 @@ import { notFound } from "next/navigation";
 import ErrorComponent from "@/components/common/ErrorComponent";
 interface CourseDetailsWrapperProps {
   slug: string;
+  branchId?: number;
 }
 
-const CourseDetailsWrapper = async ({ slug }: CourseDetailsWrapperProps) => {
+const CourseDetailsWrapper = async ({ slug, branchId }: CourseDetailsWrapperProps) => {
   let course;
 
   try {
-    const response: ApiResponse | null = await getCourseDetailBySlug(slug);
+    const response: ApiResponse | null = await getCourseDetailBySlug(slug, branchId);
 
     if (!response || !response.success || !response?.data) {
       notFound();
@@ -45,8 +46,8 @@ const CourseDetailsWrapper = async ({ slug }: CourseDetailsWrapperProps) => {
           title={"Tools & Technologies You Will Master"}
         />
         <WhoCanJoinSection course={course} />
-        <InstructorsSection 
-          instructors={course.course_instructors} 
+        <InstructorsSection
+          instructors={course.course_instructors}
           title={"Meet Your Instructors"}
         />
         <ReviewsSection course={course} />

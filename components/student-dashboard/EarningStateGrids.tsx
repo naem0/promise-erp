@@ -6,10 +6,22 @@ import { Card, CardContent } from "@/components/ui/card";
 import { DollarSign, TrendingDown, TrendingUp, Wallet } from "lucide-react";
 
 const EarningStateGrids = async () => {
-  const earningStateData: StEarningStateResponse =
-    await getStudentEarningState();
-
+  let earningStateData: StEarningStateResponse | null = null;
+  try {
+    earningStateData = await getStudentEarningState();
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error fetching BDT earnings data:", error.message);
+    } else {
+      console.error("Error fetching BDT earnings data:", error);
+    }
+  }
+  
   const cards = earningStateData?.data?.earning_cards;
+  if (!earningStateData || !earningStateData?.data || !cards ) {
+    return null;
+  }
+
 
   return (
     <div className="px-4 py-4 lg:py-6 relative">

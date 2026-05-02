@@ -153,12 +153,11 @@ export default function ReviewsForm({
         <div className="bg-card border rounded-2xl p-6 shadow-sm">
             <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
                 <Button
-                    variant="ghost"
-                    size="sm"
+                    variant="secondary"
                     onClick={() => router.back()}
-                    className="p-0 h-auto"
+                    className="cursor-pointer"
                 >
-                    <span className="text-xl">{"<"}</span>
+                    <span>Go Back</span>
                 </Button>
                 {title}
             </h2>
@@ -352,16 +351,16 @@ export default function ReviewsForm({
                         type="button"
                         variant="outline"
                         onClick={() => router.back()}
-                        className="rounded-lg border-green-600 text-green-600"
+                        className="rounded-lg border-green-600 text-green-600 cursor-pointer"
                     >
                         Cancel
                     </Button>
                     <Button
                         type="submit"
                         disabled={isSubmitting}
-                        className="bg-green-600 hover:bg-green-700 text-white px-8 rounded-lg"
+                        className="cursor-pointer"
                     >
-                        {isSubmitting ? "Submitting..." : review ? "Update" : "Add"}
+                        {isSubmitting ? "Submitting..." : review ? "Update Review" : "Add Review"}
                     </Button>
                 </div>
             </form>

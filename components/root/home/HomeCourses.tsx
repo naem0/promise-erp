@@ -19,26 +19,27 @@ import NotFoundComponent from "@/components/common/NotFoundComponent";
 interface HomeCoursesProps {
   coursesData?: ApiResponse | null;
   courses?: Course[] | PublicCourse[];
+  branchId?: string;
 }
 
-const HomeCourses = ({ coursesData, courses: directCourses }: HomeCoursesProps) => {
+const HomeCourses = ({ coursesData, courses: directCourses, branchId }: HomeCoursesProps) => {
   const courses = directCourses || coursesData?.data?.courses || [];
-  
-  if (courses.length === 0) {
+
+  if (courses?.length === 0) {
     return <NotFoundComponent message={coursesData?.message || "No Courses Found"} />;
   }
 
   const plugin = useRef(
-      Autoplay({
-        delay: 2000,
-        stopOnInteraction: false,
-      })
-    );
-  
+    Autoplay({
+      delay: 2000,
+      stopOnInteraction: false,
+    })
+  );
+
   return (
     <>
       <Carousel
-      plugins={[plugin.current]}
+        plugins={[plugin.current]}
         opts={{
           align: "start",
           loop: true,
@@ -51,7 +52,7 @@ const HomeCourses = ({ coursesData, courses: directCourses }: HomeCoursesProps) 
               key={course.id}
               className="basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4 h-auto"
             >
-              <CourseCard course={course} />
+              <CourseCard course={course} branchId={branchId} />
             </CarouselItem>
           ))}
         </CarouselContent>
@@ -62,10 +63,10 @@ const HomeCourses = ({ coursesData, courses: directCourses }: HomeCoursesProps) 
       </Carousel>
       <div className="pt-6 flex items-center justify-center">
         <Button asChild className="cursor-pointer flex items-center gap-2" variant="secondary">
-            <Link href="/courses">
-               সব কোর্স দেখুন
-            </Link>
-          </Button>
+          <Link href="/courses">
+            সব কোর্স দেখুন
+          </Link>
+        </Button>
       </div>
     </>
   );

@@ -18,6 +18,7 @@ import { createCourse } from "@/apiServices/courseService";
 import { handleFormErrors, handleFormSuccess } from "@/lib/formErrorHandler";
 import { UseFormSetError } from "react-hook-form";
 import { ApiErrorResponse } from "@/lib/apiErrorHandler";
+import { Button } from "@/components/ui/button";
 
 // -----------------------------------------
 // Step Header Component
@@ -59,9 +60,7 @@ export default function CourseCreationWizard() {
 
   const [step, setStep] = useState<number>(1);
   const [courseId, setCourseId] = useState<number | null>(null);
-  const [ error, setError] = useState<any>(null);
-
-  console.log("courseId Step......:", courseId);
+  const [error, setError] = useState<any>(null);
 
   const goNext = () => setStep((prev) => prev + 1);
 
@@ -76,7 +75,16 @@ export default function CourseCreationWizard() {
   return (
     <Card className="mx-auto w-full">
       <CardHeader>
-        <CardTitle className="text-2xl">Create Course</CardTitle>
+        <CardTitle className="text-2xl">
+          <Button
+            variant="secondary"
+            onClick={() => router.back()}
+            className="cursor-pointer me-3"
+          >
+            <span className="text-sm">Go Back</span>
+          </Button>
+          Create Course
+        </CardTitle>
       </CardHeader>
 
       <CardContent>

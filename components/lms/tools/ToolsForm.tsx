@@ -126,8 +126,18 @@ export default function ToolsForm({ title, tool }: ToolFormProps) {
     };
 
     return (
-        <div className="max-w-md mx-auto bg-card border rounded-2xl p-6 shadow-sm">
-            <h2 className="text-xl font-semibold mb-6 text-center">{title}</h2>
+        <div className="w-full mx-auto bg-card border rounded-2xl p-6 shadow-sm">
+            <div className="flex items-center justify-start gap-3 mb-4">
+                <Button
+                    type="button"
+                    variant="secondary"
+                    onClick={() => router.back()}
+                    className=" cursor-pointer"
+                >
+                    <span>Go Back</span>
+                </Button>
+                <h2 className="text-xl font-semibold">{title}</h2>
+            </div>
 
             <form onSubmit={handleSubmit(submitHandler)} className="space-y-5">
                 {/* Title */}
@@ -227,14 +237,15 @@ export default function ToolsForm({ title, tool }: ToolFormProps) {
                         )}
                     </div>
                 </div>
-
-                <Button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-full cursor-pointer"
-                >
-                    {isSubmitting ? "Submitting..." : tool ? "Update Tool" : "Add Tool"}
-                </Button>
+                <div className="flex items-center justify-end">
+                    <Button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="cursor-pointer"
+                    >
+                        {isSubmitting ? "Submitting..." : tool ? "Update Tool" : "Add Tool"}
+                    </Button>
+                </div>
             </form>
         </div>
     );

@@ -97,7 +97,7 @@ export default function FacilitiesForm({ title, facility }: FacilitiesFormProps)
     } catch (error: unknown) {
       if (error instanceof Error) {
         toast.error(error.message);
-      }else {
+      } else {
         toast.error("An unexpected error occurred.");
       }
       console.error(error);
@@ -112,8 +112,18 @@ export default function FacilitiesForm({ title, facility }: FacilitiesFormProps)
   };
 
   return (
-    <div className="max-w-md mx-auto bg-card border rounded-2xl p-6 shadow-sm">
-      <h2 className="text-xl font-semibold mb-6 text-center">{title}</h2>
+    <div className="mx-auto bg-card border rounded-2xl p-6 shadow-sm">
+      <div className="flex items-start ">
+        <Button
+          variant="secondary"
+          onClick={() => router.back()}
+          className="cursor-pointer me-3"
+        >
+          <span className="text-sm">Go Back</span>
+        </Button>
+        <h2 className="text-xl font-semibold mb-6">{title}</h2>
+      </div>
+
 
       <form onSubmit={handleSubmit(submitHandler)} className="space-y-5">
         {/* Title */}
@@ -186,9 +196,11 @@ export default function FacilitiesForm({ title, facility }: FacilitiesFormProps)
           </div>
         </div>
 
-        <Button type="submit" disabled={isSubmitting} className="w-full cursor-pointer">
-          {isSubmitting ? "Submitting..." : facility ? "Update Facility" : "Add Facility"}
-        </Button>
+        <div className="flex justify-end">
+          <Button type="submit" disabled={isSubmitting} className="cursor-pointer">
+            {isSubmitting ? "Submitting..." : facility ? "Update Facility" : "Add Facility"}
+          </Button>
+        </div>
       </form>
     </div>
   );

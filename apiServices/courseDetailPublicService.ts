@@ -140,13 +140,19 @@ export interface ApiResponse {
 }
 
 export async function getCourseDetailBySlug(
-  slug: string
+  slug: string,
+  branchId?: number,
 ): Promise<ApiResponse | null> {
   "use cache";
   cacheTag("course-detail");
 
   try {
-    const res = await fetch(`${API_BASE}/public/courses/${slug}`, {
+   const urlParams = new URLSearchParams();
+
+    if (branchId) {
+      urlParams.append("branch_id", String(branchId));
+    }
+    const res = await fetch(`${API_BASE}/public/courses/${slug}?${urlParams.toString()}`, {
       headers: {
         "Content-Type": "application/json",
       },

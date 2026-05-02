@@ -190,7 +190,16 @@ export default function BatchForm({ title, batch }: BatchFormProps) {
     return (
         <Card className="w-full mx-auto">
             <CardHeader>
-                <CardTitle className="text-2xl">{title}</CardTitle>
+                <CardTitle className="text-2xl">
+                    <Button
+                        variant="secondary"
+                        onClick={() => router.back()}
+                        className="cursor-pointer me-3"
+                    >
+                        <span className="text-sm">Go Back</span>
+                    </Button>
+                    {title}
+                </CardTitle>
             </CardHeader>
 
             <CardContent>

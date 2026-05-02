@@ -8,6 +8,7 @@ import { Suspense } from "react";
 
 interface CourseDetailPageProps {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
 export async function generateStaticParams() {
@@ -54,15 +55,16 @@ export async function generateMetadata({ params }: CourseDetailPageProps) {
 }
 
 // Course Detail Page Component
-const CourseDetail = async ({ params }: CourseDetailPageProps) => {
+const CourseDetail = async ({ params,searchParams }: CourseDetailPageProps) => {
   const { slug } = await params;
+  const { branch_id } = await searchParams;
   return (
     <Suspense fallback={<div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-16 space-y-16">
         <h1 className="text-2xl text-center">Loading...</h1>
       </div>
     </div>}>
-      <CourseDetailsWrapper slug={slug} />
+      <CourseDetailsWrapper slug={slug} branchId={branch_id ? Number(branch_id) : undefined} />
     </Suspense>
   );
 };

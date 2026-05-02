@@ -7,6 +7,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 
 import PermissionGuard from "@/components/auth/PermissionGuard";
+import StudentsSummaryWrapper from "@/components/lms/students/StudentsSummaryWrapper";
 
 export default function StudentsPage({
   searchParams,
@@ -26,6 +27,10 @@ export default function StudentsPage({
           </Button>
         </PermissionGuard>
       </div>
+
+      <Suspense fallback={<div>Loading summary...</div>}>
+        <StudentsSummaryWrapper searchParams={searchParams} />
+      </Suspense>
 
       <Suspense fallback={<div>Loading filters...</div>}>
         <StudentFilterData />

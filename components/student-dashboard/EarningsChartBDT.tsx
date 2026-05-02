@@ -10,6 +10,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import SectionLoadingSkeleton from "../common/SectionLoadingSkeleton";
 import {
+  EarningsChartApiResponse,
   EarningsChartItem,
   getStudentEarningBdtChart,
 } from "@/apiServices/studentDashboardService";
@@ -17,9 +18,7 @@ import { useEffect, useState, useTransition } from "react";
 import { useSession } from "next-auth/react";
 
 const EarningsChartBDT = () => {
-  const [earningsDataBDT, setEarningsDataBDT] = useState<EarningsChartItem[]>(
-    []
-  );
+  const [earningsDataBDT, setEarningsDataBDT] = useState<EarningsChartApiResponse | null>( null);
   const [isPending, startTransition] = useTransition();
   const { data: session } = useSession();
   const token = session?.accessToken;
@@ -32,7 +31,8 @@ const EarningsChartBDT = () => {
         if (!response?.success) {
           console.error(response?.message);
         } else {
-          setEarningsDataBDT(response?.data?.chart_data || []);
+          setEarningsDataBDT(response);
+          // setEarningsDataBDT(response?.data?.chart_data || []);
         }
       } catch (error: unknown) {
         if (error instanceof Error) {
@@ -46,8 +46,12 @@ const EarningsChartBDT = () => {
 
   if (isPending) return <SectionLoadingSkeleton />;
 
-  if (earningsDataBDT.length === 0)
-    return null;
+  const data = earningsDataBDT?.data?.chart_data || [];
+
+  if (!earningsDataBDT || !earningsDataBDT?.data ){
+    return null
+  }
+
   return (
     <Card>
       <CardHeader className="pb-2">
@@ -60,7 +64,7 @@ const EarningsChartBDT = () => {
         <div className="h-[250px] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart
-              data={earningsDataBDT}
+              data={data}
               margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
             >
               <defs>

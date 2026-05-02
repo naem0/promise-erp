@@ -47,7 +47,6 @@ export const authOptions:NextAuthOptions = {
         token.email = user.email;
         token.image = user.image;
         token.roles = user.roles;
-        // token.permissions = user.permissions;
         token.accessToken = user.accessToken;
         token.expiresAt = user.expiresAt;
       }
@@ -56,7 +55,7 @@ export const authOptions:NextAuthOptions = {
       
       if (token.expiresAt && new Date(token.expiresAt) < now) {
         console.warn("Access token expired");
-        return { ...token, accessToken: null };
+        return { ...token, accessToken: null, error: "AccessTokenExpired" };
       }
 
       return token;
@@ -69,10 +68,10 @@ export const authOptions:NextAuthOptions = {
         session.user.email = token.email;
         session.user.image = token.image;
         session.user.roles = token.roles;
-        // session.user.permissions = token.permissions;
       }
       session.accessToken = token.accessToken;
       session.expiresAt = token.expiresAt;
+      session.error = token.error;
 
       return session;
     },

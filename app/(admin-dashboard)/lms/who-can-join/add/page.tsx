@@ -1,9 +1,9 @@
 import JoinForm from "@/components/lms/who-can-join/JoinForm";
 
-const AddJoinPage = () => { 
+const AddJoinPage = () => {
   return (
     <JoinForm
-      title="Add Join Option"
+      title="Add Who Can Join"
     />
   );
 };
