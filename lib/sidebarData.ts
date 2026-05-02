@@ -188,6 +188,11 @@ export const sidebarData = {
               url: "#",
               permissions: ["view-subscriptions"],
             },
+            {
+              title: "Enrollment Reports",
+              url: "/lms/enrollment-reports",
+              permissions: ["view-course-sales-summary","view-course-sales-report"],
+            },
           ],
         },
         {
@@ -412,19 +417,24 @@ export const sidebarData = {
           icon: MonitorCog,
           items: [
             {
-              title: "Categories",
-              url: "/crm/categories",
-              permissions: ["view-crm-categories"],
-            },
-            {
               title: "Leads",
               url: "/crm/leads",
               permissions: ["view-leads"],
             },
             {
-              title: "Leads History",
+              title: "Leads Activity",
               url: "/crm/leads-history",
               permissions: ["view-lead-histories"],
+            },
+            {
+              title: "Lead Categories",
+              url: "/crm/categories",
+              permissions: ["view-crm-categories"],
+            },
+            {
+              title: "Counsellor Performance",
+              url: "/crm/consultants-performance",
+              permissions: ["view-users-performance"],
             },
             
           ],

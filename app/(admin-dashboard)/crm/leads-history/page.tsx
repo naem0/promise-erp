@@ -11,7 +11,7 @@ export default function LeadsHistoryPage({
     return (
         <div className="mx-auto space-y-6">
             <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-semibold tracking-tight text-slate-800">Leads History</h1>
+                <h1 className="text-2xl font-semibold tracking-tight text-slate-800">Leads Activity</h1>
             </div>
 
             <LeadsHistoryFilterData />

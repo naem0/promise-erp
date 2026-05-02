@@ -68,13 +68,14 @@
     { "path": "/lms/enrollments/add", "permissions": ["create-enrollments"] },
     { "path": "/lms/enrollments/approve", "permissions": ["approve-enrollments"] },
     { "path": "/lms/enrollments/edit", "permissions": ["edit-enrollments"], "isDynamic": true },
+   
+    { "path": "/lms/enrollment-reports", "permissions": ["view-course-sales-summary","view-course-sales-report"] },
+
 
     { "path": "/lms/careers", "permissions": ["view-careers"] },
     { "path": "/lms/careers/add", "permissions": ["create-careers"] },
     { "path": "/lms/careers/edit", "permissions": ["edit-careers"], "isDynamic": true },
     
-    
-
     { "path": "/districts", "permissions": ["view-districts"] },
     { "path": "/districts/add", "permissions": ["create-districts"] },
     { "path": "/districts/edit", "permissions": ["edit-districts"], "isDynamic": true },
@@ -85,7 +86,6 @@
 
     { "path": "/access-control/roles", "permissions": ["view-roles"] },
     { "path": "/access-control/permissions", "permissions": ["view-permissions"] },
-    
     
     { "path": "/web-content/stats", "permissions": ["view-stats"] },
     { "path": "/web-content/stats/add", "permissions": ["create-stats"] },
@@ -127,14 +127,24 @@
     { "path": "/web-content/contact-page/add", "permissions": ["create-contact-pages"] },
     { "path": "/web-content/contact-page/edit", "permissions": ["edit-contact-pages"], "isDynamic": true },
 
+    { "path": "/crm/leads", "permissions": ["view-leads"] },
+    { "path": "/crm/leads/add", "permissions": ["create-leads"] },
+    { "path": "/crm/leads/edit", "permissions": ["edit-leads"], "isDynamic": true },
+   
+
+    { "path": "/crm/contacts", "permissions": ["view-crm-contacts"] },
+    { "path": "/crm/contacts/add", "permissions": ["create-crm-contacts"] },
+    { "path": "/crm/contacts/edit", "permissions": ["edit-crm-contacts"], "isDynamic": true },
+
+    { "path": "/crm/leads-history", "permissions": ["view-lead-histories"] },
+    { "path": "/crm/leads-history/add", "permissions": ["create-lead-histories"] },
+    { "path": "/crm/leads-history/edit", "permissions": ["edit-lead-histories"], "isDynamic": true },
+
     { "path": "/crm/categories", "permissions": ["view-crm-categories"] },
     { "path": "/crm/categories/add", "permissions": ["create-crm-categories"] },
     { "path": "/crm/categories/edit", "permissions": ["edit-crm-categories"], "isDynamic": true },
 
-    { "path": "/crm/leads-history", "permissions": ["view-leads-histories"] },
-    { "path": "/crm/leads/add", "permissions": ["view-create-leads"] },
-    { "path": "/crm/leads/edit", "permissions": ["edit-leads"], "isDynamic": true }
-
+    {"path": "/crm/consultants-performance", "permissions": ["view-users-performance"], "isDynamic": true }
 
   ]
 }
