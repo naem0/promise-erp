@@ -4,7 +4,6 @@ import {
   getDashboardSummaryStats,
 } from "@/apiServices/adminDashboardService";
 import ErrorComponent from "../common/ErrorComponent";
-import NotFoundComponent from "../common/NotFoundComponent";
 import DashboardRunningBatches from "./DashboardRunningBatches";
 import DashboardChartsAnalytics from "./DashboardChartsAnalytics";
 
@@ -39,7 +38,7 @@ const AdminUsersStatWrapper = async () => {
   const runningBatches = stats?.running_batches ?? [];
   const divisionalIncomeReport = stats?.divisional_income_report ?? [];
 
-  if (!summaryStats || !summaryStats.success || !summaryStats.data) {
+  if (!summaryStats || !summaryStats?.success || !summaryStats?.data) {
     return null;
   }
 
@@ -52,8 +51,6 @@ const AdminUsersStatWrapper = async () => {
     "#E64A6E", // pink
     "#00B8E6", // cyan
   ];
-
-  console.log("stats----->>>", stats);
 
   const getCardColor = (index: number): string => {
     if (index < palette.length) return palette[index];

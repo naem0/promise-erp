@@ -8,6 +8,7 @@ interface StatCardProps {
 }
 
 const AdminUsersStat = ({ allStats, title, bgColor }: StatCardProps) => {
+  
   return (
     <div
       className="rounded-xl p-4 text-white shadow-md hover:shadow-lg transition-all duration-500"
@@ -19,11 +20,11 @@ const AdminUsersStat = ({ allStats, title, bgColor }: StatCardProps) => {
           {title || "No Title"}
         </h3>
       </div>
-      <div className="pb-2">
+      <div className="pb-2 flex items-center gap-2">
         <p className="text-white text-xl xl:text-2xl font-bold">
-          {" "}
           {allStats[0]?.value}
         </p>
+        <p className="text-white text-lg xl:text-xl">{allStats[0]?.title}</p>
       </div>
       <div className={`grid grid-cols-3 gap-2 `}>
         {allStats?.slice(1).map((stat, index) => (
