@@ -5,7 +5,8 @@ const nextConfig: NextConfig = {
   compress: true,
   poweredByHeader: false,
   generateEtags: true,
-  productionBrowserSourceMaps: false, // Disable to avoid source map issues
+  productionBrowserSourceMaps: false,
+
 
   cacheComponents: true,
   compiler: {
@@ -31,6 +32,7 @@ const nextConfig: NextConfig = {
     minimumCacheTTL: 31536000,
     dangerouslyAllowSVG: true,
     contentDispositionType: "attachment",
+
     remotePatterns: [
       {
         protocol: "http",
@@ -124,20 +126,11 @@ const nextConfig: NextConfig = {
     ],
   },
 
-  // Cache headers for static assets
+  // Cache headers (SAFE VERSION)
   async headers() {
     return [
       {
         source: "/:all*(svg|jpg|jpeg|png|webp|avif|gif|ico|woff|woff2)",
-        headers: [
-          {
-            key: "Cache-Control",
-            value: "public, max-age=31536000, immutable",
-          },
-        ],
-      },
-      {
-        source: "/_next/static/:path*",
         headers: [
           {
             key: "Cache-Control",

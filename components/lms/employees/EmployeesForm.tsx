@@ -81,29 +81,58 @@ export default function EmployeesForm({
         formState: { errors, isSubmitting },
     } = useForm<FormValues>({
         defaultValues: {
-            name: employee?.name || "",
-            email: employee?.email || "",
-            phone: employee?.phone || "",
-            nid_no: employee?.nid_no || "",
-            employee_id: employee?.employee_id || "",
-            address: employee?.address || "",
-            role: employee?.role?.name || "",
-            blood_group: employee?.blood_group || "",
-            designation_id: employee?.designation?.id?.toString() || "",
-            department_id: employee?.department?.id?.toString() || "",
-            branch_ids: employee?.branches?.map(b => b.id.toString()) || [],
-            join_date: employee?.joining_date || "",
-            experience: employee?.experience || "",
-            display_order: employee?.display_order?.toString() || "1",
-            employment_type: employee?.employment_type?.toString() || "1",
-            probation_period: employee?.probation_period?.toString() || "6",
-            salary_scale_id: employee?.salary_scale?.id?.toString() || "",
-            release_date: employee?.release_date || "",
-            note: employee?.note || "",
-            tool_ids: employee?.tools?.map(t => t.id.toString()) || [],
+            name: "",
+            email: "",
+            phone: "",
+            nid_no: "",
+            employee_id: "",
+            address: "",
+            role: "",
+            blood_group: "",
+            designation_id: "",
+            department_id: "",
+            branch_ids: [],
+            join_date: "",
+            experience: "",
+            display_order: "1",
+            employment_type: "1",
+            probation_period: "6",
+            salary_scale_id: "",
+            release_date: "",
+            note: "",
+            tool_ids: [],
             profile_image: undefined,
         },
     });
+
+    useEffect(() => {
+        if (employee) {
+            reset({
+                name: employee.name || "",
+                email: employee.email || "",
+                phone: employee.phone || "",
+                nid_no: employee.nid_no || "",
+                employee_id: employee.employee_id || "",
+                address: employee.address || "",
+                role: employee.role?.name || "",
+                blood_group: employee.blood_group || "",
+                designation_id: employee.designation?.id?.toString() || "",
+                department_id: employee.department?.id?.toString() || "",
+                branch_ids: employee.branches?.map((b) => b.id.toString()) || [],
+                join_date: employee.joining_date || "",
+                experience: employee.experience || "",
+                display_order: employee.display_order?.toString() || "1",
+                employment_type: employee.employment_type?.toString() || "1",
+                probation_period: employee.probation_period?.toString() || "6",
+                salary_scale_id: employee.salary_scale?.id?.toString() || "",
+                release_date: employee.release_date || "",
+                note: employee.note || "",
+                tool_ids: employee.tools?.map((t) => t.id.toString()) || [],
+                profile_image: undefined,
+            });
+            setPreviewImage(employee.profile_image || null);
+        }
+    }, [employee, reset]);
 
     const imageFile = watch("profile_image");
     const selectedRoleId = watch("role");
@@ -365,7 +394,7 @@ export default function EmployeesForm({
                     {/* Branch & Joining Date */}
                     <div className="md:col-span-2">
                         <label className="block text-sm font-medium mb-1">Branches <span className="text-red-500">*</span></label>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-2">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-2 max-h-60 overflow-y-auto pr-2">
                             {branches?.map((branch) => (
                                 <Controller
                                     key={branch.id}
@@ -492,7 +521,7 @@ export default function EmployeesForm({
                                 <h3 className="text-lg font-semibold text-gray-900">Select Tools</h3>
                             </div>
 
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 max-h-60 overflow-y-auto pr-2">
                                 {allTools.map((tool) => (
                                     <Controller
                                         key={tool.id}

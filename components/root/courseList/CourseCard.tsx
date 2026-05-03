@@ -14,13 +14,18 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import RatingStars from "@/components/common/RatingStars";
 import Link from "next/link";
 
-const CourseCard = ({ course, branchId }: { course: Course | PublicCourse, branchId?: string }) => {
-  const courseLink =
-    course?.slug
-      ? `/courses/${course.slug}${branchId ? `?branch_id=${String(branchId)}` : ""}`
-      : "#";
-  console.log("course", courseLink);
-  console.log("course--->", course);
+const CourseCard = ({
+  course,
+  branchId,
+}: {
+  course: Course | PublicCourse;
+  branchId?: string;
+}) => {
+  
+  const branch = branchId ?? "49";
+  const courseLink = course?.slug
+    ? `/courses/${course.slug}?branch_id=${branch}`
+    : "#";
 
   return (
     <Link href={courseLink}>
@@ -68,7 +73,7 @@ const CourseCard = ({ course, branchId }: { course: Course | PublicCourse, branc
           </div>
           <div className="flex items-center gap-2">
             {course?.batch?.after_discount &&
-              course?.batch?.after_discount > 0 ? (
+            course?.batch?.after_discount > 0 ? (
               <span className="text-sm text-muted-foreground line-through">
                 ৳ {course.batch.price}
               </span>

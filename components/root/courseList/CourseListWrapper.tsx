@@ -8,10 +8,12 @@ interface CoursesPageProps {
 }
 const CourseListWrapper = async ({ searchParams }: CoursesPageProps) => {
   const resolvedParams = await searchParams;
+  const branchId = resolvedParams?.branch_id?.toString();
+
 
   const params = {
     category_id: resolvedParams.category_id?.toString(),
-    branch_id: resolvedParams.branch_id?.toString(),
+    branch_id: branchId,
     search: resolvedParams.search?.toString(),
     level: resolvedParams.level?.toString(),
     course_type: resolvedParams.course_type?.toString(),
@@ -60,8 +62,8 @@ const CourseListWrapper = async ({ searchParams }: CoursesPageProps) => {
   return (
     <>
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-        {courses.map((course) => (
-          <CourseCard key={course.id} course={course} />
+        {courses?.map((course) => (
+          <CourseCard key={course?.id} course={course} branchId={branchId} />
         ))}
       </div>
       {courses.length > 0 && (

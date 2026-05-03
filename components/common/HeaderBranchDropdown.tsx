@@ -12,15 +12,16 @@ import {
   getPublicBranchList,
   HeaderBranchList,
 } from "@/apiServices/homePageService";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 const HeaderBranchDropdown = () => {
   const [branchList, setBranchList] = useState<HeaderBranchList[]>([]);
-  const [selectedBranch, setSelectedBranch] = useState<number>(1);
+  const [selectedBranch, setSelectedBranch] = useState<number>(49); // Default to "All Branches" with ID 49 Dhaka Branch
   const [isPending, startTransition] = useTransition();
 
   const router = useRouter();
   const searchParams = useSearchParams();
+  const pathname = usePathname();
 
   // Fetch branches with startTransition
   useEffect(() => {
@@ -49,13 +50,14 @@ const HeaderBranchDropdown = () => {
   }, [searchParams]);
 
   const handleBranchSelect = (branchId: number) => {
-    setSelectedBranch(branchId);
-    startTransition(() => {
-      const params = new URLSearchParams(Array.from(searchParams.entries()));
-      params.set("branch_id", branchId.toString());
-      router.replace(`/?${params.toString()}`);
-    });
-  };
+  setSelectedBranch(branchId);
+
+  startTransition(() => {
+    const params = new URLSearchParams(Array.from(searchParams.entries()));
+    params.set("branch_id", branchId.toString());
+    router.replace(`${pathname}?${params.toString()}`);
+  });
+};
 
   return (
     <DropdownMenu>
@@ -73,9 +75,9 @@ const HeaderBranchDropdown = () => {
         ) : (
           <>
             <DropdownMenuItem
-              onClick={() => handleBranchSelect(1)}
+              onClick={() => handleBranchSelect(49)} // ID 49 for "All Branches" (Dhaka Branch)
               className={
-                selectedBranch === 1 ? "cursor-pointer" : "cursor-pointer"
+                selectedBranch === 49 ? "cursor-pointer" : "cursor-pointer"
               }
             >
               All Branches

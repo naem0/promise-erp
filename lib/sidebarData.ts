@@ -1,10 +1,10 @@
-﻿import {
+import {
   BookOpen, BoxesIcon, BriefcaseBusiness, ChartLine, DollarSign, DollarSignIcon,
   GalleryVerticalEnd, GraduationCap, HouseIcon, ImagePlay, LocationEdit, LockIcon,
   MessageSquare, MonitorCog, Settings, ShieldCheck, ShoppingCartIcon, User2Icon,
   UserCheck, Users
 } from "lucide-react";
-import { permission } from "process";
+
 
 export const sidebarData = {
   user: {
