@@ -82,6 +82,10 @@ export async function getDashboardSummaryStats(): Promise<DashboardSummaryApiRes
       console.warn("Unauthorized: Access token not found.");
       return null;
     }
+    if (res?.status === 403) {
+      console.warn("Unauthorized: Access token not found.");
+      return null;
+    }
 
     if (!res.ok) {
       throw new Error(
