@@ -3,8 +3,6 @@
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import { cacheTag, updateTag } from "next/cache";
-import { District, Division } from "@/apiServices/districtService";
-import { handleApiError, processApiResponse } from "@/lib/apiErrorHandler";
 import { PaginationType } from "@/types/pagination";
 
 const API_BASE =
@@ -65,18 +63,12 @@ export interface BranchResponse {
   };
 }
 
-export interface BranchSingleResponse {
+export interface SingleBranchResponse {
   success: boolean;
   message: string;
+  code: number;
   data: Branch;
-}
-
-export interface BranchResponseType {
-  success: boolean;
-  message?: string;
   errors?: Record<string, string[] | string>;
-  data?: Branch;
-  code?: number;
 }
 
 /* ===============================
@@ -95,37 +87,39 @@ async function getAuthToken(): Promise<string> {
 /* ===============================
    Add Branch
 ================================== */
-export async function addBranch(
-  branch: BranchCreate,
-): Promise<BranchResponseType> {
+export async function createBranch(
+  formData: FormData,
+): Promise<SingleBranchResponse> {
   try {
-    const token = await getAuthToken();
+    const session = await getServerSession(authOptions);
+    const token = session?.accessToken;
+
+    if (!token) throw new Error("No valid session/token");
 
     const res = await fetch(`${API_BASE}/branches`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
       },
-      body: JSON.stringify(branch),
+      body: formData,
     });
 
-    const result = await processApiResponse(res, "Failed to add branch.");
-
-    if (!result.success) {
-      return result;
+    if (!res.ok) {
+      const text = await res.text();
+      console.error("Create Branch Failed:", text);
+      try {
+        return JSON.parse(text);
+      } catch (e) {
+        throw new Error(`Failed to create branch: ${res.statusText}`);
+      }
     }
 
+    const result = await res.json();
     updateTag("branches-list");
-
-    return {
-      success: true,
-      message: result.message || "Branch added successfully.",
-      data: result.data,
-      code: result.code,
-    };
-  } catch (error) {
-    return await handleApiError(error, "Failed to add branch.");
+    return result;
+  } catch (error: unknown) {
+    console.error("Error in createBranch:", error);
+    throw new Error(error instanceof Error ? error.message : "Failed to create branch");
   }
 }
 
@@ -190,21 +184,29 @@ export async function getBranches(
 /* ===============================
   Get Single Branch by ID
 ================================== */
-export async function getBranchById(id: string): Promise<BranchSingleResponse> {
-  const token = await getAuthToken();
+export async function getBranchById(id: string): Promise<SingleBranchResponse> {
+  try {
+    const session = await getServerSession(authOptions);
+    const token = session?.accessToken;
 
-  const res = await fetch(`${API_BASE}/branches/${id}`, {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  });
+    if (!token) throw new Error("No valid session/token");
 
-  if (!res.ok) {
-    throw new Error(`Failed to fetch branch: ${res.statusText}`);
+    const res = await fetch(`${API_BASE}/branches/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error(`Failed to fetch branch: ${res.statusText}`);
+    }
+
+    return await res.json();
+  } catch (error: unknown) {
+    console.error("Error in getBranchById:", error);
+    throw new Error(error instanceof Error ? error.message : "Failed to fetch branch");
   }
-
-  return res.json();
 }
 
 /* ===============================
@@ -213,45 +215,31 @@ export async function getBranchById(id: string): Promise<BranchSingleResponse> {
 
 export async function updateBranch(
   id: string,
-  data: Record<string, unknown>,
-): Promise<BranchResponseType> {
+  formData: FormData,
+): Promise<SingleBranchResponse> {
   try {
     const session = await getServerSession(authOptions);
     const token = session?.accessToken;
 
-    if (!token) {
-      return {
-        success: false,
-        message: "No valid session or access token found.",
-        code: 401,
-      };
-    }
+    if (!token) throw new Error("No valid session/token");
 
+    // We use POST with _method=PUT (in FormData) for Laravel updates involving multipart form data
     const res = await fetch(`${API_BASE}/branches/${id}`, {
-      method: "PUT",
+      method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
       },
-      body: JSON.stringify(data),
+      body: formData,
     });
 
-    const result = await processApiResponse(res, "Failed to update branch.");
+    
 
-    if (!result.success) {
-      return result;
-    }
-
+    const result = await res.json();
     updateTag("branches-list");
-
-    return {
-      success: true,
-      message: result.message || "Branch updated successfully.",
-      data: result.data,
-      code: result.code,
-    };
-  } catch (error) {
-    return await handleApiError(error, "Failed to update branch.");
+    return result;
+  } catch (error: unknown) {
+    console.error("Error in updateBranch:", error);
+    throw new Error(error instanceof Error ? error.message : "Failed to update branch");
   }
 }
 
@@ -261,45 +249,27 @@ export async function updateBranch(
 
 export async function deleteBranch(
   id: number,
-): Promise<{ success: boolean; message: string; code?: number }> {
+): Promise<SingleBranchResponse> {
   try {
     const session = await getServerSession(authOptions);
     const token = session?.accessToken;
 
-    if (!token) {
-      return {
-        success: false,
-        message: "No valid session or access token found.",
-        code: 401,
-      };
-    }
+    if (!token) throw new Error("No valid session/token");
 
     const res = await fetch(`${API_BASE}/branches/${id}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
       },
     });
 
-    const result = await processApiResponse(res, "Failed to delete branch");
-
-    if (!result.success) {
-      return { success: false, message: result.message, code: result.code };
-    }
-
+    const result = await res.json();
     updateTag("branches-list");
-    return {
-      success: true,
-      message: result.message || "Branch deleted successfully",
-      code: result.code,
-    };
-  } catch (error) {
-    const errorResult = await handleApiError(error, "Failed to delete branch");
-    return {
-      success: false,
-      message: errorResult.message,
-      code: errorResult.code,
-    };
+    return result;
+  } catch (error: unknown) {
+    console.error("Error in deleteBranch:", error);
+    throw new Error(error instanceof Error ? error.message : "Failed to delete branch");
   }
 }
 
