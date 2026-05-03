@@ -1,5 +1,6 @@
 "use client";
-import { Controller, useForm, useFieldArray } from "react-hook-form";
+import { useEffect } from "react";
+import { Controller, useForm, useFieldArray, Path } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,7 +10,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { addBranch, updateBranch, Branch} from "@/apiServices/branchService";
+import { createBranch, updateBranch, Branch } from "@/apiServices/branchService";
 import { Plus, X, Globe } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -99,42 +100,85 @@ export default function BranchesForm({
         remove: removeSocial,
     } = useFieldArray({ control, name: "social_links" });
 
-    const setFormError = (field: string, message: string) => {
-        setError(field as keyof FormValues, { type: "server", message });
-    };
+    useEffect(() => {
+        if (branch) {
+            reset({
+                name: branch.name || "",
+                code: branch.code || "",
+                district_id: branch.district?.id?.toString() || "",
+                address: branch.address || "",
+                phone: branch.phone?.map((p) => ({ value: p })) || [{ value: "" }],
+                email: branch.email?.map((e) => ({ value: e })) || [{ value: "" }],
+                google_map: branch.google_map || "",
+                social_links:
+                    branch.social_links?.map((s) => ({
+                        title: s.title,
+                        url: s.url,
+                    })) || [{ title: "Facebook", url: "" }],
+            });
+        }
+    }, [branch, reset]);
 
     const submitHandler = async (values: FormValues) => {
-        const payload = {
-            name: values.name,
-            code: values.code || undefined,
-            district_id: Number(values.district_id),
-            address: values.address || undefined,
-            phone: values.phone.map((p) => p.value.trim()).filter(Boolean),
-            email: values.email.map((e) => e.value.trim()).filter(Boolean),
-            google_map: values.google_map || undefined,
-            social_links: values.social_links
-                .filter((s) => s.title && s.url.trim() !== "")
-                .map((s) => ({ title: s.title, url: s.url.trim() })),
-        };
+        const formData = new FormData();
+
+        Object.entries(values).forEach(([key, value]) => {
+            if (value !== undefined && value !== null && value !== "") {
+                if (key === "phone" || key === "email") {
+                    const arr = value as { value: string }[];
+                    arr.forEach((item) => {
+                        if (item.value.trim() !== "") {
+                            formData.append(`${key}[]`, item.value.trim());
+                        }
+                    });
+                } else if (key === "social_links") {
+                    const links = value as SocialLinkFormValue[];
+                    links.forEach((link, index) => {
+                        if (link.title && link.url.trim() !== "") {
+                            formData.append(`social_links[${index}][title]`, link.title);
+                            formData.append(`social_links[${index}][url]`, link.url.trim());
+                        }
+                    });
+                } else {
+                    formData.append(key, value as string);
+                }
+            }
+        });
+
+        if (branch) {
+            formData.append("_method", "PUT");
+        }
 
         try {
             const res = branch
-                ? await updateBranch(String(branch.id), payload)
-                : await addBranch(payload);
+                ? await updateBranch(String(branch.id), formData)
+                : await createBranch(formData);
 
             if (res.success) {
                 reset();
                 toast.success(res.message || "Branch saved successfully!");
                 router.push("/lms/branches");
-            } else if (res.errors) {
-                console.log(res.errors);
-                Object.entries(res.errors).forEach(([field, messages]) => {
-                    if (messages.length > 0) {
-                        setFormError(field, messages[0]);
-                    }
-                });
             } else {
-                toast.error(res.message);
+                if (res.errors) {
+                    toast.error(res.message || "Failed to save branch");
+                    Object.entries(res.errors).forEach(([field, messages]) => {
+                        const errorMessage = Array.isArray(messages)
+                            ? messages[0]
+                            : messages;
+                        let targetField = field;
+                        // Map Laravel array validation keys (e.g. phone.0) to RHF nested array fields (phone.0.value)
+                        if (/^(phone|email)\.\d+$/.test(field)) {
+                            targetField = `${field}.value`;
+                        }
+
+                        setError(targetField as Path<FormValues>, {
+                            type: "server",
+                            message: errorMessage as string,
+                        });
+                    });
+                } else {
+                    toast.error(res.message || "Failed to save branch");
+                }
             }
         } catch (error: unknown) {
             if (error instanceof Error) {
@@ -146,13 +190,15 @@ export default function BranchesForm({
         }
     };
 
-    console.log(errors);
-
     return (
         <div className="bg-card border rounded-2xl p-6 shadow-sm">
             <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
-                <Button variant="ghost" size="sm" onClick={() => router.back()} className="p-0 h-auto">
-                    <span className="text-xl">{"<"}</span>
+                <Button
+                    variant="secondary"
+                    onClick={() => router.back()}
+                    className="cursor-pointer"
+                >
+                    <span className="text-sm">Go Back</span>
                 </Button>
                 {title}
             </h2>
@@ -375,14 +421,14 @@ export default function BranchesForm({
                         type="button"
                         variant="outline"
                         onClick={() => router.back()}
-                        className="rounded-lg border-green-600 text-green-600"
+                        className="rounded-lg border-green-600 text-green-600 cursor-pointer"
                     >
                         Cancel
                     </Button>
                     <Button
                         type="submit"
                         disabled={isSubmitting}
-                        className="bg-green-600 hover:bg-green-700 text-white px-8 rounded-lg"
+                        className="bg-green-600 hover:bg-green-700 text-white px-8 rounded-lg cursor-pointer"
                     >
                         {isSubmitting ? "Submitting..." : branch ? "Update" : "Add"}
                     </Button>
