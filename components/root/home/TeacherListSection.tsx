@@ -41,7 +41,7 @@ const TeacherListSection = ({ teacherData }: TeacherListSectionProps) => {
           {instructors.map((instructor) => (
             <CarouselItem
               key={instructor?.id}
-              className="basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4"
+              className="basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4 h-full"
             >
               <div className="flex flex-col items-center group">
                 {/* Image Wrapper */}
@@ -58,26 +58,29 @@ const TeacherListSection = ({ teacherData }: TeacherListSectionProps) => {
                 </div>
 
                 {/* Card */}
-                <Card className="text-center w-full rounded-2xl shadow-md transition-all duration-500 -mt-20 pt-28 group-hover:-translate-y-2 group-hover:shadow-xl">
-                  <CardContent>
-                    <h3 className="text-base md:text-xl capitalize font-bold text-secondary mb-1">
-                      {instructor?.name || "Teacher Name ---"}
-                    </h3>
-
-                    <p className="text-black/75 text-base font-medium mb-2">
-                      {instructor?.designation ?? "Designation ---"}
-                    </p>
-
+                <Card className="text-center w-full h-full rounded-2xl shadow-md transition-all duration-500 -mt-20 pt-28 group-hover:-translate-y-2 group-hover:shadow-xl">
+                  <CardContent className="h-full">
+                    {instructor?.name && (
+                      <h3 className="text-base md:text-xl capitalize font-bold text-secondary mb-1">
+                        {instructor?.name}
+                      </h3>
+                    )}
+                    {instructor?.designation && (
+                      <p className="text-black/75 text-base font-medium mb-2">
+                        {instructor?.designation}
+                      </p>
+                    )}
                     <div className="flex items-center justify-center gap-2 text-primary mb-2 animate-fade-in">
                       <Award />
                       <span className="text-base font-medium">
                         সার্টিফাইড ট্রেইনার
                       </span>
                     </div>
-
-                    <p className="text-black/75 text-base">
-                      {instructor.experience || "Experience ---"}
-                    </p>
+                    {instructor?.experience && (
+                      <p className="text-black/75 text-base">
+                        Experience: {instructor?.experience}
+                      </p>
+                    )}
                   </CardContent>
                 </Card>
               </div>

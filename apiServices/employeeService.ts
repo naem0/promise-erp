@@ -484,10 +484,24 @@ export interface AllOfficeEmployeesApiResponse {
   errors?: Record<string, string[]>;
 }
 
-export async function getPublicAllEmployees(): Promise<AllOfficeEmployeesApiResponse> {
+export async function getPublicAllEmployees(): Promise<AllOfficeEmployeesApiResponse | null> {
   try {
     const url = `${API_BASE}/public/employees`;
     const res = await fetch(url);
+
+    if (res.status === 404) {
+      console.warn("No employees found.");
+      return null;
+    }
+    if (res.status === 400) {
+      console.warn("Bad request.");
+      return null;
+    }
+    if (res.status === 403) {
+      console.warn("Access denied.");
+      return null;
+    }
+
     if (!res.ok) {
       throw new Error(`Failed to fetch public employees — HTTP ${res.status}`);
     }

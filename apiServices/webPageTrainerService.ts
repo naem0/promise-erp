@@ -36,7 +36,7 @@ export async function getPublicTeachersList({
   params = {},
 }: {
   params?: Record<string, unknown>;
-}): Promise<TeacherListApiResponse> {
+}): Promise<TeacherListApiResponse | null> {
   try {
     const urlParams = new URLSearchParams();
 
@@ -49,6 +49,20 @@ export async function getPublicTeachersList({
     const queryString = urlParams.toString();
 
     const res = await fetch(`${API_BASE}/public/teachers-list?${queryString}`);
+
+    if (res.status === 404) {
+      console.warn("No teachers found.");
+      return  null
+    }
+    if (res.status === 400) {
+      console.warn("Bad request.");
+      return null;
+    }
+    if (res.status === 403) {
+      console.warn("Access denied.");
+      return null;
+    }
+
 
     if (!res.ok) {
       throw new Error(

@@ -16,7 +16,7 @@ const TrainerItemWrapper = async ({ searchParams }: TrainersParams) => {
     page: queryParams.page ? Number(queryParams.page) : 1,
   };
 
-  let teachers: TeacherListApiResponse | undefined;
+  let teachers: TeacherListApiResponse | null = null;
 
   try {
     teachers = await getPublicTeachersList({ params });
@@ -37,7 +37,10 @@ const TrainerItemWrapper = async ({ searchParams }: TrainersParams) => {
   }
 
   const seniorTrainers = teachers?.data?.teachers || [];
-  const totalPages = teachers?.data?.pagination;
+  const totalPages = teachers?.data?.pagination || null;
+  if (!teachers || !teachers?.data) {
+    return null;
+  }
   return (
     <section className="py-8 md:py-12">
       <h2 className="text-center text-2xl font-semibold mb-8 max-w-fit mx-auto border-b-2 border-primary pb-2">
@@ -56,13 +59,11 @@ const TrainerItemWrapper = async ({ searchParams }: TrainersParams) => {
           ))
         )}
       </div>
-      {
-        totalPages?.per_page > 30 && (
-          <div className="flex justify-center mt-8">
-            <Pagination pagination={totalPages} />
-          </div>
-        )
-      }
+      {totalPages && totalPages?.per_page > 28 && (
+        <div className="flex justify-center mt-8">
+          <Pagination pagination={totalPages} />
+        </div>
+      )}
     </section>
   );
 };

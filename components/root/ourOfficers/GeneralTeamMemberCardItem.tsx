@@ -40,13 +40,14 @@ const GeneralTeamMemberCardItem = ({ employee }: Props) => {
       </div>
       {/* Content */}
       <div className="p-3 md:pr-4 py-4 md:py-6 min-h-40 md:min-h-54 flex flex-col justify-start md:justify-center items-center md:items-start">
-        <h3 className="text-xl font-bold text-secondary mb-2">
-          {employee.name || "Officer Name"}
-        </h3>
-
-        <p className="text-sm text-secondary/80">
-          {employee.designation || "No Designation"}
-        </p>
+        {employee?.name && (
+          <h3 className="text-xl font-bold text-secondary mb-2">
+            {employee?.name}
+          </h3>
+        )}
+        {employee.designation && (
+          <p className="text-sm text-secondary/80">{employee?.designation}</p>
+        )}
       </div>
     </div>
   );

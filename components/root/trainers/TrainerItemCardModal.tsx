@@ -17,6 +17,8 @@ interface Props {
   onOpenChange: (open: boolean) => void;
 }
 const TrainerItemCardModal = ({ member, open, onOpenChange }: Props) => {
+
+  console.log("-------", member);
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl p-0 overflow-hidden">
@@ -28,10 +30,12 @@ const TrainerItemCardModal = ({ member, open, onOpenChange }: Props) => {
         <div className="-mt-16 px-6 pb-6 text-center">
           <DialogHeader className="">
             <DialogTitle className="text-white text-center text-base xl:text-2xl font-bold">
-              {member.name || "Trainer Name ---"}
+              {
+                member?.name && member.name 
+              }
             </DialogTitle>
             <div className="flex items-center justify-start gap-4">
-              <div className="rounded-full relative w-[140px] h-[140px] overflow-hidden border-4 border-secondary shadow-lg">
+              <div className="rounded-full bg-white relative w-[140px] h-[140px] overflow-hidden border-4 border-secondary shadow-lg">
                 <Image
                   src={member.profile_image || "/images/placeholder_img.jpg"}
                   alt={member.name}
@@ -40,23 +44,23 @@ const TrainerItemCardModal = ({ member, open, onOpenChange }: Props) => {
                 />
               </div>
               <div className="">
-                <h2 className="text-xl font-semibold">
-                  {member.designation || "Designation ---"}
-                </h2>
-                <p className="text-primary">
-                  {member.experience || "Experience ---"} Experience
-                </p>
+                {
+                  member.designation && <p className="text-lg text-secondary font-medium">{member?.designation}</p>
+                }
+                {
+                  member.experience && <p className="text-base text-black font-medium">{member?.experience} Years of Experience</p>
+                }
               </div>
             </div>
           </DialogHeader>
 
           <div className="mt-6 space-y-4">
-            <div className="bg-muted p-4 rounded-lg text-sm">
-              {member.note || "Note ---"}
-            </div>
-            <div className="bg-muted p-4 rounded-lg text-sm">
-              {member.courses || "Courses ---"}
-            </div>
+            {
+              member.note && <div className="bg-muted p-4 rounded-lg text-sm">{member?.note}</div>
+            }
+            {
+              member.courses && <div className="bg-muted p-4 rounded-lg text-sm">{member?.courses}</div>
+            }
           </div>
         </div>
       </DialogContent>
