@@ -1,11 +1,22 @@
 'use client'
 
-import { useEffect, useState, useTransition } from 'react'
-import { Combobox } from '@/components/ui/combobox'
+import { useEffect, useState, useTransition, useMemo } from 'react'
+import { 
+  ComboboxRoot, 
+  ComboboxTrigger, 
+  ComboboxValue, 
+  ComboboxContent, 
+  ComboboxInput, 
+  ComboboxList, 
+  ComboboxItem, 
+  ComboboxEmpty,
+  ComboboxClear
+} from '@/components/ui/combobox'
 import { getPublicCoursesAll, Course } from '@/apiServices/courseService'
+import { cn } from '@/lib/utils'
 
 interface CourseSearchSelectProps {
-  value: string
+  value: string | null
   onValueChange: (value: string | null) => void
   placeholder?: string
   disabled?: boolean
@@ -23,14 +34,13 @@ export default function CourseSearchSelect({
 }: CourseSearchSelectProps) {
   const [courses, setCourses] = useState<Course[]>([])
   const [isPending, startTransition] = useTransition()
+  const [inputValue, setInputValue] = useState("")
 
   useEffect(() => {
     startTransition(async () => {
       try {
         const res = await getPublicCoursesAll()
         if (res.success) {
-          // Flatten if multiple pages or just set if simple array
-          // Backend returns { courses: Course[] } or similar structure
           setCourses(res.data.courses || [])
         }
       } catch (error) {
@@ -39,22 +49,64 @@ export default function CourseSearchSelect({
     })
   }, [])
 
-  const options = (courses || []).map(course => ({
+  const options = useMemo(() => (courses || []).map(course => ({
     value: String(course.id),
     label: course.title
-  }))
+  })), [courses])
+
+  const filteredOptions = useMemo(() => {
+    if (!inputValue) return options
+    const lowerInput = inputValue.toLowerCase()
+    return options.filter((option) =>
+      option.label.toLowerCase().includes(lowerInput)
+    )
+  }, [options, inputValue])
 
   return (
-    <Combobox
-      options={options}
-      value={value}
-      onValueChange={onValueChange}
-      placeholder={isPending ? "Loading courses..." : placeholder}
-      searchPlaceholder="Search course..."
-      emptyMessage={isPending ? "Loading..." : "No courses found"}
-      disabled={disabled || isPending}
-      className={className}
-      defaultValue={defaultValue}
-    />
+    <div className="space-y-2">
+      <ComboboxRoot 
+        value={value || undefined} 
+        onValueChange={(val) => onValueChange(val || null)}
+        onInputValueChange={setInputValue}
+        disabled={disabled || isPending}
+        itemToStringLabel={(val) => options.find(o => o.value === val)?.label || ""}
+      >
+        <div className="relative group">
+          <ComboboxTrigger
+            className={cn(
+              "flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 pr-9",
+              value && "[&_[data-slot=combobox-trigger-icon]]:hidden",
+              className
+            )}
+          >
+            <ComboboxValue placeholder={isPending ? "Loading courses..." : placeholder} />
+          </ComboboxTrigger>
+          {value && (
+            <div className="absolute right-2 top-1/2 -translate-y-1/2 z-10">
+              <ComboboxClear />
+            </div>
+          )}
+        </div>
+        
+        <ComboboxContent className="w-[--anchor-width] min-w-[300px]">
+          <ComboboxInput 
+            placeholder="Search course..." 
+            className="m-1 h-9 border-none shadow-none focus-visible:ring-0"
+            showTrigger={false}
+            autoFocus
+          />
+          <ComboboxList className="max-h-[300px] overflow-y-auto">
+            {filteredOptions.map((option) => (
+              <ComboboxItem key={option.value} value={option.value}>
+                {option.label}
+              </ComboboxItem>
+            ))}
+            {filteredOptions.length === 0 && (
+              <ComboboxEmpty>{isPending ? "Loading..." : "No courses found"}</ComboboxEmpty>
+            )}
+          </ComboboxList>
+        </ComboboxContent>
+      </ComboboxRoot>
+    </div>
   )
 }

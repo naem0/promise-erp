@@ -39,9 +39,8 @@ export default async function LeadManagePage({
             {leadData && <LeadInfoCard lead={leadData.lead_info} />}
 
             {leadData && <div className="bg-white rounded-3xl p-8 shadow-sm border border-slate-100">
-                <LeadHistoryManagement leadHistories={leadData.histories} />
+                <LeadHistoryManagement leadHistories={leadData.histories} leadInfo={leadData.lead_info} />
             </div>}
         </div>
     );
 }
-   

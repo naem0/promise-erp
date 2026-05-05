@@ -419,7 +419,7 @@ export const sidebarData = {
             {
               title: "Leads",
               url: "/crm/leads",
-              permissions: ["view-leads"],
+              permissions: ["view-leads", "view-assign-leads"],
             },
             {
               title: "Leads Activity",

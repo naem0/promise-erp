@@ -70,7 +70,23 @@ export interface SingleLeadResponse {
 export interface LeadInfo {
     name: string;
     phone?: string;
+    whatsapp: string;
+    address?: string;
     email?: string;
+    referrer_name?: string;
+    referrer_phone?: string;
+    status?: number;
+    status_name?: string;
+    course_type?: number;
+    course_type_name?: string;
+    shift?: number;
+    shift_name?: string;
+    source_id?: number;
+    source_name?: string;
+    branch_id?: number;
+    branch_name?: string;
+    course_id?: number;
+    interested_course?: string;
     interested_batch?: string;
 }
 

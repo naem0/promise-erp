@@ -1,5 +1,6 @@
 import { getBranches } from "@/apiServices/branchService";
 import { getCRMCategories } from "@/apiServices/crmCategoryService";
+import { Consultant, getConsultants } from "@/apiServices/crmLeadsActions";
 import CRMLeadsFilter from "./CRMLeadsFilter";
 import ErrorComponent from "@/components/common/ErrorComponent";
 
@@ -7,6 +8,7 @@ export default async function CRMLeadsFilterData() {
 
     let branches = [];
     let categories = [];
+    let consultants: Consultant[] = [];
 
     try {
         const res = await getBranches({ per_page: 500 });
@@ -38,10 +40,18 @@ export default async function CRMLeadsFilterData() {
         }
     }
 
+    try {
+        const res = await getConsultants();
+        consultants = res?.data?.consultants || [];
+    } catch (error) {
+        console.error("Error fetching consultants for filter:", error);
+    }
+
     return (
         <CRMLeadsFilter
             branches={branches}
             categories={categories}
+            consultants={consultants}
         />
     );
 }

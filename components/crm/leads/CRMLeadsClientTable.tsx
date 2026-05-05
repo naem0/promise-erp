@@ -39,6 +39,7 @@ import { toast } from "sonner";
 import { CRMLead } from "@/apiServices/crmLeadsService";
 import { assignLeadsToUser, Consultant } from "@/apiServices/crmLeadsActions";
 import DeleteCRMLeadButton from "./DeleteCRMLeadButton";
+import CRMLeadsExportButton from "./CRMLeadsExportButton";
 import { truncate } from "@/lib/utils";
 
 
@@ -47,6 +48,7 @@ interface CRMLeadsClientTableProps {
     page: number;
     perPage: number;
     consultants: Consultant[];
+    totalLeads: number;
 }
 
 export default function CRMLeadsClientTable({
@@ -54,6 +56,7 @@ export default function CRMLeadsClientTable({
     page,
     perPage,
     consultants,
+    totalLeads,
 }: CRMLeadsClientTableProps) {
     const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
     const [assignModalOpen, setAssignModalOpen] = useState(false);
@@ -148,6 +151,19 @@ export default function CRMLeadsClientTable({
                 </div>
             )}
 
+            {/* ── Table Header with Total Count ── */}
+            <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-bold tracking-tight text-foreground">
+                    All CRM Leads
+                    <span className="ml-2 text-sm font-normal text-muted-foreground">
+                        ({totalLeads} total)
+                    </span>
+                </h2>
+                <div className="flex items-center gap-2">
+                    <CRMLeadsExportButton leads={leads} page={page} perPage={perPage} />
+                </div>
+            </div>
+
             {/* ── Table ── */}
             <div className="rounded-md border">
                 <Table>
@@ -165,13 +181,12 @@ export default function CRMLeadsClientTable({
                             <TableHead className="text-center">Name, Phone & Email</TableHead>
                             <TableHead className="text-center">Referrer</TableHead>
                             <TableHead className="text-center">Course</TableHead>
-                            <TableHead className="text-center">Type</TableHead>
-                            <TableHead className="text-center">Shift</TableHead>
-                            <TableHead className="text-center">Status</TableHead>
+                            <TableHead className="text-center">Type & Shift</TableHead>
                             <TableHead className="text-center">Source</TableHead>
                             <TableHead className="text-center">Category</TableHead>
                             <TableHead className="text-center">Branch</TableHead>
                             <TableHead className="text-center">Counsellor</TableHead>
+                            <TableHead className="text-center">Status</TableHead>
                             <TableHead className="text-center">Notes</TableHead>
                         </TableRow>
                     </TableHeader>
@@ -181,11 +196,7 @@ export default function CRMLeadsClientTable({
                             <TableRow
                                 key={lead?.id}
                                 data-selected={selectedIds.has(lead.id)}
-                                className={
-                                    selectedIds.has(lead.id)
-                                        ? "bg-indigo-50 dark:bg-indigo-950/20"
-                                        : undefined
-                                }
+                                className={selectedIds.has(lead.id) ? "bg-indigo-50 dark:bg-indigo-950/20" : undefined}
                             >
                                 {/* Checkbox */}
                                 <TableCell className="text-center">
@@ -244,6 +255,12 @@ export default function CRMLeadsClientTable({
                                             </span>
                                         )}
 
+                                        {lead?.whatsapp && (
+                                            <span className="text-xs text-green-600">
+                                                WA: {lead.whatsapp}
+                                            </span>
+                                        )}
+
                                         {lead?.email && (
                                             <span className="text-xs text-secondary">
                                                 {lead.email}
@@ -274,8 +291,42 @@ export default function CRMLeadsClientTable({
                                     {truncate(lead?.course?.name || lead?.course_name || "—", 30)}
                                 </TableCell>
 
-                                {/* Course type */}
+                                {/* Course type & shift */}
                                 <TableCell className="text-center text-xs">
+                                    <div className="flex flex-col items-center gap-1">
+                                        {/* Course Type */}
+                                        <Badge
+                                            variant="outline"
+                                            className={
+                                                lead.course_type === 1
+                                                    ? "border-emerald-500 text-emerald-600 bg-emerald-50"
+                                                    : lead.course_type === 2
+                                                        ? "border-blue-500 text-blue-600 bg-blue-50" : ""
+                                            }
+                                        >
+                                            {lead?.course_type_text || "—"}
+                                        </Badge>
+
+                                        {/* Shift */}
+                                        <Badge
+                                            variant="outline"
+                                            className={
+                                                lead.shift === 1
+                                                    ? "border-amber-500 text-amber-600 bg-amber-50"
+                                                    : lead.shift === 2
+                                                        ? "border-orange-500 text-orange-600 bg-orange-50"
+                                                        : lead.shift === 3
+                                                            ? "border-purple-500 text-purple-600 bg-purple-50"
+                                                            : ""
+                                            }
+                                        >
+                                            {lead?.shift_text || "—"}
+                                        </Badge>
+                                    </div>
+                                </TableCell>
+
+
+                                {/* <TableCell className="text-center text-xs">
                                     <Badge
                                         variant="outline"
                                         className={
@@ -288,10 +339,10 @@ export default function CRMLeadsClientTable({
                                     >
                                         {lead?.course_type_text || "—"}
                                     </Badge>
-                                </TableCell>
+                                </TableCell> */}
 
                                 {/* Shift */}
-                                <TableCell className="text-center text-xs">
+                                {/* <TableCell className="text-center text-xs">
                                     <Badge
                                         variant="outline"
                                         className={
@@ -306,8 +357,59 @@ export default function CRMLeadsClientTable({
                                     >
                                         {lead?.shift_text || "—"}
                                     </Badge>
+                                </TableCell> */}
+
+
+
+                                {/* Source */}
+                                <TableCell className="text-center text-xs">
+                                    <Badge
+                                        variant="outline"
+                                        className={
+                                            lead.source?.id === 1
+                                                ? "border-slate-500 text-slate-600 bg-slate-50"
+                                                : lead.source?.id === 2
+                                                    ? "border-indigo-600 text-indigo-700 bg-indigo-50"
+                                                    : lead.source?.id === 3
+                                                        ? "border-cyan-500 text-cyan-600 bg-cyan-50"
+                                                        : lead.source?.id === 4
+                                                            ? "border-fuchsia-500 text-fuchsia-600 bg-fuchsia-50"
+                                                            : lead.source?.id === 5
+                                                                ? "border-green-500 text-green-600 bg-green-50"
+                                                                : lead.source?.id === 6
+                                                                    ? "border-teal-500 text-teal-600 bg-teal-50"
+                                                                    : lead.source?.id === 7
+                                                                        ? "border-sky-500 text-sky-600 bg-sky-50"
+                                                                        : lead.source?.id === 8
+                                                                            ? "border-gray-500 text-gray-600 bg-gray-50"
+                                                                            : ""
+                                        }
+                                    >
+                                        {lead?.source_text || "—"}
+                                    </Badge>
                                 </TableCell>
 
+                                <TableCell className="text-center">
+                                    {lead?.category?.name || "—"}
+                                </TableCell>
+
+                                <TableCell className="text-center text-xs">
+                                    {lead?.branch?.name || "—"}
+                                </TableCell>
+
+                                <TableCell className="text-center">
+                                    <div className="flex flex-col text-xs">
+                                        <span className="font-medium text-foreground">
+                                            {lead?.assigned_consultant?.name || "—"}
+                                        </span>
+                                        <span
+                                            className="text-muted-foreground"
+                                            title={lead?.assigned_consultant?.email || ""}
+                                        >
+                                            {truncate(lead?.assigned_consultant?.email || "", 20)}
+                                        </span>
+                                    </div>
+                                </TableCell>
                                 {/* Status */}
                                 <TableCell className="text-center text-xs">
                                     <Badge
@@ -332,45 +434,6 @@ export default function CRMLeadsClientTable({
                                     </Badge>
                                 </TableCell>
 
-                                {/* Source */}
-                                <TableCell className="text-center text-xs">
-                                    <Badge
-                                        variant="outline"
-                                        className={
-                                            lead.source === 1
-                                                ? "border-slate-500 text-slate-600 bg-slate-50"
-                                                : lead.source === 2
-                                                    ? "border-indigo-600 text-indigo-700 bg-indigo-50"
-                                                    : lead.source === 3
-                                                        ? "border-cyan-500 text-cyan-600 bg-cyan-50"
-                                                        : lead.source === 4
-                                                            ? "border-fuchsia-500 text-fuchsia-600 bg-fuchsia-50"
-                                                            : ""
-                                        }
-                                    >
-                                        {lead?.source_text || "—"}
-                                    </Badge>
-                                </TableCell>
-
-                                <TableCell className="text-center">
-                                    {lead?.category?.name || "—"}
-                                </TableCell>
-
-                                <TableCell className="text-center text-xs">
-                                    {lead?.branch?.name || "—"}
-                                </TableCell>
-
-                                <TableCell className="text-center">
-                                    <div className="flex flex-col text-xs">
-                                        <span className="font-medium text-foreground">
-                                            {lead?.assigned_consultant?.name || "—"}
-                                        </span>
-                                        <span className="text-muted-foreground">
-                                            {lead?.assigned_consultant?.email || ""}
-                                        </span>
-                                    </div>
-                                </TableCell>
-
                                 <TableCell
                                     className="text-center text-xs max-w-[200px]"
                                     title={lead?.notes || ""}
@@ -389,25 +452,25 @@ export default function CRMLeadsClientTable({
                     <DialogHeader>
                         <DialogTitle className="flex items-center gap-2">
                             <UserCheck className="h-5 w-5 text-indigo-600" />
-                            Assign Leads to Consultant
+                            Assign Leads to Counsellor
                         </DialogTitle>
                         <DialogDescription>
                             Assign{" "}
                             <strong>{selectedIds.size}</strong> selected lead
-                            {selectedIds.size > 1 ? "s" : ""} to a consultant.
+                            {selectedIds.size > 1 ? "s" : ""} to a counsellor.
                         </DialogDescription>
                     </DialogHeader>
 
                     <div className="py-2">
                         <label className="block text-sm font-medium text-foreground mb-2">
-                            Select Consultant
+                            Select Counsellor
                         </label>
                         <Select
                             value={selectedUserId}
                             onValueChange={setSelectedUserId}
                         >
                             <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Choose a consultant..." />
+                                <SelectValue placeholder="Choose a Counsellor..." />
                             </SelectTrigger>
                             <SelectContent>
                                 {consultants.map((consultant) => (

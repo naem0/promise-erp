@@ -15,6 +15,7 @@ import { Search, FilterX } from "lucide-react";
 
 import { Branch } from "@/apiServices/branchService";
 import { CRMCategory } from "@/apiServices/crmCategoryService";
+import { Consultant } from "@/apiServices/crmLeadsActions";
 
 interface FilterFormValues {
     search?: string;
@@ -23,16 +24,21 @@ interface FilterFormValues {
     branch_id?: string;
     category_id?: string;
     source?: string;
+    shift?: string;
+    user_id?: string;
+    per_page?: string;
 }
 
 interface CRMLeadsFilterProps {
     branches: Branch[];
     categories?: CRMCategory[];
+    consultants?: Consultant[];
 }
 
 export default function CRMLeadsFilter({
     branches,
     categories,
+    consultants,
 }: CRMLeadsFilterProps) {
     const router = useRouter();
     const pathname = usePathname();
@@ -47,6 +53,9 @@ export default function CRMLeadsFilter({
                 branch_id: searchParams.get("branch_id") || "",
                 category_id: searchParams.get("category_id") || "",
                 source: searchParams.get("source") || "",
+                shift: searchParams.get("shift") || "",
+                user_id: searchParams.get("user_id") || "",
+                per_page: searchParams.get("per_page") || "15",
             },
         });
 
@@ -98,6 +107,9 @@ export default function CRMLeadsFilter({
             branch_id: "",
             category_id: "",
             source: "",
+            shift: "",
+            user_id: "",
+            per_page: "15",
         });
         router.replace(pathname, { scroll: false });
     };
@@ -108,6 +120,9 @@ export default function CRMLeadsFilter({
     const currentBranchId = searchParams.get("branch_id") || "";
     const currentCategoryId = searchParams.get("category_id") || "";
     const currentSource = searchParams.get("source") || "";
+    const currentShift = searchParams.get("shift") || "";
+    const currentUserId = searchParams.get("user_id") || "";
+    const currentPerPage = searchParams.get("per_page") || "15";
 
     const hasActiveFilters =
         currentSearch !== "" ||
@@ -115,7 +130,10 @@ export default function CRMLeadsFilter({
         currentStatus !== "" ||
         currentBranchId !== "" ||
         currentCategoryId !== "" ||
-        currentSource !== "";
+        currentSource !== "" ||
+        currentShift !== "" ||
+        currentUserId !== "" ||
+        currentPerPage !== "15";
 
     return (
         <div className="p-6 mb-6 border rounded-xl bg-card shadow-sm">
@@ -138,7 +156,7 @@ export default function CRMLeadsFilter({
 
             <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
                 {/* Search */}
-                <div className="relative col-span-3">
+                <div className="relative col-span-2 md:col-span-3">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                         placeholder="Search by name, email, phone, referrer, course, user..."
@@ -196,8 +214,6 @@ export default function CRMLeadsFilter({
                         </Select>
                     )}
                 />
-
-
 
                 {/* Branch */}
                 <Controller
@@ -268,14 +284,91 @@ export default function CRMLeadsFilter({
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="1">Manual</SelectItem>
-                                <SelectItem value="2">Facebook</SelectItem>
-                                <SelectItem value="3">Website</SelectItem>
+                                <SelectItem value="2">Website</SelectItem>
+                                <SelectItem value="3">Facebook</SelectItem>
                                 <SelectItem value="4">API</SelectItem>
+                                <SelectItem value="5">WhatsApp</SelectItem>
+                                <SelectItem value="6">Phone</SelectItem>
+                                <SelectItem value="7">Referrer</SelectItem>
+                                <SelectItem value="8">Others</SelectItem>
                             </SelectContent>
                         </Select>
                     )}
                 />
 
+                {/* Shift */}
+                <Controller
+                    name="shift"
+                    control={control}
+                    render={({ field }) => (
+                        <Select
+                            value={field.value || ""}
+                            onValueChange={(value) => {
+                                field.onChange(value);
+                                handleSelectChange("shift")(value);
+                            }}
+                        >
+                            <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Shift" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="1">Morning</SelectItem>
+                                <SelectItem value="2">Evening</SelectItem>
+                                <SelectItem value="3">Night</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    )}
+                />
+
+                {/* User ID (Consultant) */}
+                <Controller
+                    name="user_id"
+                    control={control}
+                    render={({ field }) => (
+                        <Select
+                            value={field.value || ""}
+                            onValueChange={(value) => {
+                                field.onChange(value);
+                                handleSelectChange("user_id")(value);
+                            }}
+                        >
+                            <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Consultant" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {consultants?.map((consultant) => (
+                                    <SelectItem key={consultant.id} value={String(consultant.id)}>
+                                        {consultant.name}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    )}
+                />
+                {/* Per Page */}
+                <Controller
+                    name="per_page"
+                    control={control}
+                    render={({ field }) => (
+                        <Select
+                            value={field.value || "15"}
+                            onValueChange={(value) => {
+                                field.onChange(value);
+                                handleSelectChange("per_page")(value);
+                            }}
+                        >
+                            <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Per Page" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="15">15 Per Page</SelectItem>
+                                <SelectItem value="50">50 Per Page</SelectItem>
+                                <SelectItem value="100">100 Per Page</SelectItem>
+                                <SelectItem value="500">500 Per Page</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    )}
+                />
 
             </div>
         </div>

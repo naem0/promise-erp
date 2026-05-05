@@ -48,6 +48,14 @@ const CRMLeadsData = async ({
             typeof resolvedSearchParams.category_id === "string"
                 ? resolvedSearchParams.category_id
                 : undefined,
+        shift:
+            typeof resolvedSearchParams.shift === "string"
+                ? resolvedSearchParams.shift
+                : undefined,
+        user_id:
+            typeof resolvedSearchParams.user_id === "string"
+                ? resolvedSearchParams.user_id
+                : undefined,
     };
 
     let results;
@@ -91,6 +99,7 @@ const CRMLeadsData = async ({
                 page={page}
                 perPage={paginationData?.per_page || 15}
                 consultants={consultants}
+                totalLeads={paginationData?.total || 0}
             />
             {paginationData && paginationData.last_page > 1 && (
                 <div className="mt-4">

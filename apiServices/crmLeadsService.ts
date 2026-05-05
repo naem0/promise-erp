@@ -31,6 +31,7 @@ export interface CRMLead {
   id: number;
   name: string;
   phone: string;
+  whatsapp?: string;
   email: string;
   address: string;
   referrer_name?: string;
@@ -43,7 +44,10 @@ export interface CRMLead {
   shift_text: string;
   status: number;
   status_text: string;
-  source: number;
+  source?: {
+    id: number;
+    name: string;
+  };
   source_text: string;
   fb_lead_id?: string;
   category?: CRMLeadCategory;
@@ -277,6 +281,48 @@ export async function deleteCRMLead(
       throw new Error(error.message);
     } else {
       throw new Error("Failed to delete CRM lead");
+    }
+  }
+}
+
+// =======================
+// IMPORT LEADS
+// =======================
+
+export interface CRMLeadsImportResponse {
+  success: boolean;
+  message: string;
+  code: number;
+  data: CRMLead | null;
+  errors?: Record<string, string[]>;
+}
+
+export async function importCRMLeads(formData: FormData): Promise<CRMLeadsImportResponse> {
+  try {
+    const session = await getServerSession(authOptions);
+    const token = session?.accessToken;
+
+    if (!token) throw new Error("No valid session/token");
+
+    const res = await fetch(`${API_BASE}/crm/leads/import`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
+
+    const result = await res.json();
+    
+    // Invalidate the cache to show the new imported leads
+    updateTag("crm-leads-list");
+    return result;
+  } catch (error: unknown) {
+    console.error("Error in importCRMLeads:", error);
+    if (error instanceof Error) {
+      throw new Error(error.message || "Failed to import CRM leads");
+    } else {
+      throw new Error("Failed to import CRM leads");
     }
   }
 }
