@@ -1,9 +1,18 @@
 
+"use client";
+
 import LeadHistoryTimeline from "./LeadHistoryTimeline";
 import LeadHistoryForm from "./LeadHistoryForm";
-import { LeadHistory } from "@/apiServices/crmLeadsHistoryService";
+import LeadActionCard from "./LeadActionCard";
+import { LeadHistory, LeadInfo } from "@/apiServices/crmLeadsHistoryService";
 
-const LeadHistoryManagement = ({ leadHistories, }: { leadHistories: LeadHistory[] }) => {
+const LeadHistoryManagement = ({ 
+  leadHistories, 
+  leadInfo 
+}: { 
+  leadHistories: LeadHistory[],
+  leadInfo: LeadInfo 
+}) => {
   
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -24,7 +33,8 @@ const LeadHistoryManagement = ({ leadHistories, }: { leadHistories: LeadHistory[
 
       <div className="lg:col-span-1">
         <div className="sticky top-6">
-          <LeadHistoryForm leadId={leadHistories[0].lead_id} />
+          <LeadActionCard lead={leadInfo} />
+          <LeadHistoryForm leadId={leadHistories[0]?.lead_id} />
         </div>
       </div>
     </div>

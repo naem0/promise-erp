@@ -8,7 +8,7 @@ import NotFoundComponent from "@/components/common/NotFoundComponent";
 import GeneralTeamMemberInfos from "./GeneralTeamMemberInfos";
 
 const GeneralTeamMemberCard = async () => {
-  let employeeData: AllOfficeEmployeesApiResponse;
+  let employeeData: AllOfficeEmployeesApiResponse | null = null;
 
   try {
     employeeData = await getPublicAllEmployees();
@@ -30,6 +30,10 @@ const GeneralTeamMemberCard = async () => {
 
   const departments: AllOfficeDepartment[] = employeeData?.data || [];
 
+  if (!employeeData || !employeeData?.success) {
+    return null;
+  }
+
   return (
     <div className="container mx-auto px-4 py-8 md:py-14 space-y-12">
       {departments?.length > 0 ? (
@@ -40,7 +44,7 @@ const GeneralTeamMemberCard = async () => {
             </h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 justify-center items-center">
-              {department.employees?.map((employee) => (
+              {department?.employees?.map((employee) => (
                 <GeneralTeamMemberInfos
                   key={employee?.id}
                   employee={employee}

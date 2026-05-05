@@ -7,6 +7,8 @@ import { PlusCircle } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
 
+import CRMLeadsImportButton from "@/components/crm/leads/CRMLeadsImportButton";
+
 export default function CRMLeadsPage({
     searchParams,
 }: {
@@ -16,7 +18,10 @@ export default function CRMLeadsPage({
         <div className="mx-auto space-y-6">
             <div className="flex justify-between items-center">
                 <h1 className="text-2xl font-semibold tracking-tight text-slate-800">Leads</h1>
-                <div className="flex justify-end gap-3 pt-4">
+                <div className="flex justify-end items-center gap-3 pt-4">
+                    
+
+                    <CRMLeadsImportButton />
                     <Button asChild className="bg-green-600">
                         <Link href="/crm/leads/add">
                             <PlusCircle className="w-4 h-4 mr-2" />

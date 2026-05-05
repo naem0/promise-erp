@@ -1,4 +1,5 @@
 "use client";
+import CourseSearchSelect from "@/components/common/CourseSearchSelect";
 import { Controller, useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -28,6 +29,7 @@ interface CRMLeadsFormProps {
 interface FormValues {
     name: string;
     phone: string;
+    whatsapp: string;
     email: string;
     address: string;
     referrer_name: string;
@@ -45,7 +47,6 @@ interface FormValues {
 export default function CRMLeadsForm({
     title,
     lead,
-    courses = [],
     categories = [],
     branches = []
 }: CRMLeadsFormProps) {
@@ -62,6 +63,7 @@ export default function CRMLeadsForm({
         defaultValues: {
             name: lead?.name || "",
             phone: lead?.phone || "",
+            whatsapp: lead?.whatsapp || "",
             email: lead?.email || "",
             address: lead?.address || "",
             referrer_name: lead?.referrer_name || "",
@@ -70,7 +72,7 @@ export default function CRMLeadsForm({
             course_type: lead?.course_type?.toString() || "1",
             shift: lead?.shift?.toString() || "1",
             status: lead?.status?.toString() || "1",
-            source: lead?.source?.toString() || "1",
+            source: lead?.source?.id?.toString() || "1",
             category_id: lead?.category?.id?.toString() || "",
             branch_id: lead?.branch?.id?.toString() || "",
             notes: lead?.notes || "",
@@ -127,8 +129,12 @@ export default function CRMLeadsForm({
     return (
         <div className="bg-card border rounded-2xl p-6 shadow-sm">
             <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
-                <Button variant="ghost" size="sm" onClick={() => router.back()} className="p-0 h-auto">
-                    <span className="text-xl">{"<"}</span>
+                <Button
+                    variant="secondary"
+                    onClick={() => router.back()}
+                    className="cursor-pointer"
+                >
+                    <span className="text-sm">Go Back</span>
                 </Button>
                 {title}
             </h2>
@@ -147,6 +153,13 @@ export default function CRMLeadsForm({
                         <label className="block text-sm font-medium mb-1">Phone Number<span className="text-red-500">*</span></label>
                         <Input placeholder="Enter phone number" {...register("phone")} />
                         {errors.phone && <p className="text-sm text-red-500 mt-1">{errors.phone.message}</p>}
+                    </div>
+                    
+                    {/* WhatsApp */}
+                    <div>
+                        <label className="block text-sm font-medium mb-1">WhatsApp Number</label>
+                        <Input placeholder="Enter whatsapp number" {...register("whatsapp")} />
+                        {errors.whatsapp && <p className="text-sm text-red-500 mt-1">{errors.whatsapp.message}</p>}
                     </div>
 
                     {/* Email */}
@@ -184,16 +197,11 @@ export default function CRMLeadsForm({
                             name="course_id"
                             control={control}
                             render={({ field }) => (
-                                <Select value={field.value} onValueChange={field.onChange}>
-                                    <SelectTrigger className="w-full">
-                                        <SelectValue placeholder="Select Course" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {courses.map(course => (
-                                            <SelectItem key={course.id} value={course.id.toString()}>{course.title}</SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
+                                <CourseSearchSelect
+                                    value={field.value}
+                                    onValueChange={(val) => field.onChange(val || "")}
+                                    className="w-full"
+                                />
                             )}
                         />
                         {errors.course_id && <p className="text-sm text-red-500 mt-1">{errors.course_id.message}</p>}

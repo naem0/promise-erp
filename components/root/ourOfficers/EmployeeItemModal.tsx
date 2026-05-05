@@ -68,6 +68,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogClose,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import { AllOfficeEmployee } from "@/apiServices/employeeService";
 import { X } from "lucide-react";
@@ -90,10 +91,15 @@ const EmployeeItemModal = ({ employee, open, onOpenChange }: Props) => {
 
         <DialogHeader className="p-0">
           <div className="h-24 bg-[url('/images/empolyeemodalheader.png')] bg-no-repeat bg-cover"></div>
+          <div className="-mt-16 px-6 pb-6 text-center">
+            <DialogTitle className="text-white text-center text-base font-bold">
+              {employee.name}
+            </DialogTitle>
+          </div>
         </DialogHeader>
         <div className="px-4 pb-4">
           <div className="flex items-center justify-between gap-4 ">
-            <div className="rounded-full relative w-[140px] h-[140px] overflow-hidden border-4 border-secondary shadow-lg">
+            <div className="rounded-full relative w-[140px] h-[140px] bg-white overflow-hidden border-4 border-secondary shadow-lg">
               <Image
                 src={imageUrl}
                 alt={employee.name || "employee"}
@@ -102,16 +108,17 @@ const EmployeeItemModal = ({ employee, open, onOpenChange }: Props) => {
               />
             </div>
             <div className="flex-1">
-              <h3 className="text-base text-secondary font-bold mb-2">{employee?.name || "Employee Name ---"}</h3>
-              <p className="pb-2">
-                {employee?.designation || "Designation ---"}
-              </p>
-              <p className="pb-2">
-                {employee?.experience || "---"} Years Experience
-              </p>
-              <p className="pb-2">
-                {employee?.note || "---"}
-              </p>
+              {employee?.designation && (
+                <p className="pb-2">{employee?.designation}</p>
+              )}
+              {employee?.experience && (
+                <p className="pb-2">
+                  {employee?.experience} Years Experience
+                </p>
+              )}
+              {employee?.note && (
+                <p className="pb-2">{employee?.note}</p>
+              )}
             </div>
           </div>
           {employee?.phone && (

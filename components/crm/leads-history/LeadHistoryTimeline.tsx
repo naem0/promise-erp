@@ -49,7 +49,7 @@ const LeadHistoryTimeline = ({ histories }: LeadHistoryTimelineProps) => {
           <div className={`flex items-center justify-center w-10 h-10 rounded-full ${getIconBg(history.status_text)} shrink-0 z-10 shadow-sm border border-white`}>
             {getIcon(history.type_text, history.status_text)}
           </div>
-          <div className="flex-grow ml-6">
+          <div className="grow ml-6">
             <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
               <div className="flex items-center justify-between mb-2">
                 <h4 className="text-lg font-bold text-slate-800">{history.status_text || history.type_text}</h4>
