@@ -74,37 +74,40 @@ export interface SingleLeadResponse {
 }
 
 export interface LeadInfo {
-    name: string;
-    phone?: string;
-    whatsapp: string;
-    address?: string;
-    email?: string;
-    referrer_name?: string;
-    referrer_phone?: string;
-    status?: number;
-    status_name?: string;
-    course_type?: number;
-    course_type_name?: string;
-    shift?: number;
-    shift_name?: string;
-    source_id?: number;
-    source_name?: string;
-    branch_id?: number;
-    branch_name?: string;
-    course_id?: number;
-    interested_course?: string;
-    interested_batch?: string;
+  name: string;
+  phone?: string;
+  whatsapp: string;
+  address?: string;
+  email?: string;
+  referrer_name?: string;
+  referrer_phone?: string;
+  status?: number;
+  status_name?: string;
+  course_type?: number;
+  course_type_name?: string;
+  shift?: number;
+  shift_name?: string;
+  source_id?: number;
+  source_name?: string;
+  branch_id?: number;
+  branch_name?: string;
+  course_id?: number;
+  interested_course?: string;
+  interested_batch?: string;
+  profession?: string;
+  institute?: string;
+  age?: number;
 }
 
 export interface LeadHistoriesListResponse {
-    success: boolean;
-    message: string;
-    code: number;
-    data: {
-        lead_info: LeadInfo;
-        histories: LeadHistory[];
-    };
-    errors?: Record<string, string[]>;
+  success: boolean;
+  message: string;
+  code: number;
+  data: {
+    lead_info: LeadInfo;
+    histories: LeadHistory[];
+  };
+  errors?: Record<string, string[]>;
 }
 
 // =======================
@@ -243,11 +246,11 @@ export async function getLeadHistoriesByLeadId(
 
 export async function createLeadHistory(
   payload: {
-      lead_id: number;
-      date: string;
-      type: number;
-      status: number;
-      note: string;
+    lead_id: number;
+    date: string;
+    type: number;
+    status: number;
+    note: string;
   },
 ): Promise<SingleLeadHistoryResponse> {
   try {

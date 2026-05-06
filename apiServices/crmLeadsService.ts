@@ -59,6 +59,9 @@ export interface CRMLead {
     email: string;
   };
   notes?: string;
+  profession?: string;
+  institute?: string;
+  age?: number;
   call_count: number;
   message_count: number;
   last_date?: string;
@@ -226,7 +229,7 @@ export async function updateCRMLead(
     if (!token) throw new Error("No valid session/token");
 
     const res = await fetch(`${API_BASE}/crm/leads/${id}`, {
-      method: "POST", 
+      method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -313,7 +316,7 @@ export async function importCRMLeads(formData: FormData): Promise<CRMLeadsImport
     });
 
     const result = await res.json();
-    
+
     // Invalidate the cache to show the new imported leads
     updateTag("crm-leads-list");
     return result;

@@ -42,6 +42,9 @@ interface FormValues {
     category_id: string;
     branch_id: string;
     notes: string;
+    profession: string;
+    institute: string;
+    age: string;
 }
 
 export default function CRMLeadsForm({
@@ -66,6 +69,9 @@ export default function CRMLeadsForm({
             whatsapp: lead?.whatsapp || "",
             email: lead?.email || "",
             address: lead?.address || "",
+            profession: lead?.profession || "", 
+            institute: lead?.institute || "",
+            age: lead?.age?.toString() || "",
             referrer_name: lead?.referrer_name || "",
             referrer_phone: lead?.referrer_phone || "",
             course_id: lead?.course?.id?.toString() || "",
@@ -76,6 +82,7 @@ export default function CRMLeadsForm({
             category_id: lead?.category?.id?.toString() || "",
             branch_id: lead?.branch?.id?.toString() || "",
             notes: lead?.notes || "",
+        
         },
     });
 
@@ -162,6 +169,26 @@ export default function CRMLeadsForm({
                         {errors.whatsapp && <p className="text-sm text-red-500 mt-1">{errors.whatsapp.message}</p>}
                     </div>
 
+                    {/* Profession */}
+                    <div>
+                        <label className="block text-sm font-medium mb-1">Profession</label>
+                        <Input placeholder="Enter profession" {...register("profession")} />
+                        {errors.profession && <p className="text-sm text-red-500 mt-1">{errors.profession.message}</p>}
+                    </div>
+
+                    {/* Institute */}
+                    <div>
+                        <label className="block text-sm font-medium mb-1">Institute</label>
+                        <Input placeholder="Enter institute" {...register("institute")} />
+                        {errors.institute && <p className="text-sm text-red-500 mt-1">{errors.institute.message}</p>}
+                    </div>
+
+                    {/* Age */}
+                    <div>
+                        <label className="block text-sm font-medium mb-1">Age</label>
+                        <Input type="number" placeholder="Enter age" {...register("age")} />
+                        {errors.age && <p className="text-sm text-red-500 mt-1">{errors.age.message}</p>}
+                    </div>
                     {/* Email */}
                     <div>
                         <label className="block text-sm font-medium mb-1">Email Address</label>
