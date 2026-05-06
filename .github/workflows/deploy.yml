@@ -1,0 +1,27 @@
+name: Deploy Promise ERP
+
+on:
+  push:
+    branches:
+      - main  # আপনার ব্রাঞ্চের নাম যদি অন্য কিছু হয় (যেমন: master), তবে সেটি এখানে দিন
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Deploy to VPS via SSH
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd /var/www/promise-erp
+            git config --global --add safe.directory /var/www/promise-erp
+            git pull origin main
+            npm install
+            npm run build
+            pm2 restart promise-erp
