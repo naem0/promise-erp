@@ -136,9 +136,8 @@
     { "path": "/crm/contacts/add", "permissions": ["create-crm-contacts"] },
     { "path": "/crm/contacts/edit", "permissions": ["edit-crm-contacts"], "isDynamic": true },
 
-    { "path": "/crm/leads-history", "permissions": ["view-lead-histories"] },
-    { "path": "/crm/leads-history/add", "permissions": ["create-lead-histories"] },
-    { "path": "/crm/leads-history/edit", "permissions": ["edit-lead-histories"], "isDynamic": true },
+    { "path": "/crm/leads-history", "permissions": ["view-lead-history-list"] },
+    { "path": "/crm/leads-history/manage", "permissions": ["view-lead-histories", "create-lead-histories"], "isDynamic": true },
 
     { "path": "/crm/categories", "permissions": ["view-crm-categories"] },
     { "path": "/crm/categories/add", "permissions": ["create-crm-categories"] },

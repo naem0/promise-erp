@@ -20,7 +20,7 @@ export default function CategoriesPage({
 
                 <PermissionGuard requiredPermission="create-crm-categories">
                     <Button asChild >
-                        <Link href="/crm/categories/add">
+                        <Link href="/crm/categories/add" prefetch={true} >
                             <PlusCircle className="w-4 h-4 mr-2" />
                             Add Category
                         </Link>

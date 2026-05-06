@@ -84,7 +84,7 @@ export function NavCollapsibleItem({
                     isActive={!!isActive}
                     className="data-[active=true]:bg-primary/10 data-[active=true]:text-primary font-medium hover:bg-primary/5 hover:text-primary cursor-pointer"
                 >
-                    <Link href={item.url}>
+                    <Link href={item.url} prefetch={true}>
                         {item.icon && <item.icon />}
                         <span>{item.title}</span>
                     </Link>

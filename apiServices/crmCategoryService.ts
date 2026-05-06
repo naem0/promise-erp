@@ -50,7 +50,7 @@ export async function getCRMCategoriesCached(
   token: string,
   params: Record<string, unknown> = {},
 ): Promise<CRMCategoriesResponse> {
-  "use cache";
+  "use cache: remote";
   cacheTag("crm-categories-list");
 
   try {

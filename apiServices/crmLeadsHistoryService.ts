@@ -38,6 +38,12 @@ export interface LeadsHistoryResponse {
   data: {
     histories: LeadHistory[];
     pagination: PaginationType;
+    stats: {
+      total_leads: number;
+      new_enrollments: number;
+      lost_leads: number;
+      conversion_rate: string;
+    };
   };
   errors?: Record<string, string[]>;
 }

@@ -77,7 +77,7 @@ const LeadInfoCard = ({ lead }: LeadInfoCardProps) => {
                         <Table className="border-none shadow-none">
                             <TableBody>
                                 <TableRow className="border-none hover:bg-transparent">
-                                    <TableCell className="py-2 pl-1 pr-4 w-[80px]">Name</TableCell>
+                                    <TableCell className="py-2 pl-1 pr-4 w-20">Name</TableCell>
                                     <TableCell className="py-2 px-0 font-medium">{lead.referrer_name || "—"}</TableCell>
                                 </TableRow>
                                 <TableRow className="border-none hover:bg-transparent">

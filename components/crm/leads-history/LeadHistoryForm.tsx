@@ -98,6 +98,8 @@ const LeadHistoryForm = ({ leadId }: LeadHistoryFormProps) => {
             <SelectContent>
               <SelectItem value="1">Call</SelectItem>
               <SelectItem value="2">Message</SelectItem>
+              <SelectItem value="3">Email</SelectItem>
+              <SelectItem value="4">Whatsapp</SelectItem>
             </SelectContent>
           </Select>
         </div>

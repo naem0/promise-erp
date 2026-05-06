@@ -41,6 +41,7 @@ import { assignLeadsToUser, Consultant } from "@/apiServices/crmLeadsActions";
 import DeleteCRMLeadButton from "./DeleteCRMLeadButton";
 import CRMLeadsExportButton from "./CRMLeadsExportButton";
 import { truncate } from "@/lib/utils";
+import PermissionGuard from "@/components/auth/PermissionGuard";
 
 
 interface CRMLeadsClientTableProps {
@@ -139,6 +140,7 @@ export default function CRMLeadsClientTable({
                             <X className="h-3.5 w-3.5" />
                             Clear
                         </Button>
+                        <PermissionGuard requiredPermission="create-crm-lead-contacts">
                         <Button
                             size="sm"
                             className="gap-1 bg-indigo-600 hover:bg-indigo-700 text-white"
@@ -146,7 +148,8 @@ export default function CRMLeadsClientTable({
                         >
                             <UserCheck className="h-3.5 w-3.5" />
                             Assign to Counsellor
-                        </Button>
+                        </Button>   
+                        </PermissionGuard>
                     </div>
                 </div>
             )}

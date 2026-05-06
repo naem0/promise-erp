@@ -28,7 +28,7 @@ export default async function CRMLeadsFilterData() {
     try {
         const res = await getCRMCategories({ per_page: 500 });
         categories = res?.data?.categories || [];
-    } catch (error) {
+    } catch (error: unknown) {
         if (error instanceof Error) {
           return (<div className="py-8 md:py-12">
               <ErrorComponent message={`Error fetching categories: ${error.message}`} />
@@ -43,8 +43,12 @@ export default async function CRMLeadsFilterData() {
     try {
         const res = await getConsultants();
         consultants = res?.data?.consultants || [];
-    } catch (error) {
-        console.error("Error fetching consultants for filter:", error);
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error("Error fetching consultants for filter:", error.message);
+        } else {
+            console.error("An unknown error occurred while fetching consultants for filter.");
+        }
     }
 
     return (

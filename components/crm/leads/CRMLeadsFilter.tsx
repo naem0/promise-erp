@@ -231,11 +231,18 @@ export default function CRMLeadsFilter({
                                 <SelectValue placeholder="Branch" />
                             </SelectTrigger>
                             <SelectContent>
-                                {branches.map((branch) => (
-                                    <SelectItem key={branch.id} value={String(branch.id)}>
-                                        {branch.name}
+                                {
+                                branches?.length ? (
+                                    branches.map((branch) => (
+                                        <SelectItem key={branch.id} value={String(branch.id)}>
+                                            {branch.name}
+                                        </SelectItem>
+                                    ))
+                                ) : (
+                                    <SelectItem value="" disabled>
+                                        No branch found
                                     </SelectItem>
-                                ))}
+                                )}
                             </SelectContent>
                         </Select>
                     )}
@@ -257,11 +264,17 @@ export default function CRMLeadsFilter({
                                 <SelectValue placeholder="Lead Category" />
                             </SelectTrigger>
                             <SelectContent>
-                                {categories?.map((category) => (
-                                    <SelectItem key={category.id} value={String(category.id)}>
-                                        {category.name}
+                                {categories?.length ? (
+                                    categories.map((category) => (
+                                        <SelectItem key={category.id} value={String(category.id)}>
+                                            {category.name}
+                                        </SelectItem>
+                                    ))
+                                ) : (
+                                    <SelectItem value="" disabled>
+                                        No category found
                                     </SelectItem>
-                                ))}
+                                )}
                             </SelectContent>
                         </Select>
                     )}
@@ -336,11 +349,17 @@ export default function CRMLeadsFilter({
                                 <SelectValue placeholder="Consultant" />
                             </SelectTrigger>
                             <SelectContent>
-                                {consultants?.map((consultant) => (
-                                    <SelectItem key={consultant.id} value={String(consultant.id)}>
-                                        {consultant.name}
+                                {consultants?.length ? (
+                                    consultants.map((consultant) => (
+                                        <SelectItem key={consultant.id} value={String(consultant.id)}>
+                                            {consultant.name}
+                                        </SelectItem>
+                                    ))
+                                ) : (
+                                    <SelectItem value="" disabled>
+                                        No consultant found
                                     </SelectItem>
-                                ))}
+                                )}
                             </SelectContent>
                         </Select>
                     )}
