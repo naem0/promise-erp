@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { TrendingUp } from "lucide-react";
 import {
   Label,
   PolarRadiusAxis,
@@ -13,7 +12,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -79,6 +77,7 @@ export function ConsultantsAveragePerformance({ average_performance, period = "t
             <SelectValue placeholder="Select period" />
           </SelectTrigger>
           <SelectContent>
+            <SelectItem value="today">Today</SelectItem>
             <SelectItem value="this_week">This Week</SelectItem>
             <SelectItem value="this_month">This Month</SelectItem>
             <SelectItem value="this_year">This Year</SelectItem>
@@ -125,7 +124,7 @@ export function ConsultantsAveragePerformance({ average_performance, period = "t
                         <tspan
                           x={viewBox.cx}
                           y={(viewBox.cy || 0) - 30}
-                          className="fill-foreground text-4xl font-bold"
+                          className="fill-foreground text-xl font-bold"
                         >
                           {average_performance}%
                         </tspan>

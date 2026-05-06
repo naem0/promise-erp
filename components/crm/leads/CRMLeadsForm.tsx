@@ -95,14 +95,14 @@ export default function CRMLeadsForm({
             const res = lead
                 ? await updateCRMLead(Number(lead.id), formData)
                 : await createCRMLead(formData);
-            console.log("API Response:", res);
-            if (res.success) {
+
+            if (res?.success) {
                 reset();
-                toast.success(res.message || "Lead saved successfully!");
+                toast.success(res?.message || "Lead saved successfully!");
                 router.push("/crm/leads");
             } else {
-                if (res.errors) {
-                    toast.error(res.message || "Failed to save lead");
+                if (res?.errors) {
+                    toast.error(res?.message || "Failed to save lead");
                     Object.entries(res.errors).forEach(([field, messages]) => {
                         const errorMessage = Array.isArray(messages)
                             ? messages[0]
@@ -113,7 +113,7 @@ export default function CRMLeadsForm({
                         });
                     });
                 } else {
-                    toast.error(res.message || "Failed to save lead");
+                    toast.error(res?.message || "Failed to save lead");
                 }
             }
         } catch (error: unknown) {
@@ -154,7 +154,7 @@ export default function CRMLeadsForm({
                         <Input placeholder="Enter phone number" {...register("phone")} />
                         {errors.phone && <p className="text-sm text-red-500 mt-1">{errors.phone.message}</p>}
                     </div>
-                    
+
                     {/* WhatsApp */}
                     <div>
                         <label className="block text-sm font-medium mb-1">WhatsApp Number</label>
@@ -310,9 +310,17 @@ export default function CRMLeadsForm({
                                         <SelectValue placeholder="Select Category" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        {categories.map(cat => (
-                                            <SelectItem key={cat.id} value={cat.id.toString()}>{cat.name}</SelectItem>
-                                        ))}
+                                        {categories?.length ? (
+                                            categories.map(cat => (
+                                                <SelectItem key={cat.id} value={cat.id.toString()}>
+                                                    {cat.name}
+                                                </SelectItem>
+                                            ))
+                                        ) : (
+                                            <SelectItem value="" disabled>
+                                                No category found
+                                            </SelectItem>
+                                        )}
                                     </SelectContent>
                                 </Select>
                             )}
@@ -332,9 +340,15 @@ export default function CRMLeadsForm({
                                         <SelectValue placeholder="Select Branch" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        {branches.map(b => (
-                                            <SelectItem key={b.id} value={b.id.toString()}>{b.name}</SelectItem>
-                                        ))}
+                                        {branches?.length ? (
+                                            branches.map(b => (
+                                                <SelectItem key={b.id} value={b.id.toString()}>{b.name}</SelectItem>
+                                            ))
+                                        ) : (
+                                            <SelectItem value="" disabled>
+                                                No branch found
+                                            </SelectItem>
+                                        )}
                                     </SelectContent>
                                 </Select>
                             )}

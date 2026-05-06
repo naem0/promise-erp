@@ -60,6 +60,25 @@ const LeadsHistoryData = async ({
         );
     }
 
+    const getStatusStyles = (status: number) => {
+        switch (status) {
+            case 1:
+                return "border-[#2D76E5]/20 text-[#2D76E5] bg-[#2D76E5]/10";
+            case 2:
+                return "border-[#E67E00]/20 text-[#E67E00] bg-[#E67E00]/10";
+            case 3:
+                return "border-[#00B686]/20 text-[#00B686] bg-[#00B686]/10";
+            case 4:
+                return "border-[#9148EF]/20 text-[#9148EF] bg-[#9148EF]/10";
+            case 5:
+                return "border-[#E64A6E]/20 text-[#E64A6E] bg-[#E64A6E]/10";
+            case 6:
+                return "border-[#00B8E6]/20 text-[#00B8E6] bg-[#00B8E6]/10";
+            default:
+                return "";
+        }
+    };
+
     return (
         <>
             <div className="rounded-md border">
@@ -73,8 +92,8 @@ const LeadsHistoryData = async ({
                             <TableHead className="text-center">Next Follow Up</TableHead>
                             <TableHead className="text-center">Calls</TableHead>
                             <TableHead className="text-center">Messages</TableHead>
-                            <TableHead className="text-center">Status</TableHead>
                             <TableHead className="text-center">Consultant</TableHead>
+                            <TableHead className="text-center">Status</TableHead>
                             <TableHead className="text-center">Note</TableHead>
                         </TableRow>
                     </TableHeader>
@@ -108,17 +127,20 @@ const LeadsHistoryData = async ({
                                     {history?.message_count ?? 0}
                                 </TableCell>
                                 <TableCell className="text-center">
-                                    <Badge variant="outline">
-                                        {history?.status_text}
-                                    </Badge>
-                                </TableCell>
-                                <TableCell className="text-center">
                                     <div className="flex flex-col">
                                         <span>{history?.user_name}</span>
                                         <span className="text-xs text-secondary">{history?.user_designation}</span>
                                     </div>
                                 </TableCell>
-                                <TableCell className="max-w-[200px] text-center" title = {history?.note}>
+                                <TableCell className="text-center">
+                                    <Badge
+                                        variant="outline"
+                                        className={getStatusStyles(history?.status)}
+                                    >
+                                        {history?.status_text}
+                                    </Badge>
+                                </TableCell>
+                                <TableCell className="max-w-[200px] text-center" title={history?.note}>
                                     {truncate(history?.note || "", 20)}
                                 </TableCell>
                             </TableRow>

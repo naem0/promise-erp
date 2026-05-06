@@ -43,8 +43,12 @@ export default function CourseSearchSelect({
         if (res.success) {
           setCourses(res.data.courses || [])
         }
-      } catch (error) {
-        console.error("Failed to fetch courses:", error)
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          console.error("Failed to fetch courses:", error.message)
+        } else {
+          console.error("An unknown error occurred while fetching courses.")
+        }
       }
     })
   }, [])
