@@ -8,6 +8,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 
 import CRMLeadsImportButton from "@/components/crm/leads/CRMLeadsImportButton";
+import PermissionGuard from "@/components/auth/PermissionGuard";
 
 export default function CRMLeadsPage({
     searchParams,
@@ -22,12 +23,14 @@ export default function CRMLeadsPage({
                     
 
                     <CRMLeadsImportButton />
+                    <PermissionGuard requiredPermission="create-leads">
                     <Button asChild className="bg-green-600">
                         <Link href="/crm/leads/add">
                             <PlusCircle className="w-4 h-4 mr-2" />
                             Add Lead
                         </Link>
                     </Button>
+                    </PermissionGuard>
                 </div>
 
             </div>

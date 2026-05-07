@@ -126,7 +126,7 @@ export default function LessonList({ chapterIndex, control, register, errors }: 
                         <SelectItem value="1" defaultChecked>
                           <div className="flex items-center gap-2">
                             <Video className="w-4 h-4 text-blue-500" />
-                            Prerecorded Video 
+                            Prerecorded Video
                           </div>
                         </SelectItem>
                         <SelectItem value="2">
@@ -186,8 +186,8 @@ export default function LessonList({ chapterIndex, control, register, errors }: 
                   name={`chapters.${chapterIndex}.lessons.${idx}.is_preview` as const}
                   control={control}
                   render={({ field }) => (
-                    <Select 
-                      value={String(field.value)} 
+                    <Select
+                      value={String(field.value)}
                       onValueChange={(value) => field.onChange(Number(value))}
                     >
                       <SelectTrigger id={`lesson-preview-${chapterIndex}-${idx}`} className="w-full h-10">
@@ -213,8 +213,8 @@ export default function LessonList({ chapterIndex, control, register, errors }: 
                   name={`chapters.${chapterIndex}.lessons.${idx}.status` as const}
                   control={control}
                   render={({ field }) => (
-                    <Select 
-                      value={String(field.value)} 
+                    <Select
+                      value={String(field.value)}
                       onValueChange={(value) => field.onChange(Number(value))}
                     >
                       <SelectTrigger id={`lesson-status-${chapterIndex}-${idx}`} className="w-full h-10">
@@ -240,6 +240,7 @@ export default function LessonList({ chapterIndex, control, register, errors }: 
 
       <div className="pt-2">
         <Button
+          className="cursor-pointer"
           type="button"
           size="sm"
           onClick={() => append({
