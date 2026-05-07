@@ -424,7 +424,7 @@ export const sidebarData = {
             {
               title: "Leads Activity",
               url: "/crm/leads-history",
-              permissions: ["view-lead-histories", "create-lead-histories"],
+              permissions: ["view-lead-history-list", "view-assigned-lead-history-list"],
             },
             {
               title: "Lead Categories",

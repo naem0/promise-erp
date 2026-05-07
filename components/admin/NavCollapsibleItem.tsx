@@ -36,7 +36,7 @@ export function NavCollapsibleItem({
     }
 }) {
     const pathname = usePathname()
-    const { hasPermission, loading } = usePermission()
+    const { hasAnyPermission, loading } = usePermission()
 
     // Calculate active state
     const hasActiveChild = item.items?.some(
@@ -59,14 +59,14 @@ export function NavCollapsibleItem({
 
     if (loading) return null
 
-    if (item.permissions && !hasPermission(item.permissions)) {
+    if (item.permissions && !hasAnyPermission(item.permissions)) {
         return null
     }
 
     // Filter sub items
     const visibleSubItems = item.items?.filter(subItem => {
         if (!subItem.permissions) return true;
-        return hasPermission(subItem.permissions);
+        return hasAnyPermission(subItem.permissions);
     });
 
     if (item.items && visibleSubItems?.length === 0 && item.url === "#") {
