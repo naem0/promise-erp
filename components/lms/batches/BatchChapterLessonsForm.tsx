@@ -15,6 +15,7 @@ import ChapterSection from "@/components/lms/courses/ChapterSection";
 import { FormValues } from "@/apiServices/courseService";
 import { useEffect, useState } from "react";
 import { BookOpen } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface BatchChapterLessonsFormProps {
     batchId: number;
@@ -28,6 +29,7 @@ export default function BatchChapterLessonsForm({
     batchName,
 }: BatchChapterLessonsFormProps) {
     const [loading, setLoading] = useState(true);
+    const router = useRouter();
 
     // We reuse FormValues shape from courseService but swap course_id -> we just won't submit it.
     // Internally we manage batch_id separately.
@@ -156,14 +158,8 @@ export default function BatchChapterLessonsForm({
             console.log(res);
 
             if (res.success) {
-                toast.success(
-                    res.message || "Batch chapters & lessons updated successfully!"
-                );
-                // Sync form IDs from response
-                if (res.data && res.data.length > 0) {
-                    const sanitized = sanitizeChaptersForForm(res.data);
-                    replaceChapters(sanitized);
-                }
+                toast.success(res.message || "Batch chapters updated successfully.");
+                router.push("/lms/batches");
             } else {
                 if (res.errors) {
                     Object.entries(res.errors).forEach(([field, messages]) => {
@@ -260,6 +256,7 @@ export default function BatchChapterLessonsForm({
                             type="button"
                             size="sm"
                             variant="outline"
+                            className="cursor-pointer"
                             onClick={() =>
                                 addChapter({
                                     title: "",
@@ -289,7 +286,7 @@ export default function BatchChapterLessonsForm({
                             size="lg"
                             type="submit"
                             disabled={isSubmitting}
-                            className="w-full sm:w-auto"
+                            className="w-full sm:w-auto cursor-pointer"
                         >
                             {isSubmitting ? "Saving..." : "Update Batch Curriculum"}
                         </Button>

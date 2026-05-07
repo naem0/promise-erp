@@ -52,7 +52,7 @@ export default function CategoriesForm({
         defaultValues: {
             name: category?.name || "",
             description: category?.description || "",
-            status: category?.status !== undefined ? category?.status.toString() : "1",
+            status: category?.status !== undefined ? category?.status.toString() : "",
             image_url: undefined,
         },
     });

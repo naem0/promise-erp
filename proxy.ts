@@ -74,7 +74,7 @@ export async function proxy(request: NextRequest) {
     });
 
     if (matchedRoute) {
-      const allowed = matchedRoute.permissions.every(p => userPermissions.includes(p));
+      const allowed = matchedRoute.permissions.some(p => userPermissions.includes(p));
 
       if (!allowed) {
         return NextResponse.redirect(new URL('/unauthorized', request.url));

@@ -27,7 +27,7 @@ type NavSection = {
 }
 
 export function NavMain({ sections }: { sections: NavSection[] }) {
-  const { hasPermission, loading } = usePermission()
+  const { hasAnyPermission, loading } = usePermission()
 
   if (loading) return null
 
@@ -36,12 +36,12 @@ export function NavMain({ sections }: { sections: NavSection[] }) {
       {sections.map((section, index) => {
         const visibleItems = section.items.filter((item) => {
           // 1. Check top-level permission
-          if (item.permissions && !hasPermission(item.permissions)) return false
+          if (item.permissions && !hasAnyPermission(item.permissions)) return false
 
           // 2. For items with children (collapsed items), check if any sub-item is visible
           if (item.url === "#" && item.items) {
             return item.items.some(
-              (subItem) => !subItem.permissions || hasPermission(subItem.permissions)
+              (subItem) => !subItem.permissions || hasAnyPermission(subItem.permissions)
             )
           }
 

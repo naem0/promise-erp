@@ -7,20 +7,28 @@ interface PermissionGuardProps {
     children: ReactNode;
     requiredPermission: string | string[];
     fallback?: ReactNode;
+    mode?: "any" | "all";
 }
 
 export default function PermissionGuard({
     children,
     requiredPermission,
     fallback = null,
+    mode = "all",
 }: PermissionGuardProps) {
-    const { hasPermission, loading } = usePermission();
+    const { hasPermission, hasAnyPermission, loading } = usePermission();
 
     if (loading) {
         return null;
     }
 
-    if (hasPermission(requiredPermission)) {
+    const hasAccess = Array.isArray(requiredPermission)
+        ? mode === "any"
+            ? hasAnyPermission(requiredPermission)
+            : hasPermission(requiredPermission)
+        : hasPermission(requiredPermission);
+
+    if (hasAccess) {
         return <>{children}</>;
     }
 

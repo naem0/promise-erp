@@ -42,6 +42,7 @@ import DeleteCRMLeadButton from "./DeleteCRMLeadButton";
 import CRMLeadsExportButton from "./CRMLeadsExportButton";
 import { truncate } from "@/lib/utils";
 import PermissionGuard from "@/components/auth/PermissionGuard";
+import Image from "next/image";
 
 
 interface CRMLeadsClientTableProps {
@@ -141,14 +142,14 @@ export default function CRMLeadsClientTable({
                             Clear
                         </Button>
                         <PermissionGuard requiredPermission="create-crm-lead-contacts">
-                        <Button
-                            size="sm"
-                            className="gap-1 bg-indigo-600 hover:bg-indigo-700 text-white"
-                            onClick={() => setAssignModalOpen(true)}
-                        >
-                            <UserCheck className="h-3.5 w-3.5" />
-                            Assign to Counsellor
-                        </Button>   
+                            <Button
+                                size="sm"
+                                className="gap-1 bg-indigo-600 hover:bg-indigo-700 text-white"
+                                onClick={() => setAssignModalOpen(true)}
+                            >
+                                <UserCheck className="h-3.5 w-3.5" />
+                                Assign to Counsellor
+                            </Button>
                         </PermissionGuard>
                     </div>
                 </div>
@@ -229,6 +230,7 @@ export default function CRMLeadsClientTable({
                                             </Badge>
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="center">
+                                            <PermissionGuard requiredPermission="edit-leads">
                                             <DropdownMenuItem asChild>
                                                 <Link
                                                     href={`/crm/leads/${lead?.id}/edit`}
@@ -238,9 +240,12 @@ export default function CRMLeadsClientTable({
                                                     Edit
                                                 </Link>
                                             </DropdownMenuItem>
+                                            </PermissionGuard>
+                                            <PermissionGuard requiredPermission="delete-leads">
                                             <DropdownMenuItem asChild>
                                                 <DeleteCRMLeadButton id={lead?.id} />
                                             </DropdownMenuItem>
+                                            </PermissionGuard>
                                         </DropdownMenuContent>
                                     </DropdownMenu>
                                 </TableCell>
@@ -272,9 +277,6 @@ export default function CRMLeadsClientTable({
                                     </div>
                                 </TableCell>
 
-                                {/* <TableCell className="text-center">
-                                    {lead?.phone || "—"}
-                                </TableCell> */}
 
                                 {/* Referrer */}
                                 <TableCell className="text-center">
@@ -327,41 +329,6 @@ export default function CRMLeadsClientTable({
                                         </Badge>
                                     </div>
                                 </TableCell>
-
-
-                                {/* <TableCell className="text-center text-xs">
-                                    <Badge
-                                        variant="outline"
-                                        className={
-                                            lead.course_type === 1
-                                                ? "border-emerald-500 text-emerald-600 bg-emerald-50"
-                                                : lead.course_type === 2
-                                                    ? "border-blue-500 text-blue-600 bg-blue-50"
-                                                    : ""
-                                        }
-                                    >
-                                        {lead?.course_type_text || "—"}
-                                    </Badge>
-                                </TableCell> */}
-
-                                {/* Shift */}
-                                {/* <TableCell className="text-center text-xs">
-                                    <Badge
-                                        variant="outline"
-                                        className={
-                                            lead.shift === 1
-                                                ? "border-amber-500 text-amber-600 bg-amber-50"
-                                                : lead.shift === 2
-                                                    ? "border-orange-500 text-orange-600 bg-orange-50"
-                                                    : lead.shift === 3
-                                                        ? "border-purple-500 text-purple-600 bg-purple-50"
-                                                        : ""
-                                        }
-                                    >
-                                        {lead?.shift_text || "—"}
-                                    </Badge>
-                                </TableCell> */}
-
 
 
                                 {/* Source */}
@@ -451,7 +418,7 @@ export default function CRMLeadsClientTable({
 
             {/* ── Assign Modal ── */}
             <Dialog open={assignModalOpen} onOpenChange={setAssignModalOpen}>
-                <DialogContent className="sm:max-w-md">
+                <DialogContent className="w-full max-w-3xl">
                     <DialogHeader>
                         <DialogTitle className="flex items-center gap-2">
                             <UserCheck className="h-5 w-5 text-indigo-600" />
@@ -478,12 +445,23 @@ export default function CRMLeadsClientTable({
                             <SelectContent>
                                 {consultants.map((consultant) => (
                                     <SelectItem key={consultant.id} value={String(consultant.id)}>
-                                        <div className="flex flex-col">
-                                            <span className="font-medium">{consultant.name}</span>
-                                            <span className="text-xs text-muted-foreground">
-                                                {consultant.designation_name}
-                                                {consultant.department_name ? ` · ${consultant.department_name}` : ""}
-                                            </span>
+                                        <div className="flex justify-start gap-2">
+                                            <div>
+                                                <Image
+                                                    width={40}
+                                                    height={40}
+                                                    className="rounded-full"
+                                                    src={consultant?.profile_image || "/images/placeholder-profile.png"}
+                                                    alt={consultant?.name}
+                                                />
+                                            </div>
+                                            <div className="">
+                                                <p className="font-medium text-start">{consultant.name}</p>
+                                                <span className="text-xs text-start text-muted-foreground">
+                                                    {consultant.designation_name}
+                                                </span>
+                                            </div>
+
                                         </div>
                                     </SelectItem>
                                 ))}
@@ -496,13 +474,15 @@ export default function CRMLeadsClientTable({
                             variant="outline"
                             onClick={() => setAssignModalOpen(false)}
                             disabled={isPending}
+                            className="cursor-pointer"
                         >
                             Cancel
                         </Button>
                         <Button
-                            className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                            className="bg-indigo-600 hover:bg-indigo-700 text-white cursor-pointer"
                             onClick={handleAssign}
                             disabled={isPending || !selectedUserId}
+
                         >
                             {isPending ? (
                                 <>
