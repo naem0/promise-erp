@@ -29,7 +29,7 @@ export const authOptions:NextAuthOptions = {
           name: data.user.name,
           email: data.user.email,
           image: data.user.image,
-          roles: data.roles,
+          roles: data.user.roles || [],
           // permissions: Array.isArray(data.permissions) ? data.permissions : [],
           accessToken: data.access_token,
           expiresAt: data.expires_at,
