@@ -29,7 +29,7 @@ const EmployeesData = async ({
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) => {
     const resolvedSearchParams = await searchParams;
-    const page = typeof resolvedSearchParams.page === "string" ? Number(resolvedSearchParams.page): 1;
+    const page = typeof resolvedSearchParams.page === "string" ? Number(resolvedSearchParams.page) : 1;
     const per_page = typeof resolvedSearchParams.per_page === "string" ? Number(resolvedSearchParams.per_page) : 15;
     const params = {
         page,
@@ -175,7 +175,24 @@ const EmployeesData = async ({
                                     {employee?.department?.name || "—"}
                                 </TableCell>
                                 <TableCell className="text-center">
-                                    {employee?.branches?.map((b) => b.name).join(", ") || "—"}
+                                    {employee?.branches && employee?.branches?.length > 0 ? (
+                                        <>
+                                            {employee.branches.slice(0, 2).map((b, index) => (
+                                                <span key={b.id || index}>
+                                                    {b.name}
+                                                    {index < Math.min(2, employee.branches.length) - 1 && ", "}
+                                                </span>
+                                            ))}
+
+                                            {employee.branches.length > 2 && (
+                                                <span className="text-gray-500 ml-1">
+                                                    +{employee.branches.length - 2}
+                                                </span>
+                                            )}
+                                        </>
+                                    ) : (
+                                        "—"
+                                    )}
                                 </TableCell>
                                 <TableCell className="text-center">
                                     {employee?.role?.name || "—"}
