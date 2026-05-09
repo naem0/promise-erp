@@ -27,6 +27,9 @@ interface FilterFormValues {
     shift?: string;
     user_id?: string;
     per_page?: string;
+    date_from?: string;
+    date_to?: string;
+    assignment_status?: string;
 }
 
 interface CRMLeadsFilterProps {
@@ -56,6 +59,9 @@ export default function CRMLeadsFilter({
                 shift: searchParams.get("shift") || "",
                 user_id: searchParams.get("user_id") || "",
                 per_page: searchParams.get("per_page") || "15",
+                date_from: searchParams.get("date_from") || "",
+                date_to: searchParams.get("date_to") || "",
+                assignment_status: searchParams.get("assignment_status") || "",
             },
         });
 
@@ -110,6 +116,9 @@ export default function CRMLeadsFilter({
             shift: "",
             user_id: "",
             per_page: "15",
+            date_from: "",
+            date_to: "",
+            assignment_status: "",
         });
         router.replace(pathname, { scroll: false });
     };
@@ -133,7 +142,10 @@ export default function CRMLeadsFilter({
         currentSource !== "" ||
         currentShift !== "" ||
         currentUserId !== "" ||
-        currentPerPage !== "15";
+        currentPerPage !== "15" ||
+        searchParams.get("date_from") !== "" && searchParams.get("date_from") !== null ||
+        searchParams.get("date_to") !== "" && searchParams.get("date_to") !== null ||
+        searchParams.get("assignment_status") !== "" && searchParams.get("assignment_status") !== null;
 
     return (
         <div className="p-6 mb-6 border rounded-xl bg-card shadow-sm">
@@ -388,7 +400,58 @@ export default function CRMLeadsFilter({
                         </Select>
                     )}
                 />
+                {/* Assignment Status */}
+                <div className="space-y-1">
+                    <Controller
+                        name="assignment_status"
+                        control={control}
+                        render={({ field }) => (
+                            <Select
+                                value={field.value || ""}
+                                onValueChange={(value) => {
+                                    field.onChange(value);
+                                    handleSelectChange("assignment_status")(value);
+                                }}
+                            >
+                                <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="Assigned Status" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="assigned">Assigned</SelectItem>
+                                    <SelectItem value="not_assigned">Unassigned</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        )}
+                    />
+                </div>
 
+                
+
+                
+
+            </div>
+            <div className="flex gap-4 justify-between items-center pt-2">
+                {/* Date From */}
+                <div className="space-y-1 w-full">
+                    <label className="text-[10px] font-medium uppercase text-black ml-1">Entry Date From</label>
+                    <Input
+                        type="date"
+                        {...register("date_from")}
+                        className="h-10 cursor-pointer"
+                    />
+                    
+                </div>
+
+                {/* Date To */}
+                <div className="space-y-1 w-full">
+                  <label className="text-[10px] font-medium uppercase text-black ml-1">Entry Date To</label>
+                    <Input
+                        type="date"
+                        {...register("date_to")}
+                        className="h-10 cursor-pointer"
+                    />
+                      
+                </div>
             </div>
         </div>
     );

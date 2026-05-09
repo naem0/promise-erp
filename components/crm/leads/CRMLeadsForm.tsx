@@ -45,6 +45,7 @@ interface FormValues {
     profession: string;
     institute: string;
     age: string;
+    entry_date: string;
 }
 
 export default function CRMLeadsForm({
@@ -82,7 +83,7 @@ export default function CRMLeadsForm({
             category_id: lead?.category?.id?.toString() || "",
             branch_id: lead?.branch?.id?.toString() || "",
             notes: lead?.notes || "",
-        
+            entry_date: lead?.entry_date || "",
         },
     });
 
@@ -194,6 +195,13 @@ export default function CRMLeadsForm({
                         <label className="block text-sm font-medium mb-1">Email Address</label>
                         <Input type="email" placeholder="Enter email address" {...register("email")} />
                         {errors.email && <p className="text-sm text-red-500 mt-1">{errors.email.message}</p>}
+                    </div>
+
+                    {/* Entry Date */}
+                    <div>
+                        <label className="block text-sm font-medium mb-1">Entry Date</label>
+                        <Input type="date" {...register("entry_date")} />
+                        {errors.entry_date && <p className="text-sm text-red-500 mt-1">{errors.entry_date.message}</p>}
                     </div>
 
                     {/* Address */}

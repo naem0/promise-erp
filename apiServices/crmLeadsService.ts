@@ -62,6 +62,7 @@ export interface CRMLead {
   profession?: string;
   institute?: string;
   age?: number;
+  entry_date?: string;
   call_count: number;
   message_count: number;
   last_date?: string;

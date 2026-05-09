@@ -75,8 +75,10 @@ export default function CRMLeadsImportButton() {
           "WhatsApp": "01711223344",
           "Email": "john@example.com",
           "Address": "Dhaka, Bangladesh",
+          "Course Name": "Graphics",
           "Course Type": "Online",
-          "Course Time": "Morning"
+          "Course Time": "Morning",
+          "entry_date": "5/5/2026"
         },
         {
           "source": "Google",
@@ -86,8 +88,10 @@ export default function CRMLeadsImportButton() {
           "WhatsApp": "01822334455",
           "Email": "rahman@example.com",
           "Address": "Chittagong",
+          "Course Name": "Graphics",
           "Course Type": "Offline",
-          "Course Time": "Evening"
+          "Course Time": "Evening",
+          "entry_date": "5/6/2026"
         }
       ];
 
@@ -95,7 +99,8 @@ export default function CRMLeadsImportButton() {
       
       ws["!cols"] = [
         { wch: 12 }, { wch: 15 }, { wch: 15 }, { wch: 15 }, 
-        { wch: 15 }, { wch: 20 }, { wch: 20 }, { wch: 15 }, { wch: 15 }
+        { wch: 15 }, { wch: 20 }, { wch: 25 }, { wch: 15 }, 
+        { wch: 15 }, { wch: 15 }, { wch: 15 }
       ];
 
       const wb = XLSX.utils.book_new();
