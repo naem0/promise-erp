@@ -1,5 +1,5 @@
 "use client";
-
+ 
 import { Badge } from "@/components/ui/badge";
 import {
     DropdownMenu,
@@ -10,13 +10,13 @@ import {
 import { Pencil } from "lucide-react";
 import PermissionGuard from "@/components/auth/PermissionGuard";
 import Link from "next/link";
-
-interface LeadHistoryActionProps {
+ 
+interface LeadActivityActionProps {
     leadId: number;
     leadName: string;
 }
-
-const LeadHistoryAction = ({ leadId, leadName }: LeadHistoryActionProps) => {
+ 
+const LeadActivityAction = ({ leadId, leadName }: LeadActivityActionProps) => {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -29,12 +29,12 @@ const LeadHistoryAction = ({ leadId, leadName }: LeadHistoryActionProps) => {
                     Action
                 </Badge>
             </DropdownMenuTrigger>
-
+ 
             <DropdownMenuContent align="center">
-                <PermissionGuard requiredPermission="create-lead-histories">
+                <PermissionGuard requiredPermission="create-lead-activities">
                     <DropdownMenuItem asChild>
                         <Link
-                            href={`/crm/leads-history/${leadId}/manage`}
+                            href={`/crm/leads-activity/${leadId}/manage`}
                             className="flex items-center cursor-pointer w-full"
                         >
                             <Pencil className="mr-2 h-4 w-4" />
@@ -46,5 +46,5 @@ const LeadHistoryAction = ({ leadId, leadName }: LeadHistoryActionProps) => {
         </DropdownMenu>
     );
 };
-
-export default LeadHistoryAction;
+ 
+export default LeadActivityAction;

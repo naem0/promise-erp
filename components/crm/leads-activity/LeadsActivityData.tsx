@@ -9,13 +9,13 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { LeadHistory, getLeadsHistory } from "@/apiServices/crmLeadsHistoryService";
+import { LeadActivity, getLeadsActivity } from "@/apiServices/crmLeadsActivityService";
 import Pagination from "@/components/common/Pagination";
-import LeadHistoryAction from "./LeadHistoryAction";
-
+import LeadActivityAction from "./LeadActivityAction";
+ 
 import { truncate } from "@/lib/utils";
-
-const LeadsHistoryData = async ({
+ 
+const LeadsActivityData = async ({
     searchParams,
 }: {
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -39,10 +39,10 @@ const LeadsHistoryData = async ({
                 ? resolvedSearchParams.user_id
                 : undefined,
     };
-
+ 
     let results;
     try {
-        results = await getLeadsHistory(params);
+        results = await getLeadsActivity(params);
     } catch (error: unknown) {
         if (error instanceof Error) {
             return <ErrorComponent message={error.message} />;
@@ -50,16 +50,16 @@ const LeadsHistoryData = async ({
             return <ErrorComponent message="An unexpected error occurred." />;
         }
     }
-
-    const histories = results?.data?.histories || [];
+ 
+    const activities = results?.data?.activities || [];
     const paginationData = results?.data?.pagination;
-
-    if (!histories.length) {
+ 
+    if (!activities.length) {
         return (
-            <NotFoundComponent message={results?.message || "No leads history found."} />
+            <NotFoundComponent message={results?.message || "No leads activity found."} />
         );
     }
-
+ 
     const getStatusStyles = (status: number) => {
         switch (status) {
             case 1:
@@ -78,7 +78,7 @@ const LeadsHistoryData = async ({
                 return "";
         }
     };
-
+ 
     return (
         <>
             <div className="rounded-md border">
@@ -97,51 +97,51 @@ const LeadsHistoryData = async ({
                             <TableHead className="text-center">Note</TableHead>
                         </TableRow>
                     </TableHeader>
-
+ 
                     <TableBody>
-                        {histories.map((history: LeadHistory, index: number) => (
-                            <TableRow key={history?.id}>
+                        {activities.map((activity: LeadActivity, index: number) => (
+                            <TableRow key={activity?.id}>
                                 <TableCell className="text-center">
                                     {(page - 1) * per_page + (index + 1)}
                                 </TableCell>
                                 <TableCell className="text-center">
-                                    <LeadHistoryAction
-                                        leadId={history?.lead_id || history?.id}
-                                        leadName={history?.lead_name || "Lead"}
+                                    <LeadActivityAction
+                                        leadId={activity?.lead_id || activity?.id}
+                                        leadName={activity?.lead_name || "Lead"}
                                     />
                                 </TableCell>
-
+ 
                                 <TableCell className="text-center font-medium">
-                                    {history?.lead_name}
+                                    {activity?.lead_name}
                                 </TableCell>
                                 <TableCell className="text-center">
-                                    {history?.last_follow_up_date || "—"}
+                                    {activity?.last_follow_up_date || "—"}
                                 </TableCell>
                                 <TableCell className="text-center">
-                                    {history?.next_follow_up_date || "—"}
+                                    {activity?.next_follow_up_date || "—"}
                                 </TableCell>
                                 <TableCell className="text-center">
-                                    {history?.call_count ?? 0}
+                                    {activity?.call_count ?? 0}
                                 </TableCell>
                                 <TableCell className="text-center">
-                                    {history?.message_count ?? 0}
+                                    {activity?.message_count ?? 0}
                                 </TableCell>
                                 <TableCell className="text-center">
                                     <div className="flex flex-col">
-                                        <span>{history?.user_name}</span>
-                                        <span className="text-xs text-secondary">{history?.user_designation}</span>
+                                        <span>{activity?.user_name}</span>
+                                        <span className="text-xs text-secondary">{activity?.user_designation}</span>
                                     </div>
                                 </TableCell>
                                 <TableCell className="text-center">
                                     <Badge
                                         variant="outline"
-                                        className={getStatusStyles(history?.status)}
+                                        className={getStatusStyles(activity?.status)}
                                     >
-                                        {history?.status_text}
+                                        {activity?.status_text}
                                     </Badge>
                                 </TableCell>
-                                <TableCell className="max-w-[200px] text-center" title={history?.note}>
-                                    {truncate(history?.note || "", 20)}
+                                <TableCell className="max-w-[200px] text-center" title={activity?.note}>
+                                    {truncate(activity?.note || "", 20)}
                                 </TableCell>
                             </TableRow>
                         ))}
@@ -156,5 +156,5 @@ const LeadsHistoryData = async ({
         </>
     );
 };
-
-export default LeadsHistoryData;
+ 
+export default LeadsActivityData;

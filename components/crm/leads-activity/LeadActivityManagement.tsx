@@ -1,0 +1,43 @@
+"use client";
+ 
+import LeadActivityTimeline from "./LeadActivityTimeline";
+import LeadActivityForm from "./LeadActivityForm";
+import LeadActionCard from "./LeadActionCard";
+import { LeadActivity, LeadInfo } from "@/apiServices/crmLeadsActivityService";
+ 
+const LeadActivityManagement = ({ 
+  leadActivities, 
+  leadInfo 
+}: { 
+  leadActivities: LeadActivity[],
+  leadInfo: LeadInfo 
+}) => {
+  
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="lg:col-span-2 space-y-6">
+        <div>
+          <h2 className="text-2xl font-bold text-slate-800">Activity Timeline</h2>
+          <p className="text-slate-500 text-sm mt-1">Track all interactions and follow-up with this leads</p>
+        </div>
+ 
+        { leadActivities.length > 0 ? (
+          <LeadActivityTimeline activities={leadActivities} />
+        ) : (
+          <div className="bg-slate-50 border border-dashed border-slate-200 rounded-2xl p-12 text-center">
+            <p className="text-slate-400">No activity found for this lead.</p>
+          </div>
+        )}
+      </div>
+ 
+      <div className="lg:col-span-1">
+        <div className="sticky top-6 space-y-6">
+          <LeadActionCard lead={leadInfo} />
+          <LeadActivityForm leadId={leadActivities[0]?.lead_id} />
+        </div>
+      </div>
+    </div>
+  );
+};
+ 
+export default LeadActivityManagement;

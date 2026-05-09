@@ -1,11 +1,11 @@
 import { getConsultants } from "@/apiServices/crmLeadsActions";
-import LeadsHistoryFilter from "./LeadsHistoryFilter";
+import LeadsActivityFilter from "./LeadsActivityFilter";
 import ErrorComponent from "@/components/common/ErrorComponent";
-
-export default async function LeadsHistoryFilterData() {
-
+ 
+export default async function LeadsActivityFilterData() {
+ 
     let consultants = [];
-
+ 
     try {
         const res = await getConsultants();
         consultants = res?.data?.consultants || [];
@@ -20,9 +20,9 @@ export default async function LeadsHistoryFilterData() {
           </div>);
       }
     }
-
+ 
     return (
-        <LeadsHistoryFilter
+        <LeadsActivityFilter
             consultants={consultants}
         />
     );

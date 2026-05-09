@@ -1,8 +1,8 @@
-import { getLeadsHistory } from "@/apiServices/crmLeadsHistoryService";
+import { getLeadsActivity } from "@/apiServices/crmLeadsActivityService";
 import ErrorComponent from "@/components/common/ErrorComponent";
 import { Zap, GraduationCap, MessageSquare, TrendingUp, ArrowUp } from "lucide-react";
-
-export default async function LeadsHistorySummaryWrapper({
+ 
+export default async function LeadsActivitySummaryWrapper({
   searchParams,
 }: {
   searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -15,10 +15,10 @@ export default async function LeadsHistorySummaryWrapper({
     status: typeof resolvedSearchParams.status === "string" ? resolvedSearchParams.status : undefined,
     user_id: typeof resolvedSearchParams.user_id === "string" ? resolvedSearchParams.user_id : undefined,
   };
-
+ 
   let results;
   try {
-    results = await getLeadsHistory(params);
+    results = await getLeadsActivity(params);
   } catch (error: unknown) {
     if (error instanceof Error) {
       return <ErrorComponent message={error.message} />;
@@ -26,13 +26,13 @@ export default async function LeadsHistorySummaryWrapper({
       return <ErrorComponent message="An unexpected error occurred." />;
     }
   }
-
+ 
   if (!results || !results.success || !results.data || !results.data.stats) {
     return null;
   }
-
+ 
   const { stats } = results.data;
-
+ 
   const statCards = [
     {
       title: "Total Leads",
@@ -63,7 +63,7 @@ export default async function LeadsHistorySummaryWrapper({
       gradient: "from-[#E67E00] to-[#FFA726]",
     },
   ];
-
+ 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6 mb-6">
       {statCards.map((card, index) => {
@@ -80,7 +80,7 @@ export default async function LeadsHistorySummaryWrapper({
               </div>
               <h3 className="font-medium text-lg">{card.title}</h3>
             </div>
-
+ 
             {/* Content & Large Icon */}
             <div className="flex items-end justify-between mt-4 relative z-10">
               <div className="flex items-baseline gap-2">
@@ -90,13 +90,13 @@ export default async function LeadsHistorySummaryWrapper({
                 )}
               </div>
             </div>
-
+ 
             {/* Faint Background Icon */}
             <Icon
               className="absolute right-4 top-1/2 -translate-y-1/2 w-24 h-24 opacity-20 z-0"
               strokeWidth={1.5}
             />
-
+ 
             {/* Footer Pill - Static for now as per image if data not available */}
             <div className="mt-6 relative z-10">
               <div className="flex items-center gap-1 text-sm bg-white/20 w-fit px-3 py-1 rounded-md">

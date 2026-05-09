@@ -13,18 +13,18 @@ import {
 import { Button } from "@/components/ui/button";
 import { Search, FilterX } from "lucide-react";
 import { Consultant } from "@/apiServices/crmLeadsActions";
-
+ 
 interface FilterFormValues {
     search?: string;
     status?: string;
     user_id?: string;
 }
-
-export default function LeadsHistoryFilter({ consultants }: { consultants?: Consultant[] }) {
+ 
+export default function LeadsActivityFilter({ consultants }: { consultants?: Consultant[] }) {
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
-
+ 
     const { register, control, reset, watch, setValue } =
         useForm<FilterFormValues>({
             defaultValues: {
@@ -33,14 +33,14 @@ export default function LeadsHistoryFilter({ consultants }: { consultants?: Cons
                 user_id: searchParams.get("user_id") || "",
             },
         });
-
+ 
     const watchedValues = watch();
-
+ 
     useEffect(() => {
         const handler = setTimeout(() => {
             const params = new URLSearchParams(searchParams.toString());
             let isChanged = false;
-
+ 
             Object.entries(watchedValues).forEach(([key, value]) => {
                 const urlValue = params.get(key) || "";
                 const formValue = String(value || "");
@@ -48,7 +48,7 @@ export default function LeadsHistoryFilter({ consultants }: { consultants?: Cons
                     isChanged = true;
                 }
             });
-
+ 
             if (isChanged) {
                 params.delete("page");
                 Object.entries(watchedValues).forEach(([key, value]) => {
@@ -58,22 +58,22 @@ export default function LeadsHistoryFilter({ consultants }: { consultants?: Cons
                         params.delete(key);
                     }
                 });
-
+ 
                 const newUrl = `${pathname}?${params.toString()}`;
                 router.replace(newUrl, { scroll: false });
             }
         }, 600);
-
+ 
         return () => {
             clearTimeout(handler);
         };
     }, [JSON.stringify(watchedValues), router, pathname, searchParams]);
-
+ 
     const handleSelectChange =
         (name: keyof FilterFormValues) => (value: string) => {
             setValue(name, value);
         };
-
+ 
     const handleReset = () => {
         reset({
             search: "",
@@ -82,18 +82,18 @@ export default function LeadsHistoryFilter({ consultants }: { consultants?: Cons
         });
         router.replace(pathname, { scroll: false });
     };
-
+ 
     const currentSearch = searchParams.get("search") || "";
     const currentStatus = searchParams.get("status") || "";
     const currentUserId = searchParams.get("user_id") || "";
-
+ 
     const hasActiveFilters = currentSearch !== "" || currentStatus !== "" || currentUserId !== "";
-
+ 
     return (
         <div className="p-6 mb-6 border rounded-xl bg-card shadow-sm">
             <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-foreground">Filters</h3>
-
+ 
                 {hasActiveFilters && (
                     <Button
                         type="button"
@@ -107,7 +107,7 @@ export default function LeadsHistoryFilter({ consultants }: { consultants?: Cons
                     </Button>
                 )}
             </div>
-
+ 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 {/* Search */}
                 <div className="relative md:col-span-2">
@@ -118,7 +118,7 @@ export default function LeadsHistoryFilter({ consultants }: { consultants?: Cons
                         {...register("search")}
                     />
                 </div>
-
+ 
                 {/* Status */}
                 <Controller
                     name="status"
@@ -145,7 +145,7 @@ export default function LeadsHistoryFilter({ consultants }: { consultants?: Cons
                         </Select>
                     )}
                 />
-
+ 
                 {/* Assigned Consultant */}
                 <Controller
                     name="user_id"

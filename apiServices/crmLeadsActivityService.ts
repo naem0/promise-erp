@@ -1,18 +1,18 @@
 "use server";
-
+ 
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import { cacheTag, updateTag } from "next/cache";
 import { PaginationType } from "@/types/pagination";
-
+ 
 const API_BASE =
   process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
-
+ 
 // =======================
 // Interfaces
 // =======================
-
-export interface LeadHistory {
+ 
+export interface LeadActivity {
   id: number;
   lead_id: number;
   lead_name?: string;
@@ -30,13 +30,13 @@ export interface LeadHistory {
   type_text?: string;
   created_at: string;
 }
-
-export interface LeadsHistoryResponse {
+ 
+export interface LeadsActivityResponse {
   success: boolean;
   message: string;
   code: number;
   data: {
-    histories: LeadHistory[];
+    activities: LeadActivity[];
     pagination: PaginationType;
     stats: {
       total_leads: number;
@@ -47,15 +47,15 @@ export interface LeadsHistoryResponse {
   };
   errors?: Record<string, string[]>;
 }
-
-export interface SingleLeadHistoryResponse {
+ 
+export interface SingleLeadActivityResponse {
   success: boolean;
   message: string;
   code: number;
-  data: LeadHistory;
+  data: LeadActivity;
   errors?: Record<string, string[]>;
 }
-
+ 
 export interface Lead {
   id: number;
   name: string;
@@ -65,14 +65,14 @@ export interface Lead {
   lead_id?: string;
   interested_batch?: string;
 }
-
+ 
 export interface SingleLeadResponse {
   success: boolean;
   message: string;
   code: number;
   data: Lead;
 }
-
+ 
 export interface LeadInfo {
   name: string;
   phone?: string;
@@ -98,44 +98,44 @@ export interface LeadInfo {
   institute?: string;
   age?: number;
 }
-
-export interface LeadHistoriesListResponse {
+ 
+export interface LeadActivitiesListResponse {
   success: boolean;
   message: string;
   code: number;
   data: {
     lead_info: LeadInfo;
-    histories: LeadHistory[];
+    activities: LeadActivity[];
   };
   errors?: Record<string, string[]>;
 }
-
+ 
 // =======================
 // GET LEAD BY ID
 // =======================
-
+ 
 export async function getLeadById(
   id: number,
 ): Promise<SingleLeadResponse> {
   try {
     const session = await getServerSession(authOptions);
     const token = session?.accessToken;
-
+ 
     if (!token) throw new Error("No valid session/token");
-
+ 
     const res = await fetch(`${API_BASE}/crm/leads/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
     });
-
+ 
     if (!res.ok) {
       throw new Error(`Status: ${res.status} ${res.statusText}`);
     }
-
+ 
     const result = await res.json();
-
+ 
     return result;
   } catch (error: unknown) {
     console.error("Error in getLeadById:", error);
@@ -146,18 +146,18 @@ export async function getLeadById(
     }
   }
 }
-
+ 
 // =======================
-// GET ALL LEADS HISTORY (CACHED)
+// GET ALL LEADS ACTIVITY (CACHED)
 // =======================
-
-export async function getLeadsHistoryCached(
+ 
+export async function getLeadsActivityCached(
   token: string,
   params: Record<string, unknown> = {},
-): Promise<LeadsHistoryResponse> {
+): Promise<LeadsActivityResponse> {
   "use cache";
-  cacheTag("leads-history-list");
-
+  cacheTag("leads-activity-list");
+ 
   try {
     const urlParams = new URLSearchParams();
     for (const key in params) {
@@ -165,86 +165,86 @@ export async function getLeadsHistoryCached(
         urlParams.append(key, String(params[key]));
       }
     }
-
-    const res = await fetch(`${API_BASE}/crm/leads/history-list?${urlParams.toString()}`, {
+ 
+    const res = await fetch(`${API_BASE}/crm/leads/activity-list?${urlParams.toString()}`, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
     });
-
+ 
     if (!res.ok) {
       throw new Error(`Status: ${res.status} ${res.statusText}`);
     }
     const result = await res.json();
-
+ 
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
       throw new Error(error.message);
     } else {
-      throw new Error("Error fetching leads history");
+      throw new Error("Error fetching leads activity");
     }
   }
 }
-
+ 
 // =======================
-// GET ALL LEADS HISTORY WRAPPER
+// GET ALL LEADS ACTIVITY WRAPPER
 // =======================
-
-export async function getLeadsHistory(
+ 
+export async function getLeadsActivity(
   params: Record<string, unknown> = {},
-): Promise<LeadsHistoryResponse> {
+): Promise<LeadsActivityResponse> {
   const session = await getServerSession(authOptions);
   const token = session?.accessToken;
-
+ 
   if (!token) throw new Error("No valid session/token");
-
-  return getLeadsHistoryCached(token, params);
+ 
+  return getLeadsActivityCached(token, params);
 }
-
+ 
 // =======================
-// GET LEAD HISTORIES BY LEAD ID
+// GET LEAD ACTIVITIES BY LEAD ID
 // =======================
-
-export async function getLeadHistoriesByLeadId(
+ 
+export async function getLeadActivitiesByLeadId(
   leadId: number,
-): Promise<LeadHistoriesListResponse> {
+): Promise<LeadActivitiesListResponse> {
   try {
     const session = await getServerSession(authOptions);
     const token = session?.accessToken;
-
+ 
     if (!token) throw new Error("No valid session/token");
-
-    const res = await fetch(`${API_BASE}/crm/leads/${leadId}/histories`, {
+ 
+    const res = await fetch(`${API_BASE}/crm/leads/${leadId}/activities`, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
     });
-
+ 
     if (!res.ok) {
       throw new Error(`Status: ${res.status} ${res.statusText}`);
     }
-
+ 
     const result = await res.json();
-
+ 
     return result;
   } catch (error: unknown) {
-    console.error("Error in getLeadHistoriesByLeadId:", error);
+    console.error("Error in getLeadActivitiesByLeadId:", error);
     if (error instanceof Error) {
-      throw new Error(error.message || "Failed to fetch lead histories");
+      throw new Error(error.message || "Failed to fetch lead activities");
     } else {
-      throw new Error("Failed to fetch lead histories");
+      throw new Error("Failed to fetch lead activities");
     }
   }
 }
-
+ 
 // =======================
-// CREATE LEAD HISTORY
+// CREATE LEAD ACTIVITY
 // =======================
-
-export async function createLeadHistory(
+ 
+export async function createLeadActivity(
   payload: {
     lead_id: number;
     date: string;
@@ -252,14 +252,14 @@ export async function createLeadHistory(
     status: number;
     note: string;
   },
-): Promise<SingleLeadHistoryResponse> {
+): Promise<SingleLeadActivityResponse> {
   try {
     const session = await getServerSession(authOptions);
     const token = session?.accessToken;
-
+ 
     if (!token) throw new Error("No valid session/token");
-
-    const res = await fetch(`${API_BASE}/crm/leads/histories`, {
+ 
+    const res = await fetch(`${API_BASE}/crm/leads/activities`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -267,17 +267,17 @@ export async function createLeadHistory(
       },
       body: JSON.stringify(payload),
     });
-
+ 
     const result = await res.json();
-
-    updateTag("leads-history-list");
+ 
+    updateTag("leads-activity-list");
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error("Error in createLeadHistory:", error);
-      throw new Error(error.message || "Failed to create lead history");
+      console.error("Error in createLeadActivity:", error);
+      throw new Error(error.message || "Failed to create lead activity");
     } else {
-      throw new Error("Failed to create lead history");
+      throw new Error("Failed to create lead activity");
     }
   }
 }
