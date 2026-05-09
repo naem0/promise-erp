@@ -80,6 +80,10 @@ const EmployeesData = async ({
         }
     }
 
+    if (!results || !results?.data) {
+        return null
+    }
+
     const employees = results?.data?.employees || [];
     const paginationData = results?.data?.pagination;
     if (!employees.length) {
@@ -87,6 +91,7 @@ const EmployeesData = async ({
             <NotFoundComponent message={results?.message || "No employees found."} />
         );
     }
+    console.log("heeelo", employees)
     return (
         <>
             <div className="rounded-md border">
@@ -110,7 +115,7 @@ const EmployeesData = async ({
 
                     <TableBody>
                         {employees.map((employee: Employee, index: number) => (
-                            <TableRow key={employee?.id}>
+                            <TableRow key={employee?.id+index}>
                                 <TableCell className="text-center">
                                     {(page - 1) * per_page + (index + 1)}
                                 </TableCell>
