@@ -56,6 +56,18 @@ const CRMLeadsData = async ({
             typeof resolvedSearchParams.user_id === "string"
                 ? resolvedSearchParams.user_id
                 : undefined,
+        date_from:
+            typeof resolvedSearchParams.date_from === "string"
+                ? resolvedSearchParams.date_from
+                : undefined,
+        date_to:
+            typeof resolvedSearchParams.date_to === "string"
+                ? resolvedSearchParams.date_to
+                : undefined,
+        assignment_status:
+            typeof resolvedSearchParams.assignment_status === "string"
+                ? resolvedSearchParams.assignment_status
+                : undefined,
     };
 
     let results;
