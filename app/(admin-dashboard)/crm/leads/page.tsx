@@ -22,7 +22,9 @@ export default function CRMLeadsPage({
                 <div className="flex justify-end items-center gap-3 pt-4">
                     
 
-                    <CRMLeadsImportButton />
+                    <PermissionGuard requiredPermission="import-leads">
+                        <CRMLeadsImportButton />
+                    </PermissionGuard>
                     <PermissionGuard requiredPermission="create-leads">
                     <Button asChild className="bg-green-600">
                         <Link href="/crm/leads/add">
