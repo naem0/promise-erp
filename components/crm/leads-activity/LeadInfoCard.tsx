@@ -1,15 +1,15 @@
-import { LeadInfo } from "@/apiServices/crmLeadsHistoryService";
+import { LeadInfo } from "@/apiServices/crmLeadsActivityService";
 import {
     Table,
     TableBody,
     TableCell,
     TableRow,
 } from "@/components/ui/table";
-
+ 
 interface LeadInfoCardProps {
     lead: LeadInfo;
 }
-
+ 
 const LeadInfoCard = ({ lead }: LeadInfoCardProps) => {
     return (
         <div className="bg-white rounded-3xl p-8 shadow-sm border border-slate-100">
@@ -17,15 +17,15 @@ const LeadInfoCard = ({ lead }: LeadInfoCardProps) => {
                 <div>
                     <h2 className="text-3xl font-bold text-slate-900 leading-tight">{lead.name}</h2>
                 </div>
-
+ 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-12 pt-4">
                     {/* Contact Information */}
                     <div className="space-y-2">
                         <h3 className="text-[11px] font-bold uppercase tracking-widest px-1">Contact Information</h3>
                         
-
-
-
+ 
+ 
+ 
                         <Table className="border-none shadow-none">
                             <TableBody>
                                 {lead.email && (
@@ -79,7 +79,7 @@ const LeadInfoCard = ({ lead }: LeadInfoCardProps) => {
                             </TableBody>
                         </Table>
                     </div>
-
+ 
                     {/* Course & Source */}
                     <div className="space-y-2">
                         <h3 className="text-[11px] font-bold uppercase tracking-widest px-1">Course & Source</h3>
@@ -112,7 +112,7 @@ const LeadInfoCard = ({ lead }: LeadInfoCardProps) => {
                             </TableBody>
                         </Table>
                     </div>
-
+ 
                     {/* Referrer Details */}
                     <div className="space-y-2">
                         <h3 className="text-[11px] font-bold uppercase tracking-widest px-1">Referrer Details</h3>
@@ -144,5 +144,5 @@ const LeadInfoCard = ({ lead }: LeadInfoCardProps) => {
         </div>
     );
 };
-
+ 
 export default LeadInfoCard;

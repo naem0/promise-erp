@@ -1,29 +1,29 @@
 "use client";
-
+ 
 import { Button } from "@/components/ui/button";
 import { Phone, MessageSquare, Mail, MessageCircle } from "lucide-react";
-import { LeadInfo } from "@/apiServices/crmLeadsHistoryService";
+import { LeadInfo } from "@/apiServices/crmLeadsActivityService";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-
+ 
 interface LeadActionCardProps {
     lead: LeadInfo;
 }
-
+ 
 const LeadActionCard = ({ lead }: LeadActionCardProps) => {
     const phoneNumber = lead.phone || "";
-
+ 
     const handleCall = () => {
         if (phoneNumber) {
             window.location.href = `tel:${phoneNumber}`;
         }
     };
-
+ 
     const handleSMS = () => {
         if (phoneNumber) {
             window.location.href = `sms:${phoneNumber}`;
         }
     };
-
+ 
     const handleEmail = () => {
         if (lead.email) {
             const subject = encodeURIComponent(`Inquiry regarding ${lead.interested_course || "Course"} - Promise ERP`);
@@ -31,7 +31,7 @@ const LeadActionCard = ({ lead }: LeadActionCardProps) => {
             window.location.href = `mailto:${lead.email}?subject=${subject}&body=${body}`;
         }
     };
-
+ 
     const handleWhatsApp = () => {
         const targetNumber = lead.whatsapp || lead.phone;
         if (targetNumber) {
@@ -40,7 +40,7 @@ const LeadActionCard = ({ lead }: LeadActionCardProps) => {
             window.open(`https://wa.me/${formattedPhone}`, "_blank");
         }
     };
-
+ 
     return (
         <Card className="shadow-sm border-slate-100 mb-6">
             <CardHeader className="pb-3">
@@ -85,5 +85,5 @@ const LeadActionCard = ({ lead }: LeadActionCardProps) => {
         </Card>
     );
 };
-
+ 
 export default LeadActionCard;
