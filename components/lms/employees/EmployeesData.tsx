@@ -115,7 +115,7 @@ const EmployeesData = async ({
 
                     <TableBody>
                         {employees.map((employee: Employee, index: number) => (
-                            <TableRow key={employee?.id+index}>
+                            <TableRow key={`${employee?.id}-${index}`}>
                                 <TableCell className="text-center">
                                     {(page - 1) * per_page + (index + 1)}
                                 </TableCell>

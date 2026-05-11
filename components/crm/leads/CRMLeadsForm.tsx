@@ -17,6 +17,8 @@ import { CRMLead, createCRMLead, updateCRMLead } from "@/apiServices/crmLeadsSer
 import { Course } from "@/apiServices/courseService";
 import { CRMCategory } from "@/apiServices/crmCategoryService";
 import { Branch } from "@/apiServices/branchService";
+import { CRMSource } from "@/apiServices/crmSourceService";
+
 
 interface CRMLeadsFormProps {
     title: string;
@@ -24,6 +26,7 @@ interface CRMLeadsFormProps {
     courses?: Course[];
     categories?: CRMCategory[];
     branches?: Branch[];
+    sources?: CRMSource[];
 }
 
 interface FormValues {
@@ -38,7 +41,7 @@ interface FormValues {
     course_type: string;
     shift: string;
     status: string;
-    source: string;
+    source_id: string;
     category_id: string;
     branch_id: string;
     notes: string;
@@ -52,7 +55,8 @@ export default function CRMLeadsForm({
     title,
     lead,
     categories = [],
-    branches = []
+    branches = [],
+    sources = []
 }: CRMLeadsFormProps) {
     const router = useRouter();
 
@@ -79,7 +83,7 @@ export default function CRMLeadsForm({
             course_type: lead?.course_type?.toString() || "",
             shift: lead?.shift?.toString() || "",
             status: lead?.status?.toString() || "",
-            source: lead?.source?.id?.toString() || "",
+            source_id: lead?.source?.id?.toString() || "",
             category_id: lead?.category?.id?.toString() || "",
             branch_id: lead?.branch?.id?.toString() || "",
             notes: lead?.notes || "",
@@ -314,7 +318,7 @@ export default function CRMLeadsForm({
                     <div>
                         <label className="block text-sm font-medium mb-1">Source</label>
                         <Controller
-                            name="source"
+                            name="source_id"
                             control={control}
                             render={({ field }) => (
                                 <Select value={field.value} onValueChange={field.onChange}>
@@ -322,15 +326,22 @@ export default function CRMLeadsForm({
                                         <SelectValue placeholder="Select Source" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="1">Manual</SelectItem>
-                                        <SelectItem value="2">Facebook</SelectItem>
-                                        <SelectItem value="3">Website</SelectItem>
-                                        <SelectItem value="4">API</SelectItem>
+                                        {sources?.length ? (
+                                            sources.map(src => (
+                                                <SelectItem key={src.id} value={src.id.toString()}>
+                                                    {src.name}
+                                                </SelectItem>
+                                            ))
+                                        ) : (
+                                            <SelectItem value="" disabled>
+                                                No source found
+                                            </SelectItem>
+                                        )}
                                     </SelectContent>
                                 </Select>
                             )}
                         />
-                        {errors.source && <p className="text-sm text-red-500 mt-1">{errors.source.message}</p>}
+                        {errors.source_id && <p className="text-sm text-red-500 mt-1">{errors.source_id.message}</p>}
                     </div>
 
                     {/* Category */}

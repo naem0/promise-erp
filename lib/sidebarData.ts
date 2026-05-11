@@ -436,7 +436,11 @@ export const sidebarData = {
               url: "/crm/consultants-performance",
               permissions: ["view-users-performance"],
             },
-            
+            {
+              title: "Lead Sources",
+              url: "/crm/sources",
+              permissions: ["view-crm-sources"],
+            },
           ],
         },
       ],
