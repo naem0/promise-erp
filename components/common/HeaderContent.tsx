@@ -61,7 +61,7 @@ const getDashboardUrl = (role: string | string[] | null | undefined) => {
   if (roles.includes("student")) {
     return "/student/dashboard";
   }
-  
+
   return "/dashboard";
 };
 
@@ -107,9 +107,9 @@ export const AuthButtons = ({
         <DropdownMenuTrigger asChild>
           <button className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 hover:bg-accent transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
             <Avatar className="h-8 w-8 border-2 border-primary/20">
-              <AvatarImage 
-                src={profileImage || "/images/profile_avatar.png"} 
-                alt={userName || "User"} 
+              <AvatarImage
+                src={profileImage || "/images/profile_avatar.png"}
+                alt={userName || "User"}
               />
               <AvatarFallback className="bg-primary/10 text-primary font-semibold">
                 {userInitials}
@@ -128,9 +128,9 @@ export const AuthButtons = ({
           <DropdownMenuLabel className="p-0 font-normal">
             <div className="flex items-center gap-3 px-2 py-2">
               <Avatar className="h-10 w-10 border-2 border-primary/20">
-                <AvatarImage 
-                  src={profileImage || "/images/profile_avatar.png"} 
-                  alt={userName || "User"} 
+                <AvatarImage
+                  src={profileImage || "/images/profile_avatar.png"}
+                  alt={userName || "User"}
                 />
                 <AvatarFallback className="bg-primary/10 text-primary font-semibold">
                   {userInitials}
@@ -152,7 +152,7 @@ export const AuthButtons = ({
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <Link href={profileUrl} className="cursor-pointer">
+            <Link href="/settings/profile" className="cursor-pointer">
               <User className="mr-2 h-4 w-4" />
               Profile
             </Link>
@@ -401,7 +401,7 @@ const HeaderContent = ({ navLinks }: HeaderContentProps) => {
                 </div>
               )}
 
-            
+
           </div>
         </DialogContent>
       </Dialog>

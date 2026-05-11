@@ -159,7 +159,7 @@ const HeroSectionData = async ({
           </TableBody>
         </Table>
       </div>
-      {pagination?.has_more_pages && (
+      {pagination && pagination?.last_page > 1  && (
         <div className="mt-4">
           <Pagination pagination={pagination} />
         </div>

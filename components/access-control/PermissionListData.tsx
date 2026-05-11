@@ -15,7 +15,7 @@ import Pagination from "../common/Pagination";
 const PermissionListData = async ({
   searchParams,
 }: {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) => {
   const resolvedSearchParams = await searchParams;
   const page =

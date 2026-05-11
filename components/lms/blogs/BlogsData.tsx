@@ -161,7 +161,7 @@ const BlogsData = async ({ searchParams }: SearchParamsProps) => {
           ))}
         </TableBody>
       </Table>
-      {paginationData && (
+      {paginationData && paginationData.last_page > 1 &&  (
         <div className="mt-4">
           <Pagination pagination={paginationData} />
         </div>

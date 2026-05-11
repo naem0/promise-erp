@@ -8,7 +8,7 @@ import CourseFilterSkeleton from "@/components/root/courseList/CourseFilterSkele
 import CommonHeroBannerSkeleton from "@/components/common/web-common/CommonHeroBannerSkeleton";
 
 interface CoursesPageProps {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 const CoursesPage = ({ searchParams }: CoursesPageProps) => {
   return (

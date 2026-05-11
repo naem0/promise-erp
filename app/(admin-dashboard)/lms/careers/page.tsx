@@ -8,7 +8,7 @@ import { Suspense } from "react";
 import PermissionGuard from "@/components/auth/PermissionGuard";
 
 interface CareersPageProps {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 export default function CareersPage({ searchParams }: CareersPageProps) {

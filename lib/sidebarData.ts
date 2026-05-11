@@ -1001,38 +1001,7 @@ export const sidebarData = {
       ],
     },
 
-    {
-      label: "Settings",
-      items: [
-        {
-          title: "Settings",
-          url: "#",
-          icon: Settings,
-          items: [
-            {
-              title: "General",
-              url: "#",
-              permissions: ["view-general-settings"],
-            },
-            {
-              title: "Team",
-              url: "#",
-              permissions: ["view-team-settings"],
-            },
-            {
-              title: "Billing",
-              url: "#",
-              permissions: ["view-billing-settings"],
-            },
-            {
-              title: "Limits",
-              url: "#",
-              permissions: ["view-limits-settings"],
-            },
-          ],
-        },
-      ],
-    },
+    
 
     {
       label: "Division",
@@ -1125,6 +1094,43 @@ export const sidebarData = {
               title: "Permissions List",
               url: "/access-control/permissions",
               permissions: ["view-permissions"],
+            },
+          ],
+        },
+      ],
+    },
+    {
+      label: "Settings",
+      items: [
+        {
+          title: "Settings",
+          url: "#",
+          icon: Settings,
+          items: [
+            {
+              title: "Profile",
+              url: "/settings/profile",
+              permissions: ["view-my-profile"],
+            },
+            {
+              title: "General",
+              url: "#",
+              permissions: ["view-general-settings"],
+            },
+            {
+              title: "Team",
+              url: "#",
+              permissions: ["view-team-settings"],
+            },
+            {
+              title: "Billing",
+              url: "#",
+              permissions: ["view-billing-settings"],
+            },
+            {
+              title: "Limits",
+              url: "#",
+              permissions: ["view-limits-settings"],
             },
           ],
         },

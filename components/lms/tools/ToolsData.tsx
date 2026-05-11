@@ -149,7 +149,7 @@ const ToolsData = async ({
                     </TableBody>
                 </Table>
             </div>
-            {paginationData?.has_more_pages && (
+            {paginationData && paginationData.last_page > 1 &&  (
                 <div className="my-4">
                     <Pagination pagination={paginationData} />
                 </div>

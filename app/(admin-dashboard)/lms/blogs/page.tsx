@@ -9,7 +9,7 @@ import { Suspense } from "react";
 import PermissionGuard from "@/components/auth/PermissionGuard";
 
 interface PageProps {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 export default function BlogsPage({ searchParams }: PageProps) {
   return (
