@@ -3,7 +3,6 @@ import HighlightsSkeleton from "@/components/common/HighlightsSkeleton";
 import HighlightsSection from "@/components/root/home/HighlightsSection";
 import TrainerItemWrapper from "@/components/root/trainers/TrainerItemWrapper";
 import TrainerSkeletonGrid from "@/components/root/trainers/TrainerSkeletonGrid";
-// import TrainerStates from "@/components/root/trainers/TrainerStates";
 import TrainerWrapperHeroBanner from "@/components/root/trainers/TrainerWrapperHeroBanner";
 import { Suspense } from "react";
 
@@ -17,7 +16,6 @@ const TrainersPage = ({ searchParams }: TrainersPageProps) => {
         <TrainerWrapperHeroBanner />
       </Suspense>
       <div className="container mx-auto px-4">
-        {/* <TrainerStates /> */}
         <Suspense fallback={<HighlightsSkeleton />}>
           <HighlightsSection />
         </Suspense>
