@@ -2,10 +2,10 @@ import {
   getPublicTeachersList,
   TeacherListApiResponse,
 } from "@/apiServices/webPageTrainerService";
-import TrainerItemInfos from "./TrainerItemInfos";
 import ErrorComponent from "@/components/common/ErrorComponent";
 import NotFoundComponent from "@/components/common/NotFoundComponent";
 import Pagination from "@/components/common/Pagination";
+import TrainerItemCard from "./TrainerItemCard";
 interface TrainersParams {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
@@ -55,11 +55,11 @@ const TrainerItemWrapper = async ({ searchParams }: TrainersParams) => {
           </div>
         ) : (
           seniorTrainers.map((trainer) => (
-            <TrainerItemInfos key={trainer.id} trainer={trainer} />
+            <TrainerItemCard key={trainer.id} trainer={trainer} />
           ))
         )}
       </div>
-      {totalPages && totalPages?.per_page > 28 && (
+      {totalPages && totalPages.last_page > 1 && (
         <div className="flex justify-center mt-8">
           <Pagination pagination={totalPages} />
         </div>
