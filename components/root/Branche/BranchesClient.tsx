@@ -1,4 +1,3 @@
-
 import BranchCard from "@/components/root/Branche/BranchCard";
 import {
   getPublicWebBranches,
@@ -49,10 +48,18 @@ const BranchesClient = async ({ searchParams }: BranchesPageProps) => {
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error("Failed to fetch branches:", error.message);
-      return <ErrorComponent message={error.message} />;
+      return (
+        <div className="py-8 md:py-12">
+          <ErrorComponent message={error.message} />
+        </div>
+      );
     } else {
       console.error("Failed to fetch branches:", error);
-      return <ErrorComponent message="An unexpected error occurred." />;
+      return (
+        <div className="py-8 md:py-12">
+          <ErrorComponent message="An unexpected error occurred." />
+        </div>
+      );
     }
   }
 

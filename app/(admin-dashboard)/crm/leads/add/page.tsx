@@ -2,57 +2,23 @@ import CRMLeadsForm from "@/components/crm/leads/CRMLeadsForm";
 import { getBranches } from "@/apiServices/branchService";
 import { getCRMCategories } from "@/apiServices/crmCategoryService";
 import { getCourses } from "@/apiServices/courseService";
+import { getCRMSources } from "@/apiServices/crmSourceService";
 import ErrorComponent from "@/components/common/ErrorComponent";
 
 export default async function CRMLeadsAddPage() {
-    let branches;
-    let categories;
-    let courses;
+    // Fetch related lists in parallel for better performance
+    const [branchesRes, categoriesRes, coursesRes, sourcesRes] = await Promise.allSettled([
+        getBranches({ per_page: 500 }),
+        getCRMCategories({ per_page: 500 }),
+        getCourses({ per_page: 500 }),
+        getCRMSources({ per_page: 500 }),
+    ]);
 
-    try {
-        const res = await getBranches({ per_page: 500 });
-        branches = res?.data?.branches || [];
-    } catch (error: unknown) {
-        if (error instanceof Error) {
-           <div className="py-8 md:py-12">
-                <ErrorComponent message={`Error fetching branches: ${error.message}`} />
-            </div>
-        } else {
-            <div className="py-8 md:py-12">
-                <ErrorComponent message={`An unknown error occurred while fetching branches.`} />
-            </div>
-        }
-    }
-
-    try {
-        const res = await getCRMCategories({ per_page: 500 });
-        categories = res?.data?.categories || [];
-    } catch (error: unknown) {
-        if (error instanceof Error) {
-            <div className="py-8 md:py-12">
-                <ErrorComponent message={`Error fetching categories: ${error.message}`} />
-            </div>
-        } else {
-            <div className="py-8 md:py-12">
-                <ErrorComponent message={`An unknown error occurred while fetching categories.`} />
-            </div>
-        }
-    }
-
-    try {
-        const res = await getCourses({ per_page: 500 });
-        courses = res?.data?.courses || [];
-    } catch (error: unknown) {
-        if (error instanceof Error) {
-            <div className="py-8 md:py-12">
-                <ErrorComponent message={`Error fetching courses: ${error.message}`} />
-            </div>
-        } else {
-            <div className="py-8 md:py-12">
-                <ErrorComponent message={`An unknown error occurred while fetching courses.`} />
-            </div>
-        }
-    }
+    // Handle potential failures or empty data
+    const branches = branchesRes.status === "fulfilled" ? (branchesRes.value?.data?.branches || []) : [];
+    const categories = categoriesRes.status === "fulfilled" ? (categoriesRes.value?.data?.categories || []) : [];
+    const courses = coursesRes.status === "fulfilled" ? (coursesRes.value?.data?.courses || []) : [];
+    const sources = sourcesRes.status === "fulfilled" ? (sourcesRes.value?.data?.sources || []) : [];
 
     return (
         <CRMLeadsForm
@@ -60,6 +26,7 @@ export default async function CRMLeadsAddPage() {
             branches={branches}
             categories={categories}
             courses={courses}
+            sources={sources}
         />
     );
 }
