@@ -1,4 +1,4 @@
-import { getPublicCoursesList } from "@/apiServices/courseListPublicService";
+import { ApiResponse, getPublicCoursesList } from "@/apiServices/courseListPublicService";
 import ErrorComponent from "@/components/common/ErrorComponent";
 import NotFoundComponent from "@/components/common/NotFoundComponent";
 import Pagination from "@/components/common/Pagination";
@@ -33,7 +33,7 @@ const CourseListWrapper = async ({ searchParams }: CoursesPageProps) => {
     per_page: resolvedParams.per_page?.toString(),
   };
 
-  let results;
+  let results: ApiResponse | null = null;
 
   try {
     results = await getPublicCoursesList(params);
@@ -53,10 +53,14 @@ const CourseListWrapper = async ({ searchParams }: CoursesPageProps) => {
     }
   }
 
+  if (!results || !results?.success || !results?.data) {
+    return null;
+  }
+
   const courses = results?.data?.courses || [];
 
-  if (!courses.length) {
-    return <NotFoundComponent message={results?.message} title="Course List" />;
+  if (!courses?.length) {
+    return <NotFoundComponent message={results?.message || "No courses found"} title="Course List" />;
   }
 
   return (
@@ -66,7 +70,7 @@ const CourseListWrapper = async ({ searchParams }: CoursesPageProps) => {
           <CourseCard key={course?.id} course={course} branchId={branchId} />
         ))}
       </div>
-      {courses.length > 0 && (
+      {courses?.length > 0 && (
         <div className="pt-6">
           <Pagination pagination={results?.data?.pagination} />
         </div>

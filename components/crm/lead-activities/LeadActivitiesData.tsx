@@ -11,7 +11,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { LeadActivity, getLeadsActivity } from "@/apiServices/crmLeadsActivityService";
 import Pagination from "@/components/common/Pagination";
-import LeadActivityAction from "./LeadActivityAction";
+import LeadActivityAction from "./LeadActivitiesAction";
  
 import { truncate } from "@/lib/utils";
  

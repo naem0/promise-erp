@@ -1,11 +1,11 @@
 import ErrorComponent from "@/components/common/ErrorComponent";
 import NotFoundComponent from "@/components/common/NotFoundComponent";
-import { getCRMLeadsReport } from "@/apiServices/crmLeadsReportService";
+import { getCRMLeadReports } from "@/apiServices/crmLeadReportsService";
 import Pagination from "@/components/common/Pagination";
-import CRMLeadsReportTable from "./CRMLeadsReportTable";
-import CRMLeadsReportExportButton from "./CRMLeadsReportExportButton";
+import CRMLeadReportsTable from "./CRMLeadReportsTable";
+import CRMLeadReportsExportButton from "./CRMLeadReportsExportButton";
 
-const CRMLeadsReportData = async ({
+const CRMLeadReportsData = async ({
     searchParams,
 }: {
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -48,7 +48,7 @@ const CRMLeadsReportData = async ({
 
     let results;
     try {
-        results = await getCRMLeadsReport(params);
+        results = await getCRMLeadReports(params);
     } catch (error: unknown) {
         if (error instanceof Error) {
             return <ErrorComponent message={error.message} />;
@@ -70,14 +70,14 @@ const CRMLeadsReportData = async ({
     return (
         <div className="space-y-6">
             <div className="flex justify-end">
-                <CRMLeadsReportExportButton 
+                <CRMLeadReportsExportButton 
                     data={reportData} 
                     page={page} 
                     perPage={per_page} 
                 />
             </div>
 
-            <CRMLeadsReportTable
+            <CRMLeadReportsTable
                 data={reportData}
                 summary={summary}
                 page={page}
@@ -93,4 +93,4 @@ const CRMLeadsReportData = async ({
     );
 };
 
-export default CRMLeadsReportData;
+export default CRMLeadReportsData;

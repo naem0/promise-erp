@@ -1,5 +1,8 @@
 
+"use server";
+
 import { PaginationType } from "@/types/pagination";
+import { cacheTag } from "next/cache";
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
 
 // --- Interfaces ---
@@ -89,7 +92,9 @@ export interface GetPublicCoursesParams {
 
 export async function getPublicCoursesList(
   params: Record<string, unknown> = {},
-): Promise<ApiResponse> {
+): Promise<ApiResponse | null> {
+  "use cache: remote";
+  cacheTag("courses-list");
   const urlParams = new URLSearchParams();
   Object.entries(params).forEach(([key, value]) => {
     if (value !== undefined && value !== null) {
@@ -102,6 +107,19 @@ export async function getPublicCoursesList(
     const res = await fetch(`${API_BASE}/public/courses?${queryString}`, {
       headers: { "Content-Type": "application/json" },
     });
+
+    if (!res.ok) {
+      console.log("Home courses not ok")
+      return null
+    }
+    if (res.status === 404) {
+      console.log("Home courses not found")
+      return null
+    }
+    if (res.status === 403) {
+      console.log("Home courses Forbidden")
+      return null
+    }
 
     const data: ApiResponse = await res.json();
     return data;

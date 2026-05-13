@@ -30,11 +30,10 @@ const HomeCoursesWrapper = () => {
           };
 
           const res = await getPublicCoursesList(params);
-          // console.log("Courses fetched:=====", res);
-          if (res.success) {
+          if (res?.success) {
             setCoursesData(res ?? null);
           } else {
-            console.error("Failed to fetch public courses:", res.message);
+            console.error("Failed to fetch public courses:", res?.message);
           }
         } catch (error) {
           console.error("Failed to fetch public courses:", error);
@@ -44,13 +43,13 @@ const HomeCoursesWrapper = () => {
 
       fetchCourses();
     });
-  }, [searchParams]);
+  }, [branchId]);
 
   if (isPending) {
     return <HomeCourseSkeleton />;
   }
 
-  if (!coursesData || !coursesData?.data || coursesData?.data?.courses?.length === 0) {
+  if (!coursesData || !coursesData?.data || !coursesData?.success) {
     return null;
   }
 

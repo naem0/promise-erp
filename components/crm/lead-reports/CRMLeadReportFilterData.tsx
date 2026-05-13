@@ -1,10 +1,10 @@
 import { getBranches } from "@/apiServices/branchService";
 import { Consultant, getConsultants } from "@/apiServices/crmLeadsActions";
 import { getCourses } from "@/apiServices/courseService";
-import CRMLeadsReportFilter from "./CRMLeadsReportFilter";
 import ErrorComponent from "@/components/common/ErrorComponent";
+import CRMLeadReportsFilter from "./CRMLeadReportsFilter";
 
-export default async function CRMLeadsReportFilterData() {
+export default async function CRMLeadReportsFilterData() {
     let branches = [];
     let consultants: Consultant[] = [];
     let courses = [];
@@ -67,7 +67,7 @@ export default async function CRMLeadsReportFilterData() {
     }
 
     return (
-        <CRMLeadsReportFilter
+        <CRMLeadReportsFilter
             branches={branches}
             consultants={consultants}
             courses={courses}

@@ -131,6 +131,8 @@ export async function getBranchesCached(
   token: string,
   params: Record<string, unknown> = {},
 ): Promise<BranchResponse> {
+  "use cache: private";
+  cacheTag("branches-list");
   const urlParams = new URLSearchParams();
 
   for (const key in params) {
@@ -160,6 +162,7 @@ export async function getBranchesCached(
     );
   }
 }
+
 
 export async function getBranches(
   params: Record<string, unknown> = {},
@@ -307,6 +310,8 @@ export interface WebBranchApiResponse {
 export async function getPublicWebBranches(
   params: Record<string, unknown> = {},
 ): Promise<WebBranchApiResponse | null> {
+  "use cache: remote";
+  cacheTag("branches-list");
   try {
     const urlParams = new URLSearchParams();
 
@@ -323,6 +328,10 @@ export async function getPublicWebBranches(
 
     if (res.status === 404) {
       console.warn("No branches found.");
+      return null;
+    }
+    if (res.status === 403) {
+      console.warn("Forbidden");
       return null;
     }
 

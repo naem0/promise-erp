@@ -1,5 +1,5 @@
 import { getConsultants } from "@/apiServices/crmLeadsActions";
-import LeadsActivityFilter from "./LeadsActivityFilter";
+import LeadsActivityFilter from "./LeadActivitiesFilter";
 import ErrorComponent from "@/components/common/ErrorComponent";
  
 export default async function LeadsActivityFilterData() {

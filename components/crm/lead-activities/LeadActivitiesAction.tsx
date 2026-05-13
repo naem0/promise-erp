@@ -34,7 +34,7 @@ const LeadActivityAction = ({ leadId, leadName }: LeadActivityActionProps) => {
                 <PermissionGuard requiredPermission="create-lead-activities">
                     <DropdownMenuItem asChild>
                         <Link
-                            href={`/crm/leads-activity/${leadId}/manage`}
+                            href={`/crm/lead-activities/${leadId}/manage`}
                             className="flex items-center cursor-pointer w-full"
                         >
                             <Pencil className="mr-2 h-4 w-4" />

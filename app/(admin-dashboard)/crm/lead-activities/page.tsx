@@ -1,6 +1,6 @@
-import LeadsActivityData from "@/components/crm/leads-activity/LeadsActivityData";
-import LeadsActivityFilterData from "@/components/crm/leads-activity/LeadsActivityFilterData";
-import LeadsActivitySummaryWrapper from "@/components/crm/leads-activity/LeadsActivitySummaryWrapper";
+import LeadsActivityData from "@/components/crm/lead-activities/LeadActivitiesData";
+import LeadsActivityFilterData from "@/components/crm/lead-activities/LeadActivitiesFilterData";
+import LeadsActivitySummaryWrapper from "@/components/crm/lead-activities/LeadActivitiesSummaryWrapper";
 import TableSkeleton from "@/components/TableSkeleton";
 import { Suspense } from "react";
  
