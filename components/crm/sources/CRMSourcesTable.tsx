@@ -38,7 +38,7 @@ export default function CRMSourcesTable({
         <>
             <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-bold tracking-tight text-foreground">
-                    CRM Sources
+                    Lead Sources
                     <span className="ml-2 text-sm font-normal text-muted-foreground">
                         ({totalSources} total)
                     </span>

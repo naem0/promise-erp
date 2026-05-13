@@ -3,7 +3,7 @@
 import LeadActivityTimeline from "./LeadActivitesTimeline";
 import LeadActivityForm from "./LeadActivitiesForm";
 import LeadActionCard from "./LeadActionCard";
-import { LeadActivity, LeadInfo } from "@/apiServices/crmLeadsActivityService";
+import { LeadActivity, LeadInfo } from "@/apiServices/crmLeadActivitiesService";
  
 const LeadActivityManagement = ({ 
   leadActivities, 

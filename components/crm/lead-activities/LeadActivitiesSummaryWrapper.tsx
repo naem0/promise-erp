@@ -1,4 +1,4 @@
-import { getLeadsActivity } from "@/apiServices/crmLeadsActivityService";
+import { getLeadsActivity } from "@/apiServices/crmLeadActivitiesService";
 import ErrorComponent from "@/components/common/ErrorComponent";
 import { Zap, GraduationCap, MessageSquare, TrendingUp, ArrowUp } from "lucide-react";
  

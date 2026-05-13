@@ -1,4 +1,4 @@
-import { LeadInfo } from "@/apiServices/crmLeadsActivityService";
+import { LeadInfo } from "@/apiServices/crmLeadActivitiesService";
 import {
     Table,
     TableBody,

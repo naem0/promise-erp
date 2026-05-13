@@ -16,7 +16,7 @@ export default function CategoriesPage({
     return (
         <div className="mx-auto space-y-6">
             <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-semibold tracking-tight text-slate-800">CRM Categories</h1>
+                <h1 className="text-2xl font-semibold tracking-tight text-slate-800">Lead Categories</h1>
 
                 <PermissionGuard requiredPermission="create-crm-categories">
                     <Button asChild >

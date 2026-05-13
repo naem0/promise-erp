@@ -1,4 +1,4 @@
-import { LeadActivity } from "@/apiServices/crmLeadsActivityService";
+import { LeadActivity } from "@/apiServices/crmLeadActivitiesService";
 import { Phone, MessageSquare, GraduationCap, Star, Clock, Mail, MessageCircle } from "lucide-react";
  
 interface LeadActivityTimelineProps {

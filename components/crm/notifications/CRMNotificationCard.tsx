@@ -35,11 +35,10 @@ const CRMNotificationCard = ({ notification, index = 0 }: CRMNotificationCardPro
         startTransition(async () => {
             try {
                 const result = await markCRMNotificationAsRead(notification?.id);
-                console.log("---->", result);
                 if (result.success) {
                     toast.success(result.message || "Notification marked as read successfully");
                     setIsRead(true);
-                    router.push(`/crm/leads-activity/${notification?.lead_id}/manage`);
+                    router.push(`/crm/lead-activities/${notification?.lead_id}/manage`);
                 }else{
                     toast.error(result.message || "Failed to mark notification as read");
                 }

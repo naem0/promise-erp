@@ -278,6 +278,7 @@ export async function createLeadActivity(
     const result = await res.json();
  
     updateTag("leads-activity-list");
+    updateTag("crm-notifications-list");
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {

@@ -3,7 +3,7 @@ import LeadInfoCard from "@/components/crm/lead-activities/LeadInfoCard";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { getLeadActivitiesByLeadId } from "@/apiServices/crmLeadsActivityService";
+import { getLeadActivitiesByLeadId } from "@/apiServices/crmLeadActivitiesService";
  
 export default async function LeadManagePage({
     params,

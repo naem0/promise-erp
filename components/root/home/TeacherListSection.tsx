@@ -25,6 +25,7 @@ const TeacherListSection = ({ teacherData }: TeacherListSectionProps) => {
     Autoplay({
       delay: 2000,
       stopOnInteraction: false,
+      stopOnMouseEnter: true,
     }),
   );
   return (

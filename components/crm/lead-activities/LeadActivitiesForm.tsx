@@ -14,7 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Plus } from "lucide-react";
-import { createLeadActivity } from "@/apiServices/crmLeadsActivityService";
+import { createLeadActivity } from "@/apiServices/crmLeadActivitiesService";
 import { toast } from "sonner";
  
 interface LeadActivityFormProps {
