@@ -165,6 +165,8 @@ const StudentsData = async ({
                   </div>
                 </TableCell>
                 <TableCell className="text-center">{student?.phone}</TableCell>
+                {/* truncate */}
+                
                 <TableCell className="text-center">
                   {student?.courses?.map((course, idx) => (
                     <div key={idx} className="text-xs">

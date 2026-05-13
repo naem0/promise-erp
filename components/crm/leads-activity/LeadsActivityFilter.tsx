@@ -1,5 +1,5 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 import { Input } from "@/components/ui/input";
@@ -11,13 +11,21 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Search, FilterX } from "lucide-react";
+import { Search, FilterX, CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
+import { DateRange } from "react-day-picker";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { Field } from "@/components/ui/field";
+import { cn } from "@/lib/utils";
 import { Consultant } from "@/apiServices/crmLeadsActions";
  
 interface FilterFormValues {
     search?: string;
     status?: string;
     user_id?: string;
+    date_from?: string;
+    date_to?: string;
 }
  
 export default function LeadsActivityFilter({ consultants }: { consultants?: Consultant[] }) {
@@ -31,6 +39,8 @@ export default function LeadsActivityFilter({ consultants }: { consultants?: Con
                 search: searchParams.get("search") || "",
                 status: searchParams.get("status") || "",
                 user_id: searchParams.get("user_id") || "",
+                date_from: searchParams.get("date_from") || "",
+                date_to: searchParams.get("date_to") || "",
             },
         });
  
@@ -79,15 +89,37 @@ export default function LeadsActivityFilter({ consultants }: { consultants?: Con
             search: "",
             status: "",
             user_id: "",
+            date_from: "",
+            date_to: "",
         });
+        setLocalDate(undefined);
         router.replace(pathname, { scroll: false });
     };
  
     const currentSearch = searchParams.get("search") || "";
     const currentStatus = searchParams.get("status") || "";
     const currentUserId = searchParams.get("user_id") || "";
+    const currentDateFrom = searchParams.get("date_from") || "";
+    const currentDateTo = searchParams.get("date_to") || "";
  
-    const hasActiveFilters = currentSearch !== "" || currentStatus !== "" || currentUserId !== "";
+    const hasActiveFilters = 
+        currentSearch !== "" || 
+        currentStatus !== "" || 
+        currentUserId !== "" || 
+        currentDateFrom !== "" || 
+        currentDateTo !== "";
+
+    const [localDate, setLocalDate] = useState<DateRange | undefined>({
+        from: watchedValues.date_from ? new Date(watchedValues.date_from) : undefined,
+        to: watchedValues.date_to ? new Date(watchedValues.date_to) : undefined,
+    });
+
+    useEffect(() => {
+        setLocalDate({
+            from: watchedValues.date_from ? new Date(watchedValues.date_from) : undefined,
+            to: watchedValues.date_to ? new Date(watchedValues.date_to) : undefined,
+        });
+    }, [watchedValues.date_from, watchedValues.date_to]);
  
     return (
         <div className="p-6 mb-6 border rounded-xl bg-card shadow-sm">
@@ -108,9 +140,9 @@ export default function LeadsActivityFilter({ consultants }: { consultants?: Con
                 )}
             </div>
  
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {/* Search */}
-                <div className="relative md:col-span-2">
+                <div className="relative lg:col-span-1 xl:col-span-1">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                         placeholder="Search lead name or note..."
@@ -171,6 +203,72 @@ export default function LeadsActivityFilter({ consultants }: { consultants?: Con
                         </Select>
                     )}
                 />
+
+                {/* Date Range */}
+                <div className="space-y-1">
+                    <Field className="w-full">
+                        <Popover>
+                            <PopoverTrigger asChild className="cursor-pointer">
+                                <Button
+                                    variant="outline"
+                                    className={cn(
+                                        "w-full justify-start text-left font-normal h-10",
+                                        !watchedValues.date_from && "text-muted-foreground"
+                                    )}
+                                >
+                                    <CalendarIcon className="mr-2 h-4 w-4" />
+                                    {localDate?.from ? (
+                                        localDate.to ? (
+                                            <>
+                                                {format(localDate.from, "LLL dd, y")} -{" "}
+                                                {format(localDate.to, "LLL dd, y")}
+                                            </>
+                                        ) : (
+                                            format(localDate.from, "LLL dd, y")
+                                        )
+                                    ) : (
+                                        <span>Pick a date range</span>
+                                    )}
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0" align="start">
+                                <div className="flex flex-col">
+                                    <Calendar
+                                        mode="range"
+                                        defaultMonth={localDate?.from}
+                                        selected={localDate}
+                                        onSelect={(range) => {
+                                            setLocalDate(range);
+                                            if (range?.from && range?.to) {
+                                                setValue("date_from", format(range.from, "yyyy-MM-dd"));
+                                                setValue("date_to", format(range.to, "yyyy-MM-dd"));
+                                            }
+                                            else if (!range?.from && !range?.to) {
+                                                setValue("date_from", "");
+                                                setValue("date_to", "");
+                                            }
+                                        }}
+                                        numberOfMonths={2}
+                                    />
+                                    <div className="p-3 border-t flex justify-end gap-2 bg-slate-50/50">
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            className="h-8 text-xs text-muted-foreground hover:text-destructive cursor-pointer"
+                                            onClick={() => {
+                                                setLocalDate(undefined);
+                                                setValue("date_from", "");
+                                                setValue("date_to", "");
+                                            }}
+                                        >
+                                            Clear Range
+                                        </Button>
+                                    </div>
+                                </div>
+                            </PopoverContent>
+                        </Popover>
+                    </Field>
+                </div>
             </div>
         </div>
     );

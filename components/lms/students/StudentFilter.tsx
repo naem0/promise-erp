@@ -20,9 +20,9 @@ import CourseSearchSelect from "@/components/common/CourseSearchSelect"
 interface FilterFormValues {
   search?: string
   sort_order?: string
-  is_govt?: boolean
+  is_govt?: boolean | null
   status?: string
-  is_blocked?: boolean
+  is_blocked?: boolean | null
   division_id?: string
   branch_id?: string
   course_id?: string
@@ -46,9 +46,9 @@ export default function StudentFilter({
     defaultValues: {
       search: searchParams.get("search") || "",
       sort_order: searchParams.get("sort_order") || "",
-      is_govt: searchParams.get("is_govt") === "false",
+      is_govt: searchParams.get("is_govt") === "true" ? true : null,
       status: searchParams.get("status") || "",
-      is_blocked: searchParams.get("is_blocked") === "false",
+      is_blocked: searchParams.get("is_blocked") === "true" ? true : null,
       division_id: searchParams.get("division_id") || "",
       branch_id: searchParams.get("branch_id") || "",
       course_id: searchParams.get("course_id") || "",
@@ -78,9 +78,9 @@ export default function StudentFilter({
     reset({
       search: "",
       sort_order: "",
-      is_govt: false,
+      is_govt: null,
       status: "",
-      is_blocked: false,
+      is_blocked: null,
       division_id: "",
       branch_id: "",
       course_id: "",
@@ -214,7 +214,7 @@ export default function StudentFilter({
           name="is_govt"
           control={control}
           render={({ field }) => (
-            <Select onValueChange={(val) => field.onChange(val === "true")} value={field.value !== undefined ? String(field.value) : ""}>
+            <Select onValueChange={(val) => field.onChange(val === "true")} value={field.value !== null ? String(field.value) : ""}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Is Govt" />
               </SelectTrigger>
@@ -229,7 +229,7 @@ export default function StudentFilter({
           name="is_blocked"
           control={control}
           render={({ field }) => (
-            <Select onValueChange={(val) => field.onChange(val === "true")} value={field.value !== undefined ? String(field.value) : ""}>
+            <Select onValueChange={(val) => field.onChange(val === "true")} value={field.value !== null ? String(field.value) : ""}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Is Blocked" />
               </SelectTrigger>

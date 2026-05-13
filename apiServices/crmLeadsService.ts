@@ -80,6 +80,7 @@ export interface CRMLeadsResponse {
   errors?: Record<string, string[]>;
 }
 
+
 export interface SingleCRMLeadResponse {
   success: boolean;
   message: string;

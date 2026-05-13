@@ -146,6 +146,7 @@
     { "path": "/crm/categories/edit", "permissions": ["edit-crm-categories"], "isDynamic": true },
 
     {"path": "/crm/consultants-performance", "permissions": ["view-users-performance"], "isDynamic": true },
+    { "path": "/crm/leads-report", "permissions": ["crm-lead-reports"] },
 
     { "path": "/settings/profile", "permissions": ["view-my-profile"] }
 

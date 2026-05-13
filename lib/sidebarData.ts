@@ -1,10 +1,25 @@
 import {
-  BookOpen, BoxesIcon, BriefcaseBusiness, ChartLine, DollarSign, DollarSignIcon,
-  GalleryVerticalEnd, GraduationCap, HouseIcon, ImagePlay, LocationEdit, LockIcon,
-  MessageSquare, MonitorCog, Settings, ShieldCheck, ShoppingCartIcon, User2Icon,
-  UserCheck, Users
+  BookOpen,
+  BoxesIcon,
+  BriefcaseBusiness,
+  ChartLine,
+  DollarSign,
+  DollarSignIcon,
+  GalleryVerticalEnd,
+  GraduationCap,
+  HouseIcon,
+  ImagePlay,
+  LocationEdit,
+  LockIcon,
+  MessageSquare,
+  MonitorCog,
+  Settings,
+  ShieldCheck,
+  ShoppingCartIcon,
+  User2Icon,
+  UserCheck,
+  Users,
 } from "lucide-react";
-
 
 export const sidebarData = {
   user: {
@@ -191,7 +206,10 @@ export const sidebarData = {
             {
               title: "Enrollment Reports",
               url: "/lms/enrollment-reports",
-              permissions: ["view-course-sales-summary", "view-course-sales-report"],
+              permissions: [
+                "view-course-sales-summary",
+                "view-course-sales-report",
+              ],
             },
           ],
         },
@@ -304,7 +322,6 @@ export const sidebarData = {
               url: "/lms/branches",
               permissions: ["view-branches"],
             },
-
           ],
         },
         {
@@ -424,7 +441,10 @@ export const sidebarData = {
             {
               title: "Leads Activity",
               url: "/crm/leads-activity",
-              permissions: ["view-lead-activity-list", "view-assigned-lead-activity-list"],
+              permissions: [
+                "view-lead-activity-list",
+                "view-assigned-lead-activity-list",
+              ],
             },
             {
               title: "Lead Categories",
@@ -442,10 +462,15 @@ export const sidebarData = {
               permissions: ["view-crm-sources"],
             },
             {
+              title: "Leads Report",
+              url: "/crm/leads-report",
+              permissions: ["crm-lead-reports"],
+            },
+            {
               title: "All Notifications",
               url: "/crm/notifications",
               permissions: ["view-consultant-notifications"],
-            }
+            },
           ],
         },
       ],
@@ -1006,8 +1031,6 @@ export const sidebarData = {
       ],
     },
 
-
-
     {
       label: "Division",
       items: [
@@ -1143,6 +1166,3 @@ export const sidebarData = {
     },
   ],
 };
-
-
-
