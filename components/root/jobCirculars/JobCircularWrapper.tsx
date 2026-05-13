@@ -25,7 +25,7 @@ const JobCircularWrapper = async ({ searchParams }: SearchParamsProps) => {
 
   try {
     jobCircularData = await getPublicJobCircular(params);
-    console.log("====>>", jobCircularData)
+
   } catch (error: unknown) {
     if (error instanceof Error) {
       return (

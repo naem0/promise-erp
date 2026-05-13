@@ -4,7 +4,7 @@ import NotFoundComponent from "@/components/common/NotFoundComponent";
 import Pagination from "@/components/common/Pagination";
 import CourseCard from "@/components/root/courseList/CourseCard";
 interface CoursesPageProps {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 const CourseListWrapper = async ({ searchParams }: CoursesPageProps) => {
   const resolvedParams = await searchParams;

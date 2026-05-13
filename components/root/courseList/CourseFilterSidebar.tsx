@@ -3,7 +3,7 @@ import CourseFilterSection from "./CourseFilterSection";
 import ErrorComponent from "@/components/common/ErrorComponent";
 import { getPublicCoursesList } from "@/apiServices/courseListPublicService";
 interface CoursesPageProps {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 const CourseFilterSidebar = async ({ searchParams }: CoursesPageProps) => {
   const resolvedParams = await searchParams;

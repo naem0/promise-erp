@@ -35,7 +35,6 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar";
 import { User, LogOut, LayoutDashboard } from "lucide-react";
-import { useAppSelector } from "@/store/hooks";
 
 export interface NavLink {
   name: string;
@@ -61,7 +60,7 @@ const getDashboardUrl = (role: string | string[] | null | undefined) => {
   if (roles.includes("student")) {
     return "/student/dashboard";
   }
-  
+
   return "/dashboard";
 };
 
@@ -72,7 +71,7 @@ const getProfileUrl = (role: string | string[] | null | undefined) => {
   if (roles.includes("student")) {
     return "/student/profile";
   }
-  return "/lms/profile";
+  return "/settings/profile";
 };
 
 /* ================= AUTH BUTTONS ================= */
@@ -84,9 +83,7 @@ export const AuthButtons = ({
   const { data: session, status } = useSession();
   const isAuthenticated = !!session?.accessToken;
   const userName = session?.user?.name;
-  const reduxProfileImage = useAppSelector((state) => state.user.profileImage);
-  // Priority: Redux (updated on upload) → session image → placeholder
-  const profileImage = reduxProfileImage ?? session?.user?.image ?? null;
+  const profileImage = session?.user?.image ?? null;
 
   if (status === "loading") {
     return <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />;
@@ -107,9 +104,9 @@ export const AuthButtons = ({
         <DropdownMenuTrigger asChild>
           <button className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 hover:bg-accent transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
             <Avatar className="h-8 w-8 border-2 border-primary/20">
-              <AvatarImage 
-                src={profileImage || "/images/profile_avatar.png"} 
-                alt={userName || "User"} 
+              <AvatarImage
+                src={profileImage || "/images/profile_avatar.png"}
+                alt={userName || "User"}
               />
               <AvatarFallback className="bg-primary/10 text-primary font-semibold">
                 {userInitials}
@@ -128,9 +125,9 @@ export const AuthButtons = ({
           <DropdownMenuLabel className="p-0 font-normal">
             <div className="flex items-center gap-3 px-2 py-2">
               <Avatar className="h-10 w-10 border-2 border-primary/20">
-                <AvatarImage 
-                  src={profileImage || "/images/profile_avatar.png"} 
-                  alt={userName || "User"} 
+                <AvatarImage
+                  src={profileImage || "/images/profile_avatar.png"}
+                  alt={userName || "User"}
                 />
                 <AvatarFallback className="bg-primary/10 text-primary font-semibold">
                   {userInitials}
@@ -204,6 +201,7 @@ const HeaderContent = ({ navLinks }: HeaderContentProps) => {
   useEffect(() => {
     if (!debouncedSearch.trim()) {
       setResults(null);
+      setOpenModal(false);
       return;
     }
 
@@ -213,18 +211,12 @@ const HeaderContent = ({ navLinks }: HeaderContentProps) => {
           params: { search: debouncedSearch },
         });
 
-        if (
-          res &&
-          (res?.data?.courses?.length > 0 || res?.data?.categories?.length > 0)
-        ) {
-          setResults(res);
-          setOpenModal(true);
-        } else {
-          setResults(null);
-        }
+        setResults(res);
+        setOpenModal(true);
       } catch (error) {
         console.error("Search failed:", error);
         setResults(null);
+        setOpenModal(true);
       }
     });
   }, [debouncedSearch]);
@@ -240,12 +232,12 @@ const HeaderContent = ({ navLinks }: HeaderContentProps) => {
           const res = await getPublicCourseSearch({
             params: { search: searchQuery },
           });
-          if (res) {
-            setResults(res);
-            setOpenModal(true);
-          }
+          setResults(res);
+          setOpenModal(true);
         } catch (error) {
           console.error("Search failed:", error);
+          setResults(null);
+          setOpenModal(true);
         }
       });
     }
@@ -332,16 +324,15 @@ const HeaderContent = ({ navLinks }: HeaderContentProps) => {
 
       {/* Search Result Modal */}
       <Dialog
+        modal={false}
         open={openModal}
-        onOpenChange={(isOpen) => {
-          setOpenModal(isOpen);
-          if (!isOpen) {
-            setSearchQuery("");
-            setResults(null);
-          }
-        }}
+        onOpenChange={setOpenModal}
       >
-        <DialogContent className="max-w-lg z-9 max-h-[80vh] overflow-y-auto">
+        <DialogContent
+          hideOverlay
+          onInteractOutside={() => setOpenModal(false)}
+          className="max-w-lg z-[100] max-h-[80vh] overflow-y-auto shadow-2xl border-primary/10"
+        >
           <DialogHeader>
             <DialogTitle>
               Search Results for {"'"} {searchQuery} {"'"}
@@ -401,7 +392,7 @@ const HeaderContent = ({ navLinks }: HeaderContentProps) => {
                 </div>
               )}
 
-            
+
           </div>
         </DialogContent>
       </Dialog>

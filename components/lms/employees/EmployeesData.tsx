@@ -91,7 +91,6 @@ const EmployeesData = async ({
             <NotFoundComponent message={results?.message || "No employees found."} />
         );
     }
-    console.log("heeelo", employees)
     return (
         <>
             <div className="rounded-md border">

@@ -168,7 +168,7 @@ const FreeSeminarsData = async ({
         </TableBody>
       </Table>
 
-      {paginationData?.has_more_pages && (
+      {paginationData && paginationData.last_page > 1 &&  (
         <div className="mt-4 py-3">
           <Pagination pagination={paginationData} />
         </div>

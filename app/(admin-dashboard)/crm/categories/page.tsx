@@ -11,7 +11,7 @@ import PermissionGuard from "@/components/auth/PermissionGuard";
 export default function CategoriesPage({
     searchParams,
 }: {
-    searchParams: Promise<Record<string, string | string[] | undefined>>;
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
     return (
         <div className="mx-auto space-y-6">

@@ -28,7 +28,7 @@ export const authOptions:NextAuthOptions = {
           id: data.user.id.toString(),
           name: data.user.name,
           email: data.user.email,
-          image: data.user.image,
+          image: data.user.profile_image,
           roles: data.user.roles || [],
           // permissions: Array.isArray(data.permissions) ? data.permissions : [],
           accessToken: data.access_token,
@@ -40,7 +40,7 @@ export const authOptions:NextAuthOptions = {
 
   callbacks: {
     async jwt(params: any) {
-      const { token, user } = params;
+      const { token, user, trigger, session } = params;
       if (user) {
         token.id = user.id;
         token.name = user.name;
@@ -49,6 +49,10 @@ export const authOptions:NextAuthOptions = {
         token.roles = user.roles;
         token.accessToken = user.accessToken;
         token.expiresAt = user.expiresAt;
+      }
+
+      if (trigger === "update" && session?.image) {
+        token.image = session.image;
       }
 
       const now = new Date();

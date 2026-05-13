@@ -23,6 +23,7 @@ import { cn } from "@/lib/utils";
 import { Branch } from "@/apiServices/branchService";
 import { CRMCategory } from "@/apiServices/crmCategoryService";
 import { Consultant } from "@/apiServices/crmLeadsActions";
+import { Course } from "@/apiServices/courseService";
 
 interface FilterFormValues {
     search?: string;
@@ -37,18 +38,21 @@ interface FilterFormValues {
     date_from?: string;
     date_to?: string;
     assignment_status?: string;
+    course_id?: string;
 }
 
 interface CRMLeadsFilterProps {
     branches: Branch[];
     categories?: CRMCategory[];
     consultants?: Consultant[];
+    courses?: Course[];
 }
 
 export default function CRMLeadsFilter({
     branches,
     categories,
     consultants,
+    courses,
 }: CRMLeadsFilterProps) {
     const router = useRouter();
     const pathname = usePathname();
@@ -69,6 +73,7 @@ export default function CRMLeadsFilter({
                 date_from: searchParams.get("date_from") || "",
                 date_to: searchParams.get("date_to") || "",
                 assignment_status: searchParams.get("assignment_status") || "",
+                course_id: searchParams.get("course_id") || "",
             },
         });
 
@@ -126,6 +131,7 @@ export default function CRMLeadsFilter({
             date_from: "",
             date_to: "",
             assignment_status: "",
+            course_id: "",
         });
         router.replace(pathname, { scroll: false });
     };
@@ -152,7 +158,8 @@ export default function CRMLeadsFilter({
         currentPerPage !== "15" ||
         searchParams.get("date_from") !== "" && searchParams.get("date_from") !== null ||
         searchParams.get("date_to") !== "" && searchParams.get("date_to") !== null ||
-        searchParams.get("assignment_status") !== "" && searchParams.get("assignment_status") !== null;
+        searchParams.get("assignment_status") !== "" && searchParams.get("assignment_status") !== null ||
+        searchParams.get("course_id") !== "" && searchParams.get("course_id") !== null;
 
     const [localDate, setLocalDate] = useState<DateRange | undefined>({
         from: watchedValues.date_from ? new Date(watchedValues.date_from) : undefined,
@@ -263,17 +270,17 @@ export default function CRMLeadsFilter({
                             </SelectTrigger>
                             <SelectContent>
                                 {
-                                branches?.length ? (
-                                    branches.map((branch) => (
-                                        <SelectItem key={branch.id} value={String(branch.id)}>
-                                            {branch.name}
+                                    branches?.length ? (
+                                        branches.map((branch) => (
+                                            <SelectItem key={branch.id} value={String(branch.id)}>
+                                                {branch.name}
+                                            </SelectItem>
+                                        ))
+                                    ) : (
+                                        <SelectItem value="" disabled>
+                                            No branch found
                                         </SelectItem>
-                                    ))
-                                ) : (
-                                    <SelectItem value="" disabled>
-                                        No branch found
-                                    </SelectItem>
-                                )}
+                                    )}
                             </SelectContent>
                         </Select>
                     )}
@@ -414,7 +421,6 @@ export default function CRMLeadsFilter({
                                 <SelectItem value="15">15 Per Page</SelectItem>
                                 <SelectItem value="50">50 Per Page</SelectItem>
                                 <SelectItem value="100">100 Per Page</SelectItem>
-                                <SelectItem value="500">500 Per Page</SelectItem>
                             </SelectContent>
                         </Select>
                     )}
@@ -444,77 +450,107 @@ export default function CRMLeadsFilter({
                     />
                 </div>
 
-                
-
-                
-
-            </div>
-            <div className="pt-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6">
-                <Field className="w-full">
-                    <Popover>
-                        <PopoverTrigger asChild className="cursor-pointer">
-                            <Button
-                                variant="outline"
-                                className={cn(
-                                    "w-full justify-start text-left font-normal h-10",
-                                    !watchedValues.date_from && "text-muted-foreground"
-                                )}
+                {/* Course */}
+                <div className="space-y-1">
+                    <Controller
+                        name="course_id"
+                        control={control}
+                        render={({ field }) => (
+                            <Select
+                                value={field.value || ""}
+                                onValueChange={(value) => {
+                                    field.onChange(value);
+                                    handleSelectChange("course_id")(value);
+                                }}
                             >
-                                <CalendarIcon className="mr-2 h-4 w-4" />
-                                {localDate?.from ? (
-                                    localDate.to ? (
-                                        <>
-                                            {format(localDate.from, "LLL dd, y")} -{" "}
-                                            {format(localDate.to, "LLL dd, y")}
-                                        </>
+                                <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="Course" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {courses?.length ? (
+                                        courses.map((course) => (
+                                            <SelectItem key={course.id} value={String(course.id)}>
+                                                {course.title}
+                                            </SelectItem>
+                                        ))
                                     ) : (
-                                        format(localDate.from, "LLL dd, y")
-                                    )
-                                ) : (
-                                    <span>Pick a date range</span>
-                                )}
-                            </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
-                            <div className="flex flex-col">
-                                <Calendar
-                                    mode="range"
-                                    defaultMonth={localDate?.from}
-                                    selected={localDate}
-                                    onSelect={(range) => {
-                                        setLocalDate(range);
-                                        // If both from and to are selected, update the form
-                                        if (range?.from && range?.to) {
-                                            setValue("date_from", format(range.from, "yyyy-MM-dd"));
-                                            setValue("date_to", format(range.to, "yyyy-MM-dd"));
-                                        } 
-                                        // If nothing is selected (cleared), update the form
-                                        else if (!range?.from && !range?.to) {
-                                            setValue("date_from", "");
-                                            setValue("date_to", "");
-                                        }
-                                    }}
-                                    numberOfMonths={2}
-                                />
-                                <div className="p-3 border-t flex justify-end gap-2 bg-slate-50/50">
-                                    <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        className="h-8 text-xs text-muted-foreground hover:text-destructive cursor-pointer"
-                                        onClick={() => {
-                                            setLocalDate(undefined);
-                                            setValue("date_from", "");
-                                            setValue("date_to", "");
+                                        <SelectItem value="" disabled>
+                                            No course found
+                                        </SelectItem>
+                                    )}
+                                </SelectContent>
+                            </Select>
+                        )}
+                    />
+                </div>
+                <div className="space-y-1">
+                    <Field className="w-full">
+                        <Popover>
+                            <PopoverTrigger asChild className="cursor-pointer">
+                                <Button
+                                    variant="outline"
+                                    className={cn(
+                                        "w-full justify-start text-left font-normal h-10",
+                                        !watchedValues.date_from && "text-muted-foreground"
+                                    )}
+                                >
+                                    <CalendarIcon className="mr-2 h-4 w-4" />
+                                    {localDate?.from ? (
+                                        localDate.to ? (
+                                            <>
+                                                {format(localDate.from, "LLL dd, y")} -{" "}
+                                                {format(localDate.to, "LLL dd, y")}
+                                            </>
+                                        ) : (
+                                            format(localDate.from, "LLL dd, y")
+                                        )
+                                    ) : (
+                                        <span>Pick a date range</span>
+                                    )}
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0" align="start">
+                                <div className="flex flex-col">
+                                    <Calendar
+                                        mode="range"
+                                        defaultMonth={localDate?.from}
+                                        selected={localDate}
+                                        onSelect={(range) => {
+                                            setLocalDate(range);
+                                            // If both from and to are selected, update the form
+                                            if (range?.from && range?.to) {
+                                                setValue("date_from", format(range.from, "yyyy-MM-dd"));
+                                                setValue("date_to", format(range.to, "yyyy-MM-dd"));
+                                            }
+                                            // If nothing is selected (cleared), update the form
+                                            else if (!range?.from && !range?.to) {
+                                                setValue("date_from", "");
+                                                setValue("date_to", "");
+                                            }
                                         }}
-                                    >
-                                        Clear Range
-                                    </Button>
+                                        numberOfMonths={2}
+                                    />
+                                    <div className="p-3 border-t flex justify-end gap-2 bg-slate-50/50">
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            className="h-8 text-xs text-muted-foreground hover:text-destructive cursor-pointer"
+                                            onClick={() => {
+                                                setLocalDate(undefined);
+                                                setValue("date_from", "");
+                                                setValue("date_to", "");
+                                            }}
+                                        >
+                                            Clear Range
+                                        </Button>
+                                    </div>
                                 </div>
-                            </div>
-                        </PopoverContent>
-                    </Popover>
-                </Field>
+                            </PopoverContent>
+                        </Popover>
+                    </Field>
+                </div>
             </div>
+
         </div>
     );
 }

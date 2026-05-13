@@ -214,13 +214,11 @@ export default async function BatchesData({
           </TableBody>
         </Table>
       </div>
-      {
-        paginationData && (
-          <div className="mt-4">
-            <Pagination pagination={paginationData} />
-          </div>
-        )
-      }
+      {paginationData && paginationData.last_page > 1 &&  (
+        <div className="mt-4">
+          <Pagination pagination={paginationData} />
+        </div>
+      )}
 
     </>
   );

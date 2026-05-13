@@ -1,5 +1,5 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 import { Input } from "@/components/ui/input";
@@ -11,14 +11,21 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Search, FilterX } from "lucide-react";
+import { Search, FilterX, CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
+import { DateRange } from "react-day-picker";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { Field } from "@/components/ui/field";
+import { cn } from "@/lib/utils";
 
 import { Branch } from "@/apiServices/branchService";
 
 interface FilterFormValues {
     search?: string;
     branch_id?: string;
-    month?: string;
+    date_from?: string;
+    date_to?: string;
 }
 
 interface ConsultantsPerformanceFilterProps {
@@ -37,7 +44,8 @@ export default function ConsultantsPerformanceFilter({
             defaultValues: {
                 search: searchParams.get("search") || "",
                 branch_id: searchParams.get("branch_id") || "",
-                month: searchParams.get("month") || "",
+                date_from: searchParams.get("date_from") || "",
+                date_to: searchParams.get("date_to") || "",
             },
         });
 
@@ -85,19 +93,35 @@ export default function ConsultantsPerformanceFilter({
         reset({
             search: "",
             branch_id: "",
-            month: "",
+            date_from: "",
+            date_to: "",
         });
+        setLocalDate(undefined);
         router.replace(pathname, { scroll: false });
     };
 
     const currentSearch = searchParams.get("search") || "";
     const currentBranchId = searchParams.get("branch_id") || "";
-    const currentMonth = searchParams.get("month") || "";
+    const currentDateFrom = searchParams.get("date_from") || "";
+    const currentDateTo = searchParams.get("date_to") || "";
 
     const hasActiveFilters =
         currentSearch !== "" ||
         currentBranchId !== "" ||
-        currentMonth !== "";
+        currentDateFrom !== "" ||
+        currentDateTo !== "";
+
+    const [localDate, setLocalDate] = useState<DateRange | undefined>({
+        from: watchedValues.date_from ? new Date(watchedValues.date_from) : undefined,
+        to: watchedValues.date_to ? new Date(watchedValues.date_to) : undefined,
+    });
+
+    useEffect(() => {
+        setLocalDate({
+            from: watchedValues.date_from ? new Date(watchedValues.date_from) : undefined,
+            to: watchedValues.date_to ? new Date(watchedValues.date_to) : undefined,
+        });
+    }, [watchedValues.date_from, watchedValues.date_to]);
 
     return (
         <div className="p-6 mb-6 border rounded-xl bg-card shadow-sm">
@@ -118,7 +142,7 @@ export default function ConsultantsPerformanceFilter({
                 )}
             </div>
 
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {/* Search */}
                 <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -161,21 +185,70 @@ export default function ConsultantsPerformanceFilter({
                     )}
                 />
 
-                {/* Month */}
-                <div className="relative">
-                    <Input
-                        type={watchedValues.month ? "month" : "text"}
-                        placeholder="Select Month"
-                        className="w-full"
-                        {...register("month", {
-                            onBlur: (e) => {
-                                if (!e.target.value) {
-                                    e.target.type = "text";
-                                }
-                            }
-                        })}
-                        onFocus={(e) => (e.target.type = "month")}
-                    />
+                {/* Date Range */}
+                <div className="space-y-1">
+                    <Field className="w-full">
+                        <Popover>
+                            <PopoverTrigger asChild className="cursor-pointer">
+                                <Button
+                                    variant="outline"
+                                    className={cn(
+                                        "w-full justify-start text-left font-normal h-10",
+                                        !watchedValues.date_from && "text-muted-foreground"
+                                    )}
+                                >
+                                    <CalendarIcon className="mr-2 h-4 w-4" />
+                                    {localDate?.from ? (
+                                        localDate.to ? (
+                                            <>
+                                                {format(localDate.from, "LLL dd, y")} -{" "}
+                                                {format(localDate.to, "LLL dd, y")}
+                                            </>
+                                        ) : (
+                                            format(localDate.from, "LLL dd, y")
+                                        )
+                                    ) : (
+                                        <span>Pick a date range</span>
+                                    )}
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0" align="start">
+                                <div className="flex flex-col">
+                                    <Calendar
+                                        mode="range"
+                                        defaultMonth={localDate?.from}
+                                        selected={localDate}
+                                        onSelect={(range) => {
+                                            setLocalDate(range);
+                                            if (range?.from && range?.to) {
+                                                setValue("date_from", format(range.from, "yyyy-MM-dd"));
+                                                setValue("date_to", format(range.to, "yyyy-MM-dd"));
+                                            }
+                                            else if (!range?.from && !range?.to) {
+                                                setValue("date_from", "");
+                                                setValue("date_to", "");
+                                            }
+                                        }}
+                                        numberOfMonths={2}
+                                    />
+                                    <div className="p-3 border-t flex justify-end gap-2 bg-slate-50/50">
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            className="h-8 text-xs text-muted-foreground hover:text-destructive cursor-pointer"
+                                            onClick={() => {
+                                                setLocalDate(undefined);
+                                                setValue("date_from", "");
+                                                setValue("date_to", "");
+                                            }}
+                                        >
+                                            Clear Range
+                                        </Button>
+                                    </div>
+                                </div>
+                            </PopoverContent>
+                        </Popover>
+                    </Field>
                 </div>
             </div>
         </div>

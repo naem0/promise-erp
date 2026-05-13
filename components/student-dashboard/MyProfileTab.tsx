@@ -16,8 +16,6 @@ import {
   getStudentProfileClient,
   updateStudentProfileClient,
 } from "@/apiServices/studentDashboardService"
-import { useAppDispatch } from "@/store/hooks"
-import { setProfileImage as setReduxProfileImage } from "@/store/slices/userSlice"
 
 interface ProfileFormData {
   name: string
@@ -30,8 +28,7 @@ interface ProfileFormData {
 }
 
 const MyProfileTab = () => {
-  const { data: session } = useSession()
-  const dispatch = useAppDispatch()
+  const { data: session, update } = useSession()
   const [isPending, startTransition] = useTransition()
   const [educations, setEducations] = useState<Array<{ id?: number; degree: string; institution: string; subject: string }>>([
     { degree: "", institution: "", subject: "" }
@@ -202,9 +199,18 @@ const MyProfileTab = () => {
           toast.success(response.message || "Profile updated successfully!")
           if (response.data?.profile_image) {
             const newImageUrl = response.data.profile_image
-            console.log(" MyProfileTab component--->:", newImageUrl)
             setProfileImage(newImageUrl)
-            dispatch(setReduxProfileImage(newImageUrl))
+            
+            // Trigger NextAuth session update
+            await update({
+              ...session,
+              user: {
+                ...session?.user,
+                image: newImageUrl,
+              },
+              image: newImageUrl,
+            })
+            
             setProfileImagePreview(null)
             setProfileImageFile(null)
           }

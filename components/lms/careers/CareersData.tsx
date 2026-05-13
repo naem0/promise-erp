@@ -202,7 +202,7 @@ const CareersData = async ({ searchParams }: CareersDataProps) => {
           </TableBody>
         </Table>
       </div>
-      {paginationData && (
+      {paginationData && paginationData.last_page > 1 &&  (
         <div className="mt-4">
           <Pagination pagination={paginationData} />
         </div>

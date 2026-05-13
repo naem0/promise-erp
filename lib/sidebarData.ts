@@ -1,10 +1,25 @@
 import {
-  BookOpen, BoxesIcon, BriefcaseBusiness, ChartLine, DollarSign, DollarSignIcon,
-  GalleryVerticalEnd, GraduationCap, HouseIcon, ImagePlay, LocationEdit, LockIcon,
-  MessageSquare, MonitorCog, Settings, ShieldCheck, ShoppingCartIcon, User2Icon,
-  UserCheck, Users
+  BookOpen,
+  BoxesIcon,
+  BriefcaseBusiness,
+  ChartLine,
+  DollarSign,
+  DollarSignIcon,
+  GalleryVerticalEnd,
+  GraduationCap,
+  HouseIcon,
+  ImagePlay,
+  LocationEdit,
+  LockIcon,
+  MessageSquare,
+  MonitorCog,
+  Settings,
+  ShieldCheck,
+  ShoppingCartIcon,
+  User2Icon,
+  UserCheck,
+  Users,
 } from "lucide-react";
-
 
 export const sidebarData = {
   user: {
@@ -23,7 +38,7 @@ export const sidebarData = {
 
   navSections: [
     {
-      label: undefined, 
+      label: undefined,
       items: [
         {
           title: "Dashboard",
@@ -113,7 +128,7 @@ export const sidebarData = {
               url: "/lms/free-seminars",
               permissions: ["view-free-seminars"],
             },
-            
+
             // {
             //   title: "Blogs",
             //   url: "/lms/blogs",
@@ -191,7 +206,10 @@ export const sidebarData = {
             {
               title: "Enrollment Reports",
               url: "/lms/enrollment-reports",
-              permissions: ["view-course-sales-summary","view-course-sales-report"],
+              permissions: [
+                "view-course-sales-summary",
+                "view-course-sales-report",
+              ],
             },
           ],
         },
@@ -298,13 +316,12 @@ export const sidebarData = {
               url: "/web-content/contact-page",
               permissions: ["view-contact-pages"],
             },
-            
+
             {
               title: "Branches",
               url: "/lms/branches",
               permissions: ["view-branches"],
             },
-            
           ],
         },
         {
@@ -424,7 +441,10 @@ export const sidebarData = {
             {
               title: "Leads Activity",
               url: "/crm/leads-activity",
-              permissions: ["view-lead-activity-list", "view-assigned-lead-activity-list"],
+              permissions: [
+                "view-lead-activity-list",
+                "view-assigned-lead-activity-list",
+              ],
             },
             {
               title: "Lead Categories",
@@ -440,6 +460,16 @@ export const sidebarData = {
               title: "Lead Sources",
               url: "/crm/sources",
               permissions: ["view-crm-sources"],
+            },
+            {
+              title: "Leads Report",
+              url: "/crm/leads-report",
+              permissions: ["crm-lead-reports"],
+            },
+            {
+              title: "All Notifications",
+              url: "/crm/notifications",
+              permissions: ["view-consultant-notifications"],
             },
           ],
         },
@@ -1002,39 +1032,6 @@ export const sidebarData = {
     },
 
     {
-      label: "Settings",
-      items: [
-        {
-          title: "Settings",
-          url: "#",
-          icon: Settings,
-          items: [
-            {
-              title: "General",
-              url: "#",
-              permissions: ["view-general-settings"],
-            },
-            {
-              title: "Team",
-              url: "#",
-              permissions: ["view-team-settings"],
-            },
-            {
-              title: "Billing",
-              url: "#",
-              permissions: ["view-billing-settings"],
-            },
-            {
-              title: "Limits",
-              url: "#",
-              permissions: ["view-limits-settings"],
-            },
-          ],
-        },
-      ],
-    },
-
-    {
       label: "Division",
       items: [
         {
@@ -1130,8 +1127,42 @@ export const sidebarData = {
         },
       ],
     },
+    {
+      label: "Settings",
+      items: [
+        {
+          title: "Settings",
+          url: "#",
+          icon: Settings,
+          items: [
+            {
+              title: "Profile",
+              url: "/settings/profile",
+              permissions: ["view-my-profile"],
+            },
+            {
+              title: "General",
+              url: "#",
+              permissions: ["view-general-settings"],
+            },
+            {
+              title: "Team",
+              url: "#",
+              permissions: ["view-team-settings"],
+            },
+            {
+              title: "Billing",
+              url: "#",
+              permissions: ["view-billing-settings"],
+            },
+            {
+              title: "Limits",
+              url: "#",
+              permissions: ["view-limits-settings"],
+            },
+          ],
+        },
+      ],
+    },
   ],
 };
-
-
-

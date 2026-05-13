@@ -1,5 +1,7 @@
 {
   "routes": [
+    { "path": "/dashboard", "permissions": ["view-dashboard"] },
+    { "path": "/crm/notifications", "permissions": ["view-consultant-notifications"] },
     { "path": "/lms/courses", "permissions": ["view-courses"] },
     { "path": "/lms/courses/add", "permissions": ["create-courses"] },
     { "path": "/lms/courses/edit", "permissions": ["edit-courses"], "isDynamic": true },
@@ -143,7 +145,10 @@
     { "path": "/crm/categories/add", "permissions": ["create-crm-categories"] },
     { "path": "/crm/categories/edit", "permissions": ["edit-crm-categories"], "isDynamic": true },
 
-    {"path": "/crm/consultants-performance", "permissions": ["view-users-performance"], "isDynamic": true }
+    {"path": "/crm/consultants-performance", "permissions": ["view-users-performance"], "isDynamic": true },
+    { "path": "/crm/leads-report", "permissions": ["crm-lead-reports"] },
+
+    { "path": "/settings/profile", "permissions": ["view-my-profile"] }
 
   ]
 }

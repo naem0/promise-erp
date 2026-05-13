@@ -216,7 +216,7 @@ export default async function CoursesData({
         </Table>
       </div>
 
-      {pagination && (
+      {pagination && pagination?.last_page > 1  && (
         <div className="mt-4">
           <Pagination pagination={pagination} />
         </div>
