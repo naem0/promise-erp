@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import CourseFilterSection from "./CourseFilterSection";
 import ErrorComponent from "@/components/common/ErrorComponent";
-import { getPublicCoursesList } from "@/apiServices/courseListPublicService";
+import { ApiResponse, getPublicCoursesList } from "@/apiServices/courseListPublicService";
 interface CoursesPageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
@@ -28,20 +28,23 @@ const CourseFilterSidebar = async ({ searchParams }: CoursesPageProps) => {
     page: resolvedParams.page?.toString(),
   };
 
-  let filtersData;
+  let response: ApiResponse | null = null;
   try {
-    const response = await getPublicCoursesList(params);
-    filtersData = response?.data?.filters;
-  } catch (error) {
+    response = await getPublicCoursesList(params);
+  } catch (error: unknown) {
     if (error instanceof Error) {
       return <ErrorComponent message={error.message} />;
     } else {
       return <ErrorComponent message="An unexpected error occurred." />;
     }
   }
+  if (!response || !response.success || !response.data) {
+    return null;
+  }
+
   return (
     <Card className="p-6 top-4">
-      <CourseFilterSection filters={filtersData} />
+      <CourseFilterSection filters={response?.data?.filters} />
     </Card>
   );
 };

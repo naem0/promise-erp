@@ -27,6 +27,7 @@ const CourseCategoriesSection = ({ categoriesData }: CategoriesData) => {
     Autoplay({
       delay: 2000,
       stopOnInteraction: false,
+      stopOnMouseEnter: true,
     }),
   );
   return (
