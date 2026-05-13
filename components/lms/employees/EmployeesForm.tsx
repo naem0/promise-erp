@@ -44,7 +44,7 @@ interface FormValues {
     branch_ids: string[];
     join_date: string;
     experience: string;
-    display_order: string;
+    display_order: number;
     employment_type: string;
     probation_period: string;
     salary_scale_id: string;
@@ -94,7 +94,7 @@ export default function EmployeesForm({
             branch_ids: [],
             join_date: "",
             experience: "",
-            display_order: "1",
+            display_order: 1,
             employment_type: "1",
             probation_period: "6",
             salary_scale_id: "",
@@ -121,8 +121,8 @@ export default function EmployeesForm({
                 branch_ids: employee.branches?.map((b) => b.id.toString()) || [],
                 join_date: employee.joining_date || "",
                 experience: employee.experience || "",
-                display_order: employee.display_order?.toString() || "1",
-                employment_type: employee.employment_type?.toString() || "1",
+                display_order: employee.display_order ?? 1,
+                employment_type: (employee.employment_type !== undefined && employee.employment_type !== null) ? employee.employment_type.toString() : "1",
                 probation_period: employee.probation_period?.toString() || "6",
                 salary_scale_id: employee.salary_scale?.id?.toString() || "",
                 release_date: employee.release_date || "",
@@ -132,7 +132,7 @@ export default function EmployeesForm({
             });
             setPreviewImage(employee.profile_image || null);
         }
-    }, [employee, reset]);
+    }, [employee, reset, setPreviewImage, roles, branches, departments, designations, salaryScales, allTools]);
 
     const imageFile = watch("profile_image");
     const selectedRoleId = watch("role");
@@ -296,7 +296,12 @@ export default function EmployeesForm({
                     {/* Display Order */}
                     <div>
                         <label className="block text-sm font-medium mb-1">Display Order</label>
-                        <Input type="number" placeholder="1" {...register("display_order")} />
+                        <Input 
+                            type="number" 
+                            placeholder="1" 
+                            min="0"
+                            {...register("display_order", { valueAsNumber: true })} 
+                        />
                         {errors.display_order && <p className="text-sm text-red-500 mt-1">{errors.display_order.message}</p>}
                     </div>
 
@@ -314,7 +319,7 @@ export default function EmployeesForm({
                             name="role"
                             control={control}
                             render={({ field }) => (
-                                <Select value={field.value} onValueChange={field.onChange}>
+                                <Select key={field.value} value={field.value} onValueChange={field.onChange}>
                                     <SelectTrigger className="w-full">
                                         <SelectValue placeholder="Select Role" />
                                     </SelectTrigger>
@@ -334,7 +339,7 @@ export default function EmployeesForm({
                             name="blood_group"
                             control={control}
                             render={({ field }) => (
-                                <Select value={field.value} onValueChange={field.onChange}>
+                                <Select key={field.value} value={field.value} onValueChange={field.onChange}>
                                     <SelectTrigger className="w-full">
                                         <SelectValue placeholder="Select Blood Group" />
                                     </SelectTrigger>
@@ -356,7 +361,7 @@ export default function EmployeesForm({
                             name="designation_id"
                             control={control}
                             render={({ field }) => (
-                                <Select value={field.value} onValueChange={field.onChange}>
+                                <Select key={field.value} value={field.value} onValueChange={field.onChange}>
                                     <SelectTrigger className="w-full">
                                         <SelectValue placeholder="Select Designation" />
                                     </SelectTrigger>
@@ -376,7 +381,7 @@ export default function EmployeesForm({
                             name="department_id"
                             control={control}
                             render={({ field }) => (
-                                <Select value={field.value} onValueChange={field.onChange}>
+                                <Select key={field.value} value={field.value} onValueChange={field.onChange}>
                                     <SelectTrigger className="w-full">
                                         <SelectValue placeholder="Select a Department" />
                                     </SelectTrigger>
@@ -462,7 +467,7 @@ export default function EmployeesForm({
                             name="employment_type"
                             control={control}
                             render={({ field }) => (
-                                <Select value={field.value} onValueChange={field.onChange}>
+                                <Select key={field.value} value={field.value} onValueChange={field.onChange}>
                                     <SelectTrigger className="w-full">
                                         <SelectValue placeholder="Select Type" />
                                     </SelectTrigger>
@@ -492,7 +497,7 @@ export default function EmployeesForm({
                             name="salary_scale_id"
                             control={control}
                             render={({ field }) => (
-                                <Select value={field.value} onValueChange={field.onChange}>
+                                <Select key={field.value} value={field.value} onValueChange={field.onChange}>
                                     <SelectTrigger className="w-full">
                                         <SelectValue placeholder="Select Salary Scale" />
                                     </SelectTrigger>

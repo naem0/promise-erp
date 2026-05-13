@@ -206,7 +206,7 @@ export interface ChapterLessonResponse {
 async function getCoursesCached(
   token: string,
   params: Record<string, unknown> = {}
-): Promise<CourseResponse> {
+): Promise<CourseResponse | null> {
   "use cache";
   cacheTag("courses-list");
   try {
@@ -231,9 +231,13 @@ async function getCoursesCached(
   } catch (error: unknown) {
     console.error("Error in getCoursesCached:", error);
     if (error instanceof Error) {
-      throw new Error(error.message);
+      console.error("Cache error:", error.message);
+
+      return null;
     } else {
-      throw new Error("Failed to fetch courses");
+      console.error("Cache error:", "Failed to fetch courses");
+
+      return null;
     }
   }
 }
@@ -246,7 +250,13 @@ export async function getCourses(params: Record<string, unknown> = {}): Promise<
   const token = session?.accessToken;
   if (!token) throw new Error("No valid session or access token found.");
 
-  return getCoursesCached(token, params);
+  const _cachedResult = await getCoursesCached(token, params);
+
+
+  if (!_cachedResult) throw new Error("Failed to fetch data from cache.");
+
+
+  return _cachedResult;
 }
 
 // =======================

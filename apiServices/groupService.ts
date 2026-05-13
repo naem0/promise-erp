@@ -56,11 +56,12 @@ export async function getGroupsCached(
   page = 1,
   token: string,
   params: Record<string, unknown> = {}
-): Promise<GroupResponse> {
+): Promise<GroupResponse | null> {
   "use cache";
   cacheTag("groups-list");
 
   try {
+  // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
     const urlParams = new URLSearchParams();
     urlParams.append("page", page.toString());
 
@@ -83,12 +84,8 @@ export async function getGroupsCached(
     
     return await res.json();
   } catch (error) {
-    console.error("Error in getGroupsCached:", error);
-    throw new Error(
-      error instanceof Error
-        ? error.message
-        : "Unknown error occurred while fetching groups"
-    );
+    console.error("Error in getGroupsCached:", error instanceof Error ? error.message : error);
+    return null;
   }
 }
 
@@ -104,7 +101,11 @@ export async function getGroups(
       throw new Error("No valid session or access token found.");
     }
 
-    return await getGroupsCached(page, token, params);
+    const _cachedResult = await getGroupsCached(page, token, params);
+
+    if (!_cachedResult) throw new Error("Failed to fetch data from cache.");
+
+    return _cachedResult;
   } catch (error) {
     console.error("Error in get groups:", error);
     throw new Error(

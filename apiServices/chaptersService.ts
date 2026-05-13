@@ -88,10 +88,11 @@ export async function getChaptersCached(
   page = 1,
   token: string,
   params: Record<string, unknown> = {}
-): Promise<ChaptersResponse> {
+): Promise<ChaptersResponse | null> {
   "use cache";
   cacheTag("chapters-list");
 
+  // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
   try {
     const urlParams = new URLSearchParams();
     urlParams.append("page", page.toString());
@@ -109,11 +110,15 @@ export async function getChaptersCached(
       },
     });
 
-    const data: ChaptersResponse = await res.json();
-    return data;
+    if (!res.ok) {
+      console.error(`Chapters fetch failed: ${res.status} ${res.statusText}`);
+      return null;
+    }
+
+    return await res.json();
   } catch (error) {
-    console.error("Error in getChaptersCached:", error);
-    throw new Error("Failed to fetch chapters");
+    console.error("Error in getChaptersCached:", error instanceof Error ? error.message : error);
+    return null;
   }
 }
 
@@ -126,7 +131,9 @@ export async function getChapters(
 
   if (!token) throw new Error("No valid session/token");
 
-  return await getChaptersCached(page, token, params);
+  const result = await getChaptersCached(page, token, params);
+  if (!result) throw new Error("Failed to fetch chapters.");
+  return result;
 }
 
 // =======================

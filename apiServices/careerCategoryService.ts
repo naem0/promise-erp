@@ -49,10 +49,11 @@ export interface SingleCareerCategoryResponse {
 export async function getCareerCategoriesCached(
   token: string,
   params: Record<string, unknown> = {},
-): Promise<CareerCategoryResponse> {
+): Promise<CareerCategoryResponse | null> {
   "use cache";
   cacheTag("career-categories-list");
 
+  // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
   try {
     const urlParams = new URLSearchParams();
     for (const key in params) {
@@ -75,41 +76,29 @@ export async function getCareerCategoriesCached(
       },
     );
 
-    const data = await res.json();
-
-    return data;
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error("Error in getCareerCategoriesCached:", error);
-      throw new Error(error.message);
-    } else {
-      throw new Error("Error fetching career categories");
+    if (!res.ok) {
+      console.error(`Career categories fetch failed: ${res.status} ${res.statusText}`);
+      return null;
     }
+
+    return await res.json();
+  } catch (error: unknown) {
+    console.error("Error in getCareerCategoriesCached:", error instanceof Error ? error.message : error);
+    return null;
   }
 }
-
-// =======================
-// GET CAREER CATEGORIES WRAPPER
-// =======================
 
 export async function getCareerCategories(
   params: Record<string, unknown> = {},
 ): Promise<CareerCategoryResponse> {
-  try {
-    const session = await getServerSession(authOptions);
-    const token = session?.accessToken;
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
 
-    if (!token) throw new Error("No valid session or access token found.");
+  if (!token) throw new Error("No valid session or access token found.");
 
-    return await getCareerCategoriesCached(token, params);
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error("Career categories API error:", error);
-      throw new Error(error.message);
-    } else {
-      throw new Error("Error fetching career categories");
-    }
-  }
+  const result = await getCareerCategoriesCached(token, params);
+  if (!result) throw new Error("Failed to fetch career categories.");
+  return result;
 }
 
 // =======================

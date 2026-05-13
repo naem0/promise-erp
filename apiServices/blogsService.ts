@@ -70,10 +70,11 @@ export interface SingleBlogResponse {
 export async function getBlogsCached(
     token: string,
     params: Record<string, unknown> = {}
-): Promise<BlogsResponse> {
+): Promise<BlogsResponse | null> {
     "use cache";
     cacheTag("blogs-list");
 
+    // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
     try {
         const urlParams = new URLSearchParams();
         for (const key in params) {
@@ -93,23 +94,16 @@ export async function getBlogsCached(
         );
 
         if (!res.ok) {
-            throw new Error(`Status: ${res.status} ${res.statusText}`);
+            console.error(`Blogs fetch failed: ${res.status} ${res.statusText}`);
+            return null;
         }
-        const result = await res.json();
-        return result;
+
+        return await res.json();
     } catch (error: unknown) {
-        console.error("Error in getBlogs:", error);
-        if (error instanceof Error) {
-            throw new Error(error.message);
-        } else {
-            throw new Error("Error fetching blogs");
-        }
+        console.error("Error in getBlogsCached:", error instanceof Error ? error.message : error);
+        return null;
     }
 }
-
-// =======================
-// GET BLOGS WRAPPER
-// =======================
 
 export async function getBlogs(
     params: Record<string, unknown> = {}
@@ -119,7 +113,9 @@ export async function getBlogs(
 
     if (!token) throw new Error("No valid session/token");
 
-    return getBlogsCached(token, params);
+    const result = await getBlogsCached(token, params);
+    if (!result) throw new Error("Failed to fetch blogs.");
+    return result;
 }
 
 // =======================

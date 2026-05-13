@@ -79,11 +79,12 @@ export interface UpdateCouponRequest {
 export async function getCouponsCached(
   token: string,
   params: Record<string, unknown> = {}
-): Promise<CouponResponse> {
+): Promise<CouponResponse | null> {
   "use cache";
   cacheTag("coupons-list");
 
   try {
+  // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
     const urlParams = new URLSearchParams();
     for (const key in params) {
       if (params[key] !== undefined && params[key] !== null && params.hasOwnProperty(key)) {
@@ -101,12 +102,8 @@ export async function getCouponsCached(
     const data: CouponResponse = await res.json();
     return data;
   } catch (error: unknown) {
-    console.error("Error in getCouponsCached:", error);
-    throw new Error(
-      error instanceof Error
-        ? error.message
-        : "Unknown error occurred while fetching coupons"
-    );
+    console.error("Error in getCouponsCached:", error instanceof Error ? error.message : error);
+    return null;
   }
 }
 
@@ -121,7 +118,11 @@ export async function getCoupons(
       throw new Error("No valid session or access token found.");
     }
 
-    return await getCouponsCached(token, params);
+    const _cachedResult = await getCouponsCached(token, params);
+
+    if (!_cachedResult) throw new Error("Failed to fetch data from cache.");
+
+    return _cachedResult;
   } catch (error: unknown) {
     console.error("Error in getCoupons:", error);
     throw new Error(error instanceof Error ? error.message : "Failed to get coupons");

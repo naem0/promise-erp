@@ -141,7 +141,13 @@ export async function getCRMLeads(
 
   if (!token) throw new Error("No valid session/token");
 
-  return getCRMLeadsCached(token, params);
+  const _cachedResult = await getCRMLeadsCached(token, params);
+
+
+  if (!_cachedResult) throw new Error("Failed to fetch data from cache.");
+
+
+  return _cachedResult;
 }
 
 // =======================

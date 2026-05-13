@@ -172,7 +172,11 @@ export async function getBranches(
   }
 
   try {
-    return await getBranchesCached(token, params);
+    const _cachedResult = await getBranchesCached(token, params);
+
+    if (!_cachedResult) throw new Error("Failed to fetch data from cache.");
+
+    return _cachedResult;
   } catch (error) {
     console.error("Error in get branches:", error);
     throw new Error(

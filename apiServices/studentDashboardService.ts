@@ -1435,16 +1435,12 @@ export async function getPublicFreeSeminarBySlug(
     const data: PublicFreeSeminarBySlugResponse = await response.json();
     return data;
   } catch (error: unknown) {
-    console.error("getPublicFreeSeminarBySlug Error:", error);
     if (error instanceof Error) {
-      throw new Error(`Error fetching public free seminar: ${error.message}`);
+      console.error("getPublicFreeSeminarBySlug Error:", error.message);
+    } else {
+      console.error("getPublicFreeSeminarBySlug Error: Unknown error");
     }
-    else {
-      throw new Error(
-        "An unknown error occurred while fetching public free seminar",
-      );
-    }
-
+    return null;
   }
 }
 

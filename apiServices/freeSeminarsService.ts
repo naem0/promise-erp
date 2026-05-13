@@ -119,11 +119,12 @@ export interface SingleFreeSeminarResponse {
 export async function getFreeSeminarsCached(
   token: string,
   params: Record<string, unknown> = {},
-): Promise<FreeSeminarsResponse> {
+): Promise<FreeSeminarsResponse | null> {
   "use cache";
   cacheTag("free-seminars-list");
 
   try {
+  // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
     const urlParams = new URLSearchParams();
 
     for (const key in params) {
@@ -152,9 +153,11 @@ export async function getFreeSeminarsCached(
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error("Error in getFreeSeminarsCached:", error.message);
-      throw new Error(error.message);
+      console.error("Service error:", error.message);
+      return null;
     } else {
-      throw new Error("Error fetching free seminars");
+      console.error("Service error:", "Error fetching free seminars");
+      return null;
     }
   }
 }
@@ -167,7 +170,11 @@ export async function getFreeSeminars(
     const token = session?.accessToken;
     if (!token) throw new Error("No valid session or access token found.");
 
-    return await getFreeSeminarsCached(token, params);
+    const _cachedResult = await getFreeSeminarsCached(token, params);
+
+    if (!_cachedResult) throw new Error("Failed to fetch data from cache.");
+
+    return _cachedResult;
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error("Error in getFreeSeminars:", error.message);

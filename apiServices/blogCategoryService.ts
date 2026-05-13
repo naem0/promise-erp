@@ -101,18 +101,18 @@ export async function updateBlogCategory(
 export async function getBlogCategoriesCached(
   token: string,
   params: Record<string, unknown> = {}
-): Promise<BlogCategoryResponse> {
+): Promise<BlogCategoryResponse | null> {
   "use cache";
   cacheTag("blog-categories-list");
 
+  // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
   try {
-    // Build query string from params
     const urlParams = new URLSearchParams();
     for (const key in params) {
       if (
         params[key] !== undefined &&
         params[key] !== null &&
-        params.hasOwnProperty(key)
+        Object.prototype.hasOwnProperty.call(params, key)
       ) {
         urlParams.append(key, params[key].toString());
       }
@@ -124,19 +124,16 @@ export async function getBlogCategoriesCached(
         Authorization: `Bearer ${token}`,
       }
     });
-    const data = await res.json();
 
-    if (!data.success) {
-      throw new Error(data.message);
+    if (!res.ok) {
+      console.error(`Blog categories fetch failed: ${res.status} ${res.statusText}`);
+      return null;
     }
-    return data;
+
+    return await res.json();
   } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error("Error in getBlogCategoriesCached:", error);
-      throw new Error(error.message);
-    } else {
-      throw new Error("Error fetching blog categories");
-    }
+    console.error("Error in getBlogCategoriesCached:", error instanceof Error ? error.message : error);
+    return null;
   }
 }
 
@@ -144,23 +141,14 @@ export async function getBlogCategoriesCached(
 export async function getBlogCategories(
   params: Record<string, unknown> = {}
 ): Promise<BlogCategoryResponse> {
-  try {
-    const session = await getServerSession(authOptions);
-    const token = session?.accessToken;
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
 
-    if (!token) {
-      throw new Error("No valid session or access token found.");
-    }
+  if (!token) throw new Error("No valid session or access token found.");
 
-    return await getBlogCategoriesCached(token, params);
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error("Blog categories API error:", error);
-      throw new Error(error.message);
-    } else {
-      throw new Error("Error fetching blog categories");
-    }
-  }
+  const result = await getBlogCategoriesCached(token, params);
+  if (!result) throw new Error("Failed to fetch blog categories.");
+  return result;
 }
 
 

@@ -57,11 +57,12 @@ export interface SingleHeroSectionResponse {
 export async function getHeroSectionsCached(
   token: string,
   params: Record<string, unknown> = {}
-): Promise<HeroSectionsResponse> {
+): Promise<HeroSectionsResponse | null> {
   "use cache";
   cacheTag("hero-sections-list");
 
   try {
+  // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
     const urlParams = new URLSearchParams();
 
     for (const key in params) {
@@ -85,9 +86,11 @@ export async function getHeroSectionsCached(
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error("Error in getHeroSectionsCached:", error.message);
-      throw new Error("Error fetching hero sections");
+      console.error("Service error:", "Error fetching hero sections");
+      return null;
     } else {
-      throw new Error("Error fetching hero sections");
+      console.error("Service error:", "Error fetching hero sections");
+      return null;
     }
   }
 }
@@ -100,7 +103,11 @@ export async function getHeroSections(
     const token = session?.accessToken;
     if (!token) throw new Error("No valid session or access token found.");
 
-    return await getHeroSectionsCached(token, params);
+    const _cachedResult = await getHeroSectionsCached(token, params);
+
+    if (!_cachedResult) throw new Error("Failed to fetch data from cache.");
+
+    return _cachedResult;
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error("Error in getHeroSections:", error.message);
@@ -296,11 +303,12 @@ export interface SingleVideoGalleryResponse {
 export async function getVideoGalleriesCached(
   token: string,
   params: Record<string, unknown> = {}
-): Promise<VideoGalleriesResponse> {
+): Promise<VideoGalleriesResponse | null> {
   "use cache";
   cacheTag("public-reviews");
 
   try {
+  // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
     const urlParams = new URLSearchParams();
 
     for (const key in params) {
@@ -324,9 +332,11 @@ export async function getVideoGalleriesCached(
   } catch (error: unknown) {
     console.error("Error in getVideoGalleriesCached:", error);
     if (error instanceof Error) {
-      throw new Error("Error fetching video galleries");
+      console.error("Service error:", "Error fetching video galleries");
+      return null;
     } else {
-      throw new Error("Error fetching video galleries");
+      console.error("Service error:", "Error fetching video galleries");
+      return null;
     }
   }
 }
@@ -339,7 +349,11 @@ export async function getVideoGalleries(
     const token = session?.accessToken;
     if (!token) throw new Error("No valid session or access token found.");
 
-    return await getVideoGalleriesCached(token, params);
+    const _cachedResult = await getVideoGalleriesCached(token, params);
+
+    if (!_cachedResult) throw new Error("Failed to fetch data from cache.");
+
+    return _cachedResult;
   } catch (error: unknown) {
     console.error("Error in getVideoGalleries:", error);
     if (error instanceof Error) {
@@ -526,11 +540,12 @@ export interface SingleCommonSectionResponse {
 export async function getCommonSectionsCached(
   token: string,
   params: Record<string, unknown> = {}
-): Promise<CommonSectionsResponse> {
+): Promise<CommonSectionsResponse | null> {
   "use cache";
   cacheTag("common-sections-list");
 
   try {
+  // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
     const urlParams = new URLSearchParams();
 
     for (const key in params) {
@@ -558,9 +573,11 @@ export async function getCommonSectionsCached(
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error("Error in getCommonSectionsCached:", error.message);
-      throw new Error("Error fetching common sections");
+      console.error("Service error:", "Error fetching common sections");
+      return null;
     } else {
-      throw new Error("Error fetching common sections");
+      console.error("Service error:", "Error fetching common sections");
+      return null;
     }
   }
 }
@@ -573,7 +590,11 @@ export async function getCommonSections(
     const token = session?.accessToken;
     if (!token) throw new Error("No valid session or access token found.");
 
-    return await getCommonSectionsCached(token, params);
+    const _cachedResult = await getCommonSectionsCached(token, params);
+
+    if (!_cachedResult) throw new Error("Failed to fetch data from cache.");
+
+    return _cachedResult;
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error("Error in getCommonSections:", error.message);
@@ -804,11 +825,12 @@ export interface SingleOpportunityResponse {
 export async function getOpportunitiesCached(
   token: string,
   params: Record<string, unknown> = {}
-): Promise<OpportunitiesResponse> {
+): Promise<OpportunitiesResponse | null> {
   "use cache";
   cacheTag("opportunities-list");
 
   try {
+  // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
     const urlParams = new URLSearchParams();
 
     for (const key in params) {
@@ -836,9 +858,11 @@ export async function getOpportunitiesCached(
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error("Error in getOpportunitiesCached:", error.message);
-      throw new Error("Error fetching opportunities");
+      console.error("Service error:", "Error fetching opportunities");
+      return null;
     } else {
-      throw new Error("Error fetching opportunities");
+      console.error("Service error:", "Error fetching opportunities");
+      return null;
     }
   }
 }
@@ -851,7 +875,11 @@ export async function getOpportunities(
     const token = session?.accessToken;
     if (!token) throw new Error("No valid session or access token found.");
 
-    return await getOpportunitiesCached(token, params);
+    const _cachedResult = await getOpportunitiesCached(token, params);
+
+    if (!_cachedResult) throw new Error("Failed to fetch data from cache.");
+
+    return _cachedResult;
   } catch (error: unknown) {
     console.error("Error in getOpportunities:", error);
     if (error instanceof Error) {
@@ -1049,11 +1077,12 @@ export interface SinglePartnerResponse {
 export async function getPartnersCached(
   token: string,
   params: Record<string, unknown> = {}
-): Promise<PartnersResponse> {
+): Promise<PartnersResponse | null> {
   "use cache";
   cacheTag("partners-list");
 
   try {
+  // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
     const urlParams = new URLSearchParams();
 
     for (const key in params) {
@@ -1081,9 +1110,11 @@ export async function getPartnersCached(
   } catch (error: unknown) {
     console.error("Error in getPartnersCached:", error);
     if (error instanceof Error) {
-      throw new Error("Error fetching partners");
+      console.error("Service error:", "Error fetching partners");
+      return null;
     } else {
-      throw new Error("Error fetching partners");
+      console.error("Service error:", "Error fetching partners");
+      return null;
     }
   }
 }
@@ -1096,7 +1127,11 @@ export async function getPartners(
     const token = session?.accessToken;
     if (!token) throw new Error("No valid session or access token found.");
 
-    return await getPartnersCached(token, params);
+    const _cachedResult = await getPartnersCached(token, params);
+
+    if (!_cachedResult) throw new Error("Failed to fetch data from cache.");
+
+    return _cachedResult;
   } catch (error: unknown) {
     console.error("Error in getPartners:", error);
     if (error instanceof Error) {
@@ -1296,11 +1331,12 @@ export interface SingleNewsFeedResponse {
 export async function getNewsFeedsCached(
   token: string,
   params: Record<string, unknown> = {}
-): Promise<NewsFeedsResponse> {
+): Promise<NewsFeedsResponse | null> {
   "use cache";
   cacheTag("news-feeds-list");
 
   try {
+  // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
     const urlParams = new URLSearchParams();
 
     for (const key in params) {
@@ -1328,9 +1364,11 @@ export async function getNewsFeedsCached(
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error("Error in getNewsFeedsCached:", error.message);
-      throw new Error("Error fetching news feeds");
+      console.error("Service error:", "Error fetching news feeds");
+      return null;
     } else {
-      throw new Error("Error fetching news feeds");
+      console.error("Service error:", "Error fetching news feeds");
+      return null;
     }
   }
 }
@@ -1343,7 +1381,11 @@ export async function getNewsFeeds(
     const token = session?.accessToken;
     if (!token) throw new Error("No valid session or access token found.");
 
-    return await getNewsFeedsCached(token, params);
+    const _cachedResult = await getNewsFeedsCached(token, params);
+
+    if (!_cachedResult) throw new Error("Failed to fetch data from cache.");
+
+    return _cachedResult;
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error("Error in getNewsFeeds:", error.message);
@@ -1540,11 +1582,12 @@ export interface SingleImageGalleryResponse {
 export async function getImageGalleriesCached(
   token: string,
   params: Record<string, unknown> = {}
-): Promise<ImageGalleriesResponse> {
+): Promise<ImageGalleriesResponse | null> {
   "use cache";
   cacheTag("image-galleries-list");
 
   try {
+  // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
     const urlParams = new URLSearchParams();
 
     for (const key in params) {
@@ -1568,9 +1611,11 @@ export async function getImageGalleriesCached(
   } catch (error: unknown) {
     console.error("Error in getImageGalleriesCached:", error);
     if (error instanceof Error) {
-      throw new Error("Error fetching image galleries");
+      console.error("Service error:", "Error fetching image galleries");
+      return null;
     } else {
-      throw new Error("Error fetching image galleries");
+      console.error("Service error:", "Error fetching image galleries");
+      return null;
     }
   }
 }
@@ -1583,7 +1628,11 @@ export async function getImageGalleries(
     const token = session?.accessToken;
     if (!token) throw new Error("No valid session or access token found.");
 
-    return await getImageGalleriesCached(token, params);
+    const _cachedResult = await getImageGalleriesCached(token, params);
+
+    if (!_cachedResult) throw new Error("Failed to fetch data from cache.");
+
+    return _cachedResult;
   } catch (error: unknown) {
     console.error("Error in getImageGalleries:", error);
     if (error instanceof Error) {

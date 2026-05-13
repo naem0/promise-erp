@@ -96,7 +96,13 @@ export async function getCRMCategories(
 
   if (!token) throw new Error("No valid session/token");
 
-  return getCRMCategoriesCached(token, params);
+  const _cachedResult = await getCRMCategoriesCached(token, params);
+
+
+  if (!_cachedResult) throw new Error("Failed to fetch data from cache.");
+
+
+  return _cachedResult;
 }
 
 // =======================

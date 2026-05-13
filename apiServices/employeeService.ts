@@ -128,11 +128,12 @@ export interface SalaryScalesResponse {
 export async function getEmployeesCached(
   token: string,
   params: Record<string, unknown> = {},
-): Promise<EmployeesResponse> {
+): Promise<EmployeesResponse | null> {
   "use cache";
   cacheTag("employees-list");
 
   try {
+  // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
     const urlParams = new URLSearchParams();
     for (const key in params) {
       if (params[key] !== undefined && params[key] !== null) {
@@ -155,9 +156,11 @@ export async function getEmployeesCached(
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
-      throw new Error(error.message);
+      console.error("Service error:", error.message);
+      return null;
     } else {
-      throw new Error("Error fetching employees");
+      console.error("Service error:", "Error fetching employees");
+      return null;
     }
   }
 }
@@ -174,7 +177,11 @@ export async function getEmployees(
 
   if (!token) throw new Error("No valid session/token");
 
-  return getEmployeesCached(token, params);
+  const _cachedResult = await getEmployeesCached(token, params);
+
+  if (!_cachedResult) throw new Error("Failed to fetch data from cache.");
+
+  return _cachedResult;
 }
 
 // =======================
@@ -509,11 +516,11 @@ export async function getPublicAllEmployees(): Promise<AllOfficeEmployeesApiResp
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error("Error fetching public employees:", error);
-      throw new Error(error.message);
+      console.warn("Error fetching public employees:", error.message);
     } else {
-      throw new Error("Error fetching public employees");
+      console.warn("Error fetching public employees");
     }
+    return null;
   }
 }
 // *********End public employees api End Point******* //
@@ -553,11 +560,11 @@ export async function getPublicAllExecutives(): Promise<ChairmanMessageResponse 
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error("Error fetching public executives employees:", error);
-      throw new Error(error.message);
+      console.warn("Error fetching public executives:", error.message);
     } else {
-      throw new Error("Error fetching public executives employees");
+      console.warn("Error fetching public executives");
     }
+    return null;
   }
 }
 // *********End public chairman message api End Point******* //

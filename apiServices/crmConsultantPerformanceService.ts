@@ -36,11 +36,12 @@ export interface ConsultantPerformanceResponse {
 export async function getConsultantPerformanceCached(
   token: string,
   params: Record<string, unknown> = {}
-): Promise<ConsultantPerformanceResponse> {
+): Promise<ConsultantPerformanceResponse | null> {
   "use cache";
   cacheTag("consultant-performance-list");
 
   try {
+  // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
     const urlParams = new URLSearchParams();
     for (const key in params) {
       if (params[key] !== undefined && params[key] !== null && params[key] !== "") {
@@ -65,9 +66,11 @@ export async function getConsultantPerformanceCached(
     return await res.json();
   } catch (error: unknown) {
     if (error instanceof Error) {
-      throw new Error(error.message);
+      console.error("Service error:", error.message);
+      return null;
     } else {
-      throw new Error("Error fetching consultant performance");
+      console.error("Service error:", "Error fetching consultant performance");
+      return null;
     }
   }
 }
@@ -80,7 +83,11 @@ export async function getConsultantPerformance(
 
   if (!token) throw new Error("No valid session/token");
 
-  return getConsultantPerformanceCached(token, params);
+  const _cachedResult = await getConsultantPerformanceCached(token, params);
+
+  if (!_cachedResult) throw new Error("Failed to fetch data from cache.");
+
+  return _cachedResult;
 }
 
 export interface TopPerformer {
@@ -127,11 +134,12 @@ export interface AveragePerformanceResponse {
 export async function getConsultantPerformanceSummaryCached(
   token: string,
   params: Record<string, unknown> = {}
-): Promise<PerformanceSummaryResponse> {
+): Promise<PerformanceSummaryResponse | null> {
   "use cache";
   cacheTag("consultant-performance-summary");
 
   try {
+  // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
     const urlParams = new URLSearchParams();
     for (const key in params) {
       if (params[key] !== undefined && params[key] !== null && params[key] !== "") {
@@ -157,9 +165,11 @@ export async function getConsultantPerformanceSummaryCached(
     return await res.json();
   } catch (error: unknown) {
     if (error instanceof Error) {
-      throw new Error(error.message);
+      console.error("Service error:", error.message);
+      return null;
     } else {
-      throw new Error("Error fetching performance summary");
+      console.error("Service error:", "Error fetching performance summary");
+      return null;
     }
   }
 }
@@ -172,17 +182,22 @@ export async function getConsultantPerformanceSummary(
 
   if (!token) throw new Error("No valid session/token");
 
-  return getConsultantPerformanceSummaryCached(token, params);
+  const _cachedResult = await getConsultantPerformanceSummaryCached(token, params);
+
+  if (!_cachedResult) throw new Error("Failed to fetch data from cache.");
+
+  return _cachedResult;
 }
 
 export async function getConsultantAveragePerformanceCached(
   token: string,
   params: Record<string, unknown> = {}
-): Promise<AveragePerformanceResponse> {
+): Promise<AveragePerformanceResponse | null> {
   "use cache";
   cacheTag("consultant-average-performance");
 
   try {
+  // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
     const urlParams = new URLSearchParams();
     for (const key in params) {
       if (params[key] !== undefined && params[key] !== null && params[key] !== "") {
@@ -207,9 +222,11 @@ export async function getConsultantAveragePerformanceCached(
     return await res.json();
   } catch (error: unknown) {
     if (error instanceof Error) {
-      throw new Error(error.message);
+      console.error("Service error:", error.message);
+      return null;
     } else {
-      throw new Error("Error fetching average performance");
+      console.error("Service error:", "Error fetching average performance");
+      return null;
     }
   }
 }
@@ -222,5 +239,9 @@ export async function getConsultantAveragePerformance(
 
   if (!token) throw new Error("No valid session/token");
 
-  return getConsultantAveragePerformanceCached(token, params);
+  const _cachedResult = await getConsultantAveragePerformanceCached(token, params);
+
+  if (!_cachedResult) throw new Error("Failed to fetch data from cache.");
+
+  return _cachedResult;
 }

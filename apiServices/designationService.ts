@@ -45,11 +45,12 @@ export interface SingleDesignationResponse {
 export async function getDesignationsCached(
   token: string,
   params: Record<string, unknown> = {},
-): Promise<DesignationsResponse> {
+): Promise<DesignationsResponse | null> {
   "use cache";
   cacheTag("designations-list");
 
   try {
+  // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
     const urlParams = new URLSearchParams();
     for (const key in params) {
       if (params[key] !== undefined && params[key] !== null) {
@@ -72,9 +73,11 @@ export async function getDesignationsCached(
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
-      throw new Error(error.message);
+      console.error("Service error:", error.message);
+      return null;
     } else {
-      throw new Error("Error fetching designations");
+      console.error("Service error:", "Error fetching designations");
+      return null;
     }
   }
 }
@@ -91,7 +94,11 @@ export async function getDesignations(
 
   if (!token) throw new Error("No valid session/token");
 
-  return getDesignationsCached(token, params);
+  const _cachedResult = await getDesignationsCached(token, params);
+
+  if (!_cachedResult) throw new Error("Failed to fetch data from cache.");
+
+  return _cachedResult;
 }
 
 // =======================

@@ -89,10 +89,11 @@ export interface SingleCareerResponse {
 export async function getCareersCached(
     token: string,
     params: Record<string, unknown> = {}
-): Promise<CareersResponse> {
+): Promise<CareersResponse | null> {
     "use cache";
     cacheTag("careers-list");
 
+    // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
     try {
         const urlParams = new URLSearchParams();
         for (const key in params) {
@@ -112,24 +113,16 @@ export async function getCareersCached(
         );
 
         if (!res.ok) {
-            throw new Error(`Status: ${res.status} ${res.statusText}`);
+            console.error(`Careers fetch failed: ${res.status} ${res.statusText}`);
+            return null;
         }
 
-        const result = await res.json();
-        return result;
+        return await res.json();
     } catch (error: unknown) {
-        console.error("Error in getCareersCached:", error);
-        if (error instanceof Error) {
-            throw new Error(error.message);
-        } else {
-            throw new Error("Error fetching careers");
-        }
+        console.error("Error in getCareersCached:", error instanceof Error ? error.message : error);
+        return null;
     }
 }
-
-// =======================
-// GET CAREERS WRAPPER
-// =======================
 
 export async function getCareers(
     params: Record<string, unknown> = {}
@@ -139,7 +132,9 @@ export async function getCareers(
 
     if (!token) throw new Error("No valid session/token");
 
-    return getCareersCached(token, params);
+    const result = await getCareersCached(token, params);
+    if (!result) throw new Error("Failed to fetch careers.");
+    return result;
 }
 
 // =======================
@@ -294,10 +289,11 @@ export async function deleteCareer(id: number): Promise<SingleCareerResponse> {
 export async function getCareerCategoriesCached(
     token: string,
     params: Record<string, unknown> = {}
-): Promise<CareerCategoriesResponse> {
+): Promise<CareerCategoriesResponse | null> {
     "use cache";
     cacheTag("career-categories-list");
 
+    // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
     try {
         const urlParams = new URLSearchParams();
         for (const key in params) {
@@ -317,17 +313,14 @@ export async function getCareerCategoriesCached(
         );
 
         if (!res.ok) {
-            throw new Error(`Status: ${res.status} ${res.statusText}`);
+            console.error(`Career categories fetch failed: ${res.status} ${res.statusText}`);
+            return null;
         }
 
-        const result = await res.json();
-        return result;
+        return await res.json();
     } catch (error: unknown) {
-        if (error instanceof Error) {
-            throw new Error(error.message);
-        } else {
-            throw new Error("Error fetching career categories");
-        }
+        console.error("Error in getCareerCategoriesCached:", error instanceof Error ? error.message : error);
+        return null;
     }
 }
 
@@ -339,5 +332,7 @@ export async function getCareerCategories(
 
     if (!token) throw new Error("No valid session/token");
 
-    return getCareerCategoriesCached(token, params);
+    const result = await getCareerCategoriesCached(token, params);
+    if (!result) throw new Error("Failed to fetch career categories.");
+    return result;
 }

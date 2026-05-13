@@ -45,11 +45,12 @@ export interface SingleJoinResponse {
 export async function getJoinsCached(
   token: string,
   params: Record<string, unknown> = {}
-): Promise<JoinsResponse> {
+): Promise<JoinsResponse | null> {
   "use cache";
   cacheTag("joins-list");
 
   try {
+  // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
     const urlParams = new URLSearchParams();
     for (const key in params) {
       if (params[key] !== undefined && params[key] !== null) {
@@ -71,9 +72,11 @@ export async function getJoinsCached(
   } catch (error: unknown) {
     console.error("Error in getJoinsCached:", error);
     if (error instanceof Error) {
-      throw new Error(error.message);
+      console.error("Service error:", error.message);
+      return null;
     } else {
-      throw new Error("Failed to fetch joins");
+      console.error("Service error:", "Failed to fetch joins");
+      return null;
     }
   }
 }
@@ -90,7 +93,11 @@ export async function getJoins(
 
   if (!token) throw new Error("No valid session/token");
 
-  return getJoinsCached(token, params);
+  const _cachedResult = await getJoinsCached(token, params);
+
+  if (!_cachedResult) throw new Error("Failed to fetch data from cache.");
+
+  return _cachedResult;
 }
 
 // =======================
