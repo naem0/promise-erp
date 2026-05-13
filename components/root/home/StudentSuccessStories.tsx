@@ -25,6 +25,7 @@ const StudentSuccessStories = ({ reviewsData }: StudentSuccessStoriesProps) => {
     Autoplay({
       delay: 2000,
       stopOnInteraction: false,
+      stopOnMouseEnter: true,
     })
   );
   return (

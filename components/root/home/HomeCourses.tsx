@@ -33,6 +33,7 @@ const HomeCourses = ({ coursesData, courses: directCourses, branchId }: HomeCour
     Autoplay({
       delay: 2000,
       stopOnInteraction: false,
+      stopOnMouseEnter: true,
     })
   );
 
