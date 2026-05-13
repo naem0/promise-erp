@@ -3,13 +3,13 @@
 import { useState, useRef, useEffect, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Download, FileText, FileSpreadsheet, File, Loader2 } from "lucide-react";
-import { getCRMLeadsReport, CRMLeadReportItem } from "@/apiServices/crmLeadsReportService";
+import { getCRMLeadReports, CRMLeadReportsItem } from "@/apiServices/crmLeadReportsService";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 
-interface ExportCRMLeadsReportButtonProps {
+interface ExportCRMLeadReportsButtonProps {
   fileName?: string;
-  data?: CRMLeadReportItem[];
+  data?: CRMLeadReportsItem[];
   page?: number;
   perPage?: number;
 }
@@ -29,7 +29,7 @@ const HEADERS = [
   "Lost",
 ];
 
-function buildRows(data: CRMLeadReportItem[], page: number = 1, perPage: number = data.length) {
+function buildRows(data: CRMLeadReportsItem[], page: number = 1, perPage: number = data.length) {
   return data?.map((item, index) => [
     (page - 1) * perPage + (index + 1),
     item?.consultant_name || "N/A",
@@ -46,12 +46,12 @@ function buildRows(data: CRMLeadReportItem[], page: number = 1, perPage: number 
   ]);
 }
 
-export default function CRMLeadsReportExportButton({
-  fileName = "crm-leads-report",
+export default function CRMLeadReportsExportButton({
+  fileName = "crm-lead-reports",
   data: providedData,
   page = 1,
   perPage = 15,
-}: ExportCRMLeadsReportButtonProps) {
+}: ExportCRMLeadReportsButtonProps) {
   const [open, setOpen] = useState(false);
   const [isExporting, startExporting] = useTransition();
   const menuRef = useRef<HTMLDivElement>(null);
@@ -68,7 +68,7 @@ export default function CRMLeadsReportExportButton({
   }, [open]);
 
   const fetchAllData = async () => {
-    let allData: CRMLeadReportItem[] = [];
+    let allData: CRMLeadReportsItem[] = [];
     let currentPage = 1;
     let lastPage = 1;
     let hasError = false;
@@ -86,7 +86,7 @@ export default function CRMLeadsReportExportButton({
       };
 
       try {
-        const res = await getCRMLeadsReport(params);
+        const res = await getCRMLeadReports(params);
         if (res?.success) {
           allData = [...allData, ...(res?.data?.report_data || [])];
           lastPage = res?.data?.pagination?.last_page || 1;

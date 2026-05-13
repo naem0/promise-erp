@@ -1,11 +1,11 @@
-import { getCRMLeadsReportSummaryCards, CRMLeadsReportSummaryCard } from "@/apiServices/crmLeadsReportService";
+import { getCRMLeadReportsSummaryCards, CRMLeadReportsSummaryCard } from "@/apiServices/crmLeadReportsService";
 import { ArrowDown, ArrowUp, LucideIcon, Phone, Star, UserPlus, Zap } from "lucide-react";
 
-export default async function CRMLeadsReportSummaryWrapper() {
-  let cards: CRMLeadsReportSummaryCard[] = [];
+export default async function CRMLeadReportsSummaryWrapper() {
+  let cards: CRMLeadReportsSummaryCard[] = [];
   
   try {
-    const results = await getCRMLeadsReportSummaryCards();
+    const results = await getCRMLeadReportsSummaryCards();
     if (results?.success) {
       cards = results?.data || [];
     }

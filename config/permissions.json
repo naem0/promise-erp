@@ -138,15 +138,15 @@
     { "path": "/crm/contacts/add", "permissions": ["create-crm-contacts"] },
     { "path": "/crm/contacts/edit", "permissions": ["edit-crm-contacts"], "isDynamic": true },
 
-    { "path": "/crm/leads-activity", "permissions": ["view-lead-activity-list", "view-assigned-lead-activity-list"] },
-    { "path": "/crm/leads-activity/manage", "permissions": ["view-lead-activities", "create-lead-activities"], "isDynamic": true },
+    { "path": "/crm/lead-activities", "permissions": ["view-lead-activity-list", "view-assigned-lead-activity-list"] },
+    { "path": "/crm/lead-activities/manage", "permissions": ["view-lead-activities", "create-lead-activities"], "isDynamic": true },
 
     { "path": "/crm/categories", "permissions": ["view-crm-categories"] },
     { "path": "/crm/categories/add", "permissions": ["create-crm-categories"] },
     { "path": "/crm/categories/edit", "permissions": ["edit-crm-categories"], "isDynamic": true },
 
     {"path": "/crm/consultants-performance", "permissions": ["view-users-performance"], "isDynamic": true },
-    { "path": "/crm/leads-report", "permissions": ["crm-lead-reports"] },
+    { "path": "/crm/lead-reports", "permissions": ["crm-lead-reports"] },
 
     { "path": "/settings/profile", "permissions": ["view-my-profile"] }
 

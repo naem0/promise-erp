@@ -71,7 +71,7 @@ export default async function LeadsActivitySummaryWrapper({
         return (
           <div
             key={index}
-            className={`text-white rounded-xl p-5 flex flex-col h-full shadow-sm relative overflow-hidden bg-gradient-to-br ${card.gradient}`}
+            className={`text-white rounded-xl p-5 flex flex-col h-full shadow-sm relative overflow-hidden bg-linear-to-br ${card.gradient}`}
           >
             {/* Header */}
             <div className="flex items-center gap-2 mb-2 relative z-10">

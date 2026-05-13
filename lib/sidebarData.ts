@@ -439,8 +439,8 @@ export const sidebarData = {
               permissions: ["view-leads"],
             },
             {
-              title: "Leads Activity",
-              url: "/crm/leads-activity",
+              title: "Lead Activities",
+              url: "/crm/lead-activities",
               permissions: [
                 "view-lead-activity-list",
                 "view-assigned-lead-activity-list",
@@ -452,19 +452,19 @@ export const sidebarData = {
               permissions: ["view-crm-categories"],
             },
             {
-              title: "Counsellor Performance",
-              url: "/crm/consultants-performance",
-              permissions: ["view-users-performance"],
-            },
-            {
               title: "Lead Sources",
               url: "/crm/sources",
               permissions: ["view-crm-sources"],
             },
             {
-              title: "Leads Report",
-              url: "/crm/leads-report",
+              title: "Lead Reports",
+              url: "/crm/lead-reports",
               permissions: ["crm-lead-reports"],
+            },
+            {
+              title: "Counsellor Performance",
+              url: "/crm/consultants-performance",
+              permissions: ["view-users-performance"],
             },
             {
               title: "All Notifications",
@@ -480,7 +480,7 @@ export const sidebarData = {
       label: "HR",
       items: [
         {
-          title: "Requirement Onboar",
+          title: "Requirement Onboarding",
           url: "#",
           icon: User2Icon,
           items: [

@@ -9,22 +9,22 @@ import {
     TableRow,
     TableFooter,
 } from "@/components/ui/table";
-import { CRMLeadReportItem, CRMLeadReportSummary } from "@/apiServices/crmLeadsReportService";
+import { CRMLeadReportsItem, CRMLeadReportsSummary } from "@/apiServices/crmLeadReportsService";
 import { Badge } from "@/components/ui/badge";
 
-interface CRMLeadsReportTableProps {
-    data: CRMLeadReportItem[];
-    summary?: CRMLeadReportSummary;
+interface CRMLeadReportsTableProps {
+    data: CRMLeadReportsItem[];
+    summary?: CRMLeadReportsSummary;
     page: number;
     perPage: number;
 }
 
-export default function CRMLeadsReportTable({
+export default function CRMLeadReportsTable({
     data,
     summary,
     page,
     perPage,
-}: CRMLeadsReportTableProps) {
+}: CRMLeadReportsTableProps) {
     return (
         <div className="rounded-md border bg-white overflow-hidden shadow-sm">
             <Table>
@@ -94,7 +94,7 @@ export default function CRMLeadsReportTable({
                 {summary && (
                     <TableFooter className="bg-slate-100 font-bold border-t-2 border-slate-200">
                         <TableRow>
-                            <TableCell colSpan={5} className="text-right pr-4 text-slate-900 uppercase tracking-wider">Total Sum</TableCell>
+                            <TableCell colSpan={5} className="text-right pr-4 text-slate-900 uppercase tracking-wider">Total</TableCell>
                             <TableCell className="text-center text-slate-900">{summary.total_assigned}</TableCell>
                             <TableCell className="text-center text-blue-700">{summary.total_contacted}</TableCell>
                             <TableCell className="text-center text-green-700">{summary.total_enrolled}</TableCell>

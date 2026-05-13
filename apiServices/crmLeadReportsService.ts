@@ -12,7 +12,7 @@ const API_BASE =
 // Interfaces
 // =======================
 
-export interface CRMLeadReportSummary {
+export interface CRMLeadReportsSummary {
   total_assigned: number;
   total_enrolled: number;
   total_contacted: number;
@@ -22,7 +22,7 @@ export interface CRMLeadReportSummary {
   total_target_progress: string;
 }
 
-export interface CRMLeadReportItem {
+export interface CRMLeadReportsItem {
   user_id: number;
   consultant_name: string;
   course_id: string;
@@ -39,22 +39,22 @@ export interface CRMLeadReportItem {
   lost: number;
 }
 
-export interface CRMLeadsReportResponse {
+export interface CRMLeadReportsResponse {
   success: boolean;
   message: string;
   code: number;
   data: {
     total_course_lead: number;
     total_branch_lead: number;
-    total_summary: CRMLeadReportSummary;
+    total_summary: CRMLeadReportsSummary;
     total_records: number;
-    report_data: CRMLeadReportItem[];
+    report_data: CRMLeadReportsItem[];
     pagination: PaginationType;
   };
   errors?: Record<string, string[]>;
 }
 
-export interface CRMLeadsReportSummaryCard {
+export interface CRMLeadReportsSummaryCard {
   title: string;
   value: number;
   unit: string;
@@ -64,11 +64,11 @@ export interface CRMLeadsReportSummaryCard {
   icon: string;
 }
 
-export interface CRMLeadsReportSummaryCardsResponse {
+export interface CRMLeadReportsSummaryCardsResponse {
   success: boolean;
   message: string;
   code: number;
-  data: CRMLeadsReportSummaryCard[];
+  data: CRMLeadReportsSummaryCard[];
   errors?: Record<string, string[]>;
 }
 
@@ -76,12 +76,12 @@ export interface CRMLeadsReportSummaryCardsResponse {
 // GET LEADS REPORT (CACHED)
 // =======================
 
-export async function getCRMLeadsReportCached(
+export async function getCRMLeadReportsCached(
   token: string,
   params: Record<string, unknown> = {},
-): Promise<CRMLeadsReportResponse | null> {
+): Promise<CRMLeadReportsResponse | null> {
   "use cache: private";
-  cacheTag("crm-leads-report");
+  cacheTag("crm-lead-reports");
   try {
     const urlParams = new URLSearchParams();
     for (const key in params) {
@@ -131,22 +131,22 @@ export async function getCRMLeadsReportCached(
 // GET LEADS REPORT WRAPPER
 // =======================
 
-export async function getCRMLeadsReport(
+export async function getCRMLeadReports(
   params: Record<string, unknown> = {},
-): Promise<CRMLeadsReportResponse | null> {
+): Promise<CRMLeadReportsResponse | null> {
   const session = await getServerSession(authOptions);
   const token = session?.accessToken;
 
   if (!token) throw new Error("No valid session/token");
 
-  return getCRMLeadsReportCached(token, params);
+  return getCRMLeadReportsCached(token, params);
 }
 
 // =======================
 // GET LEADS REPORT SUMMARY CARDS
 // =======================
 
-export async function getCRMLeadsReportSummaryCards(): Promise<CRMLeadsReportSummaryCardsResponse | null> {
+export async function getCRMLeadReportsSummaryCards(): Promise<CRMLeadReportsSummaryCardsResponse | null> {
   try {
     const session = await getServerSession(authOptions);
     const token = session?.accessToken;

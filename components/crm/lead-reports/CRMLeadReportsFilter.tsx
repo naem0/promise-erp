@@ -33,17 +33,17 @@ interface FilterFormValues {
     per_page?: string;
 }
 
-interface CRMLeadsReportFilterProps {
+interface CRMLeadReportsFilterProps {
     branches: Branch[];
     consultants: Consultant[];
     courses: Course[];
 }
 
-export default function CRMLeadsReportFilter({
+export default function CRMLeadReportsFilter({
     branches,
     consultants,
     courses,
-}: CRMLeadsReportFilterProps) {
+}: CRMLeadReportsFilterProps) {
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();

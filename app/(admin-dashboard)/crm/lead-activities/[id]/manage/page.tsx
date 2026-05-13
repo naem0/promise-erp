@@ -1,5 +1,5 @@
-import LeadActivityManagement from "@/components/crm/leads-activity/LeadActivityManagement";
-import LeadInfoCard from "@/components/crm/leads-activity/LeadInfoCard";
+import LeadActivityManagement from "@/components/crm/lead-activities/LeadActivitiesManagement";
+import LeadInfoCard from "@/components/crm/lead-activities/LeadInfoCard";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
@@ -28,7 +28,7 @@ export default async function LeadManagePage({
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                     <Button variant="outline" size="icon" asChild className="rounded-full">
-                        <Link href="/crm/leads-activity">
+                        <Link href="/crm/lead-activities">
                             <ArrowLeft className="w-5 h-5" />
                         </Link>
                     </Button>
