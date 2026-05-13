@@ -9,7 +9,7 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { LeadActivity, getLeadsActivity } from "@/apiServices/crmLeadsActivityService";
+import { LeadActivity, getLeadsActivity } from "@/apiServices/crmLeadActivitiesService";
 import Pagination from "@/components/common/Pagination";
 import LeadActivityAction from "./LeadActivitiesAction";
  

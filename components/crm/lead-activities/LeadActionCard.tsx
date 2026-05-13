@@ -2,7 +2,7 @@
  
 import { Button } from "@/components/ui/button";
 import { Phone, MessageSquare, Mail, MessageCircle } from "lucide-react";
-import { LeadInfo } from "@/apiServices/crmLeadsActivityService";
+import { LeadInfo } from "@/apiServices/crmLeadActivitiesService";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
  
 interface LeadActionCardProps {

@@ -15,7 +15,7 @@ export default function CRMSourcesPage({
     return (
         <div className="mx-auto space-y-6">
             <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-semibold tracking-tight text-slate-800">CRM Sources</h1>
+                <h1 className="text-2xl font-semibold tracking-tight text-slate-800">Lead Sources</h1>
                 <div className="flex justify-end items-center gap-3 pt-4">
                     <PermissionGuard requiredPermission="create-crm-sources">
                         <Button asChild className="bg-green-600 hover:bg-green-700 text-white cursor-pointer rounded-lg">
