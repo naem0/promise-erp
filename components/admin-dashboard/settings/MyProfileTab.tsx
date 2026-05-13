@@ -14,8 +14,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Camera, X } from "lucide-react"
 import { toast } from "sonner"
 import { getUserProfile, updateUserProfile, type UserProfile } from "@/apiServices/auth/profileService"
-import { useAppDispatch } from "@/store/hooks"
-import { setProfileImage as setReduxProfileImage } from "@/store/slices/userSlice"
 
 interface ProfileFormData {
   name: string
@@ -32,9 +30,8 @@ interface ProfileFormData {
 }
 
 const MyProfileTab = () => {
-  const { data: session } = useSession()
+  const { data: session, update } = useSession()
   const router = useRouter()
-  const dispatch = useAppDispatch()
   const [isPending, startTransition] = useTransition()
   const [profileImage, setProfileImage] = useState<string | null>(null)
   const [profileImagePreview, setProfileImagePreview] = useState<string | null>(null)
@@ -167,7 +164,17 @@ const MyProfileTab = () => {
           if (response.data?.profile_image) {
             const newImageUrl = response.data.profile_image
             setProfileImage(newImageUrl)
-            dispatch(setReduxProfileImage(newImageUrl))
+            
+            // Trigger NextAuth session update
+            await update({
+              ...session,
+              user: {
+                ...session?.user,
+                image: newImageUrl,
+              },
+              image: newImageUrl,
+            })
+            
             setProfileImagePreview(null)
             setProfileImageFile(null)
           }

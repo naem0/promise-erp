@@ -47,7 +47,7 @@ const HeaderBranchDropdown = () => {
       };
       fetchBranchList();
     });
-  }, [searchParams]);
+  }, []);
 
   const handleBranchSelect = (branchId: number) => {
   setSelectedBranch(branchId);

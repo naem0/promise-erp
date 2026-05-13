@@ -1,5 +1,7 @@
 {
   "routes": [
+    { "path": "/dashboard", "permissions": ["view-dashboard"] },
+    { "path": "/crm/notifications", "permissions": ["view-consultant-notifications"] },
     { "path": "/lms/courses", "permissions": ["view-courses"] },
     { "path": "/lms/courses/add", "permissions": ["create-courses"] },
     { "path": "/lms/courses/edit", "permissions": ["edit-courses"], "isDynamic": true },

@@ -23,7 +23,7 @@ export const sidebarData = {
 
   navSections: [
     {
-      label: undefined, 
+      label: undefined,
       items: [
         {
           title: "Dashboard",
@@ -113,7 +113,7 @@ export const sidebarData = {
               url: "/lms/free-seminars",
               permissions: ["view-free-seminars"],
             },
-            
+
             // {
             //   title: "Blogs",
             //   url: "/lms/blogs",
@@ -191,7 +191,7 @@ export const sidebarData = {
             {
               title: "Enrollment Reports",
               url: "/lms/enrollment-reports",
-              permissions: ["view-course-sales-summary","view-course-sales-report"],
+              permissions: ["view-course-sales-summary", "view-course-sales-report"],
             },
           ],
         },
@@ -298,13 +298,13 @@ export const sidebarData = {
               url: "/web-content/contact-page",
               permissions: ["view-contact-pages"],
             },
-            
+
             {
               title: "Branches",
               url: "/lms/branches",
               permissions: ["view-branches"],
             },
-            
+
           ],
         },
         {
@@ -441,6 +441,11 @@ export const sidebarData = {
               url: "/crm/sources",
               permissions: ["view-crm-sources"],
             },
+            {
+              title: "All Notifications",
+              url: "/crm/notifications",
+              permissions: ["view-consultant-notifications"],
+            }
           ],
         },
       ],
@@ -1001,7 +1006,7 @@ export const sidebarData = {
       ],
     },
 
-    
+
 
     {
       label: "Division",

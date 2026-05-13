@@ -35,7 +35,6 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar";
 import { User, LogOut, LayoutDashboard } from "lucide-react";
-import { useAppSelector } from "@/store/hooks";
 
 export interface NavLink {
   name: string;
@@ -72,7 +71,7 @@ const getProfileUrl = (role: string | string[] | null | undefined) => {
   if (roles.includes("student")) {
     return "/student/profile";
   }
-  return "/lms/profile";
+  return "/settings/profile";
 };
 
 /* ================= AUTH BUTTONS ================= */
@@ -84,9 +83,7 @@ export const AuthButtons = ({
   const { data: session, status } = useSession();
   const isAuthenticated = !!session?.accessToken;
   const userName = session?.user?.name;
-  const reduxProfileImage = useAppSelector((state) => state.user.profileImage);
-  // Priority: Redux (updated on upload) → session image → placeholder
-  const profileImage = reduxProfileImage ?? session?.user?.image ?? null;
+  const profileImage = session?.user?.image ?? null;
 
   if (status === "loading") {
     return <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />;
@@ -152,7 +149,7 @@ export const AuthButtons = ({
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <Link href="/settings/profile" className="cursor-pointer">
+            <Link href={profileUrl} className="cursor-pointer">
               <User className="mr-2 h-4 w-4" />
               Profile
             </Link>
@@ -204,6 +201,7 @@ const HeaderContent = ({ navLinks }: HeaderContentProps) => {
   useEffect(() => {
     if (!debouncedSearch.trim()) {
       setResults(null);
+      setOpenModal(false);
       return;
     }
 
@@ -213,18 +211,12 @@ const HeaderContent = ({ navLinks }: HeaderContentProps) => {
           params: { search: debouncedSearch },
         });
 
-        if (
-          res &&
-          (res?.data?.courses?.length > 0 || res?.data?.categories?.length > 0)
-        ) {
-          setResults(res);
-          setOpenModal(true);
-        } else {
-          setResults(null);
-        }
+        setResults(res);
+        setOpenModal(true);
       } catch (error) {
         console.error("Search failed:", error);
         setResults(null);
+        setOpenModal(true);
       }
     });
   }, [debouncedSearch]);
@@ -240,12 +232,12 @@ const HeaderContent = ({ navLinks }: HeaderContentProps) => {
           const res = await getPublicCourseSearch({
             params: { search: searchQuery },
           });
-          if (res) {
-            setResults(res);
-            setOpenModal(true);
-          }
+          setResults(res);
+          setOpenModal(true);
         } catch (error) {
           console.error("Search failed:", error);
+          setResults(null);
+          setOpenModal(true);
         }
       });
     }
@@ -332,16 +324,15 @@ const HeaderContent = ({ navLinks }: HeaderContentProps) => {
 
       {/* Search Result Modal */}
       <Dialog
+        modal={false}
         open={openModal}
-        onOpenChange={(isOpen) => {
-          setOpenModal(isOpen);
-          if (!isOpen) {
-            setSearchQuery("");
-            setResults(null);
-          }
-        }}
+        onOpenChange={setOpenModal}
       >
-        <DialogContent className="max-w-lg z-9 max-h-[80vh] overflow-y-auto">
+        <DialogContent
+          hideOverlay
+          onInteractOutside={() => setOpenModal(false)}
+          className="max-w-lg z-[100] max-h-[80vh] overflow-y-auto shadow-2xl border-primary/10"
+        >
           <DialogHeader>
             <DialogTitle>
               Search Results for {"'"} {searchQuery} {"'"}

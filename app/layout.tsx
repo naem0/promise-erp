@@ -5,8 +5,6 @@ import { PermissionProvider } from "@/providers/PermissionProvider";
 import { Toaster } from "@/components/ui/sonner";
 
 import "./globals.css";
-import StoreProvider from "@/store/StoreProvider";
-import { Tooltip } from "radix-ui";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import SessionWatcher from "@/components/auth/SessionWatcher";
 
@@ -76,17 +74,15 @@ export default function RootLayout({
         className={`${inter.variable} antialiased`}
         suppressHydrationWarning={true}
       >
-        <StoreProvider>
-          <SessionProviderWrapper>
-            <SessionWatcher />
-            <PermissionProvider>
-              <TooltipProvider>
-                {children}
-                <Toaster />
-              </TooltipProvider>
-            </PermissionProvider>
-          </SessionProviderWrapper>
-        </StoreProvider>
+        <SessionProviderWrapper>
+          <SessionWatcher />
+          <PermissionProvider>
+            <TooltipProvider>
+              {children}
+              <Toaster />
+            </TooltipProvider>
+          </PermissionProvider>
+        </SessionProviderWrapper>
       </body>
     </html>
   );
