@@ -111,9 +111,9 @@ const EarningAllListTable = () => {
                 <TableHeader>
                   <TableRow className=" border-b border-primary/10">
                     <TableHead className="font-semibold">#SL</TableHead>
-                    <TableHead className="font-semibold text-center">
+                    {/* <TableHead className="font-semibold text-center">
                       Action
-                    </TableHead>
+                    </TableHead> */}
                     <TableHead className="font-semibold">Date</TableHead>
                     <TableHead className="font-semibold">
                       Earning (USD)
@@ -139,7 +139,7 @@ const EarningAllListTable = () => {
                       <TableCell className="text-muted-foreground">
                         {index + 1}
                       </TableCell>
-                      <TableCell className="text-center">
+                      {/* <TableCell className="text-center">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Badge
@@ -177,7 +177,7 @@ const EarningAllListTable = () => {
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
-                      </TableCell>
+                      </TableCell> */}
 
                       <TableCell className="text-primary">
                         {earning.earned_at}

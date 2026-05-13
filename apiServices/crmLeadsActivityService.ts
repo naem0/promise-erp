@@ -154,11 +154,12 @@ export async function getLeadById(
 export async function getLeadsActivityCached(
   token: string,
   params: Record<string, unknown> = {},
-): Promise<LeadsActivityResponse> {
+): Promise<LeadsActivityResponse | null> {
   "use cache";
   cacheTag("leads-activity-list");
  
   try {
+  // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
     const urlParams = new URLSearchParams();
     for (const key in params) {
       if (params[key] !== undefined && params[key] !== null) {
@@ -181,9 +182,11 @@ export async function getLeadsActivityCached(
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
-      throw new Error(error.message);
+      console.error("Service error:", error.message);
+      return null;
     } else {
-      throw new Error("Error fetching leads activity");
+      console.error("Service error:", "Error fetching leads activity");
+      return null;
     }
   }
 }
@@ -200,7 +203,11 @@ export async function getLeadsActivity(
  
   if (!token) throw new Error("No valid session/token");
  
-  return getLeadsActivityCached(token, params);
+  const _cachedResult = await getLeadsActivityCached(token, params);
+ 
+  if (!_cachedResult) throw new Error("Failed to fetch data from cache.");
+ 
+  return _cachedResult;
 }
  
 // =======================

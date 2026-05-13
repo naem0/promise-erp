@@ -59,11 +59,12 @@ export interface SingleJobApplyResponse {
 export async function getJobAppliesCached(
     token: string,
     params: Record<string, unknown> = {},
-): Promise<JobAppliesResponse> {
+): Promise<JobAppliesResponse | null> {
     "use cache";
     cacheTag("job-applies-list");
 
     try {
+  // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
         const urlParams = new URLSearchParams();
         for (const key in params) {
             if (
@@ -92,9 +93,11 @@ export async function getJobAppliesCached(
         return result;
     } catch (error: unknown) {
         if (error instanceof Error) {
-            throw new Error(error.message);
+            console.error("Service error:", error.message);
+            return null;
         } else {
-            throw new Error("Error fetching job applies");
+            console.error("Service error:", "Error fetching job applies");
+            return null;
         }
     }
 }
@@ -111,7 +114,11 @@ export async function getJobApplies(
 
     if (!token) throw new Error("No valid session/token");
 
-    return getJobAppliesCached(token, params);
+    const _cachedResult = await getJobAppliesCached(token, params);
+
+    if (!_cachedResult) throw new Error("Failed to fetch data from cache.");
+
+    return _cachedResult;
 }
 
 // =======================

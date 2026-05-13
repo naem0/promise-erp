@@ -59,11 +59,12 @@ export async function getCourseProjectCached(
   page = 1,
   token: string,
   params: Record<string, unknown> = {}
-): Promise<CourseProjectsResponse> {
+): Promise<CourseProjectsResponse | null> {
   "use cache";
   cacheTag("course-projects-list");
 
   try {
+  // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
     const urlParams = new URLSearchParams();
     urlParams.append("page", page.toString());
 
@@ -86,12 +87,8 @@ export async function getCourseProjectCached(
     const data: CourseProjectsResponse = await res.json();
      return data;
   } catch (error) {
-    console.error("Error in getCourseProjectCached:", error);
-    throw new Error(
-      error instanceof Error
-        ? error.message
-        : "Unknown error occurred while fetching course projects"
-    );
+    console.error("Error in getCourseProjectCached:", error instanceof Error ? error.message : error);
+    return null;
   }
 }
 
@@ -107,7 +104,11 @@ export async function getCourseProject(
       throw new Error("No valid session or access token found.");
     }
 
-    return await getCourseProjectCached(page, token, params);
+    const _cachedResult = await getCourseProjectCached(page, token, params);
+
+    if (!_cachedResult) throw new Error("Failed to fetch data from cache.");
+
+    return _cachedResult;
   } catch (error) {
     console.error("Error in get Categories:", error);
     throw new Error(

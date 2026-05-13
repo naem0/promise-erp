@@ -57,8 +57,9 @@ export async function fetchCommonBannerSectionData(params: Record<string, unknow
     } catch (error: unknown) {
         if (error instanceof Error) {
             console.error(" Banner Section Fetch Error:", error.message);
-            throw new Error("Error fetching banner section data");
+        } else {
+            console.error(" Banner Section Fetch Error: Unknown error");
         }
-        throw new Error("Unknown error occurred while fetching banner section data");
+        return null;
     }
 }

@@ -61,11 +61,12 @@ export interface DistrictSingleResponse {
 export async function getDistrictsCached(
   token: string,
   params: Record<string, unknown> = {}
-): Promise<DistrictResponse> {
+): Promise<DistrictResponse | null> {
   "use cache";
   cacheTag("districts-list");
 
   try {
+  // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
     const urlParams = new URLSearchParams();
 
     for (const key in params) {
@@ -87,12 +88,8 @@ export async function getDistrictsCached(
     
     return await res.json();
   } catch (error) {
-    console.error("Error in getDivisionsCached:", error);
-    throw new Error(
-      error instanceof Error
-        ? error.message
-        : "Unknown error occurred while fetching districts"
-    );
+    console.error("Error in getDistrictsCached:", error instanceof Error ? error.message : error);
+    return null;
   }
 }
 
@@ -107,7 +104,11 @@ export async function getDistricts(
       throw new Error("No valid session or access token found.");
     }
 
-    return await getDistrictsCached(token, params);
+    const _cachedResult = await getDistrictsCached(token, params);
+
+    if (!_cachedResult) throw new Error("Failed to fetch data from cache.");
+
+    return _cachedResult;
   } catch (error) {
     console.error("Error in get districts:", error);
     throw new Error(

@@ -1,5 +1,4 @@
 "use server";
-
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import { cacheTag, updateTag } from "next/cache";
@@ -94,9 +93,13 @@ export async function getCRMNotificationsCached(
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error("Error fetching CRM notifications:", error.message);
-      throw new Error(error.message);
+      console.error("Cache error:", error.message);
+
+      return null;
     } else {
-      throw new Error("Error fetching CRM notifications");
+      console.error("Cache error:", "Error fetching CRM notifications");
+
+      return null;
     }
   }
 }
@@ -113,7 +116,13 @@ export async function getCRMNotifications(
 
   if (!token) throw new Error("No valid session/token");
 
-  return getCRMNotificationsCached(token, params);
+  const _cachedResult = await getCRMNotificationsCached(token, params);
+
+
+  if (!_cachedResult) throw new Error("Failed to fetch data from cache.");
+
+
+  return _cachedResult;
 }
 
 // =======================

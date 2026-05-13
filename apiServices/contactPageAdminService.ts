@@ -56,10 +56,11 @@ export interface SingleContactPageResponse {
 export async function getContactPagesCached(
   token: string,
   params: Record<string, unknown> = {},
-): Promise<ContactPagesResponse> {
+): Promise<ContactPagesResponse | null> {
   "use cache";
   cacheTag("contact-pages-list");
 
+  // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
   try {
     const urlParams = new URLSearchParams();
     for (const key in params) {
@@ -79,23 +80,16 @@ export async function getContactPagesCached(
     );
 
     if (!res.ok) {
-      throw new Error(`Status: ${res.status} ${res.statusText}`);
+      console.error(`Contact pages fetch failed: ${res.status} ${res.statusText}`);
+      return null;
     }
-    const result = await res.json();
 
-    return result;
+    return await res.json();
   } catch (error: unknown) {
-    if (error instanceof Error) {
-      throw new Error(error.message);
-    } else {
-      throw new Error("Error fetching contact pages");
-    }
+    console.error("Error in getContactPagesCached:", error instanceof Error ? error.message : error);
+    return null;
   }
 }
-
-// =======================
-// GET CONTACT PAGES WRAPPER
-// =======================
 
 export async function getContactPages(
   params: Record<string, unknown> = {},
@@ -105,7 +99,9 @@ export async function getContactPages(
 
   if (!token) throw new Error("No valid session/token");
 
-  return getContactPagesCached(token, params);
+  const result = await getContactPagesCached(token, params);
+  if (!result) throw new Error("Failed to fetch contact pages.");
+  return result;
 }
 
 // =======================

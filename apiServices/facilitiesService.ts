@@ -48,11 +48,12 @@ export interface SingleFacilityResponse {
 export async function getFacilitiesCached(
   token: string,
   params: Record<string, unknown> = {}
-): Promise<FacilitiesResponse> {
+): Promise<FacilitiesResponse | null> {
   "use cache";
   cacheTag("facilities-list");
 
   try {
+  // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
     const urlParams = new URLSearchParams();
 
     for (const key in params) {
@@ -76,9 +77,11 @@ export async function getFacilitiesCached(
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error("Error in getFacilitiesCached:", error.message);
-      throw new Error("Error fetching facilities");
+      console.error("Service error:", "Error fetching facilities");
+      return null;
     } else {
-      throw new Error("Error fetching facilities");
+      console.error("Service error:", "Error fetching facilities");
+      return null;
     }
   }
 }
@@ -94,7 +97,11 @@ export async function getFacilities(
       throw new Error("No valid session or access token found.");
     }
 
-    return await getFacilitiesCached(token, params);
+    const _cachedResult = await getFacilitiesCached(token, params);
+
+    if (!_cachedResult) throw new Error("Failed to fetch data from cache.");
+
+    return _cachedResult;
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error("Categories API Error:", error.message)

@@ -82,11 +82,11 @@ export async function getPublicJobCircular(
     return data;
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error("Error in getPublicJobCircular:", error);
-      throw new Error(error.message);
+      console.error("Error in getPublicJobCircular:", error.message);
     } else {
-      throw new Error("An unexpected error occurred in getPublicJobCircular.");
+      console.error("Error in getPublicJobCircular: Unknown error");
     }
+    return null;
   }
 }
 // ======================= End Public Job Circular Api Service =======================
@@ -148,13 +148,11 @@ export async function getPublicJobCircularBySlug(
     return data;
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error("Error in getPublicJobCircularBySlug:", error);
-      throw new Error(error.message);
+      console.error("Error in getPublicJobCircularBySlug:", error.message);
     } else {
-      throw new Error(
-        "An unexpected error occurred in getPublicJobCircularBySlug.",
-      );
+      console.error("Error in getPublicJobCircularBySlug: Unknown error");
     }
+    return null;
   }
 }
 // ================== End Public Job Circular by slug Api Service ===============

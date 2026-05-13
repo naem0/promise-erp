@@ -109,7 +109,13 @@ export async function getCRMSources(
 
   if (!token) throw new Error("No valid session/token");
 
-  return getCRMSourcesCached(token, params);
+  const _cachedResult = await getCRMSourcesCached(token, params);
+
+
+  if (!_cachedResult) throw new Error("Failed to fetch data from cache.");
+
+
+  return _cachedResult;
 }
 
 // =======================

@@ -15,7 +15,7 @@ import { Faq, getFaqs } from "@/apiServices/faqsService";
 import DeleteButton from "./DeleteButton";
 import Pagination from "@/components/common/Pagination";
 import PermissionGuard from "@/components/auth/PermissionGuard";
-import { truncate } from "@/lib/utils";
+import { stripHtml, truncate } from "@/lib/utils";
 
 
 const FaqsData = async ({
@@ -65,7 +65,6 @@ const FaqsData = async ({
 
   const faqs = results?.data?.faq_sections || [];
   const paginationData = results?.data?.pagination;
-  console.log("paginationData", paginationData);
   if (!faqs.length) {
     return <NotFoundComponent message={results?.message || "No faqs found."} />;
   }
@@ -124,12 +123,13 @@ const FaqsData = async ({
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>
-                <TableCell className="font-medium text-center">{faq?.question}</TableCell>
+                <TableCell className="text-center" title={faq?.question || "—"}>
+                  {truncate(faq?.question || "—", 30)}
+                </TableCell>
                 <TableCell className="font-medium text-center">
-                  <div
-                    className="line-clamp-3"
-                    dangerouslySetInnerHTML={{ __html: truncate(faq?.answer ?? "", 60) }}
-                  />
+                  <div className="line-clamp-3">
+                    {truncate(stripHtml(faq?.answer || ""), 60)}
+                  </div>
                 </TableCell>
                 <TableCell className="text-center">
                   <Badge variant={faq.type === 1 ? "secondary" : faq.type === 2 ? "default" : "outline"}>

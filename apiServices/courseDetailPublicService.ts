@@ -147,6 +147,7 @@ export async function getCourseDetailBySlug(
   cacheTag("course-detail");
 
   try {
+  // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
    const urlParams = new URLSearchParams();
 
     if (branchId) {
@@ -172,9 +173,11 @@ export async function getCourseDetailBySlug(
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error("Error in getCourseDetailBySlug:", error);
-      throw new Error("Error fetching course details");
+      console.error("Service error:", "Error fetching course details");
+      return null;
     } else {
-      throw new Error("Error fetching course details");
+      console.error("Service error:", "Error fetching course details");
+      return null;
     }
   }
 }

@@ -9,3 +9,8 @@ export const truncate = (text: string, limit: number = 30) => {
     if (!text) return "—";
     return text.length > limit ? text.slice(0, limit) + "..." : text;
 };
+
+export const stripHtml = (html: string) => {
+    if (!html) return "";
+    return html.replace(/<[^>]*>/g, "");
+};

@@ -47,11 +47,12 @@ export interface SingleToolResponse {
 export async function getToolsCached(
     token: string,
     params: Record<string, unknown> = {}
-): Promise<ToolsResponse> {
+): Promise<ToolsResponse | null> {
     "use cache";
     cacheTag("tools-list");
 
     try {
+  // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
         const urlParams = new URLSearchParams();
         for (const key in params) {
             if (params[key] !== undefined && params[key] !== null) {
@@ -77,9 +78,11 @@ export async function getToolsCached(
         return result;
     } catch (error: unknown) {
         if (error instanceof Error) {
-            throw new Error(error.message);
+            console.error("Service error:", error.message);
+            return null;
         } else {
-            throw new Error("Error fetching tools");
+            console.error("Service error:", "Error fetching tools");
+            return null;
         }
     }
 }
@@ -96,7 +99,11 @@ export async function getTools(
 
     if (!token) throw new Error("No valid session/token");
 
-    return getToolsCached(token, params);
+    const _cachedResult = await getToolsCached(token, params);
+
+    if (!_cachedResult) throw new Error("Failed to fetch data from cache.");
+
+    return _cachedResult;
 }
 
 // =======================

@@ -72,7 +72,7 @@ export interface UpdateCategoryRequest {
 export async function getCategoriesCached(
   token: string,
   params: Record<string, unknown> = {}
-): Promise<CategoriesResponse> {
+): Promise<CategoriesResponse | null> {
   "use cache";
   cacheTag("categories-list");
 
@@ -99,9 +99,13 @@ export async function getCategoriesCached(
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error("Error in getCategoriesCached:", error.message);
-      throw new Error("Error fetching categories");
+      console.error("Cache error:", "Error fetching categories");
+
+      return null;
     } else {
-      throw new Error("Error fetching categories");
+      console.error("Cache error:", "Error fetching categories");
+
+      return null;
     }
   }
 }
@@ -117,7 +121,13 @@ export async function getCategories(
       throw new Error("No valid session or access token found.");
     }
 
-    return await getCategoriesCached(token, params);
+    const _cachedResult = await getCategoriesCached(token, params);
+
+
+    if (!_cachedResult) throw new Error("Failed to fetch data from cache.");
+
+
+    return _cachedResult;
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error("Categories API Error:", error.message);
@@ -268,7 +278,6 @@ export async function deleteCategory(id: number): Promise<SingleCategoryResponse
 
 export async function getHomeCourseCategories(): Promise<CategoriesResponse | null> {
   try {
-
     const res = await fetch(
       `${API_BASE}/public/course-categories/with-count`
     );
@@ -283,16 +292,16 @@ export async function getHomeCourseCategories(): Promise<CategoriesResponse | nu
         `Home Course Categories API failed: ${res.status} ${res.statusText}`
       );
     }
+
     const data: CategoriesResponse = await res.json();
     return data;
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error("Home Course Categories API Error:", error.message);
-      console.error(error.stack);
-      console.error(error.name);
-      throw error;
     } else {
-      throw new Error("Error fetching home course categories");
+      console.error("Home Course Categories API Error: Unknown error");
     }
+    return null;
   }
 }
+

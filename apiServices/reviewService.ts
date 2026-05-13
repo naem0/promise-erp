@@ -56,11 +56,12 @@ export interface SingleReviewResponse {
 export async function getReviewsCached(
   token: string,
   params: Record<string, unknown> = {}
-): Promise<ReviewsResponse> {
+): Promise<ReviewsResponse | null> {
   "use cache";
   cacheTag("reviews-list");
 
   try {
+  // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
     const urlParams = new URLSearchParams();
 
     for (const key in params) {
@@ -84,9 +85,11 @@ export async function getReviewsCached(
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
-      throw new Error(error.message);
+      console.error("Service error:", error.message);
+      return null;
     } else {
-      throw new Error("Error fetching reviews");
+      console.error("Service error:", "Error fetching reviews");
+      return null;
     }
   }
 }
@@ -103,7 +106,11 @@ export async function getReviews(
 
   if (!token) throw new Error("No valid session/token");
 
-  return getReviewsCached(token, params);
+  const _cachedResult = await getReviewsCached(token, params);
+
+  if (!_cachedResult) throw new Error("Failed to fetch data from cache.");
+
+  return _cachedResult;
 }
 
 // =======================
