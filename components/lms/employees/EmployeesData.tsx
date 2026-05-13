@@ -107,6 +107,7 @@ const EmployeesData = async ({
                             <TableHead className="text-center">Department</TableHead>
                             <TableHead className="text-center">Branch</TableHead>
                             <TableHead className="text-center">Role</TableHead>
+                            <TableHead className="text-center">Display Order</TableHead>
                             <TableHead className="text-center">Blood Group</TableHead>
                             <TableHead className="text-center">Type</TableHead>
                         </TableRow>
@@ -118,6 +119,7 @@ const EmployeesData = async ({
                                 <TableCell className="text-center">
                                     {(page - 1) * per_page + (index + 1)}
                                 </TableCell>
+
                                 <TableCell className="text-center">
                                     <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
@@ -200,6 +202,9 @@ const EmployeesData = async ({
                                 </TableCell>
                                 <TableCell className="text-center">
                                     {employee?.role?.name || "—"}
+                                </TableCell>
+                                <TableCell className="text-center">
+                                    {employee?.display_order ?? "—"}
                                 </TableCell>
                                 <TableCell className="text-center">
                                     {employee?.blood_group || "—"}
