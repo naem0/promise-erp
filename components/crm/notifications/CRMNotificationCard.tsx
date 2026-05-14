@@ -61,107 +61,92 @@ const CRMNotificationCard = ({ notification, index = 0 }: CRMNotificationCardPro
         <div
             onClick={handleMarkRead}
             className={cn(
-                "group relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3.5 rounded-lg transition-all duration-300 ease-out",
-                "border border-transparent",
+                "group relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center gap-3 px-4 py-3 rounded-lg border transition-colors",
                 !isRead
-                    ? "cursor-pointer bg-white hover:bg-slate-50/50 border-slate-200/50 hover:border-slate-300/70 shadow-sm hover:shadow-md hover:shadow-slate-200/40"
-                    : "cursor-pointer bg-slate-100 hover:bg-slate-200/70 border-slate-200/60 hover:border-slate-300/60 shadow-sm"
+                    ? "cursor-pointer bg-white hover:bg-slate-50 border-slate-200 shadow-sm"
+                    : "cursor-pointer bg-slate-100/70 hover:bg-slate-200/50 border-slate-200 shadow-sm"
             )}
             title={!isRead ? "Click to mark as read" : "Click to view lead"}
         >
-            {/* Left accent bar - Professional style */}
+            {/* Left accent bar */}
             <span
                 className={cn(
-                    "hidden sm:block absolute left-0 top-0 h-full w-1 rounded-r-md transition-all duration-300 ease-out",
-                    !isRead
-                        ? "bg-gradient-to-b from-indigo-600 via-blue-600 to-blue-700"
-                        : "bg-transparent"
+                    "hidden sm:block absolute left-0 top-0 h-full w-1",
+                    !isRead ? "bg-gradient-to-b from-indigo-500 to-blue-500" : "bg-transparent"
                 )}
             />
 
-            {/* Icon container - Responsive sizing */}
+            {/* Icon container */}
             <div
                 className={cn(
-                    "flex h-8 w-8 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-lg transition-all duration-300 ease-out",
-                    "shadow-md hover:shadow-lg",
+                    "flex h-10 w-10 shrink-0 items-center justify-center rounded-lg shadow-sm transition-transform",
                     isRead
-                        ? "bg-gradient-to-br from-slate-300 to-slate-400"
-                        : `bg-gradient-to-br ${gradient} group-hover:shadow-lg group-hover:shadow-indigo-200`
+                        ? "bg-slate-200/80"
+                        : `bg-gradient-to-br ${gradient} group-hover:scale-105`
                 )}
-                style={{
-                    transform: !isPending && !isRead ? "translateZ(0)" : "none",
-                }}
             >
                 <BellRing
                     className={cn(
-                        "h-4 w-4 sm:h-4 sm:w-4 transition-all duration-300",
-                        isRead ? "text-slate-100" : "text-white"
+                        "h-4 w-4",
+                        isRead ? "text-slate-500" : "text-white"
                     )}
                 />
             </div>
 
-            {/* Content - Responsive layout */}
-            <div className="min-w-0 flex-1 space-y-1.5 sm:space-y-1">
-                <p
-                    className={cn(
-                        "text-sm sm:text-sm font-semibold leading-relaxed transition-colors duration-300",
-                        "text-slate-900"
-                    )}
-                >
+            {/* Content */}
+            <div className="min-w-0 flex-1 space-y-1.5">
+                <p className="text-sm font-semibold text-slate-900">
                     {notification.message}
                 </p>
 
                 <div className="flex flex-wrap items-center gap-2">
-                    {/* Name badge - Professional styling */}
+                    {/* Name badge */}
                     <span
                         className={cn(
-                            "inline-flex items-center gap-1.5 rounded-md px-2.5 sm:px-3 py-1.5 text-[11px] sm:text-xs font-medium transition-all duration-300",
-                            "border border-transparent",
+                            "inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium border transition-colors",
                             isRead
-                                ? "bg-slate-100/60 text-indigo-700 border-slate-200/40"
-                                : "bg-indigo-50/80 text-indigo-700 border-indigo-200/50 group-hover:bg-indigo-100/60 group-hover:border-indigo-300/60"
+                                ? "bg-transparent text-indigo-700/70 border-slate-200/60"
+                                : "bg-indigo-50 text-indigo-700 border-indigo-200 group-hover:bg-indigo-100"
                         )}
                     >
-                        <User className="h-3.5 w-3.5 shrink-0" />
+                        <User className="h-3 w-3" />
                         <span className="truncate">{notification.name}</span>
                     </span>
 
-                    {/* Phone badge - Professional styling */}
+                    {/* Phone badge */}
                     <span
                         className={cn(
-                            "inline-flex items-center gap-1.5 rounded-md px-2.5 sm:px-3 py-1.5 text-[11px] sm:text-xs font-medium transition-all duration-300",
-                            "border border-transparent",
+                            "inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium border transition-colors",
                             isRead
-                                ? "bg-slate-100/60 text-blue-700 border-slate-200/40"
-                                : "bg-blue-50/80 text-blue-700 border-blue-200/50 group-hover:bg-blue-100/60 group-hover:border-blue-300/60"
+                                ? "bg-transparent text-blue-700/70 border-slate-200/60"
+                                : "bg-blue-50 text-blue-700 border-blue-200 group-hover:bg-blue-100"
                         )}
                     >
-                        <Phone className="h-3.5 w-3.5 shrink-0" />
+                        <Phone className="h-3 w-3" />
                         <span className="truncate">{notification.phone}</span>
                     </span>
 
-                    {/* Lead ID badge - Professional styling */}
+                    {/* Lead ID badge */}
                     <span
                         className={cn(
-                            "inline-flex items-center gap-1.5 rounded-md px-2.5 sm:px-3 py-1.5 text-[11px] sm:text-xs font-medium transition-all duration-300",
-                            "border border-transparent",
+                            "inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium border transition-colors",
                             isRead
-                                ? "bg-slate-100/60 text-teal-700 border-slate-200/40"
-                                : "bg-teal-50/80 text-teal-700 border-teal-200/50 group-hover:bg-teal-100/60 group-hover:border-teal-300/60"
+                                ? "bg-transparent text-teal-700/70 border-slate-200/60"
+                                : "bg-teal-50 text-teal-700 border-teal-200 group-hover:bg-teal-100"
                         )}
                     >
-                        <Hash className="h-3.5 w-3.5 shrink-0" />
+                        <Hash className="h-3 w-3" />
                         <span className="truncate">Lead {notification.lead_id}</span>
                     </span>
                 </div>
             </div>
 
-            {/* Status indicator - Responsive positioning */}
+            {/* Status indicator */}
             <div className="flex shrink-0 items-center justify-center pl-0 sm:pl-3 pt-1 sm:pt-0">
                 {isPending ? (
-                    <Loader2 className="h-5 w-5 animate-spin text-indigo-600 transition-colors duration-300" />
+                    <Loader2 className="h-4 w-4 animate-spin text-indigo-600" />
                 ) : isRead ? (
-                    <CheckCircle2 className="h-5 w-5 text-teal-600 transition-all duration-300" />
+                    <CheckCircle2 className="h-4 w-4 text-slate-400" />
                 ) : (
                     <span className="relative flex h-3 w-3 items-center justify-center">
                         <span className="absolute inline-flex h-full w-full animate-pulse rounded-full bg-indigo-400 opacity-50" />
