@@ -92,11 +92,9 @@ const RegisterForm = () => {
 
     try {
       const result = (await RegisterUser(data)) as ApiResponse;
-
       if (result.success) {
-        const role = result.data.roles[0];
+        const role = result?.data?.roles[0];
         toast.success(result.message || "Registration successful!");
-
         const signInResult = await signIn("credentials", {
           redirect: false,
           email_or_phone: data.email,
@@ -122,10 +120,10 @@ const RegisterForm = () => {
         return;
       }
 
-      if (result.code === 422 && result.errors) {
+      if (!result?.success && result?.errors) {
         toast.error(result.message || "Validation failed");
 
-        Object.entries(result.errors).forEach(([field, messages]) => {
+        Object.entries(result?.errors).forEach(([field, messages]) => {
           const mappedField = fieldMapping[field] || (field as keyof FormData);
 
           if (mappedField && messages && messages.length > 0) {

@@ -49,7 +49,7 @@ export async function getCRMNotificationsCached(
   token: string,
   params: Record<string, unknown> = {}
 ): Promise<CRMNotificationsResponse | null> {
-  "use cache";
+  "use cache: private";
   cacheTag("crm-notifications-list");
 
   try {
@@ -116,13 +116,116 @@ export async function getCRMNotifications(
 
   if (!token) throw new Error("No valid session/token");
 
-  const _cachedResult = await getCRMNotificationsCached(token, params);
+  const cachedResult = await getCRMNotificationsCached(token, params);
+
+  if (!cachedResult) throw new Error("Failed to fetch data from cache.");
+
+  return cachedResult;
+}
 
 
-  if (!_cachedResult) throw new Error("Failed to fetch data from cache.");
+
+// =======================
+// GET NOTIFICATION COUNT CACHED
+// =======================
+
+export interface CRMNotificationCountResponse {
+  success: boolean;
+  message: string;
+  code: number;
+  data: {
+    unread_count: number;
+  };
+}
+
+export async function getCRMNotificationCountCached(
+  token: string
+): Promise<CRMNotificationCountResponse | null> {
+  "use cache: private";
+  cacheTag("crm-notifications-list");
+
+  try {
+    const res = await fetch(
+      `${API_BASE}/consultant-notifications/count`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (res.status === 401) {
+      console.error("Unauthorized");
+      return null;
+    }
+
+    if (res.status === 403) {
+      console.error("Forbidden");
+      return null;
+    }
+
+    if (res.status === 404) {
+      console.error("Not Found");
+      return null;
+    }
+
+    if (!res.ok) {
+      throw new Error(`Status: ${res.status} ${res.statusText}`);
+    }
+
+    return await res.json();
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error(
+        "Error fetching CRM notification count:",
+        error.message
+      );
+    } else {
+      console.error(
+        "Unknown error fetching CRM notification count"
+      );
+    }
+
+    return null;
+  }
+}
 
 
-  return _cachedResult;
+export async function getCRMNotificationCount(): Promise<CRMNotificationCountResponse | null> {
+  try {
+    const session = await getServerSession(authOptions);
+
+    const token = session?.accessToken;
+
+    if (!token) {
+      throw new Error("No valid session/token");
+    }
+
+    const cachedResult =
+      await getCRMNotificationCountCached(token);
+
+    if (!cachedResult) {
+      throw new Error(
+        "Failed to fetch notification count from cache."
+      );
+    }
+
+    return cachedResult;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error(
+        "Error in getCRMNotificationCount:",
+        error.message
+      );
+    } else {
+      console.error(
+        "Unknown error in getCRMNotificationCount"
+      );
+    }
+
+    return null;
+  }
 }
 
 // =======================
