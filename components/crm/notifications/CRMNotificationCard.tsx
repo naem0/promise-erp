@@ -80,16 +80,11 @@ const CRMNotificationCard = ({ notification, index = 0 }: CRMNotificationCardPro
             <div
                 className={cn(
                     "flex h-10 w-10 shrink-0 items-center justify-center rounded-lg shadow-sm transition-transform",
-                    isRead
-                        ? "bg-slate-200/80"
-                        : `bg-gradient-to-br ${gradient} group-hover:scale-105`
+                    isRead ? "bg-slate-200/80" : `bg-gradient-to-br ${gradient} group-hover:scale-105`
                 )}
             >
                 <BellRing
-                    className={cn(
-                        "h-4 w-4",
-                        isRead ? "text-slate-500" : "text-white"
-                    )}
+                    className={cn( "h-4 w-4", isRead ? "text-slate-500" : "text-white")}
                 />
             </div>
 
