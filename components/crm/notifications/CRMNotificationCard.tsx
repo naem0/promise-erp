@@ -12,14 +12,14 @@ interface CRMNotificationCardProps {
     index?: number;
 }
 
-// Rotating gradient palette for the icon background
+// Professional color palette for enterprise CRM
 const iconGradients = [
-    "from-violet-500 to-purple-600",
-    "from-sky-500 to-blue-600",
-    "from-emerald-500 to-teal-600",
-    "from-rose-500 to-pink-600",
-    "from-amber-500 to-orange-500",
-    "from-indigo-500 to-blue-600",
+    "from-indigo-600 to-indigo-700",
+    "from-blue-600 to-blue-700",
+    "from-teal-600 to-teal-700",
+    "from-cyan-600 to-cyan-700",
+    "from-slate-600 to-slate-700",
+    "from-zinc-600 to-zinc-700",
 ];
 
 const CRMNotificationCard = ({ notification, index = 0 }: CRMNotificationCardProps) => {
@@ -56,110 +56,113 @@ const CRMNotificationCard = ({ notification, index = 0 }: CRMNotificationCardPro
         <div
             onClick={handleMarkRead}
             className={cn(
-                "group relative flex items-start gap-4 px-5 py-4 transition-all duration-200",
+                "group relative flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 px-4 sm:px-6 py-4 sm:py-5 rounded-lg transition-all duration-300 ease-out",
+                "border border-transparent",
                 !isRead
-                    ? "cursor-pointer bg-gradient-to-r from-violet-50/70 via-white to-indigo-50/50 hover:from-violet-100/80 hover:to-indigo-100/60"
-                    : "bg-secondary/10 hover:bg-secondary/20 "
+                    ? "cursor-pointer bg-white hover:bg-slate-50/50 border-slate-200/50 hover:border-slate-300/70 shadow-sm hover:shadow-md hover:shadow-slate-200/50"
+                    : "bg-slate-50/40 hover:bg-slate-100/40 border-slate-200/30 hover:border-slate-300/40 shadow-xs hover:shadow-sm"
             )}
             title={!isRead ? "Click to mark as read" : undefined}
         >
-            {/* Left accent bar */}
+            {/* Left accent bar - Professional style */}
             <span
                 className={cn(
-                    "absolute left-0 top-0 h-full w-[3px] rounded-r-full transition-all duration-300",
+                    "hidden sm:block absolute left-0 top-0 h-full w-1 rounded-r-md transition-all duration-300 ease-out",
                     !isRead
-                        ? "bg-gradient-to-b from-violet-500 to-indigo-500"
+                        ? "bg-gradient-to-b from-indigo-600 via-blue-600 to-blue-700"
                         : "bg-transparent"
                 )}
             />
 
-            {/* Icon */}
+            {/* Icon container - Responsive sizing */}
             <div
                 className={cn(
-                    "flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl shadow-md transition-transform duration-200 group-hover:scale-105",
+                    "flex h-10 w-10 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-lg transition-all duration-300 ease-out",
+                    "shadow-md hover:shadow-lg",
                     isRead
-                        ? "bg-gradient-to-br from-slate-200 to-slate-300"
-                        : `bg-gradient-to-br ${gradient}`
+                        ? "bg-gradient-to-br from-slate-300 to-slate-400"
+                        : `bg-gradient-to-br ${gradient} group-hover:shadow-lg group-hover:shadow-indigo-200`
                 )}
+                style={{
+                    transform: !isPending && !isRead ? "translateZ(0)" : "none",
+                }}
             >
                 <BellRing
                     className={cn(
-                        "h-5 w-5",
-                        isRead ? "text-slate-400" : "text-white"
+                        "h-5 w-5 sm:h-5 sm:w-5 transition-all duration-300",
+                        isRead ? "text-slate-100" : "text-white"
                     )}
                 />
             </div>
 
-            {/* Content */}
-            <div className="min-w-0 flex-1">
+            {/* Content - Responsive layout */}
+            <div className="min-w-0 flex-1 space-y-2.5 sm:space-y-2">
                 <p
                     className={cn(
-                        "text-sm leading-snug",
+                        "text-sm sm:text-sm font-semibold leading-relaxed transition-colors duration-300",
                         isRead
                             ? "text-slate-400"
-                            : "font-semibold text-slate-800"
+                            : "text-slate-900"
                     )}
                 >
                     {notification.message}
                 </p>
 
-                <div className="mt-2 flex flex-wrap items-center gap-2">
-                    {/* Name badge */}
+                <div className="flex flex-wrap items-center gap-2">
+                    {/* Name badge - Professional styling */}
                     <span
                         className={cn(
-                            "inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-medium",
+                            "inline-flex items-center gap-1.5 rounded-md px-2.5 sm:px-3 py-1.5 text-[11px] sm:text-xs font-medium transition-all duration-300",
+                            "border border-transparent",
                             isRead
-                                ? "bg-slate-100 text-slate-400"
-                                : "bg-violet-100 text-violet-700"
+                                ? "bg-slate-100/60 text-slate-500 border-slate-200/40"
+                                : "bg-indigo-50/80 text-indigo-700 border-indigo-200/50 group-hover:bg-indigo-100/60 group-hover:border-indigo-300/60"
                         )}
                     >
-                        <User className="h-3 w-3" />
-                        {notification.name}
+                        <User className="h-3.5 w-3.5 shrink-0" />
+                        <span className="truncate">{notification.name}</span>
                     </span>
 
-                    {/* Phone badge */}
+                    {/* Phone badge - Professional styling */}
                     <span
                         className={cn(
-                            "inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-medium",
+                            "inline-flex items-center gap-1.5 rounded-md px-2.5 sm:px-3 py-1.5 text-[11px] sm:text-xs font-medium transition-all duration-300",
+                            "border border-transparent",
                             isRead
-                                ? "bg-slate-100 text-slate-400"
-                                : "bg-sky-100 text-sky-700"
+                                ? "bg-slate-100/60 text-slate-500 border-slate-200/40"
+                                : "bg-blue-50/80 text-blue-700 border-blue-200/50 group-hover:bg-blue-100/60 group-hover:border-blue-300/60"
                         )}
                     >
-                        <Phone className="h-3 w-3" />
-                        {notification.phone}
+                        <Phone className="h-3.5 w-3.5 shrink-0" />
+                        <span className="truncate">{notification.phone}</span>
                     </span>
 
-                    {/* Lead ID badge */}
+                    {/* Lead ID badge - Professional styling */}
                     <span
                         className={cn(
-                            "inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-medium",
+                            "inline-flex items-center gap-1.5 rounded-md px-2.5 sm:px-3 py-1.5 text-[11px] sm:text-xs font-medium transition-all duration-300",
+                            "border border-transparent",
                             isRead
-                                ? "bg-slate-100 text-slate-400"
-                                : "bg-amber-100 text-amber-700"
+                                ? "bg-slate-100/60 text-slate-500 border-slate-200/40"
+                                : "bg-teal-50/80 text-teal-700 border-teal-200/50 group-hover:bg-teal-100/60 group-hover:border-teal-300/60"
                         )}
                     >
-                        <Hash className="h-3 w-3" />
-                        Lead {notification.lead_id}
+                        <Hash className="h-3.5 w-3.5 shrink-0" />
+                        <span className="truncate">Lead {notification.lead_id}</span>
                     </span>
                 </div>
             </div>
 
-            {/* Status indicator */}
-            <div className="flex shrink-0 flex-col items-end gap-1 pl-2">
+            {/* Status indicator - Responsive positioning */}
+            <div className="flex shrink-0 items-center justify-center pl-0 sm:pl-3 pt-1 sm:pt-0">
                 {isPending ? (
-                    <Loader2 className="h-5 w-5 animate-spin text-violet-500" />
+                    <Loader2 className="h-5 w-5 animate-spin text-indigo-600 transition-colors duration-300" />
                 ) : isRead ? (
-                    <CheckCircle2 className="h-5 w-5 text-secondary" />
+                    <CheckCircle2 className="h-5 w-5 text-teal-600 transition-all duration-300" />
                 ) : (
-                    <span className="relative flex h-3 w-3">
-                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-violet-400 opacity-60" />
-                        <span className="relative inline-flex h-3 w-3 rounded-full bg-violet-500" />
-                    </span>
-                )}
-                {!isRead && !isPending && (
-                    <span className="font-medium text-primary">
-                        Tap to read
+                    <span className="relative flex h-3 w-3 items-center justify-center">
+                        <span className="absolute inline-flex h-full w-full animate-pulse rounded-full bg-indigo-400 opacity-50" />
+                        <span className="relative inline-flex h-3 w-3 rounded-full bg-indigo-600" />
                     </span>
                 )}
             </div>
