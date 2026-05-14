@@ -30,7 +30,12 @@ const CRMNotificationCard = ({ notification, index = 0 }: CRMNotificationCardPro
     const gradient = iconGradients[index % iconGradients.length];
 
     const handleMarkRead = () => {
-        if (isRead || isPending) return;
+        if (isPending) return;
+
+        if (isRead) {
+            router.push(`/crm/lead-activities/${notification?.lead_id}/manage`);
+            return;
+        }
 
         startTransition(async () => {
             try {
@@ -56,13 +61,13 @@ const CRMNotificationCard = ({ notification, index = 0 }: CRMNotificationCardPro
         <div
             onClick={handleMarkRead}
             className={cn(
-                "group relative flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 px-4 sm:px-6 py-4 sm:py-5 rounded-lg transition-all duration-300 ease-out",
+                "group relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 px-4 sm:px-6 py-4 sm:py-5 rounded-lg transition-all duration-300 ease-out",
                 "border border-transparent",
                 !isRead
                     ? "cursor-pointer bg-white hover:bg-slate-50/50 border-slate-200/50 hover:border-slate-300/70 shadow-sm hover:shadow-md hover:shadow-slate-200/50"
-                    : "bg-slate-50/40 hover:bg-slate-100/40 border-slate-200/30 hover:border-slate-300/40 shadow-xs hover:shadow-sm"
+                    : "cursor-pointer bg-slate-100 hover:bg-slate-200/70 border-slate-200/60 hover:border-slate-300/60 shadow-sm"
             )}
-            title={!isRead ? "Click to mark as read" : undefined}
+            title={!isRead ? "Click to mark as read" : "Click to view lead"}
         >
             {/* Left accent bar - Professional style */}
             <span
@@ -100,9 +105,7 @@ const CRMNotificationCard = ({ notification, index = 0 }: CRMNotificationCardPro
                 <p
                     className={cn(
                         "text-sm sm:text-sm font-semibold leading-relaxed transition-colors duration-300",
-                        isRead
-                            ? "text-slate-400"
-                            : "text-slate-900"
+                        "text-slate-900"
                     )}
                 >
                     {notification.message}
@@ -115,7 +118,7 @@ const CRMNotificationCard = ({ notification, index = 0 }: CRMNotificationCardPro
                             "inline-flex items-center gap-1.5 rounded-md px-2.5 sm:px-3 py-1.5 text-[11px] sm:text-xs font-medium transition-all duration-300",
                             "border border-transparent",
                             isRead
-                                ? "bg-slate-100/60 text-slate-500 border-slate-200/40"
+                                ? "bg-slate-100/60 text-indigo-700 border-slate-200/40"
                                 : "bg-indigo-50/80 text-indigo-700 border-indigo-200/50 group-hover:bg-indigo-100/60 group-hover:border-indigo-300/60"
                         )}
                     >
@@ -129,7 +132,7 @@ const CRMNotificationCard = ({ notification, index = 0 }: CRMNotificationCardPro
                             "inline-flex items-center gap-1.5 rounded-md px-2.5 sm:px-3 py-1.5 text-[11px] sm:text-xs font-medium transition-all duration-300",
                             "border border-transparent",
                             isRead
-                                ? "bg-slate-100/60 text-slate-500 border-slate-200/40"
+                                ? "bg-slate-100/60 text-blue-700 border-slate-200/40"
                                 : "bg-blue-50/80 text-blue-700 border-blue-200/50 group-hover:bg-blue-100/60 group-hover:border-blue-300/60"
                         )}
                     >
@@ -143,7 +146,7 @@ const CRMNotificationCard = ({ notification, index = 0 }: CRMNotificationCardPro
                             "inline-flex items-center gap-1.5 rounded-md px-2.5 sm:px-3 py-1.5 text-[11px] sm:text-xs font-medium transition-all duration-300",
                             "border border-transparent",
                             isRead
-                                ? "bg-slate-100/60 text-slate-500 border-slate-200/40"
+                                ? "bg-slate-100/60 text-teal-700 border-slate-200/40"
                                 : "bg-teal-50/80 text-teal-700 border-teal-200/50 group-hover:bg-teal-100/60 group-hover:border-teal-300/60"
                         )}
                     >

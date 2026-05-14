@@ -123,7 +123,7 @@ const CRMNotificationsData = async ({
         </div>
 
         {/* Notification List */}
-        <div className="divide-y divide-violet-50">
+        <div className="flex flex-col gap-3 p-3 bg-slate-50/30">
           {notifications?.map((notification: CRMNotification, index: number) => (
             <CRMNotificationCard
               key={notification.id}
