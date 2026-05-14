@@ -61,10 +61,10 @@ const CRMNotificationCard = ({ notification, index = 0 }: CRMNotificationCardPro
         <div
             onClick={handleMarkRead}
             className={cn(
-                "group relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 px-4 sm:px-6 py-4 sm:py-5 rounded-lg transition-all duration-300 ease-out",
+                "group relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3.5 rounded-lg transition-all duration-300 ease-out",
                 "border border-transparent",
                 !isRead
-                    ? "cursor-pointer bg-white hover:bg-slate-50/50 border-slate-200/50 hover:border-slate-300/70 shadow-sm hover:shadow-md hover:shadow-slate-200/50"
+                    ? "cursor-pointer bg-white hover:bg-slate-50/50 border-slate-200/50 hover:border-slate-300/70 shadow-sm hover:shadow-md hover:shadow-slate-200/40"
                     : "cursor-pointer bg-slate-100 hover:bg-slate-200/70 border-slate-200/60 hover:border-slate-300/60 shadow-sm"
             )}
             title={!isRead ? "Click to mark as read" : "Click to view lead"}
@@ -82,7 +82,7 @@ const CRMNotificationCard = ({ notification, index = 0 }: CRMNotificationCardPro
             {/* Icon container - Responsive sizing */}
             <div
                 className={cn(
-                    "flex h-10 w-10 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-lg transition-all duration-300 ease-out",
+                    "flex h-8 w-8 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-lg transition-all duration-300 ease-out",
                     "shadow-md hover:shadow-lg",
                     isRead
                         ? "bg-gradient-to-br from-slate-300 to-slate-400"
@@ -94,14 +94,14 @@ const CRMNotificationCard = ({ notification, index = 0 }: CRMNotificationCardPro
             >
                 <BellRing
                     className={cn(
-                        "h-5 w-5 sm:h-5 sm:w-5 transition-all duration-300",
+                        "h-4 w-4 sm:h-4 sm:w-4 transition-all duration-300",
                         isRead ? "text-slate-100" : "text-white"
                     )}
                 />
             </div>
 
             {/* Content - Responsive layout */}
-            <div className="min-w-0 flex-1 space-y-2.5 sm:space-y-2">
+            <div className="min-w-0 flex-1 space-y-1.5 sm:space-y-1">
                 <p
                     className={cn(
                         "text-sm sm:text-sm font-semibold leading-relaxed transition-colors duration-300",
