@@ -50,7 +50,9 @@ const AboutPage = () => {
         <Suspense fallback={<WhyChooseUsSkeleton />}>
           <AboutOpportunities />
         </Suspense>
-        <AboutBranch />
+        <Suspense fallback={null}>
+          <AboutBranch />
+        </Suspense>
       </div>
       <Suspense fallback={<PartnerSkeleton />}>
         <AffiliatesAndClients />

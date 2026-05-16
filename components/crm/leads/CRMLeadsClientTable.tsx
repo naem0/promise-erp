@@ -270,8 +270,8 @@ export default function CRMLeadsClientTable({
                                         )}
 
                                         {lead?.email && (
-                                            <span className="text-xs text-secondary">
-                                                {lead.email}
+                                            <span className="text-xs text-secondary" title={lead.email}>
+                                                {truncate(lead.email, 20)}
                                             </span>
                                         )}
                                     </div>

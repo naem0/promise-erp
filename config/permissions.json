@@ -129,7 +129,7 @@
     { "path": "/web-content/contact-page/add", "permissions": ["create-contact-pages"] },
     { "path": "/web-content/contact-page/edit", "permissions": ["edit-contact-pages"], "isDynamic": true },
 
-    { "path": "/crm/leads", "permissions": ["view-leads", "view-assigned-leads"] },
+    { "path": "/crm/leads", "permissions": ["view-leads", "view-assign-leads"] },
     { "path": "/crm/leads/add", "permissions": ["create-leads"] },
     { "path": "/crm/leads/edit", "permissions": ["edit-leads"], "isDynamic": true },
    
