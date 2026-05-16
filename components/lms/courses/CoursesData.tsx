@@ -23,6 +23,7 @@ import Link from "next/link";
 import DeleteButton from "./DeleteButton";
 import AssignBranchesButton from "./AssignBranchesButton";
 import PermissionGuard from "@/components/auth/PermissionGuard";
+import { truncate } from "@/lib/utils";
 
 export default async function CoursesData({
   searchParams,
@@ -151,7 +152,9 @@ export default async function CoursesData({
                       />
                     </div>
                     <div className="text-start">
-                      <p className="font-medium">{course.title}</p>
+                      <p className="font-medium" title={course.title}>
+                        {truncate(course.title || "", 40)}
+                      </p>
                       {course.latest_batch && (
                         <p className="text-xs text-blue-600 font-semibold mt-1">
                           Latest: {course.latest_batch.name}

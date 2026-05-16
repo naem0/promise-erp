@@ -436,7 +436,7 @@ export const sidebarData = {
             {
               title: "Leads",
               url: "/crm/leads",
-              permissions: ["view-leads"],
+              permissions: ["view-leads", "view-assigned-leads"],
             },
             {
               title: "Lead Activities",
@@ -469,7 +469,7 @@ export const sidebarData = {
             {
               title: "All Notifications",
               url: "/crm/notifications",
-              permissions: ["view-consultant-notifications"],
+              permissions: ["view-consultant-notifications","mark-consultant-notification-read","mark-all-consultant-notifications-read"],
             },
           ],
         },

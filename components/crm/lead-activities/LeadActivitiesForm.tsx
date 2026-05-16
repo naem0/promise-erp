@@ -1,6 +1,5 @@
 "use client";
  
-import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,54 +15,82 @@ import {
 import { Plus } from "lucide-react";
 import { createLeadActivity } from "@/apiServices/crmLeadActivitiesService";
 import { toast } from "sonner";
+import { Controller, useForm } from "react-hook-form";
  
 interface LeadActivityFormProps {
   leadId: number;
   onSuccess?: () => void;
   onCancel?: () => void;
 }
+
+interface FormValues {
+  date: string;
+  type: string;
+  status: string;
+  note: string;
+}
  
 const LeadActivityForm = ({ leadId }: LeadActivityFormProps) => {
   const router = useRouter();
-  const [isPending, startTransition] = useTransition();
-  const [formData, setFormData] = useState({
-    date: new Date().toISOString().split("T")[0],
-    type: 1,
-    status: 1,
-    note: "",
+  
+  const {
+    register,
+    handleSubmit,
+    setError,
+    control,
+    reset,
+    watch,
+    formState: { errors, isSubmitting },
+  } = useForm<FormValues>({
+    defaultValues: {
+      date: new Date().toISOString().split("T")[0],
+      type: "",
+      status: "",
+      note: "",
+    },
   });
+
+  const currentStatus = watch("status");
+  const isDateDisabled = currentStatus === "5" || currentStatus === "6";
  
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const submitHandler = async (values: FormValues) => {
+    try {
+      const res = await createLeadActivity({
+        lead_id: leadId,
+        date: isDateDisabled ? "" : values.date,
+        type: Number(values.type),
+        status: Number(values.status),
+        note: values.note,
+      });
  
-    startTransition(async () => {
-      try {
-        const res = await createLeadActivity({
-          lead_id: leadId,
-          ...formData,
-        });
- 
-        if (res.success) {
-          toast.success(res.message || "Activity saved successfully");
-          setFormData({
-            date: new Date().toISOString().split("T")[0],
-            type: 1,
-            status: 1,
-            note: "",
+      if (res.success) {
+        toast.success(res.message || "Activity saved successfully");
+        reset();
+        router.refresh();
+      } else {
+        if (res.errors) {
+          toast.error(res.message || "Failed to save activity");
+          Object.entries(res.errors).forEach(([field, messages]) => {
+            const errorMessage = Array.isArray(messages)
+              ? messages[0]
+              : messages;
+            setError(field as keyof FormValues, {
+              type: "server",
+              message: errorMessage as string,
+            });
           });
-          router.refresh();
         } else {
           toast.error(res.message || "Failed to save activity");
         }
-      } catch (error: unknown) {
-        if (error instanceof Error) {
-          toast.error(error.message);
-        } else {
-          toast.error("An unexpected error occurred.");
-        }
-        console.error(error); 
       }
-    });
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("An unexpected error occurred.");
+      }
+      console.error(error); 
+    }
   };
  
   return (
@@ -73,55 +100,71 @@ const LeadActivityForm = ({ leadId }: LeadActivityFormProps) => {
         <h3 className="text-xl font-semibold text-slate-800">Add Activity Log</h3>
       </div>
  
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form onSubmit={handleSubmit(submitHandler)} className="space-y-5">
         <div className="space-y-2">
           <Label htmlFor="next_date" className="text-sm font-medium text-slate-700">Next Date</Label>
           <Input
             id="next_date"
             type="date"
-            value={formData.date}
-            onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+            {...register("date")}
             className="w-full border-slate-200 focus:ring-green-500 focus:border-green-500"
-            required
+            disabled={isDateDisabled}
+            required={!isDateDisabled}
           />
+          {errors.date && <p className="text-sm text-red-500 mt-1">{errors.date.message}</p>}
         </div>
+        
         {/*type * integer  1: Call, 2: Message*/}
         <div>
           <Label htmlFor="interaction_type" className="text-sm font-medium text-slate-700">Interaction Type</Label>
-          <Select
-            value={String(formData.type)}
-            onValueChange={(val) => setFormData({ ...formData, type: Number(val) })}
-          >
-            <SelectTrigger className="w-full border-slate-200">
-              <SelectValue placeholder="Select Type" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="1">Call</SelectItem>
-              <SelectItem value="2">Message</SelectItem>
-              <SelectItem value="3">Email</SelectItem>
-              <SelectItem value="4">Whatsapp</SelectItem>
-            </SelectContent>
-          </Select>
+          <Controller
+            name="type"
+            control={control}
+            render={({ field }) => (
+              <Select
+                value={field.value}
+                onValueChange={field.onChange}
+              >
+                <SelectTrigger className="w-full border-slate-200">
+                  <SelectValue placeholder="Select Type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="1">Call</SelectItem>
+                  <SelectItem value="2">Message</SelectItem>
+                  <SelectItem value="3">Email</SelectItem>
+                  <SelectItem value="4">Whatsapp</SelectItem>
+                </SelectContent>
+              </Select>
+            )}
+          />
+          {errors.type && <p className="text-sm text-red-500 mt-1">{errors.type.message}</p>}
         </div>
  
         <div className="space-y-2">
           <Label htmlFor="call_result" className="text-sm font-medium text-slate-700">Status</Label>
-          <Select
-            value={String(formData.status)}
-            onValueChange={(val) => setFormData({ ...formData, status: Number(val) })}
-          >
-            <SelectTrigger className="w-full border-slate-200">
-              <SelectValue placeholder="Select Result" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="1">New</SelectItem>
-              <SelectItem value="2">Busy</SelectItem>
-              <SelectItem value="3">Interested</SelectItem>
-              <SelectItem value="4">Follow Up</SelectItem>
-              <SelectItem value="5">Enrolled</SelectItem>
-              <SelectItem value="6">Cancelled</SelectItem>
-            </SelectContent>
-          </Select>
+          <Controller
+            name="status"
+            control={control}
+            render={({ field }) => (
+              <Select
+                value={field.value}
+                onValueChange={field.onChange}
+              >
+                <SelectTrigger className="w-full border-slate-200">
+                  <SelectValue placeholder="Select Result" />
+                </SelectTrigger>
+                <SelectContent>
+                  {/* <SelectItem value="1">New</SelectItem> */}
+                  <SelectItem value="2">Busy</SelectItem>
+                  <SelectItem value="3">Interested</SelectItem>
+                  <SelectItem value="4">Follow Up</SelectItem>
+                  <SelectItem value="5">Enrolled</SelectItem>
+                  <SelectItem value="6">Cancelled</SelectItem>
+                </SelectContent>
+              </Select>
+            )}
+          />
+          {errors.status && <p className="text-sm text-red-500 mt-1">{errors.status.message}</p>}
         </div>
  
         <div className="space-y-2">
@@ -129,20 +172,19 @@ const LeadActivityForm = ({ leadId }: LeadActivityFormProps) => {
           <Textarea
             id="note"
             placeholder="Enter Activity Notes...."
-            value={formData.note}
-            onChange={(e) => setFormData({ ...formData, note: e.target.value })}
+            {...register("note")}
             className="w-full min-h-[120px] border-slate-200 focus:ring-green-500 focus:border-green-500"
-            required
           />
+          {errors.note && <p className="text-sm text-red-500 mt-1">{errors.note.message}</p>}
         </div>
  
         <div className="flex gap-3 pt-2">
           <Button
             type="submit"
-            disabled={isPending}
+            disabled={isSubmitting}
             className="flex-1 bg-green-600 hover:bg-green-700 text-white"
           >
-            {isPending ? "Saving..." : "Save Activity"}
+            {isSubmitting ? "Saving..." : "Save Activity"}
           </Button>
         </div>
       </form>

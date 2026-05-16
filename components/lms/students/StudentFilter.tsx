@@ -110,9 +110,9 @@ export default function StudentFilter({
         )}
       </div>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-6">
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
         {/* Search Input */}
-        <div className="relative col-span-1 lg:col-span-2">
+        <div className="relative col-span-2">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search students..."

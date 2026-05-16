@@ -17,6 +17,7 @@ import DeleteButton from "./DeleteButton";
 import Image from "next/image";
 import Pagination from "@/components/common/Pagination";
 import PermissionGuard from "@/components/auth/PermissionGuard";
+import { truncate } from "@/lib/utils";
 
 const CategoriesData = async ({
 
@@ -127,8 +128,8 @@ const CategoriesData = async ({
                   />
                 </TableCell>
                 <TableCell className="font-medium">{category?.name}</TableCell>
-                <TableCell className="text-sm text-muted-foreground">
-                  {category.meta_title || <span className="italic text-xs text-muted-foreground">—</span>}
+                <TableCell className="text-sm text-muted-foreground" title={category.meta_title}>
+                  {category.meta_title ? truncate(category.meta_title, 20) : <span className="italic text-xs text-muted-foreground">—</span>}
                 </TableCell>
                 <TableCell>
                   {category.meta_tag && category.meta_tag.length > 0 ? (

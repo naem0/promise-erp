@@ -52,6 +52,10 @@ const CRMLeadsData = async ({
             typeof resolvedSearchParams.shift === "string"
                 ? resolvedSearchParams.shift
                 : undefined,
+        course_id:
+            typeof resolvedSearchParams.course_id === "string"
+                ? resolvedSearchParams.course_id
+                : undefined,
         user_id:
             typeof resolvedSearchParams.user_id === "string"
                 ? resolvedSearchParams.user_id

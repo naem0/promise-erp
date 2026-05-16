@@ -15,7 +15,8 @@ import { getStudents, Student } from "@/apiServices/studentService";
 import PermissionGuard from "@/components/auth/PermissionGuard";
 import DeleteButton from "./DeleteButton";
 import Pagination from "@/components/common/Pagination";
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import Image from "next/image";
+
 
 const StudentsData = async ({
   searchParams,
@@ -89,8 +90,6 @@ const StudentsData = async ({
               <TableHead className="text-center">Sl</TableHead>
               <TableHead className="text-center">Action</TableHead>
               <TableHead className="text-center">Profile</TableHead>
-              <TableHead className="text-center">Name & Email</TableHead>
-              <TableHead className="text-center">Phone</TableHead>
               <TableHead className="text-center">Courses & Batches</TableHead>
               <TableHead className="text-center">Branch</TableHead>
               <TableHead className="text-center">Divisions</TableHead>
@@ -148,25 +147,22 @@ const StudentsData = async ({
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>
-                <TableCell className="text-center">
-                  <div className="flex justify-center">
-                    <Avatar className="h-8 w-8 bg-gray-300 rounded-full overflow-hidden">
-                      <AvatarImage
+                <TableCell className="flex items-center gap-2">
+                    <div className="relative w-12 h-12">
+                      <Image
                         src={student?.profile_image || "/images/profile_avatar.png"}
                         alt={student?.name}
+                        fill
+                        className="object-cover object-top rounded-full"
                       />
-                    </Avatar>
-                  </div>
+                    </div>
+                    <div>
+                      <p>{student?.name} </p>
+                      <p className="text-xs text-muted-foreground">{student?.email}</p>
+                      <p className="text-xs text-muted-foreground">{student?.phone}</p>
+                    </div>
                 </TableCell>
-                <TableCell className="text-center">
-                  <div className="space-y-1">
-                    <p className="text-sm font-medium leading-none">{student?.name}</p>
-                    <p className="text-xs text-muted-foreground">{student?.email}</p>
-                  </div>
-                </TableCell>
-                <TableCell className="text-center">{student?.phone}</TableCell>
-                {/* truncate */}
-                
+
                 <TableCell className="text-center">
                   {student?.courses?.map((course, idx) => (
                     <div key={idx} className="text-xs">

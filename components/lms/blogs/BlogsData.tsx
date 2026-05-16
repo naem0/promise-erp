@@ -147,7 +147,7 @@ const BlogsData = async ({ searchParams }: SearchParamsProps) => {
                 {blog?.category?.title || "—"}
               </TableCell>
               <TableCell className="text-center">
-                {blog?.author?.name || "—"}
+                {blog?.author || "—"}
               </TableCell>
               <TableCell className="text-center">
                 <Badge variant={blog.status === 1 ? "default" : "secondary"}>
@@ -161,7 +161,7 @@ const BlogsData = async ({ searchParams }: SearchParamsProps) => {
           ))}
         </TableBody>
       </Table>
-      {paginationData && paginationData.last_page > 1 &&  (
+      {paginationData && paginationData.last_page > 1 && (
         <div className="mt-4">
           <Pagination pagination={paginationData} />
         </div>
