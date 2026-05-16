@@ -158,7 +158,7 @@ export default function CRMLeadsClientTable({
             {/* ── Table Header with Total Count ── */}
             <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-bold tracking-tight text-foreground">
-                    All CRM Leads
+                    Lead List
                     <span className="ml-2 text-sm font-normal text-muted-foreground">
                         ({totalLeads} total)
                     </span>
@@ -182,7 +182,7 @@ export default function CRMLeadsClientTable({
                             </TableHead>
                             <TableHead className="text-center">Sl</TableHead>
                             <TableHead className="text-center">Action</TableHead>
-                            <TableHead className="text-center">Name, Phone & Email</TableHead>
+                            <TableHead className="text-center">Lead Profile</TableHead>
                             <TableHead className="text-center">Referrer</TableHead>
                             <TableHead className="text-center">Course</TableHead>
                             <TableHead className="text-center">Type & Shift</TableHead>

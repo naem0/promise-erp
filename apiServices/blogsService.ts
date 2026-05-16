@@ -30,17 +30,17 @@ export interface Blog {
     category: BlogCategory;
     title: string;
     slug: string;
-    author: BlogAuthor;
+    author: string;
     short_description: string;
     description: string;
-    thumbnail: string | null;
+    thumbnail?: string ;
     status: number;
-    published_at: string;
-    meta_title: string;
-    meta_description: string;
+    published_at?: string ;
+    meta_title?: string;
+    meta_description?: string;
     meta_tag: string[];
-    schema: string;
-    schedule: string;
+    schema?: string;
+    schedule?: string;
 }
 
 export interface BlogsResponse {

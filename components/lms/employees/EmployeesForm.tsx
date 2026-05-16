@@ -122,8 +122,8 @@ export default function EmployeesForm({
                 join_date: employee.joining_date || "",
                 experience: employee.experience || "",
                 display_order: employee.display_order ?? 1,
-                employment_type: (employee.employment_type !== undefined && employee.employment_type !== null) ? employee.employment_type.toString() : "1",
-                probation_period: employee.probation_period?.toString() || "6",
+                employment_type: (employee.employment_type !== undefined && employee.employment_type !== null) ? employee.employment_type.toString() : "",
+                probation_period: employee.probation_period?.toString() || "",
                 salary_scale_id: employee.salary_scale?.id?.toString() || "",
                 release_date: employee.release_date || "",
                 note: employee.note || "",
@@ -296,11 +296,11 @@ export default function EmployeesForm({
                     {/* Display Order */}
                     <div>
                         <label className="block text-sm font-medium mb-1">Display Order</label>
-                        <Input 
-                            type="number" 
-                            placeholder="1" 
+                        <Input
+                            type="number"
+                            placeholder="1"
                             min="0"
-                            {...register("display_order", { valueAsNumber: true })} 
+                            {...register("display_order", { valueAsNumber: true })}
                         />
                         {errors.display_order && <p className="text-sm text-red-500 mt-1">{errors.display_order.message}</p>}
                     </div>
@@ -398,7 +398,34 @@ export default function EmployeesForm({
 
                     {/* Branch & Joining Date */}
                     <div className="md:col-span-2">
-                        <label className="block text-sm font-medium mb-1">Branches <span className="text-red-500">*</span></label>
+                        <div className="flex items-center justify-between mb-2">
+                            <label className="block text-sm font-medium">
+                                Branches <span className="text-red-500">*</span>
+                                {(watch("branch_ids") || []).length > 0 && (
+                                    <span className="ml-2 text-xs font-normal text-green-600 bg-green-50 px-2 py-0.5 rounded-full border border-green-100">
+                                        {(watch("branch_ids") || []).length} Selected
+                                    </span>
+                                )}
+                            </label>
+                            {branches.length > 0 && (
+                                <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => {
+                                        const currentIds = watch("branch_ids") || [];
+                                        if (currentIds.length === branches.length) {
+                                            setValue("branch_ids", []);
+                                        } else {
+                                            setValue("branch_ids", branches.map(b => b.id.toString()));
+                                        }
+                                    }}
+                                    className="h-7 text-xs text-green-600 hover:text-green-700 hover:bg-green-50 cursor-pointer"
+                                >
+                                    {(watch("branch_ids") || []).length === branches.length ? "Deselect All" : "Select All"}
+                                </Button>
+                            )}
+                        </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-2 max-h-60 overflow-y-auto pr-2">
                             {branches?.map((branch) => (
                                 <Controller
@@ -522,8 +549,33 @@ export default function EmployeesForm({
                     {/* Tools Selection Section */}
                     {isTeacherRole && (
                         <div className="md:col-span-2">
-                            <div className="mb-4">
-                                <h3 className="text-lg font-semibold text-gray-900">Select Tools</h3>
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                                    Select Tools
+                                    {(watch("tool_ids") || []).length > 0 && (
+                                        <span className="text-sm font-normal text-green-600 bg-green-50 px-2 py-0.5 rounded-full border border-green-100">
+                                            {(watch("tool_ids") || []).length} Selected
+                                        </span>
+                                    )}
+                                </h3>
+                                {allTools.length > 0 && (
+                                    <Button
+                                        type="button"
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => {
+                                            const currentIds = watch("tool_ids") || [];
+                                            if (currentIds.length === allTools.length) {
+                                                setValue("tool_ids", []);
+                                            } else {
+                                                setValue("tool_ids", allTools.map(t => t.id.toString()));
+                                            }
+                                        }}
+                                        className="h-7 text-xs text-green-600 hover:text-green-700 hover:bg-green-50 coursor-pointer"
+                                    >
+                                        {(watch("tool_ids") || []).length === allTools.length ? "Deselect All" : "Select All"}
+                                    </Button>
+                                )}
                             </div>
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 max-h-60 overflow-y-auto pr-2">
@@ -597,10 +649,10 @@ export default function EmployeesForm({
                 </div>
 
                 <div className="flex justify-end gap-3 pt-4">
-                    <Button type="button" variant="outline" onClick={() => router.back()} className="rounded-lg border-green-600 text-green-600 ">
+                    <Button  type="button" variant="outline" onClick={() => router.back()} className="rounded-lg border-green-600 text-green-600 cursor-pointer">
                         Cancel
                     </Button>
-                    <Button type="submit" disabled={isSubmitting} className="bg-green-600 hover:bg-green-700 text-white px-8 rounded-lg">
+                    <Button type="submit" disabled={isSubmitting} className="bg-green-600 hover:bg-green-700 text-white px-8 rounded-lg cursor-pointer">
                         {isSubmitting ? "Submitting..." : employee ? "Update" : "Add"}
                     </Button>
                 </div>

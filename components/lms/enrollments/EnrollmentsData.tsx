@@ -13,6 +13,7 @@ import Pagination from "@/components/common/Pagination";
 import { getEnrollments } from "@/apiServices/enrollmentService";
 import EnrollmentActionMenu from "./EnrollmentActionMenu";
 import { Badge } from "@/components/ui/badge";
+import { truncate } from "@/lib/utils";
 
 
 export default async function EnrollmentsData({
@@ -84,8 +85,7 @@ export default async function EnrollmentsData({
                         <TableRow>
                             <TableHead className="text-center w-[50px]">Sl</TableHead>
                             <TableHead className="text-center min-w-[90px]">Action</TableHead>
-                            <TableHead className="text-start min-w-[150px]">Student Name</TableHead>
-                            <TableHead className="min-w-[120px]">Email & Phone</TableHead>
+                            <TableHead className="text-start min-w-[150px]">Student Details</TableHead>
                             <TableHead className="min-w-[150px]">Course & Batch</TableHead>
                             <TableHead className="text-right">Price</TableHead>
                             <TableHead className="text-center min-w-[120px]">Enrollment Date</TableHead>
@@ -107,9 +107,17 @@ export default async function EnrollmentsData({
                                         />
                                     )}
                                 </TableCell>
-                                <TableCell className="font-medium text-start">{enrollment?.user?.name || "N/A"}</TableCell>
-                                <TableCell>{enrollment?.user?.email || "N/A"} <br /> {enrollment?.user?.phone || "N/A"}</TableCell>
-                                <TableCell>{enrollment?.batch?.course?.title || "N/A"} <br /> {enrollment?.batch?.name || "N/A"}</TableCell>
+                                <TableCell className="font-medium text-start">
+                                    <p>{enrollment?.user?.name || "N/A"}</p>
+                                    <p className="text-xs text-muted-foreground ">{enrollment?.user?.phone || "N/A"}</p>
+                                    <p className="text-xs text-muted-foreground ">{enrollment?.user?.email || "N/A"}</p>
+                                </TableCell>
+                                
+                                <TableCell>
+                                    <p title={enrollment?.batch?.course?.title}>
+                                        {enrollment?.batch?.course? truncate (enrollment?.batch?.course?.title) || "N/A" : "N/A"}
+                                    </p>
+                                    <p>{enrollment?.batch?.name || "N/A"} </p></TableCell>
                                 <TableCell className="text-right">
                                     {enrollment?.discount_amount ? <del>{enrollment?.original_price ? formatCurrency(enrollment.original_price) : "N/A"}</del> : null} <br />
                                     <span className="font-semibold text-primary">{enrollment?.final_price ? formatCurrency(enrollment.final_price) : "N/A"}</span>

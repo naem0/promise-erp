@@ -384,7 +384,7 @@ export default function CRMLeadsFilter({
                             }}
                         >
                             <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Consultant" />
+                                <SelectValue placeholder="Select Counsellor" />
                             </SelectTrigger>
                             <SelectContent>
                                 {consultants?.length ? (
@@ -457,24 +457,25 @@ export default function CRMLeadsFilter({
                         control={control}
                         render={({ field }) => (
                             <Select
-                                value={field.value || ""}
-                                onValueChange={(value) => {
-                                    field.onChange(value);
-                                    handleSelectChange("course_id")(value);
-                                }}
+                                value={field.value}
+                                onValueChange={field.onChange}
                             >
                                 <SelectTrigger className="w-full">
                                     <SelectValue placeholder="Course" />
                                 </SelectTrigger>
+
                                 <SelectContent>
                                     {courses?.length ? (
                                         courses.map((course) => (
-                                            <SelectItem key={course.id} value={String(course.id)}>
+                                            <SelectItem
+                                                key={course.id}
+                                                value={String(course.id)}
+                                            >
                                                 {course.title}
                                             </SelectItem>
                                         ))
                                     ) : (
-                                        <SelectItem value="" disabled>
+                                        <SelectItem value="no-course" disabled>
                                             No course found
                                         </SelectItem>
                                     )}

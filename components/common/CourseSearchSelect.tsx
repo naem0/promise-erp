@@ -67,7 +67,7 @@ export default function CourseSearchSelect({
   }, [options, inputValue])
 
   return (
-    <div className="space-y-2">
+    <div>
       <ComboboxRoot 
         value={value || undefined} 
         onValueChange={(val) => onValueChange(val || null)}

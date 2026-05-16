@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/table";
 import { CRMLeadReportsItem, CRMLeadReportsSummary } from "@/apiServices/crmLeadReportsService";
 import { Badge } from "@/components/ui/badge";
+import { truncate } from "@/lib/utils";
 
 interface CRMLeadReportsTableProps {
     data: CRMLeadReportsItem[];
@@ -50,11 +51,11 @@ export default function CRMLeadReportsTable({
                             <TableCell className="text-center text-slate-500 font-medium">
                                 {(page - 1) * perPage + index + 1}
                             </TableCell>
-                            <TableCell className="font-medium text-slate-900">
-                                {item.consultant_name}
+                            <TableCell className="font-medium text-slate-900" title={item.consultant_name}>
+                                {truncate(item.consultant_name, 30)}
                             </TableCell>
-                            <TableCell className="text-slate-700 max-w-[300px]">
-                                {item.course_name}
+                            <TableCell className="text-slate-700 max-w-[300px]" title={item.course_name}>
+                                {truncate(item.course_name, 30)}
                             </TableCell>
                             <TableCell>
                                 <Badge variant="secondary" className="bg-blue-50 text-blue-700 border-blue-100 font-normal">

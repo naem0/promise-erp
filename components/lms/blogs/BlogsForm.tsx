@@ -314,7 +314,7 @@ export default function BlogsForm({
 
                     {/* Slug */}
                     <div>
-                        <label className="block text-sm font-medium mb-1">Slug</label>
+                        <label className="block text-sm font-medium mb-1">Slug <span className="text-red-500">*</span></label>
                         <Input placeholder="blog-slug-here" {...register("slug")} />
                         {errors.slug && (
                             <p className="text-sm text-red-500 mt-1">{errors.slug.message}</p>
