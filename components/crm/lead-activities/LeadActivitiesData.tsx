@@ -92,7 +92,7 @@ const LeadsActivityData = async ({
                             <TableHead className="text-center">Next Follow Up</TableHead>
                             <TableHead className="text-center">Calls</TableHead>
                             <TableHead className="text-center">Messages</TableHead>
-                            <TableHead className="text-center">Consultant</TableHead>
+                            <TableHead className="text-center">Counsellor</TableHead>
                             <TableHead className="text-center">Status</TableHead>
                             <TableHead className="text-center">Note</TableHead>
                         </TableRow>

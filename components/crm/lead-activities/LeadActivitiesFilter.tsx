@@ -145,7 +145,7 @@ export default function LeadsActivityFilter({ consultants }: { consultants?: Con
                 <div className="relative lg:col-span-1 xl:col-span-1">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
-                        placeholder="Search lead name or note..."
+                        placeholder="Search lead name..."
                         className="pl-10"
                         {...register("search")}
                     />
@@ -191,7 +191,7 @@ export default function LeadsActivityFilter({ consultants }: { consultants?: Con
                             }}
                         >
                             <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Consultant" />
+                                <SelectValue placeholder="Select Counsellor" />
                             </SelectTrigger>
                             <SelectContent>
                                 {consultants?.map((consultant) => (

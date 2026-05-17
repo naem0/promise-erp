@@ -14,7 +14,7 @@ const ConsultantsPerformanceSummaryWrapper = async ({
 }) => {
   const resolvedSearchParams = await searchParams;
   const branch_id = typeof resolvedSearchParams.branch_id === "string" ? resolvedSearchParams.branch_id : undefined;
-  const period = typeof resolvedSearchParams.period === "string" ? resolvedSearchParams.period : "this_week";
+  const period = typeof resolvedSearchParams.period === "string" ? resolvedSearchParams.period : "today";
 
   const params = { branch_id, period };
 

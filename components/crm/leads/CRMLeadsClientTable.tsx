@@ -439,19 +439,19 @@ export default function CRMLeadsClientTable({
                             value={selectedUserId}
                             onValueChange={setSelectedUserId}
                         >
-                            <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Choose a Counsellor..." />
+                            <SelectTrigger className="w-full py-10">
+                                <SelectValue className="h-20" placeholder="Choose a Counsellor..." />
                             </SelectTrigger>
-                            <SelectContent>
+                            <SelectContent className="w-full overflow-y-auto py-10">
                                 {consultants.map((consultant) => (
-                                    <SelectItem key={consultant.id} value={String(consultant.id)}>
+                                    <SelectItem className="h-20 py-10" key={consultant.id} value={String(consultant.id)}>
                                         <div className="flex justify-start gap-2">
                                             <div>
                                                 <Image
                                                     width={40}
                                                     height={40}
                                                     className="rounded-full"
-                                                    src={consultant?.profile_image || "/images/placeholder-profile.png"}
+                                                    src={consultant?.profile_image || "/default-profile.png"}
                                                     alt={consultant?.name}
                                                 />
                                             </div>
