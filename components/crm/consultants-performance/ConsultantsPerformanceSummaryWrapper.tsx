@@ -77,12 +77,12 @@ const ConsultantsPerformanceSummaryWrapper = async ({
           <div className="p-2 bg-white/20 rounded-lg">
             <Headphones className="w-5 h-5 text-white" />
           </div>
-          <h3 className="font-medium text-lg">Total Consultants</h3>
+          <h3 className="font-medium text-lg">Total Counsellor</h3>
         </div>
         <div className="flex items-end justify-between mt-4">
           <div className="flex items-baseline gap-2">
             <span className="text-5xl font-bold">{summaryData.total_consultants}</span>
-            <span className="text-2xl font-medium opacity-90">Consultant</span>
+              <span className="text-2xl font-medium opacity-90">Counsellor</span>
           </div>
           <Headphones className="w-12 h-12 opacity-20" />
         </div>
@@ -98,12 +98,12 @@ const ConsultantsPerformanceSummaryWrapper = async ({
           <div className="p-2 bg-white/20 rounded-lg">
             <Headphones className="w-5 h-5 text-white" />
           </div>
-          <h3 className="font-medium text-lg">Active Consultants</h3>
+          <h3 className="font-medium text-lg">Active Counsellors</h3>
         </div>
         <div className="flex items-end justify-between mt-4">
           <div className="flex items-baseline gap-2">
             <span className="text-5xl font-bold">{summaryData.active_consultants}</span>
-            <span className="text-2xl font-medium opacity-90">Consultant</span>
+            <span className="text-2xl font-medium opacity-90">Counsellor</span>
           </div>
           <Headphones className="w-12 h-12 opacity-20" />
         </div>
