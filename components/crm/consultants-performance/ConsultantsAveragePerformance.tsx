@@ -47,7 +47,7 @@ interface ConsultantsAveragePerformanceProps {
   period?: string;
 }
 
-export function ConsultantsAveragePerformance({ average_performance, period = "this_week" }: ConsultantsAveragePerformanceProps) {
+export function ConsultantsAveragePerformance({ average_performance, period = "today" }: ConsultantsAveragePerformanceProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
