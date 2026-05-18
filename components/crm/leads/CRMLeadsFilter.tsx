@@ -197,34 +197,11 @@ export default function CRMLeadsFilter({
                 <div className="relative col-span-2 md:col-span-3">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
-                        placeholder="Search by name, email, phone, referrer, course, user..."
+                        placeholder="Search by name, email, phone, referrer..."
                         className="pl-10"
                         {...register("search")}
                     />
                 </div>
-
-                {/* Sort Order */}
-                <Controller
-                    name="sort_order"
-                    control={control}
-                    render={({ field }) => (
-                        <Select
-                            value={field.value}
-                            onValueChange={(value) => {
-                                field.onChange(value);
-                                handleSelectChange("sort_order")(value);
-                            }}
-                        >
-                            <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Sort Order" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="asc">ASC</SelectItem>
-                                <SelectItem value="desc">DESC</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    )}
-                />
 
                 {/* Status */}
                 <Controller
@@ -331,7 +308,7 @@ export default function CRMLeadsFilter({
                             }}
                         >
                             <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Source" />
+                                <SelectValue placeholder="Lead Source" />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="1">Manual</SelectItem>
@@ -402,29 +379,7 @@ export default function CRMLeadsFilter({
                         </Select>
                     )}
                 />
-                {/* Per Page */}
-                <Controller
-                    name="per_page"
-                    control={control}
-                    render={({ field }) => (
-                        <Select
-                            value={field.value || "15"}
-                            onValueChange={(value) => {
-                                field.onChange(value);
-                                handleSelectChange("per_page")(value);
-                            }}
-                        >
-                            <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Per Page" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="15">15 Per Page</SelectItem>
-                                <SelectItem value="50">50 Per Page</SelectItem>
-                                <SelectItem value="100">100 Per Page</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    )}
-                />
+               
                 {/* Assignment Status */}
                 <div className="space-y-1">
                     <Controller
@@ -484,6 +439,29 @@ export default function CRMLeadsFilter({
                         )}
                     />
                 </div>
+                  {/* Sort Order */}
+                <Controller
+                    name="sort_order"
+                    control={control}
+                    render={({ field }) => (
+                        <Select
+                            value={field.value}
+                            onValueChange={(value) => {
+                                field.onChange(value);
+                                handleSelectChange("sort_order")(value);
+                            }}
+                        >
+                            <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Sort Order" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="asc">ASC</SelectItem>
+                                <SelectItem value="desc">DESC</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    )}
+                />
+                    {/* Date Range Picker */}
                 <div className="space-y-1">
                     <Field className="w-full">
                         <Popover>
@@ -550,6 +528,29 @@ export default function CRMLeadsFilter({
                         </Popover>
                     </Field>
                 </div>
+                 {/* Per Page */}
+                <Controller
+                    name="per_page"
+                    control={control}
+                    render={({ field }) => (
+                        <Select
+                            value={field.value || "15"}
+                            onValueChange={(value) => {
+                                field.onChange(value);
+                                handleSelectChange("per_page")(value);
+                            }}
+                        >
+                            <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Per Page" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="15">15 Per Page</SelectItem>
+                                <SelectItem value="50">50 Per Page</SelectItem>
+                                <SelectItem value="100">100 Per Page</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    )}
+                />
             </div>
 
         </div>
