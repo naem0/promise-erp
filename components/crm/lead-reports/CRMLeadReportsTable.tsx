@@ -35,7 +35,6 @@ export default function CRMLeadReportsTable({
                         <TableHead className="font-semibold min-w-[150px]">Counsellor</TableHead>
                         <TableHead className="font-semibold min-w-[200px]">Course</TableHead>
                         <TableHead className="font-semibold">Branch</TableHead>
-                        <TableHead className="font-semibold">Date</TableHead>
                         <TableHead className="font-semibold text-center">Assigned</TableHead>
                         <TableHead className="font-semibold text-center">Contacted</TableHead>
                         <TableHead className="font-semibold text-center">Enrolled</TableHead>
@@ -58,12 +57,37 @@ export default function CRMLeadReportsTable({
                                 {truncate(item.course_name, 30)}
                             </TableCell>
                             <TableCell>
-                                <Badge variant="secondary" className="bg-blue-50 text-blue-700 border-blue-100 font-normal">
-                                    {item.branch_name}
-                                </Badge>
-                            </TableCell>
-                            <TableCell className="text-slate-600 whitespace-nowrap">
-                                {item.date}
+                                <div className="flex flex-wrap gap-1 items-center">
+                                    {(() => {
+                                        const branches = item.branch_name
+                                            ? item.branch_name.split(",").map((b) => b.trim()).filter(Boolean)
+                                            : [];
+                                        const visible = branches.slice(0, 2);
+                                        const overflow = branches.length - 2;
+                                        return (
+                                            <>
+                                                {visible.map((branch, i) => (
+                                                    <Badge
+                                                        key={i}
+                                                        variant="secondary"
+                                                        className="bg-blue-50 text-blue-700 border-blue-100 font-normal"
+                                                    >
+                                                        {branch}
+                                                    </Badge>
+                                                ))}
+                                                {overflow > 0 && (
+                                                    <Badge
+                                                        variant="secondary"
+                                                        className="bg-slate-100 text-slate-600 border-slate-200 font-normal"
+                                                        title={branches.slice(2).join(", ")}
+                                                    >
+                                                        +{overflow}
+                                                    </Badge>
+                                                )}
+                                            </>
+                                        );
+                                    })()}
+                                </div>
                             </TableCell>
                             <TableCell className="text-center font-semibold text-slate-900">
                                 {item.total_assigned}
@@ -95,7 +119,7 @@ export default function CRMLeadReportsTable({
                 {summary && (
                     <TableFooter className="bg-slate-100 font-bold border-t-2 border-slate-200">
                         <TableRow>
-                            <TableCell colSpan={5} className="text-right pr-4 text-slate-900 uppercase tracking-wider">Total</TableCell>
+                            <TableCell colSpan={4} className="text-right pr-4 text-slate-900 uppercase tracking-wider">Total</TableCell>
                             <TableCell className="text-center text-slate-900">{summary.total_assigned}</TableCell>
                             <TableCell className="text-center text-blue-700">{summary.total_contacted}</TableCell>
                             <TableCell className="text-center text-green-700">{summary.total_enrolled}</TableCell>
