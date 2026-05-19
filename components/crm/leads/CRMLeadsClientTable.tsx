@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, useCallback } from "react";
+import { useState, useTransition } from "react";
 import {
     Table,
     TableBody,
@@ -45,11 +45,56 @@ import PermissionGuard from "@/components/auth/PermissionGuard";
 import Image from "next/image";
 
 
+/* ── Helper Functions for Badge Colors ── */
+function getCourseTypeColor(typeId: number) {
+    switch (typeId) {
+        case 1: return "border-emerald-500 text-emerald-600 bg-emerald-50";
+        case 2: return "border-blue-500 text-blue-600 bg-blue-50";
+        default: return "";
+    }
+}
+
+function getShiftColor(shiftId: number) {
+    switch (shiftId) {
+        case 1: return "border-amber-500 text-amber-600 bg-amber-50";
+        case 2: return "border-orange-500 text-orange-600 bg-orange-50";
+        case 3: return "border-purple-500 text-purple-600 bg-purple-50";
+        default: return "";
+    }
+}
+
+function getSourceColor(sourceId: number | undefined) {
+    switch (sourceId) {
+        case 1: return "border-slate-500 text-slate-600 bg-slate-50";
+        case 2: return "border-indigo-600 text-indigo-700 bg-indigo-50";
+        case 3: return "border-cyan-500 text-cyan-600 bg-cyan-50";
+        case 4: return "border-fuchsia-500 text-fuchsia-600 bg-fuchsia-50";
+        case 5: return "border-green-500 text-green-600 bg-green-50";
+        case 6: return "border-teal-500 text-teal-600 bg-teal-50";
+        case 7: return "border-sky-500 text-sky-600 bg-sky-50";
+        case 8: return "border-gray-500 text-gray-600 bg-gray-50";
+        default: return "";
+    }
+}
+
+function getStatusColor(statusId: number) {
+    switch (statusId) {
+        case 1: return "border-blue-500 text-blue-600 bg-blue-50";
+        case 2: return "border-yellow-500 text-yellow-600 bg-yellow-50";
+        case 3: return "border-emerald-500 text-emerald-600 bg-emerald-50";
+        case 4: return "border-indigo-500 text-indigo-600 bg-indigo-50";
+        case 5: return "border-violet-500 text-violet-600 bg-violet-50";
+        case 6: return "border-rose-500 text-rose-600 bg-rose-50";
+        default: return "";
+    }
+}
+
 interface CRMLeadsClientTableProps {
     leads: CRMLead[];
     page: number;
     perPage: number;
     consultants: Consultant[];
+    branches: { id: number; name: string }[];
     totalLeads: number;
 }
 
@@ -58,39 +103,45 @@ export default function CRMLeadsClientTable({
     page,
     perPage,
     consultants,
+    branches,
     totalLeads,
 }: CRMLeadsClientTableProps) {
     const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
     const [assignModalOpen, setAssignModalOpen] = useState(false);
+    const [selectedBranchId, setSelectedBranchId] = useState<string>("");
     const [selectedUserId, setSelectedUserId] = useState<string>("");
     const [isPending, startTransition] = useTransition();
 
+    // /* ── Filter Helpers ── */
+    const filteredConsultants = !selectedBranchId
+        ? []
+        : consultants.filter(c => c.branches?.some(b => String(b.id) === selectedBranchId));
     /* ── Selection helpers ── */
     const allSelected =
         leads.length > 0 && leads.every((l) => selectedIds.has(l.id));
     const someSelected = selectedIds.size > 0;
 
-    const toggleAll = useCallback(() => {
+    const toggleAll = () => {
         if (allSelected) {
             setSelectedIds(new Set());
         } else {
-            setSelectedIds(new Set(leads.map((l) => l.id)));
+            setSelectedIds(new Set(leads?.map((l) => l.id)));
         }
-    }, [allSelected, leads]);
+    };
 
-    const toggleOne = useCallback((id: number) => {
+    const toggleOne = (id: number) => {
         setSelectedIds((prev) => {
             const next = new Set(prev);
             if (next.has(id)) next.delete(id);
             else next.add(id);
             return next;
         });
-    }, []);
+    };
 
     /* ── Assign submit ── */
     const handleAssign = () => {
         if (!selectedUserId) {
-            toast.error("Please select a consultant to assign leads to.");
+            toast.error("Please select a counsellor to assign leads to.");
             return;
         }
         if (selectedIds.size === 0) {
@@ -111,6 +162,7 @@ export default function CRMLeadsClientTable({
                     );
                     setSelectedIds(new Set());
                     setSelectedUserId("");
+                    setSelectedBranchId("");
                     setAssignModalOpen(false);
                 } else {
                     toast.error(res.message || "Failed to assign leads.");
@@ -196,7 +248,7 @@ export default function CRMLeadsClientTable({
                     </TableHeader>
 
                     <TableBody>
-                        {leads.map((lead: CRMLead, index: number) => (
+                        {leads?.map((lead: CRMLead, index: number) => (
                             <TableRow
                                 key={lead?.id}
                                 data-selected={selectedIds.has(lead.id)}
@@ -231,20 +283,20 @@ export default function CRMLeadsClientTable({
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="center">
                                             <PermissionGuard requiredPermission="edit-leads">
-                                            <DropdownMenuItem asChild>
-                                                <Link
-                                                    href={`/crm/leads/${lead?.id}/edit`}
-                                                    className="flex items-center cursor-pointer"
-                                                >
-                                                    <Pencil className="mr-2 h-4 w-4" />
-                                                    Edit
-                                                </Link>
-                                            </DropdownMenuItem>
+                                                <DropdownMenuItem asChild>
+                                                    <Link
+                                                        href={`/crm/leads/${lead?.id}/edit`}
+                                                        className="flex items-center cursor-pointer"
+                                                    >
+                                                        <Pencil className="mr-2 h-4 w-4" />
+                                                        Edit
+                                                    </Link>
+                                                </DropdownMenuItem>
                                             </PermissionGuard>
                                             <PermissionGuard requiredPermission="delete-leads">
-                                            <DropdownMenuItem asChild>
-                                                <DeleteCRMLeadButton id={lead?.id} />
-                                            </DropdownMenuItem>
+                                                <DropdownMenuItem asChild>
+                                                    <DeleteCRMLeadButton id={lead?.id} />
+                                                </DropdownMenuItem>
                                             </PermissionGuard>
                                         </DropdownMenuContent>
                                     </DropdownMenu>
@@ -302,12 +354,7 @@ export default function CRMLeadsClientTable({
                                         {/* Course Type */}
                                         <Badge
                                             variant="outline"
-                                            className={
-                                                lead.course_type === 1
-                                                    ? "border-emerald-500 text-emerald-600 bg-emerald-50"
-                                                    : lead.course_type === 2
-                                                        ? "border-blue-500 text-blue-600 bg-blue-50" : ""
-                                            }
+                                            className={getCourseTypeColor(lead.course_type)}
                                         >
                                             {lead?.course_type_text || "—"}
                                         </Badge>
@@ -315,15 +362,7 @@ export default function CRMLeadsClientTable({
                                         {/* Shift */}
                                         <Badge
                                             variant="outline"
-                                            className={
-                                                lead.shift === 1
-                                                    ? "border-amber-500 text-amber-600 bg-amber-50"
-                                                    : lead.shift === 2
-                                                        ? "border-orange-500 text-orange-600 bg-orange-50"
-                                                        : lead.shift === 3
-                                                            ? "border-purple-500 text-purple-600 bg-purple-50"
-                                                            : ""
-                                            }
+                                            className={getShiftColor(lead.shift)}
                                         >
                                             {lead?.shift_text || "—"}
                                         </Badge>
@@ -335,25 +374,7 @@ export default function CRMLeadsClientTable({
                                 <TableCell className="text-center text-xs">
                                     <Badge
                                         variant="outline"
-                                        className={
-                                            lead.source?.id === 1
-                                                ? "border-slate-500 text-slate-600 bg-slate-50"
-                                                : lead.source?.id === 2
-                                                    ? "border-indigo-600 text-indigo-700 bg-indigo-50"
-                                                    : lead.source?.id === 3
-                                                        ? "border-cyan-500 text-cyan-600 bg-cyan-50"
-                                                        : lead.source?.id === 4
-                                                            ? "border-fuchsia-500 text-fuchsia-600 bg-fuchsia-50"
-                                                            : lead.source?.id === 5
-                                                                ? "border-green-500 text-green-600 bg-green-50"
-                                                                : lead.source?.id === 6
-                                                                    ? "border-teal-500 text-teal-600 bg-teal-50"
-                                                                    : lead.source?.id === 7
-                                                                        ? "border-sky-500 text-sky-600 bg-sky-50"
-                                                                        : lead.source?.id === 8
-                                                                            ? "border-gray-500 text-gray-600 bg-gray-50"
-                                                                            : ""
-                                        }
+                                        className={getSourceColor(lead.source?.id)}
                                     >
                                         {lead?.source_text || "—"}
                                     </Badge>
@@ -384,21 +405,7 @@ export default function CRMLeadsClientTable({
                                 <TableCell className="text-center text-xs">
                                     <Badge
                                         variant="outline"
-                                        className={
-                                            lead.status === 1
-                                                ? "border-blue-500 text-blue-600 bg-blue-50"
-                                                : lead.status === 2
-                                                    ? "border-yellow-500 text-yellow-600 bg-yellow-50"
-                                                    : lead.status === 3
-                                                        ? "border-emerald-500 text-emerald-600 bg-emerald-50"
-                                                        : lead.status === 4
-                                                            ? "border-indigo-500 text-indigo-600 bg-indigo-50"
-                                                            : lead.status === 5
-                                                                ? "border-violet-500 text-violet-600 bg-violet-50"
-                                                                : lead.status === 6
-                                                                    ? "border-rose-500 text-rose-600 bg-rose-50"
-                                                                    : ""
-                                        }
+                                        className={getStatusColor(lead.status)}
                                     >
                                         {lead?.status_text || "—"}
                                     </Badge>
@@ -417,7 +424,16 @@ export default function CRMLeadsClientTable({
             </div>
 
             {/* ── Assign Modal ── */}
-            <Dialog open={assignModalOpen} onOpenChange={setAssignModalOpen}>
+            <Dialog
+                open={assignModalOpen}
+                onOpenChange={(open) => {
+                    setAssignModalOpen(open);
+                    if (!open) {
+                        setSelectedUserId("");
+                        setSelectedBranchId("");
+                    }
+                }}
+            >
                 <DialogContent className="w-full max-w-3xl">
                     <DialogHeader>
                         <DialogTitle className="flex items-center gap-2">
@@ -432,39 +448,79 @@ export default function CRMLeadsClientTable({
                     </DialogHeader>
 
                     <div className="py-2">
+                        {branches.length > 0 && (
+                            <div className="mb-4">
+                                <label className="block text-sm font-medium text-foreground mb-2">
+                                    Select Branch
+                                </label>
+                                <Select
+                                    value={selectedBranchId}
+                                    onValueChange={(val) => {
+                                        setSelectedBranchId(val);
+                                        setSelectedUserId("");
+                                    }}
+                                >
+                                    <SelectTrigger className="w-full">
+                                        <SelectValue placeholder="Select a Branch" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {
+                                            branches.length > 0 ? (
+                                                branches?.map(branch => (
+                                                    <SelectItem key={branch.id} value={String(branch.id)}>
+                                                        {branch.name}
+                                                    </SelectItem>
+                                                ))) : (
+                                                <SelectItem value="no-branches" disabled>
+                                                    No branches available
+                                                </SelectItem>
+                                            )
+                                        }
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        )}
+
                         <label className="block text-sm font-medium text-foreground mb-2">
                             Select Counsellor
                         </label>
                         <Select
                             value={selectedUserId}
                             onValueChange={setSelectedUserId}
+                            disabled={!selectedBranchId}
                         >
                             <SelectTrigger className="w-full py-6">
                                 <SelectValue className="h-10" placeholder="Choose a Counsellor..." />
                             </SelectTrigger>
                             <SelectContent className="w-full overflow-y-auto py-10">
-                                {consultants.map((consultant) => (
-                                    <SelectItem className="py-2" key={consultant.id} value={String(consultant.id)}>
-                                        <div className="flex justify-start gap-2">
-                                            <div>
-                                                <Image
-                                                    width={40}
-                                                    height={40}
-                                                    className="rounded-full"
-                                                    src={consultant?.profile_image || "/default-profile.png"}
-                                                    alt={consultant?.name}
-                                                />
-                                            </div>
-                                            <div className="">
-                                                <p className="font-medium text-start">{consultant.name}</p>
-                                                <span className="text-xs text-start text-muted-foreground">
-                                                    {consultant.designation_name}
-                                                </span>
-                                            </div>
+                                {filteredConsultants?.length > 0 ? (
+                                    filteredConsultants?.map((consultant) => (
+                                        <SelectItem className="py-2" key={consultant.id} value={String(consultant.id)}>
+                                            <div className="flex justify-start gap-2">
+                                                <div>
+                                                    <Image
+                                                        width={40}
+                                                        height={40}
+                                                        className="rounded-full"
+                                                        src={consultant?.profile_image || "/default-profile.png"}
+                                                        alt={consultant?.name}
+                                                    />
+                                                </div>
+                                                <div className="">
+                                                    <p className="font-medium text-start">{consultant.name}</p>
+                                                    <span className="text-xs text-start text-muted-foreground">
+                                                        {consultant.designation_name}
+                                                    </span>
+                                                </div>
 
-                                        </div>
-                                    </SelectItem>
-                                ))}
+                                            </div>
+                                        </SelectItem>
+                                    ))
+                                ) : (
+                                    <div className="p-4 text-center text-sm text-muted-foreground">
+                                        No counsellors found for this branch.
+                                    </div>
+                                )}
                             </SelectContent>
                         </Select>
                     </div>
@@ -472,7 +528,11 @@ export default function CRMLeadsClientTable({
                     <DialogFooter className="gap-2">
                         <Button
                             variant="outline"
-                            onClick={() => setAssignModalOpen(false)}
+                            onClick={() => {
+                                setAssignModalOpen(false);
+                                setSelectedUserId("");
+                                setSelectedBranchId("");
+                            }}
                             disabled={isPending}
                             className="cursor-pointer"
                         >

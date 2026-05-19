@@ -19,6 +19,7 @@ import {
   User2Icon,
   UserCheck,
   Users,
+  Warehouse,
 } from "lucide-react";
 
 export const sidebarData = {
@@ -470,6 +471,33 @@ export const sidebarData = {
               title: "All Notifications",
               url: "/crm/notifications",
               permissions: ["view-consultant-notifications","mark-consultant-notification-read","mark-all-consultant-notifications-read"],
+            },
+          ],
+        },
+      ],
+    },
+     {
+      label: "INVENTORY",
+      items: [
+        {
+          title: "Inventory Management",
+          url: "#",
+          icon: Warehouse,
+          items: [
+            {
+              title: "Inventory Categories",
+              url: "/inventory/inventory-categories",
+              permissions: ["view-product-categories"],
+            },
+            {
+              title: "Brands",
+              url: "/inventory/inventory-brands",
+              permissions: ["view-brands"],
+            },
+            {
+              title: "Units",
+              url: "/inventory/inventory-units",
+              permissions: ["view-units"],
             },
           ],
         },

@@ -1,7 +1,7 @@
 {
   "routes": [
     { "path": "/dashboard", "permissions": ["view-dashboard"] },
-    { "path": "/crm/notifications", "permissions": ["view-consultant-notifications","mark-consultant-notification-read","mark-all-consultant-notifications-read"] },
+    
     { "path": "/lms/courses", "permissions": ["view-courses"] },
     { "path": "/lms/courses/add", "permissions": ["create-courses"] },
     { "path": "/lms/courses/edit", "permissions": ["edit-courses"], "isDynamic": true },
@@ -147,6 +147,21 @@
 
     {"path": "/crm/consultants-performance", "permissions": ["view-users-performance"], "isDynamic": true },
     { "path": "/crm/lead-reports", "permissions": ["crm-lead-reports"] },
+    { "path": "/crm/notifications", "permissions": ["view-consultant-notifications","mark-consultant-notification-read","mark-all-consultant-notifications-read"] },
+
+
+    { "path": "/inventory/inventory-categories", "permissions": ["view-product-categories"] },
+    { "path": "/inventory/inventory-categories/add", "permissions": ["create-product-categories"] },
+    { "path": "/inventory/inventory-categories/edit", "permissions": ["edit-product-categories"], 
+    "isDynamic": true },
+
+     { "path": "/inventory/inventory-brands", "permissions": ["view-brands"] },
+     { "path": "/inventory/inventory-brands/add", "permissions": ["create-brands"] },
+     { "path": "/inventory/inventory-brands/edit", "permissions": ["edit-brands"], "isDynamic": true },
+
+      { "path": "/inventory/inventory-units", "permissions": ["view-units"] },
+      { "path": "/inventory/inventory-units/add", "permissions": ["create-units"] },
+      { "path": "/inventory/inventory-units/edit", "permissions": ["edit-units"], "isDynamic": true },
 
     { "path": "/settings/profile", "permissions": ["view-my-profile"] }
 

@@ -11,6 +11,7 @@ const protectedRoutes = [
   '/hr',
   '/lms',
   '/crm',
+  '/inventory',
   '/profile',
   '/settings',
   '/divisions',
