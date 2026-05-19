@@ -99,7 +99,7 @@ const CourseCard = ({
               {course?.batch?.after_discount || course?.batch?.price || "Free"}
             </span>
           </div>
-          <Button className="cursor-pointer">Get Consultation</Button>
+          <Button className="cursor-pointer"> Course Details </Button>
         </CardFooter>
       </Card>
     </Link>
