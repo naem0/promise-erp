@@ -44,7 +44,7 @@ const TeacherListSection = ({ teacherData }: TeacherListSectionProps) => {
               key={instructor?.id}
               className="basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4 h-full"
             >
-              <div className="flex flex-col items-center group">
+              <div className="flex flex-col items-center group relative h-full">
                 {/* Image Wrapper */}
 
                 <div className=" z-20 relative h-44 w-[70%] bg-white rounded-2xl overflow-hidden shadow-xl transition-transform duration-500 group-hover:scale-102">
@@ -79,7 +79,7 @@ const TeacherListSection = ({ teacherData }: TeacherListSectionProps) => {
                     </div>
                     {instructor?.experience && (
                       <p className="text-black/75 text-base">
-                        Experience: {instructor?.experience}
+                         {instructor?.experience} Years of Experience
                       </p>
                     )}
                   </CardContent>
