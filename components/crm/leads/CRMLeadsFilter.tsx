@@ -24,6 +24,8 @@ import { Branch } from "@/apiServices/branchService";
 import { CRMCategory } from "@/apiServices/crmCategoryService";
 import { Consultant } from "@/apiServices/crmLeadsActions";
 import { Course } from "@/apiServices/courseService";
+import PermissionGuard from "@/components/auth/PermissionGuard";
+import CourseSearchSelect from "@/components/common/CourseSearchSelect";
 
 interface FilterFormValues {
     search?: string;
@@ -351,37 +353,39 @@ export default function CRMLeadsFilter({
                 />
 
                 {/* User ID (Consultant) */}
-                <Controller
-                    name="user_id"
-                    control={control}
-                    render={({ field }) => (
-                        <Select
-                            value={field.value || ""}
-                            onValueChange={(value) => {
-                                field.onChange(value);
-                                handleSelectChange("user_id")(value);
-                            }}
-                        >
-                            <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Select Counsellor" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {consultants?.length ? (
-                                    consultants.map((consultant) => (
-                                        <SelectItem key={consultant.id} value={String(consultant.id)}>
-                                            {consultant.name}
+                <PermissionGuard requiredPermission="view-leads">
+                    <Controller
+                        name="user_id"
+                        control={control}
+                        render={({ field }) => (
+                            <Select
+                                value={field.value || ""}
+                                onValueChange={(value) => {
+                                    field.onChange(value);
+                                    handleSelectChange("user_id")(value);
+                                }}
+                            >
+                                <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="Select Counsellor" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {consultants?.length ? (
+                                        consultants.map((consultant) => (
+                                            <SelectItem key={consultant.id} value={String(consultant.id)}>
+                                                {consultant.name}
+                                            </SelectItem>
+                                        ))
+                                    ) : (
+                                        <SelectItem value="" disabled>
+                                            No consultant found
                                         </SelectItem>
-                                    ))
-                                ) : (
-                                    <SelectItem value="" disabled>
-                                        No consultant found
-                                    </SelectItem>
-                                )}
-                            </SelectContent>
-                        </Select>
-                    )}
-                />
-               
+                                    )}
+                                </SelectContent>
+                            </Select>
+                        )}
+                    />
+                </PermissionGuard>
+
                 {/* Assignment Status */}
                 <div className="space-y-1">
                     <Controller
@@ -413,35 +417,18 @@ export default function CRMLeadsFilter({
                         name="course_id"
                         control={control}
                         render={({ field }) => (
-                            <Select
-                                value={field.value}
-                                onValueChange={field.onChange}
-                            >
-                                <SelectTrigger className="w-full">
-                                    <SelectValue placeholder="Course" />
-                                </SelectTrigger>
-
-                                <SelectContent>
-                                    {courses?.length ? (
-                                        courses.map((course) => (
-                                            <SelectItem
-                                                key={course.id}
-                                                value={String(course.id)}
-                                            >
-                                                {course.title}
-                                            </SelectItem>
-                                        ))
-                                    ) : (
-                                        <SelectItem value="no-course" disabled>
-                                            No course found
-                                        </SelectItem>
-                                    )}
-                                </SelectContent>
-                            </Select>
+                            <CourseSearchSelect
+                                value={field.value || null}
+                                onValueChange={(val) => {
+                                    field.onChange(val || "");
+                                    handleSelectChange("course_id")(val || "");
+                                }}
+                                placeholder="Select course ..."
+                            />
                         )}
                     />
                 </div>
-                  {/* Sort Order */}
+                {/* Sort Order */}
                 <Controller
                     name="sort_order"
                     control={control}
@@ -463,7 +450,7 @@ export default function CRMLeadsFilter({
                         </Select>
                     )}
                 />
-                    {/* Date Range Picker */}
+                {/* Date Range Picker */}
                 <div className="space-y-1">
                     <Field className="w-full">
                         <Popover>
@@ -530,7 +517,7 @@ export default function CRMLeadsFilter({
                         </Popover>
                     </Field>
                 </div>
-                 {/* Per Page */}
+                {/* Per Page */}
                 <Controller
                     name="per_page"
                     control={control}

@@ -468,6 +468,11 @@ export const sidebarData = {
               permissions: ["view-users-performance"],
             },
             {
+              title: "Lead Referrers",
+              url: "/crm/lead-referrers",
+              permissions: ["view-crm-referrers"],
+            },
+            {
               title: "All Notifications",
               url: "/crm/notifications",
               permissions: ["view-consultant-notifications","mark-consultant-notification-read","mark-all-consultant-notifications-read"],

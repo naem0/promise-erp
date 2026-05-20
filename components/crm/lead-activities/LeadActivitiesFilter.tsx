@@ -20,6 +20,7 @@ import { Field } from "@/components/ui/field";
 import { cn } from "@/lib/utils";
 import { Consultant } from "@/apiServices/crmLeadsActions";
 import CourseSearchSelect from "@/components/common/CourseSearchSelect";
+import PermissionGuard from "@/components/auth/PermissionGuard";
 
 interface FilterFormValues {
     search?: string;
@@ -191,6 +192,7 @@ export default function LeadsActivityFilter({ consultants }: { consultants?: Con
                 />
  
                 {/* Assigned Consultant */}
+                <PermissionGuard requiredPermission="view-lead-activity-list">
                 <Controller
                     name="user_id"
                     control={control}
@@ -215,6 +217,7 @@ export default function LeadsActivityFilter({ consultants }: { consultants?: Con
                         </Select>
                     )}
                 />
+                </PermissionGuard>
 
                 {/* Course */}
                 <Controller
