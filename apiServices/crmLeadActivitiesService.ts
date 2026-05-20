@@ -16,6 +16,7 @@ export interface LeadActivity {
   id: number;
   lead_id: number;
   lead_name?: string;
+  course_name?: string;
   next_follow_up_date?: string;
   last_follow_up_date?: string;
   call_count?: number;

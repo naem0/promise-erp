@@ -85,6 +85,9 @@ function getStatusColor(statusId: number) {
         case 4: return "border-indigo-500 text-indigo-600 bg-indigo-50";
         case 5: return "border-violet-500 text-violet-600 bg-violet-50";
         case 6: return "border-rose-500 text-rose-600 bg-rose-50";
+        case 7: return "border-slate-500 text-slate-600 bg-slate-50";
+        case 8: return "border-red-500 text-red-600 bg-red-50";
+        case 9: return "border-indigo-500 text-indigo-600 bg-indigo-50";
         default: return "";
     }
 }

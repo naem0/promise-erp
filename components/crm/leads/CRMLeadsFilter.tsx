@@ -225,6 +225,9 @@ export default function CRMLeadsFilter({
                                 <SelectItem value="4">Follow Up</SelectItem>
                                 <SelectItem value="5">Enrolled</SelectItem>
                                 <SelectItem value="6">Cancelled</SelectItem>
+                                <SelectItem value="7">Not Received</SelectItem>
+                                <SelectItem value="8">Call Rejected</SelectItem>
+                                <SelectItem value="9">Note</SelectItem>
                             </SelectContent>
                         </Select>
                     )}

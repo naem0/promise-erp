@@ -19,11 +19,13 @@ import { Calendar } from "@/components/ui/calendar";
 import { Field } from "@/components/ui/field";
 import { cn } from "@/lib/utils";
 import { Consultant } from "@/apiServices/crmLeadsActions";
- 
+import CourseSearchSelect from "@/components/common/CourseSearchSelect";
+
 interface FilterFormValues {
     search?: string;
     status?: string;
     user_id?: string;
+    course_id?: string;
     date_from?: string;
     date_to?: string;
 }
@@ -39,6 +41,7 @@ export default function LeadsActivityFilter({ consultants }: { consultants?: Con
                 search: searchParams.get("search") || "",
                 status: searchParams.get("status") || "",
                 user_id: searchParams.get("user_id") || "",
+                course_id: searchParams.get("course_id") || "",
                 date_from: searchParams.get("date_from") || "",
                 date_to: searchParams.get("date_to") || "",
             },
@@ -89,6 +92,7 @@ export default function LeadsActivityFilter({ consultants }: { consultants?: Con
             search: "",
             status: "",
             user_id: "",
+            course_id: "",
             date_from: "",
             date_to: "",
         });
@@ -99,6 +103,7 @@ export default function LeadsActivityFilter({ consultants }: { consultants?: Con
     const currentSearch = searchParams.get("search") || "";
     const currentStatus = searchParams.get("status") || "";
     const currentUserId = searchParams.get("user_id") || "";
+    const currentCourseId = searchParams.get("course_id") || "";
     const currentDateFrom = searchParams.get("date_from") || "";
     const currentDateTo = searchParams.get("date_to") || "";
  
@@ -106,6 +111,7 @@ export default function LeadsActivityFilter({ consultants }: { consultants?: Con
         currentSearch !== "" || 
         currentStatus !== "" || 
         currentUserId !== "" || 
+        currentCourseId !== "" ||
         currentDateFrom !== "" || 
         currentDateTo !== "";
 
@@ -173,6 +179,9 @@ export default function LeadsActivityFilter({ consultants }: { consultants?: Con
                                 <SelectItem value="4">Follow Up</SelectItem>
                                 <SelectItem value="5">Enrolled</SelectItem>
                                 <SelectItem value="6">Cancelled</SelectItem>
+                                <SelectItem value="7">Not Received</SelectItem>
+                                <SelectItem value="8">Call Rejected</SelectItem>
+                                <SelectItem value="9">Note</SelectItem>
                             </SelectContent>
                         </Select>
                     )}
@@ -201,6 +210,21 @@ export default function LeadsActivityFilter({ consultants }: { consultants?: Con
                                 ))}
                             </SelectContent>
                         </Select>
+                    )}
+                />
+
+                {/* Course */}
+                <Controller
+                    name="course_id"
+                    control={control}
+                    render={({ field }) => (
+                        <CourseSearchSelect
+                            value={field.value || null}
+                            onValueChange={(value) => {
+                                field.onChange(value || "");
+                                handleSelectChange("course_id")(value || "");
+                            }}
+                        />
                     )}
                 />
 

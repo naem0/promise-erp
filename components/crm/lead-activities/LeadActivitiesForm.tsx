@@ -66,6 +66,7 @@ const LeadActivityForm = ({ leadId }: LeadActivityFormProps) => {
       if (res.success) {
         toast.success(res.message || "Activity saved successfully");
         reset();
+        router.push("/crm/lead-activities");
         router.refresh();
       } else {
         if (res.errors) {
@@ -160,6 +161,9 @@ const LeadActivityForm = ({ leadId }: LeadActivityFormProps) => {
                   <SelectItem value="4">Follow Up</SelectItem>
                   <SelectItem value="5">Enrolled</SelectItem>
                   <SelectItem value="6">Cancelled</SelectItem>
+                  <SelectItem value="7">Not Received</SelectItem>
+                  <SelectItem value="8">Call Rejected</SelectItem>
+                  <SelectItem value="9">Note</SelectItem>
                 </SelectContent>
               </Select>
             )}
