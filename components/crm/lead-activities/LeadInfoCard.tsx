@@ -19,7 +19,7 @@ const LeadInfoCard = ({ lead }: LeadInfoCardProps) => {
             <div className="space-y-4">
                 <div>
                     <h2 className="text-3xl font-bold text-slate-900 leading-tight wrap-break whitespace-normal">
-                        {lead.name}
+                        {lead?.name}
                     </h2>
                 </div>
 
@@ -32,98 +32,98 @@ const LeadInfoCard = ({ lead }: LeadInfoCardProps) => {
 
                         <Table className="border-none shadow-none table-fixed w-full">
                             <TableBody>
-                                {lead.email && (
+                                {lead?.email && (
                                     <TableRow className="border-none hover:bg-transparent">
                                         <TableCell className="py-2 pl-1 pr-4 w-24 align-top">
                                             Email
                                         </TableCell>
 
                                         <TableCell className="py-2 px-0 font-medium wrap-break whitespace-normal">
-                                            {lead.email}
+                                            {lead?.email}
                                         </TableCell>
                                     </TableRow>
                                 )}
 
-                                {lead.phone && (
+                                {lead?.phone && (
                                     <TableRow className="border-none hover:bg-transparent">
                                         <TableCell className="py-2 pl-1 pr-4 align-top">
                                             Phone
                                         </TableCell>
 
                                         <TableCell className="py-2 px-0 font-medium wrap-break whitespace-normal">
-                                            {lead.phone}
+                                            {lead?.phone}
                                         </TableCell>
                                     </TableRow>
                                 )}
 
-                                {lead.whatsapp && (
+                                {lead?.whatsapp && (
                                     <TableRow className="border-none hover:bg-transparent">
                                         <TableCell className="py-2 pl-1 pr-4 align-top">
                                             WhatsApp
                                         </TableCell>
 
                                         <TableCell className="py-2 px-0 font-medium wrap-break whitespace-normal">
-                                            {lead.whatsapp}
+                                            {lead?.whatsapp}
                                         </TableCell>
                                     </TableRow>
                                 )}
 
-                                {lead.address && (
+                                {lead?.address && (
                                     <TableRow className="border-none hover:bg-transparent">
                                         <TableCell className="py-2 pl-1 pr-4 align-top">
                                             Address
                                         </TableCell>
 
                                         <TableCell className="py-2 px-0 font-medium wrap-break whitespace-normal">
-                                            {lead.address}
+                                            {lead?.address}
                                         </TableCell>
                                     </TableRow>
                                 )}
 
-                                {lead.branch_name && (
+                                {lead?.branch_name && (
                                     <TableRow className="border-none hover:bg-transparent">
                                         <TableCell className="py-2 pl-1 pr-4 align-top">
                                             Branch
                                         </TableCell>
 
                                         <TableCell className="py-2 px-0 font-medium wrap-break whitespace-normal">
-                                            {lead.branch_name}
+                                            {lead?.branch_name}
                                         </TableCell>
                                     </TableRow>
                                 )}
 
-                                {lead.profession && (
+                                {lead?.profession && (
                                     <TableRow className="border-none hover:bg-transparent">
                                         <TableCell className="py-2 pl-1 pr-4 align-top">
                                             Profession
                                         </TableCell>
 
                                         <TableCell className="py-2 px-0 font-medium wrap-break whitespace-normal">
-                                            {lead.profession}
+                                            {lead?.profession}
                                         </TableCell>
                                     </TableRow>
                                 )}
 
-                                {lead.institute && (
+                                {lead?.institute && (
                                     <TableRow className="border-none hover:bg-transparent">
                                         <TableCell className="py-2 pl-1 pr-4 align-top">
                                             Institute
                                         </TableCell>
 
                                         <TableCell className="py-2 px-0 font-medium wrap-break whitespace-normal">
-                                            {lead.institute}
+                                            {lead?.institute}
                                         </TableCell>
                                     </TableRow>
                                 )}
 
-                                {lead.age !== undefined && lead.age !== null && (
+                                {lead?.age !== undefined && lead?.age !== null && (
                                     <TableRow className="border-none hover:bg-transparent">
                                         <TableCell className="py-2 pl-1 pr-4 align-top">
                                             Age
                                         </TableCell>
 
                                         <TableCell className="py-2 px-0 font-medium wrap-break whitespace-normal">
-                                            {lead.age}
+                                            {lead?.age}
                                         </TableCell>
                                     </TableRow>
                                 )}
@@ -139,50 +139,50 @@ const LeadInfoCard = ({ lead }: LeadInfoCardProps) => {
 
                         <Table className="border-none shadow-none table-fixed w-full">
                             <TableBody>
-                                {lead.interested_course && (
+                                {lead?.interested_course && (
                                     <TableRow className="border-none hover:bg-transparent">
                                         <TableCell className="py-2 pl-1 pr-4 w-24 align-top">
                                             Course
                                         </TableCell>
 
                                         <TableCell className="py-2 px-0 font-medium wrap-break whitespace-normal leading-snug">
-                                            {lead.interested_course}
+                                            {lead?.interested_course}
                                         </TableCell>
                                     </TableRow>
                                 )}
 
-                                {lead.course_type_name && (
+                                {lead?.course_type_name && (
                                     <TableRow className="border-none hover:bg-transparent">
                                         <TableCell className="py-2 pl-1 pr-4 align-top">
                                             Type
                                         </TableCell>
 
                                         <TableCell className="py-2 px-0 font-medium wrap-break whitespace-normal">
-                                            {lead.course_type_name}
+                                            {lead?.course_type_name}
                                         </TableCell>
                                     </TableRow>
                                 )}
 
-                                {lead.shift_name && (
+                                {lead?.shift_name && (
                                     <TableRow className="border-none hover:bg-transparent">
                                         <TableCell className="py-2 pl-1 pr-4 align-top">
                                             Shift
                                         </TableCell>
 
                                         <TableCell className="py-2 px-0 font-medium wrap-break whitespace-normal">
-                                            {lead.shift_name}
+                                            {lead?.shift_name}
                                         </TableCell>
                                     </TableRow>
                                 )}
 
-                                {lead.status_name && (
+                                {lead?.status_name && (
                                     <TableRow className="border-none hover:bg-transparent">
                                         <TableCell className="py-2 pl-1 pr-4 align-top">
                                             Status
                                         </TableCell>
 
                                         <TableCell className="py-2 px-0 font-medium text-blue-600 wrap-break whitespace-normal">
-                                            {lead.status_name}
+                                            {lead?.status_name}
                                         </TableCell>
                                     </TableRow>
                                 )}
@@ -198,38 +198,38 @@ const LeadInfoCard = ({ lead }: LeadInfoCardProps) => {
 
                         <Table className="border-none shadow-none table-fixed w-full">
                             <TableBody>
-                                {lead.referrer_name && (
+                                {lead?.referrer_name && (
                                     <TableRow className="border-none hover:bg-transparent">
                                         <TableCell className="py-2 pl-1 pr-4 w-24 align-top">
                                             Name
                                         </TableCell>
 
                                         <TableCell className="py-2 px-0 font-medium wrap-break whitespace-normal">
-                                            {lead.referrer_name}
+                                            {lead?.referrer_name}
                                         </TableCell>
                                     </TableRow>
                                 )}
 
-                                {lead.referrer_phone && (
+                                {lead?.referrer_phone && (
                                     <TableRow className="border-none hover:bg-transparent">
                                         <TableCell className="py-2 pl-1 pr-4 align-top">
                                             Phone
                                         </TableCell>
 
                                         <TableCell className="py-2 px-0 font-medium wrap-break whitespace-normal">
-                                            {lead.referrer_phone}
+                                            {lead?.referrer_phone}
                                         </TableCell>
                                     </TableRow>
                                 )}
 
-                                {lead.source_name && (
+                                {lead?.source_name && (
                                     <TableRow className="border-none hover:bg-transparent">
                                         <TableCell className="py-2 pl-1 pr-4 align-top">
                                             Source
                                         </TableCell>
 
                                         <TableCell className="py-2 px-0 font-medium wrap-break whitespace-normal">
-                                            {lead.source_name}
+                                            {lead?.source_name}
                                         </TableCell>
                                     </TableRow>
                                 )}
