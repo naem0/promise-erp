@@ -28,6 +28,7 @@ interface FilterFormValues {
     course_id?: string;
     date_from?: string;
     date_to?: string;
+    per_page?: string;
 }
  
 export default function LeadsActivityFilter({ consultants }: { consultants?: Consultant[] }) {
@@ -44,6 +45,7 @@ export default function LeadsActivityFilter({ consultants }: { consultants?: Con
                 course_id: searchParams.get("course_id") || "",
                 date_from: searchParams.get("date_from") || "",
                 date_to: searchParams.get("date_to") || "",
+                per_page: searchParams.get("per_page") || "15",
             },
         });
  
@@ -95,6 +97,7 @@ export default function LeadsActivityFilter({ consultants }: { consultants?: Con
             course_id: "",
             date_from: "",
             date_to: "",
+            per_page: "15",
         });
         setLocalDate(undefined);
         router.replace(pathname, { scroll: false });
@@ -106,14 +109,15 @@ export default function LeadsActivityFilter({ consultants }: { consultants?: Con
     const currentCourseId = searchParams.get("course_id") || "";
     const currentDateFrom = searchParams.get("date_from") || "";
     const currentDateTo = searchParams.get("date_to") || "";
- 
+    const currentPerPage = searchParams.get("per_page") || "15";
     const hasActiveFilters = 
         currentSearch !== "" || 
         currentStatus !== "" || 
         currentUserId !== "" || 
         currentCourseId !== "" ||
         currentDateFrom !== "" || 
-        currentDateTo !== "";
+        currentDateTo !== "" ||
+        currentPerPage !== "15";
 
     const [localDate, setLocalDate] = useState<DateRange | undefined>({
         from: watchedValues.date_from ? new Date(watchedValues.date_from) : undefined,
@@ -181,7 +185,6 @@ export default function LeadsActivityFilter({ consultants }: { consultants?: Con
                                 <SelectItem value="6">Cancelled</SelectItem>
                                 <SelectItem value="7">Not Received</SelectItem>
                                 <SelectItem value="8">Call Rejected</SelectItem>
-                                <SelectItem value="9">Note</SelectItem>
                             </SelectContent>
                         </Select>
                     )}
@@ -227,6 +230,31 @@ export default function LeadsActivityFilter({ consultants }: { consultants?: Con
                         />
                     )}
                 />
+
+                {/* Per Page */}
+                <Controller
+                    name="per_page"
+                    control={control}
+                    render={({ field }) => (
+                        <Select
+                            value={field.value || "15"}
+                            onValueChange={(value) => {
+                                field.onChange(value);
+                                handleSelectChange("per_page")(value);
+                            }}
+                        >
+                            <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Per Page" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="15">15 Per Page</SelectItem>
+                                <SelectItem value="50">50 Per Page</SelectItem>
+                                <SelectItem value="100">100 Per Page</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    )}
+                />
+
 
                 {/* Date Range */}
                 <div className="space-y-1">

@@ -1,16 +1,12 @@
 import { CRMCategory, getCRMCategories } from "@/apiServices/crmCategoryService";
 import { ArrowDown, ArrowUp, Briefcase, Users } from "lucide-react";
 
-export default async function CRMLeadsSummaryWrapper({
-  searchParams,
-}: {
-  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
-}) {
+export default async function CRMLeadsSummaryWrapper() {
   let categories: CRMCategory[] = [];
   let results;
   
   try {
-     results = await getCRMCategories({ per_page: 15, page: 1 });
+     results = await getCRMCategories();
     if (results?.success) {
       categories = results?.data?.categories;
     }

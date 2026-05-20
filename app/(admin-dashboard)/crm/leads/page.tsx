@@ -38,7 +38,7 @@ export default function CRMLeadsPage({
             </div>
 
             <Suspense fallback={<div>Loading summary...</div>}>
-                <CRMLeadsSummaryWrapper searchParams={searchParams} />
+                <CRMLeadsSummaryWrapper/>
             </Suspense>
 
             <Suspense fallback={<div>Loading filters...</div>}>

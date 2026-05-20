@@ -147,13 +147,19 @@ export async function getCourseDetailBySlug(
   cacheTag("course-detail");
 
   try {
-  // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
-   const urlParams = new URLSearchParams();
+    const urlParams = new URLSearchParams();
 
     if (branchId) {
       urlParams.append("branch_id", String(branchId));
     }
-    const res = await fetch(`${API_BASE}/public/courses/${slug}?${urlParams.toString()}`, {
+
+    const query = urlParams.toString();
+
+    const url = query
+      ? `${API_BASE}/public/courses/${slug}?${query}`
+      : `${API_BASE}/public/courses/${slug}`;
+
+    const res = await fetch(url, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -164,8 +170,14 @@ export async function getCourseDetailBySlug(
       return null;
     }
 
+    if (res.status === 403) {
+      console.error("Forbidden: You don't have access to this course.");
+      return null;
+    }
+
     if (!res.ok) {
-      throw new Error(`Failed to fetch course details: ${res.statusText}`);
+      console.error("Failed to fetch course details:", res.statusText);
+      return null;
     }
 
     const data: ApiResponse = await res.json();
@@ -192,7 +204,7 @@ export interface CheckBatchEnrollmentResponse {
   };
 }
 export async function checkBatchEnrollment(
-  batchId: number
+  batchId: number,
 ): Promise<CheckBatchEnrollmentResponse> {
   try {
     const session = await getServerSession(authOptions);
@@ -205,7 +217,7 @@ export async function checkBatchEnrollment(
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-      }
+      },
     );
     const data: CheckBatchEnrollmentResponse = await res.json();
 
