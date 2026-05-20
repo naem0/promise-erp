@@ -38,16 +38,15 @@ const WhyChooseUs = async () => {
   return (
     <section className="py-8 md:py-12">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-        <Card className="p-4 bg-white shadow">
+        <div className="">
+          <h2 className="mb-6 font-bold text-2xl lg:text-4xl text-secondary ">Why Choose Us</h2>
+        <Card className="px-4 py-6 bg-white shadow-2xl rounded-xl">
           <div className="">
-            <strong className="text-xl lg:text-2xl text-secondary block mb-3">
-              Why Choose Us
-            </strong>
-            <h2 className="text-2xl lg:text-3xl font-bold text-black mb-4">
+            <h4 className="text-xl lg:text-2xl font-bold text-black mb-4">
               We Have Experience <br />
               And We Have A Team <br />
               Of Experts
-            </h2>
+            </h4>
             <p>
               E-Learning and Earning Ltd. has been the foremost information
               technology service provider since 2013. The training programs of
@@ -66,6 +65,7 @@ const WhyChooseUs = async () => {
             </div>
           </div>
         </Card>
+        </div>
         <div>
           <div className="space-y-4">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">

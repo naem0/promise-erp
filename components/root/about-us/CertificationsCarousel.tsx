@@ -36,18 +36,18 @@ const CertificationsSection = async () => {
   }
 
   return (
-    <div className="w-full px-4 py-10 space-y-10">
-      <div className="">
-        <h3 className="text-3xl font-semibold mb-4 text-secondary">
+    <div className="w-full px-4 py-10 lg:py-20">
+      <div className="text-center">
+        <h3 className="text-3xl mb-3 font-semibold text-secondary">
           Certified for Excellence
         </h3>
         <p className="text-black/60 leading-relaxed">
-          Building trust through globally verified standards and industry-{" "}
+          Building trust through globally verified standards and industry{" "}
           <br></br>leading certifications that define our commitment to quality.
         </p>
       </div>
 
-      <div className="space-y-12">
+      <div className="space-y-12 pt-10 lg:pt-20">
         <div className="grid grid-cols-1 items-center gap-6">
           
           {
@@ -66,13 +66,13 @@ const CertificationsSection = async () => {
                     isEven ? "lg:order-2" : "lg:order-1"
                   }`}
                 >
-                  <CardContent className="flex justify-start">
+                  <CardContent className="flex justify-start pt-0">
                     <div className="relative w-full h-[280px] md:h-[380px]">
                       <Image
                         src={cert.image || "/images/placeholder_img.jpg"}
                         alt={cert.title || "image"}
                         fill
-                        className="object-contain p-4"
+                        className="object-contain px-4"
                       />
                     </div>
                   </CardContent>

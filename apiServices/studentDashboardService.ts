@@ -1358,6 +1358,7 @@ export interface PublicCourse {
   category_id: number;
   title: string;
   slug: string;
+  total_enrolled: number;
   featured_image: string;
   ratings: number;
   total_live_class: number;

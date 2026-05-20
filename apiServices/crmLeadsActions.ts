@@ -28,12 +28,18 @@ export interface AssignLeadsResponse {
   errors?: Record<string, string[]>;
 }
 
+export interface Branch {
+  id: number;
+  name: string;
+}
+
 export interface Consultant {
   id: number;
   name: string;
   designation_name: string;
   department_name: string;
   profile_image?: string | null;
+  branches?: Branch[];
 }
 
 export interface ConsultantsResponse {

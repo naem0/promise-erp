@@ -21,7 +21,7 @@ const SectionTitle = ({
 
       {/* {subtitle && ( */}
         <p
-          className={`text-lg max-w-2xl mx-auto ${
+          className={`text-lg max-w-5xl mx-auto ${
             iswhite ? "text-white" : "text-black/75"
           }`}
         >

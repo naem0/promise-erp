@@ -37,7 +37,7 @@ const AboutBranch = async () => {
     <section className="py-8 md:py-12">
       <div className="pb-6">
         <h2 className="text-2xl lg:text-4xl text-secondary font-bold tracking-tight mb-4">
-          Our Few Branches
+          Our Branches
         </h2>
         <p>
           We{"’"}re proud to collaborate with leading government and private

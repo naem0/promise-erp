@@ -38,6 +38,18 @@ const LeadsActivityData = async ({
             typeof resolvedSearchParams.user_id === "string"
                 ? resolvedSearchParams.user_id
                 : undefined,
+        course_id:
+            typeof resolvedSearchParams.course_id === "string"
+                ? resolvedSearchParams.course_id
+                : undefined,
+        date_from:
+            typeof resolvedSearchParams.date_from === "string"
+                ? resolvedSearchParams.date_from
+                : undefined,
+        date_to:
+            typeof resolvedSearchParams.date_to === "string"
+                ? resolvedSearchParams.date_to
+                : undefined,
     };
  
     let results;
@@ -74,6 +86,12 @@ const LeadsActivityData = async ({
                 return "border-[#E64A6E]/20 text-[#E64A6E] bg-[#E64A6E]/10";
             case 6:
                 return "border-[#00B8E6]/20 text-[#00B8E6] bg-[#00B8E6]/10";
+            case 7:
+                return "border-[#64748B]/20 text-[#64748B] bg-[#64748B]/10";
+            case 8:
+                return "border-[#EF4444]/20 text-[#EF4444] bg-[#EF4444]/10";
+            case 9:
+                return "border-[#6366F1]/20 text-[#6366F1] bg-[#6366F1]/10";
             default:
                 return "";
         }
@@ -88,6 +106,7 @@ const LeadsActivityData = async ({
                             <TableHead className="text-center">Sl</TableHead>
                             <TableHead className="text-center">Action</TableHead>
                             <TableHead className="text-center">Lead Name</TableHead>
+                            <TableHead className="text-center">Course</TableHead>
                             <TableHead className="text-center">Last Follow Up</TableHead>
                             <TableHead className="text-center">Next Follow Up</TableHead>
                             <TableHead className="text-center">Calls</TableHead>
@@ -113,6 +132,9 @@ const LeadsActivityData = async ({
  
                                 <TableCell className="text-center font-medium">
                                     {activity?.lead_name}
+                                </TableCell>
+                                <TableCell className="text-center" title={activity?.course_name}>
+                                    {truncate(activity?.course_name || "—", 25)}
                                 </TableCell>
                                 <TableCell className="text-center">
                                     {activity?.last_follow_up_date || "—"}

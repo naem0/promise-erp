@@ -5,6 +5,7 @@ import { getCRMLeads } from "@/apiServices/crmLeadsService";
 import { Consultant, getConsultants } from "@/apiServices/crmLeadsActions";
 import Pagination from "@/components/common/Pagination";
 import CRMLeadsClientTable from "./CRMLeadsClientTable";
+import { getBranches } from "@/apiServices/branchService";
 
 const CRMLeadsData = async ({
     searchParams,
@@ -107,6 +108,19 @@ const CRMLeadsData = async ({
             return <ErrorComponent message="An unexpected error occurred." />;
         }
     }
+    
+    let branches: { id: number; name: string }[] = [];
+    try {
+        const branchesRes = await getBranches({ per_page: 500 });
+        branches = branchesRes?.data?.branches || [];
+    } catch (error: unknown) {
+        console.log(error);
+        if (error instanceof Error) {
+            return <ErrorComponent message={error.message} />;
+        } else {
+            return <ErrorComponent message="An unexpected error occurred." />;
+        }
+    }
 
     return (
         <>
@@ -115,6 +129,7 @@ const CRMLeadsData = async ({
                 page={page}
                 perPage={paginationData?.per_page || 15}
                 consultants={consultants}
+                branches={branches}
                 totalLeads={paginationData?.total || 0}
             />
             {paginationData && paginationData.last_page > 1 && (
