@@ -32,21 +32,21 @@ const CRMNotificationTabs = ({
                         data-[state=active]:bg-secondary
                         data-[state=active]:text-white
                         data-[state=active]:shadow-md
-                        data-[state=active]:shadow-indigo-200
+                        data-[state=active]:shadow-indigo-200 cursor-pointer
                     "
                 >
                     <LayoutList className="h-4 w-4" />
                     All Notifications
-                    <span
+                    {/* <span
                         className="
                             inline-flex items-center justify-center rounded-full px-2 py-0.5
-                            text-xs font-bold leading-none
+                            text-xs font-bold leading-none min-w-2
                             bg-slate-200 text-slate-600
                             data-[state=active]:bg-white/25 data-[state=active]:text-white
                         "
                     >
                         {all.length}
-                    </span>
+                    </span> */}
                 </TabsTrigger>
 
                 {/* UNREAD tab — rose/orange accent */}
@@ -59,13 +59,13 @@ const CRMNotificationTabs = ({
                         data-[state=active]:bg-primary
                         data-[state=active]:text-white
                         data-[state=active]:shadow-md
-                        data-[state=active]:shadow-rose-200
+                        data-[state=active]:shadow-rose-200 cursor-pointer
                     "
                 >
                     <BellRing className="h-4 w-4" />
                     Unread
                     {unreadCount > 0 ? (
-                        <span className="inline-flex items-center justify-center rounded-full bg-rose-500 px-2 py-0.5 text-xs font-bold text-white leading-none data-[state=active]:bg-white/25">
+                        <span className="inline-flex items-center justify-center rounded-full min-w-2 bg-rose-500 px-2 py-0.5 text-xs font-bold text-white leading-none data-[state=active]:bg-white/25">
                             {unreadCount}
                         </span>
                     ) : (

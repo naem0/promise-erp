@@ -129,6 +129,8 @@ interface EnrollmentSubmitPayload {
   payment_method: number | string,
   payment_type: number | null,
   partial_payment_amount: number | null,
+  payment_number?: string | null,
+  transaction_id?: string | null,
 }
 // End post enrollment Submition
 
@@ -234,13 +236,15 @@ export async function postEnrollmentSubmit(
   if (!token) { throw new Error("No valid session or access token found.") }
 
   try {
-    const { batch_id, payment_method, coupon_code, payment_type, partial_payment_amount } = payload;
+    const { batch_id, payment_method, coupon_code, payment_type, partial_payment_amount, payment_number, transaction_id } = payload;
 
     const body = {
       coupon_code,
       payment_method,
       payment_type,
       partial_payment_amount,
+      payment_number: payment_number || null,
+      transaction_id: transaction_id || null,
     };
 
     const response = await fetch(`${API_BASE}/batches/${batch_id}/enroll`, {
