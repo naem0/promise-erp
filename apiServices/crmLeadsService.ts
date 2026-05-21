@@ -76,11 +76,11 @@ export interface CRMLeadsResponse {
     total_leads: number;
     stats?: {
       total_leads: number;
-      to_day_leads: number;
+      today_leads: number;
       old_leads: number;
       new_enrollments: number;
-      total_flowup: number;
-      to_day_flowup: number;
+      total_follow_up: number;
+      today_follow_up: number;
       lost_leads: number;
       conversion_rate: string;
     };

@@ -44,7 +44,12 @@ export interface LeadsActivityResponse {
       new_enrollments: number;
       lost_leads: number;
       conversion_rate: string;
+      old_leads?: number;
+      to_day_leads?: number;
+      total_flowup?: number;
+      to_day_flowup?: number;
     };
+    growth?: Record<string, number>;
   };
   errors?: Record<string, string[]>;
 }
