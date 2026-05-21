@@ -12,9 +12,12 @@ const LeadActivityManagement = ({
   leadActivities: LeadActivity[],
   leadInfo: LeadInfo 
 }) => {
+
+  const lastLeadActivity = leadActivities[0]?.status_text;
+  console.log("Last Lead Activity:", lastLeadActivity);
   
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
       <div className="lg:col-span-2 space-y-6">
         <div>
           <h2 className="text-2xl font-bold text-slate-800">Activity Timeline</h2>
@@ -33,7 +36,7 @@ const LeadActivityManagement = ({
       <div className="lg:col-span-1">
         <div className="sticky top-6 space-y-6">
           <LeadActionCard lead={leadInfo} />
-          <LeadActivityForm leadId={leadActivities[0]?.lead_id} />
+          <LeadActivityForm leadId={leadActivities[0]?.lead_id} lastLeadActivityStatus={lastLeadActivity} />
         </div>
       </div>
     </div>
