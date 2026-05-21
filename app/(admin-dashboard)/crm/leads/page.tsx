@@ -20,8 +20,6 @@ export default function CRMLeadsPage({
             <div className="flex justify-between items-center">
                 <h1 className="text-2xl font-semibold tracking-tight text-slate-800">Leads</h1>
                 <div className="flex justify-end items-center gap-3 pt-4">
-                    
-
                     <PermissionGuard requiredPermission="import-leads">
                         <CRMLeadsImportButton />
                     </PermissionGuard>
