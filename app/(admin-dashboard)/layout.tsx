@@ -31,7 +31,11 @@ export default async function DashboardLayout({
               />
               <DashboardNotification />
             </header>
-            <div className="">{children}</div>
+            <div className="min-h-[calc(100vh-64px)] bg-gray-50 p-4">
+              <Suspense fallback={null}>
+                {children}
+              </Suspense>
+            </div>
           </SidebarInset>
         </Suspense>
       </main>

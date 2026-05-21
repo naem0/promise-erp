@@ -107,6 +107,7 @@ const EnrollPaymentMethod = ({
       }
     });
   };
+  
 
   return (
     <Card className="py-0">

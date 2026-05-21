@@ -134,12 +134,31 @@ interface EnrollmentSubmitPayload {
 
 
 // get enrollment details ==> getEnrollmentDetails
-export async function getEnrollmentDetails(slug: string, token: string): Promise<EnrollmentResponse | null> {
+export async function getEnrollmentDetails(
+  slug: string,
+  token: string,
+  params?: Record<string, string | null>,
+): Promise<EnrollmentResponse | null> {
   if (!token) { throw new Error("No valid session or access token found.")}
   try {
-    const res = await fetch(`${API_BASE}/courses/${slug}/enrollment-details`,
+
+    const urlParams = new URLSearchParams();
+
+    if (params) {
+      for (const key in params) {
+        if (params[key] !== undefined && params[key] !== null) {
+          urlParams.append(key, String(params[key]));
+        }
+      }
+    }
+
+    const queryString = urlParams.toString();
+
+    const url = `${API_BASE}/courses/${slug}/enrollment-details${
+      queryString ? `?${queryString}` : ""
+    }`;
+    const res = await fetch(url,
       {
-        cache: "no-store",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -149,6 +168,10 @@ export async function getEnrollmentDetails(slug: string, token: string): Promise
 
     if(res.status === 404) {
       console.error("Enrollment API Error: Not Found");
+      return null; 
+    }
+    if(res.status === 403) {
+      console.error("Enrollment API Error: Forbidden");
       return null; 
     }
 

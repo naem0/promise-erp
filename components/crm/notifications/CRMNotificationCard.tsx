@@ -44,7 +44,7 @@ const CRMNotificationCard = ({ notification, index = 0 }: CRMNotificationCardPro
                     toast.success(result.message || "Notification marked as read successfully");
                     setIsRead(true);
                     router.push(`/crm/lead-activities/${notification?.lead_id}/manage`);
-                }else{
+                } else {
                     toast.error(result.message || "Failed to mark notification as read");
                 }
             } catch (error: unknown) {
@@ -57,6 +57,8 @@ const CRMNotificationCard = ({ notification, index = 0 }: CRMNotificationCardPro
         });
     };
 
+
+
     return (
         <div
             onClick={handleMarkRead}
@@ -64,9 +66,9 @@ const CRMNotificationCard = ({ notification, index = 0 }: CRMNotificationCardPro
                 "group relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center gap-3 px-4 py-3 rounded-lg border transition-colors",
                 !isRead
                     ? "cursor-pointer bg-white hover:bg-slate-50 border-slate-200 shadow-sm"
-                    : "cursor-pointer bg-slate-100/70 hover:bg-slate-200/50 border-slate-200 shadow-sm"
+                    : "cursor-pointer bg-slate-200/40 hover:bg-slate-200/50 border-slate-200 shadow-sm"
             )}
-            title={!isRead ? "Click to mark as read" : "Click to view lead"}
+            title={!isRead ? "Click to mark as read" : "Already read • Click to view lead"}
         >
             {/* Left accent bar */}
             <span
@@ -80,17 +82,17 @@ const CRMNotificationCard = ({ notification, index = 0 }: CRMNotificationCardPro
             <div
                 className={cn(
                     "flex h-10 w-10 shrink-0 items-center justify-center rounded-lg shadow-sm transition-transform",
-                    isRead ? "bg-slate-200/80" : `bg-gradient-to-br ${gradient} group-hover:scale-105`
+                    isRead ? "bg-slate-100/80" : `bg-gradient-to-br ${gradient} group-hover:scale-105`
                 )}
             >
                 <BellRing
-                    className={cn( "h-4 w-4", isRead ? "text-slate-500" : "text-white")}
+                    className={cn("h-4 w-4", isRead ? "text-slate-500" : "text-white")}
                 />
             </div>
 
             {/* Content */}
             <div className="min-w-0 flex-1 space-y-1.5">
-                <p className="text-sm font-semibold text-slate-900">
+                <p className={cn("text-sm font-semibold ", isRead && "text-secondary text-sm font-normal ")}>
                     {notification.message}
                 </p>
 

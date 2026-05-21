@@ -5,8 +5,8 @@ import { Suspense } from "react";
 
 const ProfilePage = () => {
   return (
-    <section className="py-4 px-4">
-      <div className="flex items-center gap-2 px-4 mb-5">
+    <section className="mx-auto space-y-6">
+      <div className="flex items-center gap-2 mb-5">
         <Link href="/dashboard" className="text-secondary">
           <ChevronLeft className="h-5 w-5" />
         </Link>

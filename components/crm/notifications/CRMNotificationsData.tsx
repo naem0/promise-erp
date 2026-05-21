@@ -5,8 +5,8 @@ import {
   CRMNotification,
 } from "@/apiServices/crmNotification";
 import Pagination from "@/components/common/Pagination";
-import CRMNotificationCard from "./CRMNotificationCard";
-import { BellRing, Inbox } from "lucide-react";
+import CRMNotificationTabs from "./CRMNotificationTabs";
+import { BellRing } from "lucide-react";
 
 const CRMNotificationsData = async ({
   searchParams,
@@ -50,6 +50,8 @@ const CRMNotificationsData = async ({
   const unreadCount = results?.data?.unread_count ?? 0;
   const totalCount = results?.data?.pagination?.total ?? notifications.length;
   const paginationData = results?.data?.pagination;
+
+  const unreadNotifications = notifications.filter((n) => n.read_at === null);
 
   if (!notifications.length) {
     return (
@@ -122,15 +124,13 @@ const CRMNotificationsData = async ({
           <span className="text-right">Status</span>
         </div>
 
-        {/* Notification List */}
-        <div className="flex flex-col gap-2 p-3 bg-slate-50/30">
-          {notifications?.map((notification: CRMNotification, index: number) => (
-            <CRMNotificationCard
-              key={notification.id}
-              notification={notification}
-              index={index}
-            />
-          ))}
+        {/* Notification Tabs */}
+        <div className="p-3 bg-slate-50/30">
+          <CRMNotificationTabs
+            all={notifications}
+            unread={unreadNotifications}
+            unreadCount={unreadCount}
+          />
         </div>
       </div>
 

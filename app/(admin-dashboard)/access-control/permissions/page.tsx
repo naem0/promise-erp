@@ -8,7 +8,7 @@ export interface PermissionParams {
 }
 const PermissionsPage = ({ searchParams }: PermissionParams) => {
   return (
-    <div className="mx-auto px-4 py-8 lg:py-12">
+    <div className="mx-auto space-y-6">
       <div className="p-6 mb-6 border rounded-xl bg-card shadow-sm">
         <div className="flex justify-between items-center">
           <h1 className="text-xl font-semibold tracking-tight">Permissions</h1>

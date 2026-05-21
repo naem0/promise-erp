@@ -67,7 +67,7 @@ const AdminUsersStatWrapper = async () => {
 
   return (
     <>
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3 gap-4 px-4 py-5">
+      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3 gap-4 py-5">
         {totalSumaryInfo?.length > 0 ? (
           totalSumaryInfo?.map((stat, index) => (
             <AdminUsersStat
@@ -85,7 +85,7 @@ const AdminUsersStatWrapper = async () => {
       {/* Charts Analytics */}
       <DashboardChartsAnalytics chartsAnalytics={chartsAnalytics} />
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 md:gap-6 px-4 py-5">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 md:gap-6 py-5">
         {/* LEFT SIDE (Table) */}
         <div className="xl:col-span-2">
           {runningBatches?.length > 0 ? (

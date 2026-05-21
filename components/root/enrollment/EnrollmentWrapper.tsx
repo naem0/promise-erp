@@ -12,6 +12,7 @@ import {
   postEnrollmentCoupon,
 } from "@/apiServices/studentEnrollmentService";
 import NotFoundComponent from "@/components/common/NotFoundComponent";
+import { useSearchParams } from "next/navigation";
 
 interface Props {
   slug: string;
@@ -24,18 +25,25 @@ const EnrollmentWrapper = ({ slug }: Props) => {
   const [savedCouponCode, setSavedCouponCode] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const { data: session } = useSession();
+  const token = session?.accessToken;
+  const searchParams = useSearchParams();
 
   // Fetch enrollment details
   const fetchEnrollment = async () => {
-    const token = session?.accessToken;
+
     if (!token) return;
+    const params = {
+      branch_id: searchParams.get("branch_id"),
+    };
 
     startTransition(async () => {
       try {
-        const res = await getEnrollmentDetails(slug, token);
+        const res = await getEnrollmentDetails(slug, token, params);
         if (!res || !res.success || !res.data) {
           return;
         }
+
+        console.log("Enrollment----->", res);
 
         if (res?.success) {
           setEnrollmentDetails(res);
@@ -49,10 +57,10 @@ const EnrollmentWrapper = ({ slug }: Props) => {
   };
 
   useEffect(() => {
-    if (session?.accessToken && slug) {
+    if (token && slug) {
       fetchEnrollment();
     }
-  }, [slug]);
+  }, [slug, token, searchParams]);
 
   // Handle coupon apply
   const handleApplyCoupon = async () => {
