@@ -8,7 +8,7 @@ export default function CRMNotificationsPage({
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
     return (
-        <div className="mx-auto space-y-6 px-4">
+        <div className="mx-auto space-y-6">
             <div className="flex justify-between items-center">
                 <h1 className="text-2xl font-semibold">
                     Notifications

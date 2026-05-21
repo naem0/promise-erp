@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import { cacheLife, cacheTag, updateTag } from "next/cache";
 import { PaginationType } from "@/types/pagination";
+import { GrowthStats } from "./crmLeadActivitiesService";
 
 const API_BASE =
   process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
@@ -84,7 +85,7 @@ export interface CRMLeadsResponse {
       lost_leads: number;
       conversion_rate: string;
     };
-    growth?: Record<string, number>;
+    growth?: GrowthStats;
     leads: CRMLead[];
     pagination: PaginationType;
   };

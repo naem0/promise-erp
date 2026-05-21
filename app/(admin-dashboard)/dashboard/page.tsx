@@ -13,8 +13,8 @@ import AdminUsersStatSkeleton from "@/components/admin-dashboard/AdminUsersStatS
 
 const DashboardPage = () => {
   return (
-          <div className="px-4 py-6">
-        <div className="pb-2 px-4">
+    <div className="mx-auto space-y-6">
+      <div className="pb-2">
           <h1 className="text-secondary text-xl lg:text-2xl capitalize font-bold ">
             Dashboard
           </h1>
@@ -30,7 +30,7 @@ const DashboardPage = () => {
         >
           <AdminUsersStatWrapper />
         </Suspense>
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 px-4 py-5">
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 py-5">
           <Suspense fallback={<div className="h-[350px] w-full bg-muted animate-pulse rounded-xl" />}>
             <AdminMonthlyRegistrationChart />
           </Suspense>
@@ -44,7 +44,7 @@ const DashboardPage = () => {
           </div>
         </div>
         {/* Table + Alerts */}
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 px-4 py-5">
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 py-5">
           <Suspense fallback={<div className="h-[400px] w-full bg-muted animate-pulse rounded-xl" />}>
             <AdminPerformanceTable />
           </Suspense>
@@ -53,7 +53,7 @@ const DashboardPage = () => {
           </Suspense>
         </div>
         {/* Bottom Widgets */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 px-4 py-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 py-5">
           <Suspense fallback={<div className="h-[300px] w-full bg-muted animate-pulse rounded-xl" />}>
             <AdminRecentActivity />
           </Suspense>

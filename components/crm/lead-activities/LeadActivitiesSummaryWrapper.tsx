@@ -27,11 +27,11 @@ export default async function LeadsActivitySummaryWrapper({
     }
   }
  
-  if (!results || !results.success || !results.data || !results.data.stats) {
+  if (!results || !results?.success || !results?.data || !results?.data?.stats) {
     return null;
   }
  
-  const { stats, growth } = results.data;
+  const { stats, growth } = results?.data;
  
   const statCards = [
     {
@@ -99,13 +99,16 @@ export default async function LeadsActivitySummaryWrapper({
       gradient: "from-[#059669] to-[#34D399]",
     },
   ];
- 
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6 mb-6">
+
+ return (
+    <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-4 md:gap-6 mb-6">
       {statCards.map((card, index) => {
         const Icon = card.icon;
-        const growthValue = growth && growth[card.id] ? growth[card.id] : 0;
-        
+
+        // growth value dynamically get by card id
+        const growthValue = growth?.[card.id as keyof typeof growth] ?? 0;
+        const isNegative = Number(growthValue) < 0;
+
         return (
           <div
             key={index}
@@ -116,34 +119,43 @@ export default async function LeadsActivitySummaryWrapper({
               <div className="p-2 bg-white/20 rounded-lg">
                 <Icon className="w-5 h-5 text-white" />
               </div>
-              <h3 className="font-medium text-lg">{card.title}</h3>
+
+              <h3 className="font-medium text-lg">{card?.title}</h3>
             </div>
- 
-            {/* Content & Large Icon */}
+
+            {/* Content */}
             <div className="flex items-end justify-between mt-4 relative z-10">
-              <div className="flex items-baseline gap-2">
-                <span className="text-5xl font-bold">{card.value}</span>
-                {card.label && (
-                  <span className="text-xl font-medium opacity-90">{card.label}</span>
+              <div className="flex items-baseline gap-2 flex-wrap">
+                <span className="text-5xl font-bold">
+                  {card?.value}
+                </span>
+
+                {card?.label && (
+                  <span className="text-xl font-medium opacity-90">
+                    {card?.label}
+                  </span>
                 )}
               </div>
             </div>
- 
-            {/* Faint Background Icon */}
+
+            {/* Background Icon */}
             <Icon
               className="absolute right-4 top-1/2 -translate-y-1/2 w-24 h-24 opacity-20 z-0"
               strokeWidth={1.5}
             />
 
-            {/* Footer Pill */}
+            {/* Footer */}
             <div className="mt-6 relative z-10">
               <div className="flex items-center gap-1 text-sm bg-white/20 w-fit px-3 py-1 rounded-md">
-                {growthValue < 0 ? (
+                {isNegative ? (
                   <ArrowDown className="w-4 h-4 text-red-200" />
                 ) : (
-                  <ArrowUp className="w-4 h-4" />
+                  <ArrowUp className="w-4 h-4 text-green-100" />
                 )}
-                <span>{Math.abs(growthValue)}% From Last Week</span>
+
+                <span>
+                  {Math.abs(Number(growthValue))}% From Last Week
+                </span>
               </div>
             </div>
           </div>

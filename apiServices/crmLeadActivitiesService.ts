@@ -31,12 +31,23 @@ export interface LeadActivity {
   type_text?: string;
   created_at: string;
 }
+export interface GrowthStats {
+  total_leads: number;
+  new_enrollments: number;
+  lost_leads: number;
+  total_follow_up: number;
+  today_leads: number;
+  old_leads: number;
+  today_follow_up: number;
+  conversion_rate: number;
+}
  
 export interface LeadsActivityResponse {
   success: boolean;
   message: string;
   code: number;
   data: {
+    growth?: GrowthStats;
     activities: LeadActivity[];
     pagination: PaginationType;
     stats: {
@@ -49,7 +60,6 @@ export interface LeadsActivityResponse {
       total_follow_up?: number;
       today_follow_up?: number;
     };
-    growth?: Record<string, number>;
   };
   errors?: Record<string, string[]>;
 }

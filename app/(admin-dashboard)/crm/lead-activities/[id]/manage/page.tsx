@@ -24,7 +24,7 @@ export default async function LeadManagePage({
     }
  
     return (
-        <div className="mx-auto space-y-8 max-w-[1600px] p-6">
+        <div className="mx-auto space-y-8 max-w-[1600px]">
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                     <Button variant="outline" size="icon" asChild className="rounded-full">

@@ -90,7 +90,7 @@ export default function DashboardChartsAnalytics({
   const chartConfig = buildChartConfig(seriesWithData);
 
   return (
-    <Card className="rounded-2xl shadow-md border bg-white mx-4 my-5">
+    <Card className="rounded-2xl shadow-md border bg-white my-5">
       <CardHeader>
         <CardTitle className="text-base font-semibold text-gray-800">
           Charts Analytics
