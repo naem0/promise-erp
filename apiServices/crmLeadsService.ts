@@ -74,6 +74,17 @@ export interface CRMLeadsResponse {
   code: number;
   data: {
     total_leads: number;
+    stats?: {
+      total_leads: number;
+      today_leads: number;
+      old_leads: number;
+      new_enrollments: number;
+      total_follow_up: number;
+      today_follow_up: number;
+      lost_leads: number;
+      conversion_rate: string;
+    };
+    growth?: Record<string, number>;
     leads: CRMLead[];
     pagination: PaginationType;
   };

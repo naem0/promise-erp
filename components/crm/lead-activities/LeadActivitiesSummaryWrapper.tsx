@@ -1,6 +1,6 @@
 import { getLeadsActivity } from "@/apiServices/crmLeadActivitiesService";
 import ErrorComponent from "@/components/common/ErrorComponent";
-import { Zap, GraduationCap, MessageSquare, TrendingUp, ArrowUp } from "lucide-react";
+import { Zap, GraduationCap, MessageSquare, TrendingUp, ArrowUp, ArrowDown, PhoneCall } from "lucide-react";
  
 export default async function LeadsActivitySummaryWrapper({
   searchParams,
@@ -31,10 +31,11 @@ export default async function LeadsActivitySummaryWrapper({
     return null;
   }
  
-  const { stats } = results.data;
+  const { stats, growth } = results.data;
  
   const statCards = [
     {
+      id: "total_leads",
       title: "Total Leads",
       value: stats.total_leads,
       label: "Leads",
@@ -42,6 +43,7 @@ export default async function LeadsActivitySummaryWrapper({
       gradient: "from-[#00B686] to-[#00D19D]",
     },
     {
+      id: "new_enrollments",
       title: "New Enrollments",
       value: stats.new_enrollments,
       label: "Students",
@@ -49,6 +51,7 @@ export default async function LeadsActivitySummaryWrapper({
       gradient: "from-[#2D76E5] to-[#4A90E2]",
     },
     {
+      id: "lost_leads",
       title: "Lost Leads",
       value: stats.lost_leads,
       label: "Lost",
@@ -56,11 +59,44 @@ export default async function LeadsActivitySummaryWrapper({
       gradient: "from-[#E64A6E] to-[#F06292]",
     },
     {
+      id: "conversion_rate",
       title: "Conversion Rate",
       value: stats.conversion_rate,
       label: "",
       icon: TrendingUp,
       gradient: "from-[#E67E00] to-[#FFA726]",
+    },
+    {
+      id: "old_leads",
+      title: "Old Leads",
+      value: stats.old_leads ?? 0,
+      label: "Students",
+      icon: Zap,
+      gradient: "from-[#2D76E5] to-[#4A90E2]",
+    },
+    {
+      id: "today_leads",
+      title: "Today Leads",
+      value: stats.today_leads ?? 0,
+      label: "Students",
+      icon: Zap,
+      gradient: "from-[#9333EA] to-[#C084FC]",
+    },
+    {
+      id: "total_follow_up",
+      title: "Total Follow-Up",
+      value: stats.total_follow_up ?? 0,
+      label: "Students",
+      icon: PhoneCall,
+      gradient: "from-[#00C6FF] to-[#0072FF]",
+    },
+    {
+      id: "today_follow_up",
+      title: "Today Follow-Up",
+      value: stats.today_follow_up ?? 0,
+      label: "Students",
+      icon: PhoneCall,
+      gradient: "from-[#059669] to-[#34D399]",
     },
   ];
  
@@ -68,6 +104,8 @@ export default async function LeadsActivitySummaryWrapper({
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6 mb-6">
       {statCards.map((card, index) => {
         const Icon = card.icon;
+        const growthValue = growth && growth[card.id] ? growth[card.id] : 0;
+        
         return (
           <div
             key={index}
@@ -96,12 +134,16 @@ export default async function LeadsActivitySummaryWrapper({
               className="absolute right-4 top-1/2 -translate-y-1/2 w-24 h-24 opacity-20 z-0"
               strokeWidth={1.5}
             />
- 
-            {/* Footer Pill - Static for now as per image if data not available */}
+
+            {/* Footer Pill */}
             <div className="mt-6 relative z-10">
               <div className="flex items-center gap-1 text-sm bg-white/20 w-fit px-3 py-1 rounded-md">
-                <ArrowUp className="w-4 h-4" />
-                <span>23.1% From Last Week</span>
+                {growthValue < 0 ? (
+                  <ArrowDown className="w-4 h-4 text-red-200" />
+                ) : (
+                  <ArrowUp className="w-4 h-4" />
+                )}
+                <span>{Math.abs(growthValue)}% From Last Week</span>
               </div>
             </div>
           </div>
