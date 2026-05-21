@@ -45,9 +45,9 @@ export interface LeadsActivityResponse {
       lost_leads: number;
       conversion_rate: string;
       old_leads?: number;
-      to_day_leads?: number;
-      total_flowup?: number;
-      to_day_flowup?: number;
+      today_leads?: number;
+      total_follow_up?: number;
+      today_follow_up?: number;
     };
     growth?: Record<string, number>;
   };
