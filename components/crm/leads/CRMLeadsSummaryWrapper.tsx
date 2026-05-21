@@ -27,11 +27,11 @@ export default async function CRMLeadsSummaryWrapper({
     }
   }
  
-  if (!results || !results.success || !results.data || !results.data.stats) {
+  if (!results || !results?.success || !results?.data || !results?.data?.stats) {
     return null;
   }
  
-  const { stats, growth } = results.data;
+  const { stats, growth } = results?.data;
  
   const statCards = [
     {
@@ -104,7 +104,10 @@ export default async function CRMLeadsSummaryWrapper({
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6 mb-6">
       {statCards?.map((card, index) => {
         const Icon = card.icon;
-        const growthValue = growth && growth[card.id] !== undefined ? growth[card.id] : 0;
+        const growthValue =
+          growth?.[card.id as keyof typeof growth] ?? 0;
+
+        const isNegative = Number(growthValue) < 0;
         
         return (
           <div
@@ -138,10 +141,10 @@ export default async function CRMLeadsSummaryWrapper({
             {/* Footer Pill */}
             <div className="mt-6 relative z-10">
               <div className="flex items-center gap-1 text-sm bg-white/20 w-fit px-3 py-1 rounded-md">
-                {growthValue < 0 ? (
+                {isNegative ? (
                   <ArrowDown className="w-4 h-4 text-red-200" />
                 ) : (
-                  <ArrowUp className="w-4 h-4" />
+                  <ArrowUp className="w-4 h-4 text-green-100" />
                 )}
                 <span>{Math.abs(growthValue)}% From Last Week</span>
               </div>
