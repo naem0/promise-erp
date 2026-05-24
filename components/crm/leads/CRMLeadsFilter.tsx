@@ -1,5 +1,5 @@
 "use client";
-import { useEffect} from "react";
+import { useEffect } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 import { Input } from "@/components/ui/input";
@@ -11,13 +11,13 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Search, FilterX} from "lucide-react";
+import { Search, FilterX } from "lucide-react";
 import { Branch } from "@/apiServices/branchService";
 import { CRMCategory } from "@/apiServices/crmCategoryService";
 import { Consultant } from "@/apiServices/crmLeadsActions";
 import { Course } from "@/apiServices/courseService";
 import PermissionGuard from "@/components/auth/PermissionGuard";
-import CourseSearchSelect from "@/components/common/CourseSearchSelect";
+import CourseMultipleSearchSelect from "@/components/common/CourseMultipleSearchSelect";
 import { DatePickerWithRange } from "@/components/common/DatePickerWithRange";
 
 interface FilterFormValues {
@@ -173,12 +173,30 @@ export default function CRMLeadsFilter({
 
             <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
                 {/* Search */}
-                <div className="relative col-span-2 md:col-span-3">
+                <div className="relative col-span-2">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                         placeholder="Search by name, email, phone, referrer..."
                         className="pl-10"
                         {...register("search")}
+                    />
+                </div>
+                {/* Course */}
+                <div className="space-y-1 col-span-2">
+                    <Controller
+                        name="course_id"
+                        control={control}
+                        render={({ field }) => (
+                            <CourseMultipleSearchSelect
+                                value={field.value ? field.value.split(",") : []}
+                                onValueChange={(val) => {
+                                    const stringValue = val.join(",");
+                                    field.onChange(stringValue);
+                                    handleSelectChange("course_id")(stringValue);
+                                }}
+                                placeholder="Select course ..."
+                            />
+                        )}
                     />
                 </div>
 
@@ -388,23 +406,7 @@ export default function CRMLeadsFilter({
                     />
                 </div>
 
-                {/* Course */}
-                <div className="space-y-1">
-                    <Controller
-                        name="course_id"
-                        control={control}
-                        render={({ field }) => (
-                            <CourseSearchSelect
-                                value={field.value || null}
-                                onValueChange={(val) => {
-                                    field.onChange(val || "");
-                                    handleSelectChange("course_id")(val || "");
-                                }}
-                                placeholder="Select course ..."
-                            />
-                        )}
-                    />
-                </div>
+
                 {/* Sort Order */}
                 <Controller
                     name="sort_order"

@@ -491,12 +491,12 @@ export const sidebarData = {
           icon: Warehouse,
           items: [
             {
-              title: "Inventory Items",
+              title: "Items",
               url: "/inventory/inventory-items",
               permissions: ["view-products"],
             },
             {
-              title: "Inventory Categories",
+              title: "Categories",
               url: "/inventory/inventory-categories",
               permissions: ["view-product-categories"],
             },

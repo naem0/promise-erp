@@ -1,0 +1,39 @@
+import ItemsData from "@/components/inventory/inventory-items/ItemsData";
+import ItemsFilterData from "@/components/inventory/inventory-items/ItemsFilterData";
+import TableSkeleton from "@/components/TableSkeleton";
+import { Button } from "@/components/ui/button";
+import { PlusCircle } from "lucide-react";
+import Link from "next/link";
+import { Suspense } from "react";
+import PermissionGuard from "@/components/auth/PermissionGuard";
+
+export default function InventoryItemsPage({
+    searchParams,
+}: {
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+    return (
+        <div className="mx-auto space-y-6">
+            <div className="flex justify-between items-center">
+                <h1 className="text-2xl font-semibold tracking-tight text-slate-800">Products</h1>
+
+                <PermissionGuard requiredPermission="create-products">
+                    <Button asChild className="">
+                        <Link href="/inventory/inventory-items/add">
+                            <PlusCircle className="w-4 h-4 mr-2" />
+                            Add Product
+                        </Link>
+                    </Button>
+                </PermissionGuard>
+            </div>
+
+            <Suspense fallback={<div>Loading filters...</div>}>
+                <ItemsFilterData />
+            </Suspense>
+
+            <Suspense fallback={<TableSkeleton columns={10} rows={10} />}>
+                <ItemsData searchParams={searchParams} />
+            </Suspense>
+        </div>
+    );
+}
