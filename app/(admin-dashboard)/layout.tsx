@@ -21,7 +21,7 @@ export default async function DashboardLayout({
         <AppSidebar />
       </Suspense>
       <Suspense fallback={<div>Loading...</div>}>
-          <SidebarInset>
+          <SidebarInset className="h-svh overflow-hidden">
             <header className="flex justify-between h-16 shrink-0 items-center gap-2 border-b px-4">
               <SidebarTrigger className="-ml-1" />
               <Separator
@@ -30,7 +30,7 @@ export default async function DashboardLayout({
               />
               <DashboardNotification />
             </header>
-            <div className="min-h-[calc(100vh-64px)] bg-gray-50 p-4 min-w-0">
+            <div className="h-[calc(100svh-64px)] bg-gray-50 p-4 min-w-0 overflow-y-auto">
               <Suspense fallback={null}>
                 {children}
               </Suspense>
