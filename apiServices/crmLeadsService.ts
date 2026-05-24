@@ -28,6 +28,14 @@ export interface CRMLeadBranch {
   name: string;
 }
 
+export interface CRMLeadReferrer {
+  id: number;
+  name: string;
+  phone: string;
+  email?: string;
+  institute_name?: string;
+}
+
 export interface CRMLead {
   id: number;
   name: string;
@@ -37,6 +45,8 @@ export interface CRMLead {
   address: string;
   referrer_name?: string;
   referrer_phone?: string;
+  referrer?: CRMLeadReferrer;
+  referrer_id?: number;
   course_name?: string;
   course?: CRMLeadCourse;
   course_type: number;

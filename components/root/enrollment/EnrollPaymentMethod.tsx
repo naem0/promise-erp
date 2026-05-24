@@ -35,14 +35,14 @@ const EnrollPaymentMethod = ({
   const router = useRouter();
 
   // type === 1 → Pay Later
-  const isPayLater = selectedMethod?.type === 1;
-  // Show partial_payment_amount for everyone except Pay Later
+  const isPayLater = selectedMethod?.name === "Pay Later";
+
   const showPartialAmount = selectedMethod && !isPayLater;
-  // Show payment_number & transaction_id only when NOT Pay Later
   const showNumberFields = selectedMethod && !isPayLater;
 
   useEffect(() => {
     // Reset extra fields whenever method changes
+    if (!selectedMethod) return;
     setPartialAmount("");
     setPaymentNumber("");
     setTransactionId("");
@@ -114,7 +114,7 @@ const EnrollPaymentMethod = ({
             batch_id: enrollmentDetails.batch.id,
             coupon_code: savedCouponCode,
             payment_method: selectedMethod!.id,
-            payment_type: isPayLater ? 0 : 2, // 0=no payment(pay later), 2=full payment
+            payment_type: isPayLater ? 0 : 1 , // 0 for Pay Later, 1 for others
             partial_payment_amount: showPartialAmount ? Number(partialAmount) : null,
             payment_number: showNumberFields ? paymentNumber : null,
             transaction_id: showNumberFields ? transactionId : null,
@@ -183,11 +183,9 @@ const EnrollPaymentMethod = ({
             ))}
           </div>
 
-          {/* Extra fields based on selected method */}
           {selectedMethod && (
             <div className="space-y-4 mb-6">
 
-              {/* partial_payment_amount — Pay Later বাদে সবার জন্য */}
               {showPartialAmount && (
                 <div className="grid gap-1">
                   <Label htmlFor="partial_payment_amount">
@@ -210,7 +208,6 @@ const EnrollPaymentMethod = ({
                 </div>
               )}
 
-              {/* payment_number & transaction_id — Pay Later ও Cash বাদে */}
               {showNumberFields && (
                 <>
                   <div className="grid gap-1">

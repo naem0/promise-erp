@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useTransition, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import { 
   ComboboxRoot, 
   ComboboxTrigger, 
@@ -12,51 +12,32 @@ import {
   ComboboxEmpty,
   ComboboxClear
 } from '@/components/ui/combobox'
-import { getPublicCoursesAll, Course } from '@/apiServices/courseService'
+import { CRMReferrer } from '@/apiServices/crmReferrerService'
 import { cn } from '@/lib/utils'
 
-interface CourseSearchSelectProps {
+interface ReferrerSearchSelectProps {
   value: string | null
   onValueChange: (value: string | null) => void
+  referrers: CRMReferrer[]
   placeholder?: string
   disabled?: boolean
   className?: string
-  defaultValue?: string
 }
 
-export default function CourseSearchSelect({
+export default function ReferrerSearchSelect({
   value,
   onValueChange,
-  placeholder = "Select course",
+  referrers = [],
+  placeholder = "Select referrer",
   disabled = false,
-  className,
-  defaultValue
-}: CourseSearchSelectProps) {
-  const [courses, setCourses] = useState<Course[]>([])
-  const [isPending, startTransition] = useTransition()
+  className
+}: ReferrerSearchSelectProps) {
   const [inputValue, setInputValue] = useState("")
 
-  useEffect(() => {
-    startTransition(async () => {
-      try {
-        const res = await getPublicCoursesAll()
-        if (res.success) {
-          setCourses(res.data.courses || [])
-        }
-      } catch (error: unknown) {
-        if (error instanceof Error) {
-          console.error("Failed to fetch courses:", error.message)
-        } else {
-          console.error("An unknown error occurred while fetching courses.")
-        }
-      }
-    })
-  }, [])
-
-  const options = useMemo(() => (courses || []).map(course => ({
-    value: String(course.id),
-    label: course.title
-  })), [courses])
+  const options = useMemo(() => (referrers || []).map(ref => ({
+    value: String(ref.id),
+    label: `${ref.name} (${ref.phone})`
+  })), [referrers])
 
   const filteredOptions = useMemo(() => {
     if (!inputValue) return options
@@ -72,7 +53,7 @@ export default function CourseSearchSelect({
         value={value || ""} 
         onValueChange={(val) => onValueChange(val || null)}
         onInputValueChange={setInputValue}
-        disabled={disabled || isPending}
+        disabled={disabled}
         itemToStringLabel={(val) => options.find(o => o.value === val)?.label || ""}
       >
         <div className="relative group">
@@ -90,7 +71,7 @@ export default function CourseSearchSelect({
               </span>
             ) : (
               <span className="text-muted-foreground text-left flex-1 truncate">
-                {isPending ? "Loading courses..." : placeholder}
+                {placeholder}
               </span>
             )}
           </ComboboxTrigger>
@@ -103,7 +84,7 @@ export default function CourseSearchSelect({
         
         <ComboboxContent className="w-[--anchor-width] min-w-[300px]">
           <ComboboxInput 
-            placeholder="Search course..." 
+            placeholder="Search referrer..." 
             className="m-1 h-9 border-none shadow-none focus-visible:ring-0"
             showTrigger={false}
             autoFocus
@@ -115,7 +96,7 @@ export default function CourseSearchSelect({
               </ComboboxItem>
             ))}
             {filteredOptions.length === 0 && (
-              <ComboboxEmpty>{isPending ? "Loading..." : "No courses found"}</ComboboxEmpty>
+              <ComboboxEmpty>No referrers found</ComboboxEmpty>
             )}
           </ComboboxList>
         </ComboboxContent>

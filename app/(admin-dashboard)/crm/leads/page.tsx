@@ -24,19 +24,19 @@ export default function CRMLeadsPage({
                         <CRMLeadsImportButton />
                     </PermissionGuard>
                     <PermissionGuard requiredPermission="create-leads">
-                    <Button asChild className="bg-green-600">
-                        <Link href="/crm/leads/add">
-                            <PlusCircle className="w-4 h-4 mr-2" />
-                            Add Lead
-                        </Link>
-                    </Button>
+                        <Button asChild className="bg-green-600">
+                            <Link href="/crm/leads/add">
+                                <PlusCircle className="w-4 h-4 mr-2" />
+                                Add Lead
+                            </Link>
+                        </Button>
                     </PermissionGuard>
                 </div>
 
             </div>
 
             <Suspense fallback={<div>Loading summary...</div>}>
-                <CRMLeadsSummaryWrapper/>
+                <CRMLeadsSummaryWrapper />
             </Suspense>
 
             <Suspense fallback={<div>Loading filters...</div>}>

@@ -19,6 +19,7 @@ export interface CRMNotification {
   phone: string;
   message: string;
   type: string;
+  created_at_human: string;
 }
 
 export interface CRMNotificationsResponse {

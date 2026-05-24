@@ -12,21 +12,23 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Search, FilterX } from "lucide-react";
-import { Branch } from "@/apiServices/branchService";
-import { DatePickerWithRange } from "@/components/common/DatePickerWithRange";
+import { ProductCategory } from "@/apiServices/inventoryCategoriesService";
+import { Brand } from "@/apiServices/inventoryBrandsService";
 
 interface FilterFormValues {
     search?: string;
     status?: string;
     sort_order?: string;
-    branch_name?: string;
+    category_id?: string;
+    brand_id?: string;
 }
 
-interface ReferrersFilterProps {
-    branches?: Branch[];
+interface ItemsFilterProps {
+    categories?: ProductCategory[];
+    brands?: Brand[];
 }
 
-export default function ReferrersFilter({ branches = [] }: ReferrersFilterProps) {
+export default function ItemsFilter({ categories = [], brands = [] }: ItemsFilterProps) {
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
@@ -37,7 +39,8 @@ export default function ReferrersFilter({ branches = [] }: ReferrersFilterProps)
                 search: searchParams.get("search") || "",
                 status: searchParams.get("status") || "",
                 sort_order: searchParams.get("sort_order") || "",
-                branch_name: searchParams.get("branch_name") || "",
+                category_id: searchParams.get("category_id") || "",
+                brand_id: searchParams.get("brand_id") || "",
             },
         });
 
@@ -86,7 +89,8 @@ export default function ReferrersFilter({ branches = [] }: ReferrersFilterProps)
             search: "",
             status: "",
             sort_order: "",
-            branch_name: "",
+            category_id: "",
+            brand_id: "",
         });
         router.replace(pathname, { scroll: false });
     };
@@ -94,15 +98,15 @@ export default function ReferrersFilter({ branches = [] }: ReferrersFilterProps)
     const currentSearch = searchParams.get("search") || "";
     const currentStatus = searchParams.get("status") || "";
     const currentSortOrder = searchParams.get("sort_order") || "";
-    const currentBranchName = searchParams.get("branch_name") || "";
+    const currentCategoryId = searchParams.get("category_id") || "";
+    const currentBrandId = searchParams.get("brand_id") || "";
 
     const hasActiveFilters =
         currentSearch !== "" ||
         currentStatus !== "" ||
         currentSortOrder !== "" ||
-        currentBranchName !== "" ||
-        !!searchParams.get("date_from") ||
-        !!searchParams.get("date_to");
+        currentCategoryId !== "" ||
+        currentBrandId !== "";
 
     return (
         <div className="p-6 mb-6 border rounded-xl bg-card shadow-sm">
@@ -125,46 +129,84 @@ export default function ReferrersFilter({ branches = [] }: ReferrersFilterProps)
 
             <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
                 {/* Search */}
-                <div className="relative md:col-span-2 xl:col-span-2">
+                <div className="relative md:col-span-2">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
-                        placeholder="Search referrers (name, email, institute_name...)"
+                        placeholder="Search by name, barcode, model..."
                         className="pl-10"
                         {...register("search")}
                     />
                 </div>
 
-
-                {/* Branch Selection */}
+                {/* Category */}
                 <Controller
-                    name="branch_name"
+                    name="category_id"
                     control={control}
                     render={({ field }) => (
                         <Select
                             value={field.value}
                             onValueChange={(value) => {
                                 field.onChange(value);
-                                handleSelectChange("branch_name")(value);
+                                handleSelectChange("category_id")(value);
                             }}
                         >
                             <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Branch Name" />
+                                <SelectValue placeholder="Category" />
                             </SelectTrigger>
                             <SelectContent>
-                                {branches?.length > 0 ? (
-                                    branches.map((branch) => (
-                                        <SelectItem
-                                            key={branch.id}
-                                            value={branch.name}
-                                        >
-                                            {branch.name}
+                                {
+                                    categories?.length > 0 ? (
+                                        categories?.map((category) => (
+                                            <SelectItem
+                                                key={category.id}
+                                                value={category.id.toString()}
+                                            >
+                                                {category.name}
+                                            </SelectItem>
+                                        ))
+                                    ) : (
+                                        <SelectItem value="no-category" disabled>
+                                            No categories available
                                         </SelectItem>
-                                    ))
-                                ) : (
-                                    <SelectItem value="no-branch" disabled>
-                                        No branches available
-                                    </SelectItem>
-                                )}
+                                    )
+                                }
+                            </SelectContent>
+                        </Select>
+                    )}
+                />
+
+                {/* Brand */}
+                <Controller
+                    name="brand_id"
+                    control={control}
+                    render={({ field }) => (
+                        <Select
+                            value={field.value}
+                            onValueChange={(value) => {
+                                field.onChange(value);
+                                handleSelectChange("brand_id")(value);
+                            }}
+                        >
+                            <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Brand" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {
+                                    brands?.length > 0 ? (
+                                        brands?.map((brand) => (
+                                            <SelectItem
+                                                key={brand.id}
+                                                value={brand.id.toString()}
+                                            >
+                                                {brand.name}
+                                            </SelectItem>
+                                        ))
+                                    ) : (
+                                        <SelectItem value="no-brand" disabled>
+                                            No brands available
+                                        </SelectItem>
+                                    )
+                                }
                             </SelectContent>
                         </Select>
                     )}
@@ -192,33 +234,6 @@ export default function ReferrersFilter({ branches = [] }: ReferrersFilterProps)
                         </Select>
                     )}
                 />
-
-                {/* Sort Order */}
-                <Controller
-                    name="sort_order"
-                    control={control}
-                    render={({ field }) => (
-                        <Select
-                            value={field.value}
-                            onValueChange={(value) => {
-                                field.onChange(value);
-                                handleSelectChange("sort_order")(value);
-                            }}
-                        >
-                            <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Sort Order" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="asc">ASC</SelectItem>
-                                <SelectItem value="desc">DESC</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    )}
-                />
-                {/* Date Picker Range */}
-                <div >
-                    <DatePickerWithRange />
-                </div>
             </div>
         </div>
     );

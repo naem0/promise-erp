@@ -22,6 +22,7 @@ import DeleteBrandButton from "./DeleteBrandButton";
 import Pagination from "@/components/common/Pagination";
 import PermissionGuard from "@/components/auth/PermissionGuard";
 import { truncate } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 const BrandsData = async ({
   searchParams,
@@ -95,7 +96,7 @@ const BrandsData = async ({
 
           <TableBody>
             {brands?.map((brand: Brand, index: number) => (
-              <TableRow key={`${brand?.id}-${index}`} className="hover:bg-slate-50/50 transition-colors">
+              <TableRow key={`${brand?.id}.${brand?.name}`} className="hover:bg-slate-50/50 transition-colors">
                 <TableCell className="text-center text-slate-500 font-medium">
                   {(page - 1) * per_page + (index + 1)}
                 </TableCell>
@@ -104,10 +105,7 @@ const BrandsData = async ({
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Badge
-                        variant="default"
-                        role="button"
-                        tabIndex={0}
-                        className="cursor-pointer"
+                        className="cursor-pointer "
                       >
                         Action
                       </Badge>
