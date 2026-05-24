@@ -153,6 +153,9 @@
     { "path": "/crm/lead-reports", "permissions": ["crm-lead-reports"] },
     { "path": "/crm/notifications", "permissions": ["view-consultant-notifications","mark-consultant-notification-read","mark-all-consultant-notifications-read"] },
 
+    { "path": "/inventory/inventory-items", "permissions": ["view-products"] },
+    { "path": "/inventory/inventory-items/add", "permissions": ["create-products"] },  
+    { "path": "/inventory/inventory-items/edit", "permissions": ["edit-products"], "isDynamic": true }, 
 
     { "path": "/inventory/inventory-categories", "permissions": ["view-product-categories"] },
     { "path": "/inventory/inventory-categories/add", "permissions": ["create-product-categories"] },

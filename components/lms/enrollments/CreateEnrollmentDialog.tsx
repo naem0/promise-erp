@@ -261,20 +261,6 @@ export default function CreateEnrollmentDialog() {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="payment_amount">Payment Amount</Label>
-                <Input
-                  id="payment_amount"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  placeholder="0.00"
-                  value={formData.payment_amount}
-                  onChange={(e) => setFormData({ ...formData, payment_amount: e.target.value })}
-                  disabled={isPending}
-                />
-              </div>
-
-              <div className="space-y-2">
                 <Label htmlFor="discount_amount">Additional Discount</Label>
                 <Input
                   id="discount_amount"
@@ -284,6 +270,19 @@ export default function CreateEnrollmentDialog() {
                   placeholder="0.00"
                   value={formData.discount_amount}
                   onChange={(e) => setFormData({ ...formData, discount_amount: e.target.value })}
+                  disabled={isPending}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="payment_amount">Payment Amount</Label>
+                <Input
+                  id="payment_amount"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  placeholder="0.00"
+                  value={formData.payment_amount}
+                  onChange={(e) => setFormData({ ...formData, payment_amount: e.target.value })}
                   disabled={isPending}
                 />
               </div>

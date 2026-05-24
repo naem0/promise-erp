@@ -274,10 +274,10 @@ export default function CreateEnrollmentForm({
               {/* Course Selection with SearchSelect */}
               <div className="space-y-2">
                 <Label htmlFor="course_id">Course</Label>
-                <CourseSearchSelect 
-                   value={courseId}
-                   onValueChange={handleCourseChange}
-                   placeholder="Select course (optional)..."
+                <CourseSearchSelect
+                  value={courseId}
+                  onValueChange={handleCourseChange}
+                  placeholder="Select course (optional)..."
                 />
                 {errors.course_id && (
                   <p className="text-sm text-red-500">{errors.course_id.message}</p>
@@ -453,6 +453,22 @@ export default function CreateEnrollmentForm({
                   <p className="text-sm text-red-500">{errors.payment_status.message}</p>
                 )}
               </div>
+              {/* Discount Amount */}
+              <div className="space-y-2">
+                <Label htmlFor="discount_amount">Additional Discount</Label>
+                <Input
+                  id="discount_amount"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  placeholder="0.00"
+                  {...register("discount_amount")}
+                  disabled={isSubmitting}
+                />
+                {errors.discount_amount && (
+                  <p className="text-sm text-red-500">{errors.discount_amount.message}</p>
+                )}
+              </div>
 
               {/* Payment Amount */}
               <div className="space-y-2">
@@ -471,22 +487,7 @@ export default function CreateEnrollmentForm({
                 )}
               </div>
 
-              {/* Discount Amount */}
-              <div className="space-y-2">
-                <Label htmlFor="discount_amount">Additional Discount</Label>
-                <Input
-                  id="discount_amount"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  placeholder="0.00"
-                  {...register("discount_amount")}
-                  disabled={isSubmitting}
-                />
-                {errors.discount_amount && (
-                  <p className="text-sm text-red-500">{errors.discount_amount.message}</p>
-                )}
-              </div>
+
             </div>
 
             {/* Payment Reference */}

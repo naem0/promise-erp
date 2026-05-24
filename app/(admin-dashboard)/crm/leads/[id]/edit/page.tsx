@@ -1,10 +1,10 @@
 import CRMLeadsForm from "@/components/crm/leads/CRMLeadsForm";
 import { getCRMLeadById } from "@/apiServices/crmLeadsService";
-import { getBranches } from "@/apiServices/branchService";
-import { getCRMCategories } from "@/apiServices/crmCategoryService";
-import { getCourses } from "@/apiServices/courseService";
-import { getCRMSources } from "@/apiServices/crmSourceService";
-import ErrorComponent from "@/components/common/ErrorComponent";
+import { getBranches, Branch } from "@/apiServices/branchService";
+import { getCRMCategories, CRMCategory } from "@/apiServices/crmCategoryService";
+import { getCourses, Course } from "@/apiServices/courseService";
+import { getCRMSources, CRMSource } from "@/apiServices/crmSourceService";
+import { getCRMReferrers, CRMReferrer } from "@/apiServices/crmReferrerService";
 import NotFoundComponent from "@/components/common/NotFoundComponent";
 
 interface PageProps {
@@ -19,18 +19,11 @@ export default async function EditCRMLeadPage({ params }: PageProps) {
         leadRes = await getCRMLeadById(Number(id));
     } catch (error: unknown) {
         if (error instanceof Error) {
-            return (
-                <div className="py-8 md:py-12">
-                    <ErrorComponent message={`Error fetching lead: ${error.message}`} />
-                </div>
-            );
+            console.error("Error fetching lead:", error.message);
         }
-            
-        return (
-            <div className="py-8 md:py-12">
-                <ErrorComponent message="An unexpected error occurred." />
-            </div>
-        );
+        else {
+            console.error("Error fetching lead:", error);
+        }
     }
 
     if (!leadRes?.data) {
@@ -43,18 +36,70 @@ export default async function EditCRMLeadPage({ params }: PageProps) {
         );
     }
 
-    // Fetch related lists in parallel for better performance
-    const [branchesRes, categoriesRes, coursesRes, sourcesRes] = await Promise.allSettled([
-        getBranches({ per_page: 500 }),
-        getCRMCategories({ per_page: 500 }),
-        getCourses({ per_page: 500 }),
-        getCRMSources({ per_page: 500 }),
-    ]);
+    let branches: Branch[] = [];
+    try {
+        const res = await getBranches({ per_page: 500 });
+        branches = res?.data?.branches || [];
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error("Error fetching branches:", error.message);
+        }
+        else {
+            console.error("Error fetching branches:", error);
+        }
+    }
 
-    const branches = branchesRes.status === "fulfilled" ? (branchesRes.value?.data?.branches || []) : [];
-    const categories = categoriesRes.status === "fulfilled" ? (categoriesRes.value?.data?.categories || []) : [];
-    const courses = coursesRes.status === "fulfilled" ? (coursesRes.value?.data?.courses || []) : [];
-    const sources = sourcesRes.status === "fulfilled" ? (sourcesRes.value?.data?.sources || []) : [];
+    let categories: CRMCategory[] = [];
+    try {
+        const res = await getCRMCategories({ per_page: 500 });
+        categories = res?.data?.categories || [];
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error("Error fetching CRM categories:", error.message);
+        }
+        else {
+            console.error("Error fetching CRM categories:", error);
+        }
+    }
+
+    let courses: Course[] = [];
+    try {
+        const res = await getCourses({ per_page: 500 });
+        courses = res?.data?.courses || [];
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error("Error fetching courses:", error.message);
+        }
+        else {
+            console.error("Error fetching courses:", error);
+        }
+    }
+
+    let sources: CRMSource[] = [];
+    try {
+        const res = await getCRMSources({ per_page: 500 });
+        sources = res?.data?.sources || [];
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error("Error fetching CRM sources:", error.message);
+        }
+        else {
+            console.error("Error fetching CRM sources:", error);
+        }
+    }
+
+    let referrers: CRMReferrer[] = [];
+    try {
+        const res = await getCRMReferrers({ per_page: 500 });
+        referrers = res?.data?.referrers || [];
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error("Error fetching CRM referrers:", error.message);
+        }
+        else {
+            console.error("Error fetching CRM referrers:", error);
+        }
+    }
 
     return (
         <CRMLeadsForm
@@ -64,6 +109,7 @@ export default async function EditCRMLeadPage({ params }: PageProps) {
             categories={categories}
             courses={courses}
             sources={sources}
+            referrers={referrers}
         />
     );
 }

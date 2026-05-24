@@ -337,10 +337,10 @@ export default function CRMLeadsClientTable({
                                 <TableCell className="text-center">
                                     <div className="flex flex-col text-xs">
                                         <span className="font-medium text-foreground">
-                                            {lead?.referrer_name || "—"}
+                                            {lead?.referrer?.name || lead?.referrer_name || "—"}
                                         </span>
                                         <span className="text-muted-foreground">
-                                            {lead?.referrer_phone || ""}
+                                            {lead?.referrer?.phone || lead?.referrer_phone || ""}
                                         </span>
                                     </div>
                                 </TableCell>

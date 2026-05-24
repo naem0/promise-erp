@@ -21,6 +21,7 @@ import {
   Users,
   Warehouse,
 } from "lucide-react";
+import { title } from "process";
 
 export const sidebarData = {
   user: {
@@ -489,6 +490,11 @@ export const sidebarData = {
           url: "#",
           icon: Warehouse,
           items: [
+            {
+              title: "Inventory Items",
+              url: "/inventory/inventory-items",
+              permissions: ["view-products"],
+            },
             {
               title: "Inventory Categories",
               url: "/inventory/inventory-categories",

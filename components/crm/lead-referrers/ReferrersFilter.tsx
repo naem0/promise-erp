@@ -134,10 +134,6 @@ export default function ReferrersFilter({ branches = [] }: ReferrersFilterProps)
                     />
                 </div>
 
-                {/* Date Picker Range */}
-                <div className="md:col-span-2 xl:col-span-2">
-                    <DatePickerWithRange />
-                </div>
 
                 {/* Branch Selection */}
                 <Controller
@@ -219,6 +215,10 @@ export default function ReferrersFilter({ branches = [] }: ReferrersFilterProps)
                         </Select>
                     )}
                 />
+                {/* Date Picker Range */}
+                <div >
+                    <DatePickerWithRange />
+                </div>
             </div>
         </div>
     );

@@ -40,6 +40,7 @@ function Combobox({
   className,
   disabled,
   showClear = true,
+  value,
   ...props
 }: ComboboxProps) {
   const [inputValue, setInputValue] = React.useState("")
@@ -57,6 +58,7 @@ function Combobox({
       data-slot="combobox-root" 
       disabled={disabled} 
       multiple={false} 
+      value={value || ""}
       onValueChange={(val) => onValueChange?.(val)} 
       onInputValueChange={setInputValue}
       itemToStringLabel={(val) => options.find(o => o.value === val)?.label || ""}

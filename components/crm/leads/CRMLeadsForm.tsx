@@ -18,6 +18,8 @@ import { Course } from "@/apiServices/courseService";
 import { CRMCategory } from "@/apiServices/crmCategoryService";
 import { Branch } from "@/apiServices/branchService";
 import { CRMSource } from "@/apiServices/crmSourceService";
+import { CRMReferrer } from "@/apiServices/crmReferrerService";
+import ReferrerSearchSelect from "@/components/common/ReferrerSearchSelect";
 
 
 interface CRMLeadsFormProps {
@@ -27,6 +29,7 @@ interface CRMLeadsFormProps {
     categories?: CRMCategory[];
     branches?: Branch[];
     sources?: CRMSource[];
+    referrers?: CRMReferrer[];
 }
 
 interface FormValues {
@@ -35,8 +38,7 @@ interface FormValues {
     whatsapp: string;
     email: string;
     address: string;
-    referrer_name: string;
-    referrer_phone: string;
+    referrer_id: string;
     course_id: string;
     course_type: string;
     shift: string;
@@ -56,7 +58,8 @@ export default function CRMLeadsForm({
     lead,
     categories = [],
     branches = [],
-    sources = []
+    sources = [],
+    referrers = []
 }: CRMLeadsFormProps) {
     const router = useRouter();
 
@@ -77,8 +80,7 @@ export default function CRMLeadsForm({
             profession: lead?.profession || "", 
             institute: lead?.institute || "",
             age: lead?.age?.toString() || "",
-            referrer_name: lead?.referrer_name || "",
-            referrer_phone: lead?.referrer_phone || "",
+            referrer_id: lead?.referrer?.id?.toString() || "",
             course_id: lead?.course?.id?.toString() || "",
             course_type: lead?.course_type?.toString() || "",
             shift: lead?.shift?.toString() || "",
@@ -215,18 +217,22 @@ export default function CRMLeadsForm({
                         {errors.address && <p className="text-sm text-red-500 mt-1">{errors.address.message}</p>}
                     </div>
 
-                    {/* Referrer Name */}
+                    {/* Referrer */}
                     <div>
-                        <label className="block text-sm font-medium mb-1">Referrer Name</label>
-                        <Input placeholder="Enter referrer name" {...register("referrer_name")} />
-                        {errors.referrer_name && <p className="text-sm text-red-500 mt-1">{errors.referrer_name.message}</p>}
-                    </div>
-
-                    {/* Referrer Phone */}
-                    <div>
-                        <label className="block text-sm font-medium mb-1">Referrer Phone</label>
-                        <Input placeholder="Enter referrer phone" {...register("referrer_phone")} />
-                        {errors.referrer_phone && <p className="text-sm text-red-500 mt-1">{errors.referrer_phone.message}</p>}
+                        <label className="block text-sm font-medium mb-1">Referrer</label>
+                        <Controller
+                            name="referrer_id"
+                            control={control}
+                            render={({ field }) => (
+                                <ReferrerSearchSelect
+                                    value={field.value}
+                                    onValueChange={(val) => field.onChange(val || "")}
+                                    referrers={referrers}
+                                    className="w-full"
+                                />
+                            )}
+                        />
+                        {errors.referrer_id && <p className="text-sm text-red-500 mt-1">{errors.referrer_id.message}</p>}
                     </div>
 
                     {/* Course */}

@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect} from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 import {
@@ -10,14 +10,8 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { FilterX, CalendarIcon } from "lucide-react";
-import { format } from "date-fns";
-import { DateRange } from "react-day-picker";
-
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
-import { Field } from "@/components/ui/field";
-import { cn } from "@/lib/utils";
+import { FilterX } from "lucide-react";
+import { DatePickerWithRange } from "@/components/common/DatePickerWithRange";
 
 import { Branch } from "@/apiServices/branchService";
 import { Consultant } from "@/apiServices/crmLeadsActions";
@@ -28,8 +22,6 @@ interface FilterFormValues {
     branch_id?: string;
     course_id?: string;
     status?: string;
-    date_from?: string;
-    date_to?: string;
     per_page?: string;
 }
 
@@ -56,8 +48,6 @@ export default function CRMLeadReportsFilter({
                 course_id: searchParams.get("course_id") || "",
                 status: searchParams.get("status") || "",
                 per_page: searchParams.get("per_page") || "15",
-                date_from: searchParams.get("date_from") || "",
-                date_to: searchParams.get("date_to") || "",
             },
         });
 
@@ -108,8 +98,6 @@ export default function CRMLeadReportsFilter({
             course_id: "",
             status: "",
             per_page: "15",
-            date_from: "",
-            date_to: "",
         });
         router.replace(pathname, { scroll: false });
     };
@@ -123,17 +111,7 @@ export default function CRMLeadReportsFilter({
         searchParams.get("date_from") ||
         searchParams.get("date_to");
 
-    const [localDate, setLocalDate] = useState<DateRange | undefined>({
-        from: watchedValues.date_from ? new Date(watchedValues.date_from) : undefined,
-        to: watchedValues.date_to ? new Date(watchedValues.date_to) : undefined,
-    });
 
-    useEffect(() => {
-        setLocalDate({
-            from: watchedValues.date_from ? new Date(watchedValues.date_from) : undefined,
-            to: watchedValues.date_to ? new Date(watchedValues.date_to) : undefined,
-        });
-    }, [watchedValues.date_from, watchedValues.date_to]);
 
     return (
         <div className="p-6 mb-6 border rounded-xl bg-card shadow-sm">
@@ -282,68 +260,7 @@ export default function CRMLeadReportsFilter({
                 />
 
                 {/* Date Range */}
-                <Field className="w-full">
-                    <Popover>
-                        <PopoverTrigger asChild className="cursor-pointer">
-                            <Button
-                                variant="outline"
-                                className={cn(
-                                    "w-full justify-start text-left font-normal h-10",
-                                    !watchedValues.date_from && "text-muted-foreground"
-                                )}
-                            >
-                                <CalendarIcon className="mr-2 h-4 w-4" />
-                                {localDate?.from ? (
-                                    localDate.to ? (
-                                        <>
-                                            {format(localDate.from, "LLL dd, y")} -{" "}
-                                            {format(localDate.to, "LLL dd, y")}
-                                        </>
-                                    ) : (
-                                        format(localDate.from, "LLL dd, y")
-                                    )
-                                ) : (
-                                    <span>Pick a date range</span>
-                                )}
-                            </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
-                            <div className="flex flex-col">
-                                <Calendar
-                                    mode="range"
-                                    defaultMonth={localDate?.from}
-                                    selected={localDate}
-                                    onSelect={(range) => {
-                                        setLocalDate(range);
-                                        if (range?.from && range?.to) {
-                                            setValue("date_from", format(range.from, "yyyy-MM-dd"));
-                                            setValue("date_to", format(range.to, "yyyy-MM-dd"));
-                                        }
-                                        else if (!range?.from && !range?.to) {
-                                            setValue("date_from", "");
-                                            setValue("date_to", "");
-                                        }
-                                    }}
-                                    numberOfMonths={2}
-                                />
-                                <div className="p-3 border-t flex justify-end gap-2 bg-slate-50/50">
-                                    <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        className="h-8 text-xs text-muted-foreground hover:text-destructive cursor-pointer"
-                                        onClick={() => {
-                                            setLocalDate(undefined);
-                                            setValue("date_from", "");
-                                            setValue("date_to", "");
-                                        }}
-                                    >
-                                        Clear Range
-                                    </Button>
-                                </div>
-                            </div>
-                        </PopoverContent>
-                    </Popover>
-                </Field>
+                <DatePickerWithRange />
 
                 {/* Per Page */}
                 <Controller

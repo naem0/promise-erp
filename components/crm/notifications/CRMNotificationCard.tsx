@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { CRMNotification, markCRMNotificationAsRead } from "@/apiServices/crmNotification";
-import { Phone, User, CheckCircle2, Loader2, BellRing, Hash } from "lucide-react";
+import { Phone, User, CheckCircle2, Loader2, BellRing, Hash, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -56,8 +56,6 @@ const CRMNotificationCard = ({ notification, index = 0 }: CRMNotificationCardPro
             }
         });
     };
-
-
 
     return (
         <div
@@ -134,6 +132,17 @@ const CRMNotificationCard = ({ notification, index = 0 }: CRMNotificationCardPro
                     >
                         <Hash className="h-3 w-3" />
                         <span className="truncate">Lead {notification.lead_id}</span>
+                    </span>
+                    <span
+                    className={cn(
+                            "inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium border transition-colors",
+                            isRead
+                                ? "bg-transparent text-teal-700/70 border-slate-200/60"
+                                : "bg-teal-50 text-black border-teal-200 group-hover:bg-teal-100"
+                        )}
+                    >
+                        <Clock className="h-3 w-3" />
+                        {notification?.created_at_human}
                     </span>
                 </div>
             </div>
