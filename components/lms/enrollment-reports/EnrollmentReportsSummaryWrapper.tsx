@@ -1,139 +1,163 @@
-import { getCourseSalesSummary, CourseSalesSummaryApiResponse } from "@/apiServices/enrollmentReportService";
+
+import {
+  getCourseSalesSummary,
+  CourseSalesSummaryApiResponse,
+  CourseSalesSummaryItem,
+} from "@/apiServices/enrollmentReportService";
 import ErrorComponent from "@/components/common/ErrorComponent";
-import { 
-  ArrowDown, 
-  ArrowUp, 
-  Banknote, 
-  CreditCard, 
-  GraduationCap, 
-  Layers, 
-  MessageCircle, 
-  PieChart, 
-  TrendingUp, 
-  Zap 
+import {
+  ArrowDown,
+  ArrowUp,
+  Banknote,
+  Boxes,
+  CreditCard,
+  GraduationCap,
+  Layers3,
+  Star,
+  TrendingUp,
+  UserPlus,
+  Users,
+  Wallet,
+  XCircle,
 } from "lucide-react";
+
+const gradients = [
+  "from-[#3477DB] to-[#4B8CF0]",
+  "from-[#8D49E6] to-[#A864FF]",
+  "from-[#18BDE6] to-[#34D4FF]",
+  "from-[#E34771] to-[#FF6B8F]",
+  "from-[#08B98B] to-[#10D9A3]",
+  "from-[#5A00D6] to-[#7E31FF]",
+  "from-[#EE8600] to-[#FFAA33]",
+];
+
+const iconMap: Record<string, React.ElementType> = {
+  "Total Received": Banknote,
+  "Advance Received": Wallet,
+  "Total Due": CreditCard,
+  "Running Batches": Layers3,
+  "Total Enrollments": Users,
+  "New Students This Week": UserPlus,
+  "Collection Growth": TrendingUp,
+  "Due Collection": Boxes,
+  "Pending Payment": Wallet,
+  "Cancelled Enrollments": XCircle,
+  "Most Selling Course": Star,
+};
 
 export default async function EnrollmentReportsSummaryWrapper() {
   let summaryResponse: CourseSalesSummaryApiResponse | null = null;
-  
+
   try {
     summaryResponse = await getCourseSalesSummary();
   } catch (error: unknown) {
-    if (error instanceof Error) {
-      return (
-        <div className="py-8 md:py-12">
-          <ErrorComponent
-            message={error.message || "An unknown error occurred"}
-          />
-        </div>
-      );
-    } else {
-      return (
-        <div className="py-8 md:py-12">
-          <ErrorComponent message="An unknown error occurred" />
-        </div>
-      );
-    }
+    return (
+      <div className="py-8 md:py-12">
+        <ErrorComponent
+          message={
+            error instanceof Error
+              ? error.message
+              : "An unknown error occurred"
+          }
+        />
+      </div>
+    );
   }
 
-  if (!summaryResponse || !summaryResponse.success || !summaryResponse.data) {
+  if (!summaryResponse?.success || !summaryResponse?.data) {
     return null;
   }
 
   const summaryData = summaryResponse.data.summary;
 
-  const cardsInfo = [
-    {
-      title: "Total Received",
-      stat: summaryData.total_received,
-      prefix: "৳ ",
-      bg: "#00B686", // green
-      SmallIcon: Banknote,
-      LargeIcon: Zap,
-    },
-    {
-      title: "Advance",
-      stat: summaryData.advance,
-      prefix: "৳ ",
-      bg: "#E67E00", // orange
-      SmallIcon: PieChart,
-      LargeIcon: TrendingUp,
-    },
-    {
-      title: "Total Due",
-      stat: summaryData.total_due,
-      prefix: "৳ ",
-      bg: "#2D76E5", // blue
-      SmallIcon: CreditCard,
-      LargeIcon: GraduationCap,
-    },
-    {
-      title: "Running Batch",
-      stat: summaryData.running_batch,
-      prefix: "",
-      bg: "#E64A6E", // pink
-      SmallIcon: Layers,
-      LargeIcon: MessageCircle,
-      padZero: true,
-    },
-  ];
+  const formatValue = (item: CourseSalesSummaryItem) => {
+    const title = item.title || "Most Selling Course";
 
-  const formatValue = (val: number, prefix: string, padZero: boolean) => {
-    let formatted = val.toLocaleString();
-    if (padZero && val < 10 && val > 0) {
-        formatted = `0${val}`;
-    } else if (padZero && val === 0) {
-        formatted = "00";
+    if (title === "Collection Growth" || title === "Due Collection") {
+      return `${item.value}%`;
     }
-    return `${prefix}${formatted}`;
+
+    if (
+      [
+        "Running Batches",
+        "Total Enrollments",
+        "New Students This Week",
+        "Cancelled Enrollments",
+      ].includes(title)
+    ) {
+      return `${item.value.toLocaleString()} Students`;
+    }
+
+    if (title === "Most Selling Course") {
+      return `${String(item.value).padStart(2, "0")} Course`;
+    }
+
+    return `৳ ${item.value.toLocaleString()}`;
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 lg:grid-cols-4 gap-4 md:gap-6 mb-6">
-      {cardsInfo.map((card, index) => {
-        const { title, stat, prefix, bg, SmallIcon, LargeIcon, padZero } = card;
-        
-        const growth = stat?.growth || "";
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+      {summaryData.map((item: CourseSalesSummaryItem, index: number) => {
+        const title =
+          item.key === "most_selling_course"
+            ? "Most Selling Course"
+            : item.title || "";
+
+        const Icon = iconMap[title] || TrendingUp;
+
+        const growth = item.growth || "";
         const isPositive = growth.startsWith("+");
         const isNegative = growth.startsWith("-");
-        
-        const percentageText = growth.replace(/^[+-]/, '').trim() || "0% From Last Week";
+
+        const gradient = gradients[index % gradients.length];
 
         return (
-          <div 
-            key={index} 
-            className="text-white rounded-xl p-5 flex flex-col h-full shadow-sm relative overflow-hidden"
-            style={{ backgroundColor: bg }}
+          <div
+            key={index}
+            className={`relative overflow-hidden rounded-2xl bg-gradient-to-br ${gradient} p-5 text-white shadow-sm`}
           >
-            {/* Header */}
-            <div className="flex items-center gap-2 mb-2 relative z-10">
-              <div className="p-2 bg-white/20 rounded-lg">
-                <SmallIcon className="w-5 h-5 text-white" />
+            {/* Top */}
+            <div className="relative z-10 flex items-center gap-3">
+              <div className="rounded-lg bg-white/20 p-2">
+                <Icon className="h-5 w-5" />
               </div>
-              <h3 className="font-medium text-lg">{title}</h3>
+
+              <h3 className="text-lg font-medium">{title}</h3>
             </div>
 
-            {/* Content & Large Icon */}
-            <div className="flex items-end justify-between mt-4 relative z-10">
-              <div className="flex items-baseline gap-2">
-                <span className="text-xl lg:text-2xl font-bold">
-                  {formatValue(stat?.value || 0, prefix, !!padZero)}
-                </span>
-              </div>
-            </div>
-            
-            {/* Faint Background Icon */}
-            <LargeIcon className="absolute right-4 top-1/2 -translate-y-1/2 w-24 h-24 opacity-20 z-0" strokeWidth={1.5} />
+            {/* Middle */}
+            <div className="relative z-10 mt-6">
+              <h2 className="text-3xl font-bold">
+                {formatValue(item)}
+              </h2>
 
-            {/* Footer Pill */}
-            <div className="mt-6 relative z-10">
-              <div className="flex items-center gap-1 text-xs md:text-sm bg-white/20 w-fit px-3 py-1 rounded-full md:rounded-md">
+              {item.course_name && (
+                <p className="mt-1 text-sm text-white/80">
+                  {item.course_name}
+                </p>
+              )}
+            </div>
+
+            {/* Background Icon */}
+            <Icon
+              className="absolute right-4 top-1/2 h-24 w-24 -translate-y-1/2 opacity-15"
+              strokeWidth={1.5}
+            />
+
+            {/* Footer */}
+            <div className="relative z-10 mt-6">
+              <div className="flex w-fit items-center gap-1 rounded-full bg-white/20 px-3 py-1 text-xs md:text-sm">
                 {isPositive ? (
-                  <ArrowUp className="w-3 h-3 md:w-4 md:h-4" />
+                  <ArrowUp className="h-3 w-3 md:h-4 md:w-4" />
                 ) : isNegative ? (
-                  <ArrowDown className="w-3 h-3 md:w-4 md:h-4" />
-                ) : <ArrowUp className="w-3 h-3 md:w-4 md:h-4 opacity-0" />}
-                <span>{percentageText}</span>
+                  <ArrowDown className="h-3 w-3 md:h-4 md:w-4" />
+                ) : (
+                  <div className="w-3 md:w-4" />
+                )}
+
+                <span>
+                  {growth.replace(/^[+-]/, "") || "0% From Last Week"}
+                </span>
               </div>
             </div>
           </div>
