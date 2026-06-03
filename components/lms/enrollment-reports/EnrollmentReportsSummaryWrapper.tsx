@@ -114,7 +114,7 @@ export default async function EnrollmentReportsSummaryWrapper() {
         return (
           <div
             key={index}
-            className={`relative overflow-hidden rounded-2xl bg-gradient-to-br ${gradient} p-5 text-white shadow-sm`}
+            className={`relative overflow-hidden rounded-2xl bg-linear-to-br ${gradient} p-5 text-white shadow-sm`}
           >
             {/* Top */}
             <div className="relative z-10 flex items-center gap-3">
