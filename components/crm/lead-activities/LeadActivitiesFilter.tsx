@@ -37,7 +37,7 @@ export default function LeadsActivityFilter({ consultants }: { consultants?: Con
                 status: searchParams.get("status") || "",
                 user_id: searchParams.get("user_id") || "",
                 course_id: searchParams.get("course_id") || "",
-                per_page: searchParams.get("per_page") || "15",
+                per_page: searchParams.get("per_page") || "",
             },
         });
 
@@ -87,7 +87,7 @@ export default function LeadsActivityFilter({ consultants }: { consultants?: Con
             status: "",
             user_id: "",
             course_id: "",
-            per_page: "15",
+            per_page: "",
         });
         router.replace(pathname, { scroll: false });
     };
@@ -98,7 +98,7 @@ export default function LeadsActivityFilter({ consultants }: { consultants?: Con
     const currentCourseId = searchParams.get("course_id") || "";
     const currentDateFrom = searchParams.get("date_from") || "";
     const currentDateTo = searchParams.get("date_to") || "";
-    const currentPerPage = searchParams.get("per_page") || "15";
+    const currentPerPage = searchParams.get("per_page") || "";
     const hasActiveFilters =
         currentSearch !== "" ||
         currentStatus !== "" ||
@@ -106,7 +106,7 @@ export default function LeadsActivityFilter({ consultants }: { consultants?: Con
         currentCourseId !== "" ||
         currentDateFrom !== "" ||
         currentDateTo !== "" ||
-        currentPerPage !== "15";
+        currentPerPage !== "";
 
 
 

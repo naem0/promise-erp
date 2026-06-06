@@ -26,6 +26,21 @@ const LeadsActivityData = async ({
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) => {
   const resolvedSearchParams = await searchParams;
+
+  const searchParamsString = new URLSearchParams(
+    Object.entries(resolvedSearchParams).reduce((acc, [key, value]) => {
+      if (value !== undefined) {
+        if (Array.isArray(value)) {
+          value.forEach(v => acc.append(key, v));
+        } else {
+          acc.append(key, value);
+        }
+      }
+      return acc;
+    }, new URLSearchParams())
+  ).toString();
+  const queryStr = searchParamsString ? `?${searchParamsString}` : "";
+
   const page =
     typeof resolvedSearchParams.page === "string"
       ? Number(resolvedSearchParams.page)
@@ -143,7 +158,7 @@ const LeadsActivityData = async ({
                   /> */}
                   <PermissionGuard requiredPermission="create-lead-activities">
                     <Link
-                      href={`/crm/lead-activities/${activity?.lead_id || activity?.id}/manage`}
+                      href={`/crm/lead-activities/${activity?.lead_id || activity?.id}/manage${queryStr}`}
                       className="inline-flex items-center rounded-md border px-3 py-1 text-sm bg-primary text-white"
                     >
                       Action
