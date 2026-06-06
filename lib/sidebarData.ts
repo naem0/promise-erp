@@ -446,6 +446,7 @@ export const sidebarData = {
               permissions: [
                 "view-lead-activity-list",
                 "view-assigned-lead-activity-list",
+                "create-enrollments",
               ],
             },
             {
@@ -461,7 +462,7 @@ export const sidebarData = {
             {
               title: "Lead Reports",
               url: "/crm/lead-reports",
-              permissions: ["crm-lead-reports"],
+              permissions: ["crm-lead-reports", "crm-reports-list","crm-assigned-reports-list"],
             },
             {
               title: "Counsellor Performance",
