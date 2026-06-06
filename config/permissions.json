@@ -170,6 +170,19 @@
       { "path": "/inventory/inventory-units/add", "permissions": ["create-units"] },
       { "path": "/inventory/inventory-units/edit", "permissions": ["edit-units"], "isDynamic": true },
 
+    { "path": "/inventory/inventory-groups", "permissions": ["view-group-items"] },
+    { "path": "/inventory/inventory-groups/add", "permissions": ["create-group-items"] },
+    { "path": "/inventory/inventory-groups/edit", "permissions": ["edit-group-items"], "isDynamic": true },
+  
+     { "path": "/inventory/inventory-rooms", "permissions": ["view-rooms"] },
+     { "path": "/inventory/inventory-rooms/add", "permissions": ["create-rooms"] },
+     { "path": "/inventory/inventory-rooms/edit", "permissions": ["edit-rooms"], "isDynamic": true },
+     
+     { "path": "/inventory/inventory-delivery-partners", "permissions": ["view-delivery-partners"] },
+     { "path": "/inventory/inventory-delivery-partners/add", "permissions": ["create-delivery-partners"] },
+     { "path": "/inventory/inventory-delivery-partners/edit", "permissions": ["edit-delivery-partners"], "isDynamic": true },
+
+
     { "path": "/settings/profile", "permissions": ["view-my-profile"] }
 
   ]

@@ -20,6 +20,7 @@ import {
   Calendar,
   User,
   MessageSquare,
+  FileText,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -82,6 +83,12 @@ export function StudentSidebar() {
       url: "/student/paymenthistory",
       icon: Clock,
       isActive: pathname.startsWith("/student/paymenthistory"),
+    },
+    {
+      title: "Invoices",
+      url: "/student/invoices",
+      icon: FileText,
+      isActive: pathname.startsWith("/student/invoices"),
     },
     {
       title: "Notifications",

@@ -29,7 +29,7 @@ const CRMNotificationTabs = ({
                         relative flex-1 h-full flex items-center justify-center gap-2
                         rounded-lg text-sm font-semibold transition-all duration-200
                         text-slate-500 hover:text-indigo-600
-                        data-[state=active]:bg-secondary
+                        data-[state=active]:bg-primary
                         data-[state=active]:text-white
                         data-[state=active]:shadow-md
                         data-[state=active]:shadow-indigo-200 cursor-pointer

@@ -20,6 +20,7 @@ export interface CRMNotification {
   message: string;
   type: string;
   created_at_human: string;
+  course_name?: string;
 }
 
 export interface CRMNotificationsResponse {

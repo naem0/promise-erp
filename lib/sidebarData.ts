@@ -187,7 +187,7 @@ export const sidebarData = {
             },
             {
               title: "Invoices",
-              url: "#",
+              url: "/lms/invoices",
               permissions: ["view-invoices"],
             },
             // {
@@ -496,6 +496,11 @@ export const sidebarData = {
               permissions: ["view-products"],
             },
             {
+              title: "Group Items",
+              url: "/inventory/inventory-groups",
+              permissions: ["view-group-items"],  
+            },
+            {
               title: "Categories",
               url: "/inventory/inventory-categories",
               permissions: ["view-product-categories"],
@@ -510,6 +515,18 @@ export const sidebarData = {
               url: "/inventory/inventory-units",
               permissions: ["view-units"],
             },
+
+            {
+              title: "Rooms",
+              url: "/inventory/inventory-rooms",
+              permissions: ["view-rooms"],
+            },
+            
+              { 
+                title: "Delivery Partners",
+                url: "/inventory/inventory-delivery-partners",
+                permissions: ["view-delivery-partners"],
+              },
           ],
         },
       ],

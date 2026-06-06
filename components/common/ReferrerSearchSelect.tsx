@@ -10,7 +10,8 @@ import {
   ComboboxList, 
   ComboboxItem, 
   ComboboxEmpty,
-  ComboboxClear
+  ComboboxClear,
+  useComboboxAnchor
 } from '@/components/ui/combobox'
 import { CRMReferrer } from '@/apiServices/crmReferrerService'
 import { cn } from '@/lib/utils'
@@ -34,6 +35,8 @@ export default function ReferrerSearchSelect({
 }: ReferrerSearchSelectProps) {
   const [inputValue, setInputValue] = useState("")
 
+  const anchor = useComboboxAnchor()
+
   const options = useMemo(() => (referrers || []).map(ref => ({
     value: String(ref.id),
     label: `${ref.name} (${ref.phone})`
@@ -56,7 +59,7 @@ export default function ReferrerSearchSelect({
         disabled={disabled}
         itemToStringLabel={(val) => options.find(o => o.value === val)?.label || ""}
       >
-        <div className="relative group">
+        <div ref={anchor} className="relative group">
           <ComboboxTrigger
             className={cn(
               "flex h-10 w-full items-center justify-between rounded-md border border-input bg-background pl-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
@@ -82,7 +85,7 @@ export default function ReferrerSearchSelect({
           )}
         </div>
         
-        <ComboboxContent className="w-[--anchor-width] min-w-[300px]">
+        <ComboboxContent anchor={anchor} className="w-[--anchor-width] min-w-[300px]">
           <ComboboxInput 
             placeholder="Search referrer..." 
             className="m-1 h-9 border-none shadow-none focus-visible:ring-0"

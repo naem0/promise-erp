@@ -69,6 +69,9 @@ const LeadActivityForm = ({ leadId, lastLeadActivityStatus }: LeadActivityFormPr
       if (res.success) {
         toast.success(res.message || "Activity saved successfully");
         reset();
+        if (values.status === "5") {
+          window.open(`/lms/enrollments/add?lead_id=${leadId}`, "_blank");
+        }
         router.push("/crm/lead-activities");
         router.refresh();
       } else {

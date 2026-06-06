@@ -305,3 +305,69 @@ export async function createLeadActivity(
     }
   }
 }
+
+// =======================
+// GET LEAD ENROLLMENT INFO
+// =======================
+
+export interface LeadEnrollmentInfo {
+  id: number;
+  student_id: number;
+  name: string;
+  email: string;
+  phone: string;
+  whatsapp?: string;
+  branch_id: number;
+  course_id: number;
+  batch_id?: number;
+}
+
+export interface LeadEnrollmentInfoResponse {
+  success: boolean;
+  message: string;
+  code: number;
+  data: LeadEnrollmentInfo;
+  errors?: Record<string, string[]>;
+}
+
+export async function getLeadEnrollmentInfo(
+  leadId: number,
+): Promise<LeadEnrollmentInfoResponse | null> {
+  try {
+    const session = await getServerSession(authOptions);
+    const token = session?.accessToken;
+
+    if (!token) throw new Error("No valid session/token");
+
+    const res = await fetch(`${API_BASE}/crm/leads/${leadId}/enrollment-info`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (res.status === 404) {
+      console.log("Lead not found for enrollment");
+      return null;
+    }
+    if (res.status === 401 || res.status === 403) {
+      console.log("Unauthorized to fetch lead enrollment info");
+      return null;
+    }
+
+    if (!res.ok) {
+      throw new Error(`Status: ${res.status} ${res.statusText}`);
+    }
+
+    const result = await res.json();
+    return result;
+  } catch (error: unknown) {
+    console.error("Error in getLeadEnrollmentInfo:", error);
+    if (error instanceof Error) {
+      throw new Error(error.message || "Failed to fetch lead enrollment info");
+    } else {
+      throw new Error("Failed to fetch lead enrollment info");
+    }
+  }
+}
+
