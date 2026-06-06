@@ -284,6 +284,7 @@ const HeaderContent = ({ navLinks }: HeaderContentProps) => {
               className="absolute right-0 top-1/2 -translate-y-1/2 w-14 border-0 rounded-l-none px-8 h-full bg-secondary hover:bg-primary"
               onClick={handleSearchClick}
               disabled={!searchQuery.trim() || isPending}
+              aria-label="Search"
             >
               {isPending ? (
                 <Loader2 className="h-8 w-10 animate-spin" />
@@ -302,7 +303,7 @@ const HeaderContent = ({ navLinks }: HeaderContentProps) => {
         {/* Mobile Menu */}
         <Sheet>
           <SheetTrigger asChild>
-            <Button variant="ghost" size="icon" className="lg:hidden">
+            <Button variant="ghost" size="icon" className="lg:hidden" aria-label="Open navigation menu">
               <Menu />
             </Button>
           </SheetTrigger>

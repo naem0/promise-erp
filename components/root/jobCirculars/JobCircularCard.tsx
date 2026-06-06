@@ -57,6 +57,7 @@ const JobCircularCard = ({ job }: JobCircularsProps) => {
             <Link
               href={`/job-circulars/${job.slug}`}
               target="_blank"
+              rel="noopener noreferrer"
               className="bg-primary px-4"
             >
               Apply Now

@@ -48,16 +48,16 @@ const FooterWidget = () => {
             <div className="mt-6">
               <p className="text-sm text-white mb-2">Follow us on:</p>
               <div className="flex gap-3">
-                <Link href="https://www.facebook.com/elaeltd.official" target="_blank" className=" text-white">
+                <Link href="https://www.facebook.com/elaeltd.official" target="_blank" rel="noopener noreferrer" className=" text-white" aria-label="Facebook">
                   <Facebook size={20} />
                 </Link>
-                <Link href="https://www.linkedin.com/company/e-learning-and-earning-ltd/" target="_blank" className=" text-white">
+                <Link href="https://www.linkedin.com/company/e-learning-and-earning-ltd/" target="_blank" rel="noopener noreferrer" className=" text-white" aria-label="LinkedIn">
                   <Linkedin size={20} />
                 </Link>
-                <Link href="https://x.com/elaeltdofficial" target="_blank" className=" text-white">
+                <Link href="https://x.com/elaeltdofficial" target="_blank" rel="noopener noreferrer" className=" text-white" aria-label="Twitter">
                   <Twitter size={20} />
                 </Link>
-                <Link href="https://www.youtube.com/@elaeltd.official" target="_blank" className=" text-white">
+                <Link href="https://www.youtube.com/@elaeltd.official" target="_blank" rel="noopener noreferrer" className=" text-white" aria-label="YouTube">
                   <Youtube size={20} />
                 </Link>
               </div>

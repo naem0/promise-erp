@@ -57,6 +57,7 @@ const NewsfeedsArchive = async () => {
               href={newsItems[0].news_link || "#"}
               className="group h-full "
               target="_blank"
+              rel="noopener noreferrer"
             >
               <AspectRatio
                 ratio={1 / 1}
@@ -64,7 +65,7 @@ const NewsfeedsArchive = async () => {
               >
                 <Image
                   src={newsItems[0].image || "/images/placeholder_img.jpg"}
-                  alt={newsItems[0].news_link || "News Image"}
+                  alt={newsItems[0].title || "Featured News"}
                   fill
                   className="object-cover transition-transform duration-500 group-hover:scale-105 border border-secondary/20 rounded-lg"
                   sizes="(min-width: 1024px) 50vw, 100vw"
@@ -82,6 +83,7 @@ const NewsfeedsArchive = async () => {
                 href={item.news_link}
                 className="group"
                 target="_blank"
+                rel="noopener noreferrer"
               >
                 <Card className="p-3 py-4 h-full gap-2">
                   <h3 className="text-center text-secondary text-sm font-semibold">
@@ -93,7 +95,7 @@ const NewsfeedsArchive = async () => {
                   >
                     <Image
                       src={item.image || "/images/placeholder_img.jpg"}
-                      alt={item.news_link}
+                      alt={item.title || "News"}
                       fill
                       className="object-cover transition-transform duration-500 group-hover:scale-105 border border-secondary/20 rounded-lg"
                       sizes="(min-width: 1024px) 50vw, 100vw"

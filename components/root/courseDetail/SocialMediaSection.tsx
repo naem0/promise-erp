@@ -39,7 +39,7 @@ export default function SocialMediaSection() {
             <div className="w-16 h-16 relative">
               <Image
                 src={item.icon}
-                alt="icon"
+                alt={`${item.bold} Icon`}
                 fill
                 className="object-contain"
               />
@@ -55,6 +55,7 @@ export default function SocialMediaSection() {
             <Link
               href={item.link}
               target="_blank"
+              rel="noopener noreferrer"
               className="border border-primary text-primary rounded-full px-6 py-2 text-sm font-medium hover:bg-primary hover:text-primary-foreground transition flex items-center gap-2"
             >
               {item.btn} 

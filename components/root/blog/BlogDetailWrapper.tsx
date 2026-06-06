@@ -94,6 +94,7 @@ const BlogDetailWrapper = async ({ slug }: BlogDetailWrapperProps) => {
                 href="https://www.facebook.com/elaeltd.official"
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="Facebook"
               >
                 <Facebook className="w-4 h-4 text-white" />
               </Link>
@@ -104,6 +105,7 @@ const BlogDetailWrapper = async ({ slug }: BlogDetailWrapperProps) => {
                 href="https://www.youtube.com/@elaeltd.official"
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="YouTube"
               >
                 <Youtube className="w-4 h-4 text-white" />
               </Link>
@@ -114,6 +116,7 @@ const BlogDetailWrapper = async ({ slug }: BlogDetailWrapperProps) => {
                 href="https://www.linkedin.com/company/e-learning-and-earning-ltd"
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="LinkedIn"
               >
                 <Linkedin className="w-4 h-4 text-white" />
               </Link>

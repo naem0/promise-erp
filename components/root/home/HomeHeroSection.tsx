@@ -33,6 +33,7 @@ const HomeHeroSection = ({ heroBannerData }: HeroVideoData) => {
           alt="Hero background"
           fill
           priority
+          fetchPriority="high"
           quality={85}
           sizes="100vw"
           className="object-cover object-center"
@@ -80,21 +81,20 @@ const HomeHeroSection = ({ heroBannerData }: HeroVideoData) => {
             }}
           >
             <div className="rounded-2xl overflow-hidden border-6 min-h-[425px] border-white relative">
-              <ReactPlayer
-                className="absolute inset-0"
-                src={videoUrl}
-                playing={isPlaying}
-                controls={true}
-                width="100%"
-                height="100%"
-                onPlay={() => setIsPlaying(true)}
-                onPause={() => setIsPlaying(false)}
-              />
-
-              {!isPlaying && (
+              {isPlaying ? (
+                <ReactPlayer
+                  className="absolute inset-0"
+                  src={videoUrl}
+                  playing={isPlaying}
+                  controls={true}
+                  width="100%"
+                  height="100%"
+                  onPlay={() => setIsPlaying(true)}
+                  onPause={() => setIsPlaying(false)}
+                />
+              ) : (
                 <div
                   className="flex items-center justify-center absolute inset-0"
-                  
                 >
                   <div className="relative w-full h-full">
                     <Image
