@@ -20,13 +20,18 @@ const HEADERS = [
   "Course",
   "Branch",
   "Date",
+  "Total Lead",
   "Assigned",
   "Contacted",
-  "Progress",
-  "Enrolled",
-  "Follow Up",
+  "New",
+  "Busy",
   "Interested",
-  "Lost",
+  "Follow Up",
+  "Enrolled",
+  "Cancelled",
+  "Not Received",
+  "Call Rejected",
+  "Progress",
 ];
 
 function buildRows(data: CRMLeadReportsItem[], page: number = 1, perPage: number = data.length) {
@@ -36,13 +41,18 @@ function buildRows(data: CRMLeadReportsItem[], page: number = 1, perPage: number
     item?.course_name || "N/A",
     item?.branch_name || "N/A",
     item?.date || "",
+    item?.total_lead || 0,
     item?.total_assigned || 0,
     item?.contacted || 0,
-    item?.target_progress || "",
-    item?.enrolled || 0,
-    item?.follow_up || 0,
+    item?.new || 0,
+    item?.busy || 0,
     item?.interested || 0,
+    item?.follow_up || 0,
+    item?.enrolled || 0,
     item?.lost || 0,
+    item?.not_received || 0,
+    item?.call_rejected || 0,
+    item?.target_progress || "",
   ]);
 }
 
@@ -151,13 +161,18 @@ export default function CRMLeadReportsExportButton({
         { wch: 30 }, // Course
         { wch: 15 }, // Branch
         { wch: 15 }, // Date
+        { wch: 12 }, // Total Lead
         { wch: 10 }, // Assigned
         { wch: 10 }, // Contacted
-        { wch: 15 }, // Progress
-        { wch: 10 }, // Enrolled
-        { wch: 10 }, // Follow Up
+        { wch: 10 }, // New
+        { wch: 10 }, // Busy
         { wch: 10 }, // Interested
-        { wch: 10 }, // Lost
+        { wch: 10 }, // Follow Up
+        { wch: 10 }, // Enrolled
+        { wch: 10 }, // Cancelled
+        { wch: 15 }, // Not Received
+        { wch: 15 }, // Call Rejected
+        { wch: 15 }, // Progress
       ];
 
       const wb = utils.book_new();

@@ -13,12 +13,17 @@ const API_BASE =
 // =======================
 
 export interface CRMLeadReportsSummary {
+  total_lead: number;
   total_assigned: number;
-  total_enrolled: number;
-  total_contacted: number;
-  total_follow_up: number;
+  total_new: number;
+  total_busy: number;
   total_interested: number;
+  total_follow_up: number;
+  total_enrolled: number;
   total_lost: number;
+  total_not_received: number;
+  total_call_rejected: number;
+  total_contacted: number;
   total_target_progress: string;
 }
 
@@ -30,13 +35,18 @@ export interface CRMLeadReportsItem {
   branch_id: string;
   branch_name: string;
   date: string;
+  total_lead: number;
   total_assigned: number;
   contacted: number;
   target_progress: string;
-  enrolled: number;
-  follow_up: number;
+  new: number;
+  busy: number;
   interested: number;
+  follow_up: number;
+  enrolled: number;
   lost: number;
+  not_received: number;
+  call_rejected: number;
 }
 
 export interface CRMLeadReportsResponse {

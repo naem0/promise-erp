@@ -50,9 +50,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, Plus } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { useForm, Controller } from "react-hook-form";
+import PermissionGuard from "@/components/auth/PermissionGuard";
+import { getElPaymentMethods, PaymentMethod } from "@/apiServices/studentDashboardService";
 
 interface InfoRowProps {
     label: string;
@@ -95,6 +97,7 @@ export default function EnrollmentDetails({
 }: EnrollmentDetailsProps) {
     const router = useRouter();
     const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false);
+    const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
 
     const {
         register,
@@ -107,11 +110,28 @@ export default function EnrollmentDetails({
     } = useForm<PaymentFormValues>({
         defaultValues: {
             paid_amount: "",
-            payment_method: PAYMENT_METHOD_BKASH.toString(),
+            payment_method: "",
             payment_status: PAYMENT_STATUS_PAID.toString(),
             comment: "",
         },
     });
+
+    useEffect(() => {
+        const fetchPaymentMethods = async () => {
+            try {
+                const res = await getElPaymentMethods();
+                if (res && res.success && res.data) {
+                    setPaymentMethods(res.data);
+                    if (res.data.length > 0) {
+                        setValue("payment_method", res.data[0].id.toString());
+                    }
+                }
+            } catch (error : unknown) {
+                console.error("Error fetching payment methods:", error);
+            }
+        };
+        fetchPaymentMethods();
+    }, [setValue]);
 
     if (errorMessage) {
         return <ErrorComponent message={errorMessage} />;
@@ -155,7 +175,12 @@ export default function EnrollmentDetails({
             if (res.success) {
                 toast.success(res.message || "Payment created successfully");
                 setIsPaymentDialogOpen(false);
-                reset();
+                reset({
+                    paid_amount: "",
+                    payment_method: paymentMethods[0]?.id.toString() || "",
+                    payment_status: PAYMENT_STATUS_PAID.toString(),
+                    comment: "",
+                });
                 router.refresh();
             } else {
                 toast.error(res.message || "Failed to create payment");
@@ -246,12 +271,14 @@ export default function EnrollmentDetails({
                         <CardTitle>Payment Histories</CardTitle>
                         {dueAmount > 0 && (
                             <Dialog open={isPaymentDialogOpen} onOpenChange={setIsPaymentDialogOpen}>
+                                <PermissionGuard requiredPermission={["create-payment-histories"]}>
                                 <DialogTrigger asChild>
                                     <Button size="sm" className="gap-2">
                                         <Plus className="h-4 w-4" />
                                         Add Payment
                                     </Button>
                                 </DialogTrigger>
+                                </PermissionGuard>
                                 <DialogContent className="sm:max-w-[500px]" onPointerDownOutside={(e) => isSubmitting && e.preventDefault()}>
                                     <DialogHeader>
                                         <DialogTitle>Create New Payment</DialogTitle>
@@ -285,16 +312,17 @@ export default function EnrollmentDetails({
                                                     <Select
                                                         value={field.value}
                                                         onValueChange={field.onChange}
-                                                        disabled={isSubmitting}
+                                                        disabled={isSubmitting || paymentMethods.length === 0}
                                                     >
                                                         <SelectTrigger id="payment_method" className="w-full">
-                                                            <SelectValue placeholder="Select payment method" />
+                                                            <SelectValue placeholder={paymentMethods.length === 0 ? "Loading..." : "Select payment method"} />
                                                         </SelectTrigger>
                                                         <SelectContent>
-                                                            <SelectItem value={PAYMENT_METHOD_BKASH.toString()}>bKash</SelectItem>
-                                                            <SelectItem value={PAYMENT_METHOD_ROCKET.toString()}>Rocket</SelectItem>
-                                                            <SelectItem value={PAYMENT_METHOD_NAGAD.toString()}>Nagad</SelectItem>
-                                                            <SelectItem value={PAYMENT_METHOD_CASH.toString()}>Cash</SelectItem>
+                                                            {paymentMethods.map((method) => (
+                                                                <SelectItem key={method.id} value={method.id.toString()}>
+                                                                    {method.name}
+                                                                </SelectItem>
+                                                            ))}
                                                         </SelectContent>
                                                     </Select>
                                                 )}
@@ -387,11 +415,14 @@ export default function EnrollmentDetails({
                                             <TableRow key={history.id}>
                                                 <TableCell>{index + 1}</TableCell>
                                                 <TableCell>{history.payment_details?.payment_method_name ?? "N/A"}</TableCell>
+
                                                 <TableCell>
-                                                    <PaymentHistoryStatusDropdown
-                                                        paymentHistoryId={history.id}
-                                                        currentStatus={history.payment_details?.payment_status_name}
-                                                    />
+                                                    <PermissionGuard requiredPermission={["edit-payment-histories"]}>
+                                                        <PaymentHistoryStatusDropdown
+                                                            paymentHistoryId={history.id}
+                                                            currentStatus={history.payment_details?.payment_status_name}
+                                                        />
+                                                    </PermissionGuard>
                                                 </TableCell>
                                                 <TableCell>{history.payment_details?.payment_type_name ?? "N/A"}</TableCell>
                                                 <TableCell className="text-right">
@@ -400,7 +431,7 @@ export default function EnrollmentDetails({
                                                 <TableCell className="text-right">
                                                     {formatCurrency(history.payment_details?.due_amount)}
                                                 </TableCell>
-                                                <TableCell className="max-w-[240px]">
+                                                <TableCell className="max-[240px]">
                                                     {history.payment_details?.comment ?? "N/A"}
                                                 </TableCell>
                                                 <TableCell>
