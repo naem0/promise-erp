@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -17,6 +17,7 @@ import {
 import { Combobox } from "@/components/ui/combobox";
 import CourseSearchSelect from "@/components/common/CourseSearchSelect";
 import { createEnrollment } from "@/apiServices/enrollmentService";
+import { getLeadEnrollmentInfo, LeadEnrollmentInfoResponse } from "@/apiServices/crmLeadActivitiesService";
 import {
   PAYMENT_METHOD_PAYLATER,
   PAYMENT_METHOD_ROCKET,
@@ -92,6 +93,10 @@ export default function CreateEnrollmentForm({
   batches: initialBatches,
 }: CreateEnrollmentFormProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const leadIdParam = searchParams.get("lead_id");
+
+  const [students, setStudents] = useState<Student[]>(initialStudents);
   const [courseId, setCourseId] = useState<string>("");
   const [selectedBatch, setSelectedBatch] = useState<Batch | null>(null);
 
@@ -121,13 +126,81 @@ export default function CreateEnrollmentForm({
   const paymentAmount = watch("payment_amount");
   const additionalDiscount = watch("discount_amount");
 
+  // Sync state when initialStudents changes
+  useEffect(() => {
+    setStudents((prev) => {
+      const customStudents = prev.filter((ps) => !initialStudents.some((is) => is.id === ps.id));
+      return [...customStudents, ...initialStudents];
+    });
+  }, [initialStudents]);
+
+  // Fetch and populate lead info if lead_id is present
+  useEffect(() => {
+    const fetchLeadInfo = async () => {
+      if (!leadIdParam) return;
+      try {
+        const res = await getLeadEnrollmentInfo(Number(leadIdParam));
+        if (res?.success && res?.data) {
+          const leadData = res?.data;
+          let targetStudentId = "";
+
+          if (leadData?.student_id) {
+            const exists = students.find((s) => s.id === leadData.student_id);
+            if (!exists) {
+              const newStudent: Student = {
+                id: leadData.student_id,
+                name: leadData.name,
+                email: leadData.email,
+                phone: leadData.phone,
+              };
+              setStudents((prev) => [newStudent, ...prev]);
+            }
+            targetStudentId = leadData.student_id.toString();
+          } else {
+            // Find by phone or email
+            const matched = students.find(
+              (s) =>
+                (leadData.phone && s.phone === leadData.phone) ||
+                (leadData.email && s.email?.toLowerCase() === leadData.email.toLowerCase())
+            );
+            if (matched) {
+              targetStudentId = matched.id.toString();
+            } else {
+              toast.error("Lead is not registered as a student yet. Please register them first.");
+            }
+          }
+
+          if (targetStudentId) {
+            setValue("user_id", targetStudentId);
+          }
+
+          if (leadData?.course_id) {
+            handleCourseChange(leadData?.course_id.toString());
+            if (leadData?.batch_id) {
+              setTimeout(() => {
+                setValue("batch_id", leadData?.batch_id!.toString());
+              }, 50);
+            }
+          }
+          toast.success("Lead enrollment info loaded successfully!");
+        } else {
+          toast.error(res?.message || "Failed to load lead enrollment info");
+        }
+      } catch (error: unknown) {
+        console.error("Error loading lead info:", error);
+        toast.error("Error loading lead enrollment info");
+      }
+    };
+    fetchLeadInfo();
+  }, [leadIdParam]);
+
   // Filter batches by course
   const filteredBatches = courseId
     ? initialBatches.filter((batch) => batch.course?.id === Number(courseId))
     : initialBatches;
 
   // Prepare options for Combobox
-  const studentOptions = (initialStudents || []).map((student) => ({
+  const studentOptions = (students || []).map((student) => ({
     value: student?.id?.toString() || "",
     label: student ? `${student.name || "N/A"}${student.email ? ` (${student.email})` : ""}${student.phone ? ` - ${student.phone}` : ""}` : "Unknown Student",
   }));

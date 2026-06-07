@@ -7,11 +7,28 @@ import { getLeadActivitiesByLeadId } from "@/apiServices/crmLeadActivitiesServic
  
 export default async function LeadManagePage({
     params,
+    searchParams,
 }: {
     params: Promise<{ id: string }>;
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
     const { id } = await params;
     const leadId = Number(id);
+ 
+    const resolvedSearchParams = await searchParams;
+    const searchParamsString = new URLSearchParams(
+        Object.entries(resolvedSearchParams).reduce((acc, [key, value]) => {
+            if (value !== undefined) {
+                if (Array.isArray(value)) {
+                    value.forEach(v => acc.append(key, v));
+                } else {
+                    acc.append(key, value);
+                }
+            }
+            return acc;
+        }, new URLSearchParams())
+    ).toString();
+    const backUrl = `/crm/lead-activities${searchParamsString ? `?${searchParamsString}` : ""}`;
  
     let leadData;
     try {
@@ -28,7 +45,7 @@ export default async function LeadManagePage({
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                     <Button variant="outline" size="icon" asChild className="rounded-full">
-                        <Link href="/crm/lead-activities">
+                        <Link href={backUrl}>
                             <ArrowLeft className="w-5 h-5" />
                         </Link>
                     </Button>

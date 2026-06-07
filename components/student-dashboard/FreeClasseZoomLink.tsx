@@ -58,6 +58,7 @@ const FreeClasseZoomLink = ({ seminarData }: FreeClasseSessionProps) => {
                 variant="ghost"
                 size="icon"
                 className="h-8 w-8 shrink-0 text-green-600 hover:text-green-700"
+                aria-label="Copy joining link"
               >
                 <Copy className="h-4 w-4" />
               </Button>

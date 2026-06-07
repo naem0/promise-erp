@@ -123,6 +123,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "elt-back.promisemart.com",
       },
+      {
+        protocol: "https",
+        hostname: "picsum.photos",
+      },
     ],
   },
 

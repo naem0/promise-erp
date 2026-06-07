@@ -36,9 +36,10 @@ const EnrollPaymentMethod = ({
 
   // type === 1 → Pay Later
   const isPayLater = selectedMethod?.name === "Pay Later";
+  const isBkash = selectedMethod?.name?.toLowerCase() === "bkash";
 
   const showPartialAmount = selectedMethod && !isPayLater;
-  const showNumberFields = selectedMethod && !isPayLater;
+  const showNumberFields = selectedMethod && !isPayLater && !isBkash;
 
   useEffect(() => {
     // Reset extra fields whenever method changes
@@ -124,7 +125,11 @@ const EnrollPaymentMethod = ({
 
         if (res.success) {
           toast.success(res?.data?.message || "Enrollment successful");
-          router.push("/student/dashboard");
+          if (res.data?.bkash_url) {
+            window.location.href = res.data.bkash_url;
+          } else {
+            router.push("/student/dashboard");
+          }
         } else {
           if (res.errors) {
             const apiFieldErrors: Record<string, string> = {};

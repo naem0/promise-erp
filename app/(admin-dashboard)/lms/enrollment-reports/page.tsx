@@ -11,18 +11,18 @@ export default async function EnrollmentReportsPage({
     return (
         <div className="mx-auto space-y-6">
             <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-semibold tracking-tight text-slate-800">Enrollment Reports</h1>
+                <h1 className="text-2xl font-semibold tracking-tight text-secondary">Enrollment Reports</h1>
             </div>
 
-            <Suspense fallback={<div>Loading summary...</div>}>
+            <Suspense fallback={<h2 className="text-2xl font-semibold tracking-tight text-secondary text-center">Loading summary...</h2>}>
                 <EnrollmentReportsSummaryWrapper />
             </Suspense>
 
-            <Suspense fallback={<div>Loading filters...</div>}>
+            <Suspense fallback={<h2 className="text-2xl font-semibold tracking-tight text-secondary text-center">Loading filters...</h2>}>
                 <EnrollmentReportsFilterData />
             </Suspense>
 
-            <Suspense fallback={<div>Loading report data...</div>}>
+            <Suspense fallback={<h2 className="text-2xl font-semibold tracking-tight text-secondary text-center">Loading report data...</h2>}>
                 <EnrollmentReportsData searchParams={searchParams} />
             </Suspense>
         </div>

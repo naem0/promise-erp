@@ -6,19 +6,17 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v
 
 //   ******* Start getCourseSalesSummary API *******
 
-export interface CourseSalesSummaryStat {
+export interface CourseSalesSummaryItem {
+  title?: string;
+  key?: string;
   value: number;
   growth: string;
+  course_name?: string;
 }
 
 export interface CourseSalesSummaryData {
   total_branches: number;
-  summary: {
-    total_received: CourseSalesSummaryStat;
-    advance: CourseSalesSummaryStat;
-    total_due: CourseSalesSummaryStat;
-    running_batch: CourseSalesSummaryStat;
-  };
+  summary: CourseSalesSummaryItem[];
 }
 
 export interface CourseSalesSummaryApiResponse {
@@ -49,7 +47,7 @@ export async function getCourseSalesSummary(): Promise<CourseSalesSummaryApiResp
       return null;
     }
 
-    if (res?.status === 401) {
+    if (res?.status === 401 || res?.status === 403) {
       console.warn("Unauthorized: Access token not found.");
       return null;
     }
@@ -132,7 +130,7 @@ export async function getCourseSalesReportList(
       return null;
     }
 
-    if (res?.status === 401) {
+    if (res?.status === 401 || res?.status === 403) {
       console.warn("Unauthorized: Access token not found.");
       return null;
     }

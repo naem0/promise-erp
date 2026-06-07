@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -33,6 +33,7 @@ interface FormValues {
 
 const LeadActivityForm = ({ leadId, lastLeadActivityStatus }: LeadActivityFormProps) => {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const {
     register,
@@ -69,7 +70,11 @@ const LeadActivityForm = ({ leadId, lastLeadActivityStatus }: LeadActivityFormPr
       if (res.success) {
         toast.success(res.message || "Activity saved successfully");
         reset();
-        router.push("/crm/lead-activities");
+        if (values.status === "5") {
+          window.open(`/lms/enrollments/add?lead_id=${leadId}`, "_blank");
+        }
+        const paramsString = searchParams.toString();
+        router.push(`/crm/lead-activities${paramsString ? `?${paramsString}` : ""}`);
         router.refresh();
       } else {
         if (res.errors) {

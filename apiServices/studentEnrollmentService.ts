@@ -119,6 +119,7 @@ export interface EnrollmentSubmitResponse {
   data: {
     enrollment: EnrollmentSubmit;
     pricing: EnrollmentPricing;
+    bkash_url?: string;
     message: string;
   };
   errors?: Record<string, string[]>;

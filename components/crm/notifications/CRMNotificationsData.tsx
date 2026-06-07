@@ -21,11 +21,23 @@ const CRMNotificationsData = async ({
   const per_page =
     typeof resolvedSearchParams.per_page === "string"
       ? Number(resolvedSearchParams.per_page)
-      : 15;
+      : 30;
+  const course =
+    typeof resolvedSearchParams.course === "string" && resolvedSearchParams.course.trim() !== ""
+      ? Number(resolvedSearchParams.course)
+      : typeof resolvedSearchParams.course_id === "string" && resolvedSearchParams.course_id.trim() !== ""
+        ? Number(resolvedSearchParams.course_id)
+        : undefined;
+
+  const params = {
+    page,
+    per_page,
+    course,
+  };
 
   let results;
   try {
-    results = await getCRMNotifications({ page, per_page });
+    results = await getCRMNotifications(params);
   } catch (error: unknown) {
     if (error instanceof Error) {
       return (
@@ -63,34 +75,6 @@ const CRMNotificationsData = async ({
 
   return (
     <>
-      {/* Stats Row */}
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <div className="rounded-2xl bg-gradient-to-br from-violet-500 to-purple-600 p-4 text-white shadow-lg">
-          <p className="text-xs font-medium uppercase tracking-widest opacity-80">
-            Total
-          </p>
-          <p className="mt-1 text-3xl font-bold">{totalCount}</p>
-        </div>
-        <div className="rounded-2xl bg-gradient-to-br from-rose-500 to-pink-600 p-4 text-white shadow-lg">
-          <p className="text-xs font-medium uppercase tracking-widest opacity-80">
-            Unread
-          </p>
-          <p className="mt-1 text-3xl font-bold">{unreadCount}</p>
-        </div>
-        <div className="rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 p-4 text-white shadow-lg">
-          <p className="text-xs font-medium uppercase tracking-widest opacity-80">
-            Read
-          </p>
-          <p className="mt-1 text-3xl font-bold">{totalCount - unreadCount}</p>
-        </div>
-        <div className="rounded-2xl bg-gradient-to-br from-sky-500 to-blue-600 p-4 text-white shadow-lg">
-          <p className="text-xs font-medium uppercase tracking-widest opacity-80">
-            This Page
-          </p>
-          <p className="mt-1 text-3xl font-bold">{notifications.length}</p>
-        </div>
-      </div>
-
       {/* Main Panel */}
       <div className="overflow-hidden rounded-2xl border border-violet-100 bg-white shadow-md">
         {/* Header */}
