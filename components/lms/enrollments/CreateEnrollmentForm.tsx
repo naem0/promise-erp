@@ -17,14 +17,8 @@ import {
 import { Combobox } from "@/components/ui/combobox";
 import CourseSearchSelect from "@/components/common/CourseSearchSelect";
 import { createEnrollment } from "@/apiServices/enrollmentService";
-import { getLeadEnrollmentInfo, LeadEnrollmentInfoResponse } from "@/apiServices/crmLeadActivitiesService";
-import {
-  PAYMENT_METHOD_PAYLATER,
-  PAYMENT_METHOD_ROCKET,
-  PAYMENT_METHOD_NAGAD,
-  PAYMENT_METHOD_BKASH,
-  PAYMENT_METHOD_CASH,
-} from "@/apiServices/paymentConstants";
+import { getLeadEnrollmentInfo } from "@/apiServices/crmLeadActivitiesService";
+import { getElPaymentMethods, PaymentMethod } from "@/apiServices/studentDashboardService";
 import {
   PAYMENT_STATUS_PENDING,
   PAYMENT_STATUS_PAID,
@@ -99,6 +93,7 @@ export default function CreateEnrollmentForm({
   const [students, setStudents] = useState<Student[]>(initialStudents);
   const [courseId, setCourseId] = useState<string>("");
   const [selectedBatch, setSelectedBatch] = useState<Batch | null>(null);
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
 
   const {
     register,
@@ -114,7 +109,7 @@ export default function CreateEnrollmentForm({
       batch_id: "",
       course_id: "",
       status: ENROLLMENT_STATUS_ACTIVE.toString(),
-      payment_method: PAYMENT_METHOD_BKASH.toString(),
+      payment_method: "",
       payment_status: PAYMENT_STATUS_PENDING.toString(),
       payment_amount: "",
       discount_amount: "",
@@ -125,6 +120,21 @@ export default function CreateEnrollmentForm({
   const batchId = watch("batch_id");
   const paymentAmount = watch("payment_amount");
   const additionalDiscount = watch("discount_amount");
+
+  // Fetch payment methods dynamically
+  useEffect(() => {
+    const fetchPaymentMethods = async () => {
+      try {
+        const res = await getElPaymentMethods();
+        if (res?.success && res?.data) {
+          setPaymentMethods(res?.data);
+        }
+      } catch (error: unknown) {
+        console.error("Error fetching payment methods:", error);
+      }
+    };
+    fetchPaymentMethods();
+  }, [setValue]);
 
   // Sync state when initialStudents changes
   useEffect(() => {
@@ -488,17 +498,23 @@ export default function CreateEnrollmentForm({
                 <Select
                   value={watch("payment_method")}
                   onValueChange={(value) => setValue("payment_method", value)}
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || paymentMethods.length === 0}
                 >
                   <SelectTrigger id="payment_method" className="w-full">
-                    <SelectValue />
+                    <SelectValue placeholder={"Select Payment Method"} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value={PAYMENT_METHOD_PAYLATER.toString()}>Pay Later</SelectItem>
-                    <SelectItem value={PAYMENT_METHOD_ROCKET.toString()}>Rocket</SelectItem>
-                    <SelectItem value={PAYMENT_METHOD_NAGAD.toString()}>Nagad</SelectItem>
-                    <SelectItem value={PAYMENT_METHOD_BKASH.toString()}>bKash</SelectItem>
-                    <SelectItem value={PAYMENT_METHOD_CASH.toString()}>Cash</SelectItem>
+                    {
+                      paymentMethods?.length > 0 ? (
+                        paymentMethods?.map((method) => (
+                          <SelectItem key={method?.id} value={method?.id?.toString()}>
+                            {method?.name}
+                          </SelectItem>
+                        ))
+                      ) : (
+                        <SelectItem value="none" disabled>No Payment Methods Available</SelectItem>
+                      )
+                    }
                   </SelectContent>
                 </Select>
                 {errors.payment_method && (

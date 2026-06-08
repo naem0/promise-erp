@@ -906,73 +906,73 @@ export const sidebarData = {
       ],
     },
 
-    {
-      label: "Sales",
-      items: [
-        {
-          title: "Sales Management",
-          url: "#",
-          icon: ShoppingCartIcon,
-          items: [
-            {
-              title: "Dashboard",
-              url: "#",
-              permissions: ["view-sales-dashboard"],
-            },
-            {
-              title: "Customer Management",
-              url: "#",
-              permissions: ["view-customer-management"],
-            },
-            {
-              title: "Product / Item Management",
-              url: "#",
-              permissions: ["view-product-item-management"],
-            },
-            {
-              title: "Delivery Management",
-              url: "#",
-              permissions: ["view-delivery-management"],
-            },
-            {
-              title: "Sales Report",
-              url: "#",
-              permissions: ["view-sales-report"],
-            },
-            {
-              title: "Orders Management",
-              url: "#",
-              permissions: ["view-orders-management"],
-            },
-            {
-              title: "Quotation & Proposal",
-              url: "#",
-              permissions: ["view-quotation-proposal"],
-            },
-            {
-              title: "Invoice & Billing",
-              url: "#",
-              permissions: ["view-invoices"],
-            },
-            {
-              title: "Payment Collection / Due Management",
-              url: "#",
-              permissions: ["view-payment-collection-due-management"],
-            },
-            {
-              title: "Sales Return / Exchange Policy",
-              url: "#",
-              permissions: ["view-sales-return-exchange-policy"],
-            },
-            {
-              title: "Sales Target",
-              url: "#",
-              permissions: ["view-sales-target"],
-            },
-          ],
-        },
-      ],
-    },
+    // {
+    //   label: "Sales",
+    //   items: [
+    //     {
+    //       title: "Sales Management",
+    //       url: "#",
+    //       icon: ShoppingCartIcon,
+    //       items: [
+    //         {
+    //           title: "Dashboard",
+    //           url: "#",
+    //           permissions: ["view-sales-dashboard"],
+    //         },
+    //         {
+    //           title: "Customer Management",
+    //           url: "#",
+    //           permissions: ["view-customer-management"],
+    //         },
+    //         {
+    //           title: "Product / Item Management",
+    //           url: "#",
+    //           permissions: ["view-product-item-management"],
+    //         },
+    //         {
+    //           title: "Delivery Management",
+    //           url: "#",
+    //           permissions: ["view-delivery-management"],
+    //         },
+    //         {
+    //           title: "Sales Report",
+    //           url: "#",
+    //           permissions: ["view-sales-report"],
+    //         },
+    //         {
+    //           title: "Orders Management",
+    //           url: "#",
+    //           permissions: ["view-orders-management"],
+    //         },
+    //         {
+    //           title: "Quotation & Proposal",
+    //           url: "#",
+    //           permissions: ["view-quotation-proposal"],
+    //         },
+    //         // {
+    //         //   title: "Invoice & Billing",
+    //         //   url: "#",
+    //         //   permissions: ["view-invoices"],
+    //         // },
+    //         {
+    //           title: "Payment Collection / Due Management",
+    //           url: "#",
+    //           permissions: ["view-payment-collection-due-management"],
+    //         },
+    //         {
+    //           title: "Sales Return / Exchange Policy",
+    //           url: "#",
+    //           permissions: ["view-sales-return-exchange-policy"],
+    //         },
+    //         {
+    //           title: "Sales Target",
+    //           url: "#",
+    //           permissions: ["view-sales-target"],
+    //         },
+    //       ],
+    //     },
+    //   ],
+    // },
 
     {
       label: "Expenses",

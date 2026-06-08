@@ -23,6 +23,7 @@ import {
   PAYMENT_STATUS_PENDING,
   PAYMENT_STATUS_PAID,
   PAYMENT_STATUS_REFUNDED,
+  PAYMENT_STATUS_REJECTED,
 } from "@/apiServices/paymentConstants";
 import { updatePaymentHistoryStatus } from "@/apiServices/paymentHistoryService";
 import { useRouter } from "next/navigation";
@@ -49,6 +50,7 @@ export default function PaymentHistoryStatusDropdown({
     const statusLower = statusName.toLowerCase();
     if (statusLower === "paid") return PAYMENT_STATUS_PAID;
     if (statusLower === "refunded") return PAYMENT_STATUS_REFUNDED;
+    if (statusLower === "rejected") return PAYMENT_STATUS_REJECTED;
     return PAYMENT_STATUS_PENDING;
   };
 
@@ -79,6 +81,7 @@ export default function PaymentHistoryStatusDropdown({
           [PAYMENT_STATUS_PENDING]: "Pending",
           [PAYMENT_STATUS_PAID]: "Paid",
           [PAYMENT_STATUS_REFUNDED]: "Refunded",
+          [PAYMENT_STATUS_REJECTED]: "Rejected",
         };
 
         toast.success(`Payment status changed to ${statusNames[pendingStatus]}`);
@@ -101,6 +104,7 @@ export default function PaymentHistoryStatusDropdown({
     [PAYMENT_STATUS_PENDING]: "Pending",
     [PAYMENT_STATUS_PAID]: "Paid",
     [PAYMENT_STATUS_REFUNDED]: "Refunded",
+    [PAYMENT_STATUS_REJECTED]: "Rejected",
   };
 
   const getStatusColor = (status: number) => {
@@ -111,6 +115,8 @@ export default function PaymentHistoryStatusDropdown({
         return "bg-amber-100 text-amber-700 hover:bg-amber-200 border-amber-200";
       case PAYMENT_STATUS_REFUNDED:
         return "bg-red-100 text-red-700 hover:bg-red-200 border-red-200";
+      case PAYMENT_STATUS_REJECTED:
+        return "bg-rose-100 text-rose-700 hover:bg-rose-200 border-rose-200";
       default:
         return "bg-gray-100 text-gray-700 hover:bg-gray-200 border-gray-200";
     }
@@ -130,6 +136,7 @@ export default function PaymentHistoryStatusDropdown({
           <SelectItem value={PAYMENT_STATUS_PENDING.toString()}>Pending</SelectItem>
           <SelectItem value={PAYMENT_STATUS_PAID.toString()}>Paid</SelectItem>
           <SelectItem value={PAYMENT_STATUS_REFUNDED.toString()}>Refunded</SelectItem>
+          <SelectItem value={PAYMENT_STATUS_REJECTED.toString()}>Rejected</SelectItem>
         </SelectContent>
       </Select>
 

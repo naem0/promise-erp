@@ -18,6 +18,8 @@ export interface CreatePaymentData {
   payment_method: number;
   payment_status: number;
   comment?: string;
+  payment_number?: string;
+  transaction_id?: string;
 }
 
 export interface UpdatePaymentStatusData {
