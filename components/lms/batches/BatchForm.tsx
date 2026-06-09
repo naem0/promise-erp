@@ -459,7 +459,7 @@ export default function BatchForm({ title, batch }: BatchFormProps) {
 
 
                         <div className="grid gap-2 relative pb-5">
-                            <Label htmlFor="whatsapp_group_link">WhatsApp Group Link</Label>
+                            <Label htmlFor="whatsapp_group_link">WhatsApp / Telegram Group Link</Label>
                             <Input
                                 id="whatsapp_group_link"
                                 placeholder="https://chat.whatsapp.com/..."
