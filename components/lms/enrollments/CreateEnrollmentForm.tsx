@@ -17,14 +17,8 @@ import {
 import { Combobox } from "@/components/ui/combobox";
 import CourseSearchSelect from "@/components/common/CourseSearchSelect";
 import { createEnrollment } from "@/apiServices/enrollmentService";
-import { getLeadEnrollmentInfo, LeadEnrollmentInfoResponse } from "@/apiServices/crmLeadActivitiesService";
-import {
-  PAYMENT_METHOD_PAYLATER,
-  PAYMENT_METHOD_ROCKET,
-  PAYMENT_METHOD_NAGAD,
-  PAYMENT_METHOD_BKASH,
-  PAYMENT_METHOD_CASH,
-} from "@/apiServices/paymentConstants";
+import { getLeadEnrollmentInfo } from "@/apiServices/crmLeadActivitiesService";
+import { getElPaymentMethods, PaymentMethod } from "@/apiServices/studentDashboardService";
 import {
   PAYMENT_STATUS_PENDING,
   PAYMENT_STATUS_PAID,
@@ -99,12 +93,14 @@ export default function CreateEnrollmentForm({
   const [students, setStudents] = useState<Student[]>(initialStudents);
   const [courseId, setCourseId] = useState<string>("");
   const [selectedBatch, setSelectedBatch] = useState<Batch | null>(null);
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
 
   const {
     register,
     handleSubmit,
     setValue,
     setError,
+    clearErrors,
     watch,
     reset,
     formState: { errors, isSubmitting },
@@ -114,7 +110,7 @@ export default function CreateEnrollmentForm({
       batch_id: "",
       course_id: "",
       status: ENROLLMENT_STATUS_ACTIVE.toString(),
-      payment_method: PAYMENT_METHOD_BKASH.toString(),
+      payment_method: "",
       payment_status: PAYMENT_STATUS_PENDING.toString(),
       payment_amount: "",
       discount_amount: "",
@@ -125,6 +121,28 @@ export default function CreateEnrollmentForm({
   const batchId = watch("batch_id");
   const paymentAmount = watch("payment_amount");
   const additionalDiscount = watch("discount_amount");
+
+  // Fetch payment methods dynamically
+  useEffect(() => {
+    const fetchPaymentMethods = async () => {
+      try {
+        const res = await getElPaymentMethods();
+        if (res?.success && res?.data) {
+          setPaymentMethods(res?.data);
+          // Dynamically find and select "Cash" payment method
+          const cashMethod = res.data.find(
+            (method: PaymentMethod) => method?.name?.toLowerCase() === "cash"
+          );
+          if (cashMethod) {
+            setValue("payment_method", cashMethod.id.toString());
+          }
+        }
+      } catch (error: unknown) {
+        console.error("Error fetching payment methods:", error);
+      }
+    };
+    fetchPaymentMethods();
+  }, [setValue]);
 
   // Sync state when initialStudents changes
   useEffect(() => {
@@ -254,10 +272,13 @@ export default function CreateEnrollmentForm({
     setValue("course_id", val);
     setValue("batch_id", "");
     setSelectedBatch(null);
+    clearErrors("course_id");
+    clearErrors("batch_id");
   };
 
   const handleBatchChange = (value: string | null) => {
     setValue("batch_id", value || "");
+    clearErrors("batch_id");
   };
 
   const onSubmit = async (values: FormValues) => {
@@ -282,7 +303,8 @@ export default function CreateEnrollmentForm({
         if (res.errors) {
           Object.entries(res.errors).forEach(([field, messages]) => {
             const errorMessage = Array.isArray(messages) ? messages[0] : messages;
-            setError(field as keyof FormValues, { type: "server", message: errorMessage as string });
+            const formField = field === "payment_method_id" ? "payment_method" : field;
+            setError(formField as keyof FormValues, { type: "server", message: errorMessage as string });
           });
         }
       }
@@ -323,7 +345,13 @@ export default function CreateEnrollmentForm({
           <CardDescription>Create a new enrollment for a student. Pricing will be automatically calculated from the batch.</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <form
+            onSubmit={(e) => {
+              clearErrors();
+              handleSubmit(onSubmit)(e);
+            }}
+            className="space-y-6"
+          >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Student Selection with Combobox */}
               <div className="space-y-2">
@@ -333,7 +361,10 @@ export default function CreateEnrollmentForm({
                 <Combobox
                   options={studentOptions}
                   value={watch("user_id")}
-                  onValueChange={(value) => setValue("user_id", value || "")}
+                  onValueChange={(value) => {
+                    setValue("user_id", value || "");
+                    clearErrors("user_id");
+                  }}
                   placeholder="Select student..."
                   searchPlaceholder="Search student by name, email, or phone..."
                   emptyMessage="No students found"
@@ -382,7 +413,10 @@ export default function CreateEnrollmentForm({
                 <Label htmlFor="status">Status</Label>
                 <Select
                   value={watch("status")}
-                  onValueChange={(value) => setValue("status", value)}
+                  onValueChange={(value) => {
+                    setValue("status", value);
+                    clearErrors("status");
+                  }}
                   disabled={isSubmitting}
                 >
                   <SelectTrigger id="status" className="w-full">
@@ -484,21 +518,30 @@ export default function CreateEnrollmentForm({
 
               {/* Payment Method */}
               <div className="space-y-2">
-                <Label htmlFor="payment_method">Payment Method</Label>
+                <Label htmlFor="payment_method">Payment Method <span className="text-red-500">*</span></Label>
                 <Select
                   value={watch("payment_method")}
-                  onValueChange={(value) => setValue("payment_method", value)}
-                  disabled={isSubmitting}
+                  onValueChange={(value) => {
+                    setValue("payment_method", value);
+                    clearErrors("payment_method");
+                  }}
+                  disabled={isSubmitting || paymentMethods.length === 0}
                 >
                   <SelectTrigger id="payment_method" className="w-full">
-                    <SelectValue />
+                    <SelectValue placeholder={"Select Payment Method"} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value={PAYMENT_METHOD_PAYLATER.toString()}>Pay Later</SelectItem>
-                    <SelectItem value={PAYMENT_METHOD_ROCKET.toString()}>Rocket</SelectItem>
-                    <SelectItem value={PAYMENT_METHOD_NAGAD.toString()}>Nagad</SelectItem>
-                    <SelectItem value={PAYMENT_METHOD_BKASH.toString()}>bKash</SelectItem>
-                    <SelectItem value={PAYMENT_METHOD_CASH.toString()}>Cash</SelectItem>
+                    {
+                      paymentMethods?.length > 0 ? (
+                        paymentMethods?.map((method) => (
+                          <SelectItem key={method?.id} value={method?.id?.toString()}>
+                            {method?.name}
+                          </SelectItem>
+                        ))
+                      ) : (
+                        <SelectItem value="none" disabled>No Payment Methods Available</SelectItem>
+                      )
+                    }
                   </SelectContent>
                 </Select>
                 {errors.payment_method && (
@@ -511,7 +554,10 @@ export default function CreateEnrollmentForm({
                 <Label htmlFor="payment_status">Payment Status</Label>
                 <Select
                   value={watch("payment_status")}
-                  onValueChange={(value) => setValue("payment_status", value)}
+                  onValueChange={(value) => {
+                    setValue("payment_status", value);
+                    clearErrors("payment_status");
+                  }}
                   disabled={isSubmitting}
                 >
                   <SelectTrigger id="payment_status" className="w-full">

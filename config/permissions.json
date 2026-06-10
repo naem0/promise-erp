@@ -54,9 +54,9 @@
     { "path": "/lms/employees/add", "permissions": ["create-employees"] },
     { "path": "/lms/employees/edit", "permissions": ["edit-employees"], "isDynamic": true },
 
-    { "path": "/lms/students", "permissions": ["view-students"] },
-    { "path": "/lms/students/add", "permissions": ["create-students"] },
-    { "path": "/lms/students/edit", "permissions": ["edit-students"], "isDynamic": true },
+    { "path": "/lms/students", "permissions": ["view-students", "govt", "paid"] },
+    { "path": "/lms/students/add", "permissions": ["create-students", "govt", "paid"] },
+    { "path": "/lms/students/edit", "permissions": ["edit-students", "govt", "paid"], "isDynamic": true },
 
     { "path": "/lms/designations", "permissions": ["view-designations"] },
     { "path": "/lms/designations/add", "permissions": ["create-designations"] },

@@ -308,13 +308,13 @@ export default function CRMLeadsForm({
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="1">New</SelectItem>
-                                        <SelectItem value="2">Busy</SelectItem>
+                                        {/* <SelectItem value="2">Busy</SelectItem>
                                         <SelectItem value="3">Interested</SelectItem>
                                         <SelectItem value="4">Follow Up</SelectItem>
                                         <SelectItem value="5">Enrolled</SelectItem>
                                         <SelectItem value="6">Cancelled</SelectItem>
                                         <SelectItem value="7">Not Received</SelectItem>
-                                        <SelectItem value="8">Call Rejected</SelectItem>
+                                        <SelectItem value="8">Call Rejected</SelectItem> */}
                                     </SelectContent>
                                 </Select>
                             )}

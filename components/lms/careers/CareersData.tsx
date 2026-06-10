@@ -79,10 +79,14 @@ const CareersData = async ({ searchParams }: CareersDataProps) => {
     }
   }
 
+  if(!results || !results?.data) {
+    return null;
+  }
+
   const careers = results?.data?.careers || [];
   const paginationData = results?.data?.pagination;
 
-  if (!careers.length) {
+  if (!careers?.length) {
     return (
       <div className="py-8 md:py-12">
         <NotFoundComponent message={results?.message || "No careers found."} />
@@ -111,7 +115,7 @@ const CareersData = async ({ searchParams }: CareersDataProps) => {
           </TableHeader>
 
           <TableBody>
-            {careers.map((career: Career, index: number) => (
+            {careers?.map((career: Career, index: number) => (
               <TableRow key={career?.id}>
                 <TableCell className="text-center">
                   {(page - 1) * 15 + (index + 1)}

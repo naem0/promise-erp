@@ -2,6 +2,7 @@
 export const PAYMENT_STATUS_PENDING = 0;
 export const PAYMENT_STATUS_PAID = 1;
 export const PAYMENT_STATUS_REFUNDED = 2;
+export const PAYMENT_STATUS_REJECTED = 3;
 
 // Payment Method Constants
 export const PAYMENT_METHOD_PAYLATER = 0;

@@ -21,6 +21,10 @@ export interface CRMNotification {
   type: string;
   created_at_human: string;
   course_name?: string;
+  consultant?: {
+    name: string;
+    phone: string;
+  };
 }
 
 export interface CRMNotificationsResponse {

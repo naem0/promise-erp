@@ -84,8 +84,8 @@ export default function JobAppliesForm({
             }
         });
 
-        if (values.resume && values.resume.length > 0) {
-            formData.append("resume", values.resume[0]);
+        if (values?.resume && values?.resume?.length > 0) {
+            formData.append("resume", values?.resume[0]);
         }
 
         try {
@@ -127,8 +127,13 @@ export default function JobAppliesForm({
     return (
         <div className="bg-card border rounded-2xl p-6 shadow-sm">
             <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
-                <Button variant="ghost" size="sm" onClick={() => router.back()} className="p-0 h-auto">
-                    <span className="text-xl">{"<"}</span>
+                <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => router.back()}
+                    className="cursor-pointer"
+                >
+                    Go Back
                 </Button>
                 {title}
             </h2>

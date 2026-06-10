@@ -8,11 +8,7 @@ import {
     PAYMENT_STATUS_PENDING,
     PAYMENT_STATUS_PAID,
     PAYMENT_STATUS_REFUNDED,
-    PAYMENT_METHOD_BKASH,
-    PAYMENT_METHOD_ROCKET,
-    PAYMENT_METHOD_NAGAD,
-    PAYMENT_METHOD_PAYLATER,
-    PAYMENT_METHOD_CASH,
+    PAYMENT_STATUS_REJECTED,
 } from "@/apiServices/paymentConstants";
 import EnrollmentStatusDropdown from "./EnrollmentStatusDropdown";
 import PaymentHistoryStatusDropdown from "./PaymentHistoryStatusDropdown";
@@ -81,6 +77,8 @@ interface PaymentFormValues {
     payment_method: string;
     payment_status: string;
     comment: string;
+    payment_number: string;
+    transaction_id: string;
 }
 
 const formatCurrency = (amount?: number | null) =>
@@ -106,6 +104,7 @@ export default function EnrollmentDetails({
         setValue,
         setError,
         reset,
+        watch,
         formState: { errors: formErrors, isSubmitting },
     } = useForm<PaymentFormValues>({
         defaultValues: {
@@ -113,18 +112,24 @@ export default function EnrollmentDetails({
             payment_method: "",
             payment_status: PAYMENT_STATUS_PAID.toString(),
             comment: "",
+            payment_number: "",
+            transaction_id: "",
         },
     });
+
+    const selectedMethodId = watch("payment_method");
+    const selectedMethodName = paymentMethods.find(m => m.id.toString() === selectedMethodId)?.name.toLowerCase() || "";
+    const isBkashOrNagad = selectedMethodName.includes("bkash") || selectedMethodName.includes("nagad");
 
     useEffect(() => {
         const fetchPaymentMethods = async () => {
             try {
                 const res = await getElPaymentMethods();
                 if (res && res.success && res.data) {
-                    setPaymentMethods(res.data);
-                    if (res.data.length > 0) {
-                        setValue("payment_method", res.data[0].id.toString());
-                    }
+                    const filtered = res.data.filter(
+                        (method) => method.name.toLowerCase() !== "pay later"
+                    );
+                    setPaymentMethods(filtered);
                 }
             } catch (error : unknown) {
                 console.error("Error fetching payment methods:", error);
@@ -170,6 +175,8 @@ export default function EnrollmentDetails({
                 payment_method: Number(values.payment_method),
                 payment_status: Number(values.payment_status),
                 comment: values.comment || undefined,
+                payment_number: isBkashOrNagad ? values.payment_number : undefined,
+                transaction_id: isBkashOrNagad ? values.transaction_id : undefined,
             });
 
             if (res.success) {
@@ -177,9 +184,11 @@ export default function EnrollmentDetails({
                 setIsPaymentDialogOpen(false);
                 reset({
                     paid_amount: "",
-                    payment_method: paymentMethods[0]?.id.toString() || "",
+                    payment_method: "",
                     payment_status: PAYMENT_STATUS_PAID.toString(),
                     comment: "",
+                    payment_number: "",
+                    transaction_id: "",
                 });
                 router.refresh();
             } else {
@@ -312,17 +321,22 @@ export default function EnrollmentDetails({
                                                     <Select
                                                         value={field.value}
                                                         onValueChange={field.onChange}
-                                                        disabled={isSubmitting || paymentMethods.length === 0}
+                                                        disabled={isSubmitting}
                                                     >
                                                         <SelectTrigger id="payment_method" className="w-full">
-                                                            <SelectValue placeholder={paymentMethods.length === 0 ? "Loading..." : "Select payment method"} />
+                                                            <SelectValue placeholder={"Select payment method"} />
                                                         </SelectTrigger>
                                                         <SelectContent>
-                                                            {paymentMethods.map((method) => (
-                                                                <SelectItem key={method.id} value={method.id.toString()}>
-                                                                    {method.name}
-                                                                </SelectItem>
-                                                            ))}
+                                                            {
+                                                            paymentMethods?.length > 0 ? (
+                                                                paymentMethods?.map((method) => (
+                                                                    <SelectItem key={method?.id} value={method?.id?.toString()}>
+                                                                        {method?.name}
+                                                                    </SelectItem>
+                                                                ))
+                                                            ) : (
+                                                                <SelectItem value="none" disabled>No Payment Methods Available</SelectItem>
+                                                            )}
                                                         </SelectContent>
                                                     </Select>
                                                 )}
@@ -349,6 +363,7 @@ export default function EnrollmentDetails({
                                                             <SelectItem value={PAYMENT_STATUS_PAID.toString()}>Paid</SelectItem>
                                                             <SelectItem value={PAYMENT_STATUS_PENDING.toString()}>Pending</SelectItem>
                                                             <SelectItem value={PAYMENT_STATUS_REFUNDED.toString()}>Refunded</SelectItem>
+                                                            <SelectItem value={PAYMENT_STATUS_REJECTED.toString()}>Rejected</SelectItem>
                                                         </SelectContent>
                                                     </Select>
                                                 )}
@@ -357,6 +372,41 @@ export default function EnrollmentDetails({
                                                 <p className="text-sm text-red-500">{formErrors.payment_status.message}</p>
                                             )}
                                         </div>
+
+                                        {isBkashOrNagad && (
+                                            <>
+                                                <div className="space-y-2">
+                                                    <Label htmlFor="payment_number">Payment Number *</Label>
+                                                    <Input
+                                                        id="payment_number"
+                                                        type="text"
+                                                        placeholder="Enter payment number (e.g. 017xxxxxxxx)"
+                                                        {...register("payment_number", {
+                                                            required: isBkashOrNagad ? "Payment number is required" : false
+                                                        })}
+                                                        disabled={isSubmitting}
+                                                    />
+                                                    {formErrors.payment_number && (
+                                                        <p className="text-sm text-red-500">{formErrors.payment_number.message}</p>
+                                                    )}
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <Label htmlFor="transaction_id">Transaction ID *</Label>
+                                                    <Input
+                                                        id="transaction_id"
+                                                        type="text"
+                                                        placeholder="Enter transaction ID"
+                                                        {...register("transaction_id", {
+                                                            required: isBkashOrNagad ? "Transaction ID is required" : false
+                                                        })}
+                                                        disabled={isSubmitting}
+                                                    />
+                                                    {formErrors.transaction_id && (
+                                                        <p className="text-sm text-red-500">{formErrors.transaction_id.message}</p>
+                                                    )}
+                                                </div>
+                                            </>
+                                        )}
                                         <div className="space-y-2">
                                             <Label htmlFor="comment">Comment</Label>
                                             <Textarea

@@ -13,9 +13,10 @@ const JobInfoRoleOverview = ({jobCirculars}:JobCircularParams) => {
         </CardTitle>
       </CardHeader>
       <CardContent className="pb-4">
-        <p className="text-black/60 leading-relaxed">
-          {jobCirculars?.short_description || "Data not available"}
-        </p>
+        <div
+          className="prose prose-sm sm:prose-base lg:prose-lg max-w-none"
+          dangerouslySetInnerHTML={{ __html: jobCirculars?.short_description || "" }}
+        />
       </CardContent>
     </Card>
   );

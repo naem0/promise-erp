@@ -6,11 +6,14 @@ import { PlusCircle } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
 
-export default function JobAppliesPage({
-    searchParams,
-}: {
-    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}) {
+export default async function JobAppliesPage(
+    {
+        searchParams,
+    }: {
+        searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+    }
+) {
+
     return (
         <div className="mx-auto space-y-6">
             <div className="flex justify-between items-center">
