@@ -30,7 +30,7 @@ export default async function DashboardLayout({
               />
               <DashboardNotification />
             </header>
-            <div className="h-[calc(100svh-64px)] bg-gray-50 p-4 min-w-0 overflow-y-auto">
+            <div className="h-[calc(100svh-64px)] bg-gray-50 p-4 py-8 min-w-0 overflow-y-auto">
               <Suspense fallback={null}>
                 {children}
               </Suspense>

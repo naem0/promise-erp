@@ -112,15 +112,16 @@ const CRMNotificationCard = ({
 
       {/* Content */}
       <div className="min-w-0 flex-1 space-y-1.5">
-        
+
         <p
           className={cn(
-            "text-base font-semibold pb-0 mb-0",
+            "text-base font-semibold pb-1 mb-0",
             isRead && "text-secondary text-sm font-normal ",
           )}
         >
-         Course Name: <span className="text-primary">{notification?.course_name}</span>
+          Course Name: <span className="text-primary">{notification?.course_name}</span>
         </p>
+
         <span className="text-sm text-slate-800 inline-block pb-1">{notification?.message}</span>
 
         <div className="flex flex-wrap items-center gap-2">
@@ -174,6 +175,14 @@ const CRMNotificationCard = ({
             {notification?.created_at_human}
           </span>
         </div>
+        <p
+          className={cn(
+            "text-base font-semibold pb-1 mb-0",
+            isRead && "text-secondary text-sm font-normal ",
+          )}
+        >
+          Consultant Name: <span className="text-primary">{notification?.consultant?.name} , {notification?.consultant?.phone}</span>
+        </p>
       </div>
 
       {/* Status indicator */}

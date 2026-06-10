@@ -22,9 +22,9 @@ import DeleteJobApplyButton from "./DeleteJobApplyButton";
 import Pagination from "@/components/common/Pagination";
 import { truncate } from "@/lib/utils";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
+    Tooltip,
+    TooltipContent,
+    TooltipTrigger,
 } from "@/components/ui/tooltip"
 
 const statusVariant = (
@@ -42,11 +42,13 @@ const statusVariant = (
     }
 };
 
-const JobAppliesData = async ({
-    searchParams,
-}: {
-    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}) => {
+const JobAppliesData = async (
+    {
+        searchParams,
+    }: {
+        searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+    }
+) => {
     const resolvedSearchParams = await searchParams;
     const page =
         typeof resolvedSearchParams.page === "string"
@@ -83,10 +85,14 @@ const JobAppliesData = async ({
         }
     }
 
+    if (!results || !results?.data) {
+        return  null;
+    }
+
     const applies = results?.data?.applies || [];
     const paginationData = results?.data?.pagination;
 
-    if (!applies.length) {
+    if (!applies?.length) {
         return (
             <NotFoundComponent message={results?.message || "No job applications found."} />
         );
@@ -100,18 +106,18 @@ const JobAppliesData = async ({
                         <TableRow>
                             <TableHead className="text-center">Sl</TableHead>
                             <TableHead className="text-center">Action</TableHead>
-                            <TableHead className="text-center">Name & Email</TableHead>
-                            <TableHead className="text-center">Phone</TableHead>
+                            <TableHead className="text-start">Applicant Details
+                            </TableHead>
                             <TableHead className="text-center">Job Position</TableHead>
-                            <TableHead className="text-center">Address</TableHead>
                             <TableHead className="text-center">Resume</TableHead>
                             <TableHead className="text-center">Status</TableHead>
                             <TableHead className="text-center">Applied At</TableHead>
+
                         </TableRow>
                     </TableHeader>
 
                     <TableBody>
-                        {applies.map((apply: JobApply, index: number) => (
+                        { applies?.map((apply: JobApply, index: number) => (
                             <TableRow key={apply?.id}>
                                 <TableCell className="text-center">
                                     {(page - 1) * 15 + (index + 1)}
@@ -145,27 +151,24 @@ const JobAppliesData = async ({
                                         </DropdownMenuContent>
                                     </DropdownMenu>
                                 </TableCell>
-                                <TableCell className="font-medium text-center">
+                                <TableCell className="font-medium">
                                     <div className="flex flex-col">
                                         <span>{apply?.name}</span>
-                                        <span className="text-xs text-secondary">{apply?.email}</span>
+                                        <span className="text-xs text-secondary" title={apply?.email || ""}>Email: {truncate(apply?.email, 30)}
+                                        </span>
+                                        <span className="text-xs text-secondary" title={apply?.phone || ""}>
+                                            Phone: {truncate(apply?.phone, 30)}
+                                        </span>
+                                        <span className="text-xs text-secondary" title={apply?.address || ""}>
+                                            Address: {truncate(apply?.address, 30)}
+                                        </span>
                                     </div>
-                                </TableCell>
-                                <TableCell className="text-center">
-                                    {apply?.phone || "—"}
                                 </TableCell>
                                 <TableCell className="text-center">
                                     <span className="text-sm">{apply?.career?.title || "—"}</span>
                                 </TableCell>
-                                <TableCell className="text-center" title={apply?.address}>
-                                    {truncate(apply?.address, 30)}
-                                </TableCell>
-                                <Tooltip>
-                                    <TooltipTrigger>{truncate(apply?.address, 30)}</TooltipTrigger>
-                                    <TooltipContent>
-                                        <p>{apply?.address}</p>
-                                    </TooltipContent>
-                                </Tooltip>
+
+
                                 <TableCell className="text-center">
                                     {apply?.resume ? (
                                         <a
@@ -193,12 +196,13 @@ const JobAppliesData = async ({
                         ))}
                     </TableBody>
                 </Table>
-                {paginationData && (
-                    <div className="mt-4">
-                        <Pagination pagination={paginationData} />
-                    </div>
-                )}
+
             </div>
+            {paginationData && paginationData.last_page > 1 && (
+                <div className="mt-4">
+                    <Pagination pagination={paginationData} />
+                </div>
+            )}
         </>
     );
 };

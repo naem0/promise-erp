@@ -15,7 +15,7 @@ const JobKeyResponsibilities = ({jobCirculars}: JobCircularParams) => {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-2 pb-4">
-        <p>{jobCirculars?.description || "Data not available"}</p>
+        <div className="prose prose-sm sm:prose-base lg:prose-lg max-w-none" dangerouslySetInnerHTML={{ __html: jobCirculars?.description || "" }} />
       </CardContent>
     </Card>
   );

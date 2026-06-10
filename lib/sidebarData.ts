@@ -66,7 +66,7 @@ export const sidebarData = {
             {
               title: "Students",
               url: "/lms/students",
-              permissions: ["view-students"],
+              permissions: ["view-students","govt","paid"],
             },
             {
               title: "Designations",

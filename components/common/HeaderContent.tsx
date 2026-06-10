@@ -2,9 +2,19 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Menu, Loader2, ChevronDown } from "lucide-react";
+import { Search, Menu, Loader2, ChevronDown, Phone } from "lucide-react";
 import { Suspense, useEffect, useState, useTransition } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Category,
+  getHomeCourseCategories,
+} from "@/apiServices/categoryService";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import Image from "next/image";
 import Link from "next/link";
 import HeaderBranchDropdown from "./HeaderBranchDropdown";
@@ -186,6 +196,16 @@ export const AuthButtons = ({
 };
 
 /* ================= HEADER CONTENT ================= */
+const aboutDropdownLinks = [
+  { name: "About", href: "/about" },
+  { name: "Trainers", href: "/trainers" },
+  { name: "Video Gallery", href: "/video-gellary" },
+  { name: "Image Gallery", href: "/image-gallery" },
+  { name: "Success Stories", href: "/success-stories" },
+  { name: "News Feeds", href: "/news-feeds" },
+  { name: "Our Officers", href: "/our-officers" },
+];
+
 const HeaderContent = ({ navLinks }: HeaderContentProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [openModal, setOpenModal] = useState(false);
@@ -196,6 +216,23 @@ const HeaderContent = ({ navLinks }: HeaderContentProps) => {
 
   const debouncedSearch = useDebounce(searchQuery, 800);
   const router = useRouter();
+
+  const [openSheet, setOpenSheet] = useState(false);
+  const [categories, setCategories] = useState<Category[]>([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await getHomeCourseCategories();
+        if (res?.success && res.data?.categories) {
+          setCategories(res.data.categories);
+        }
+      } catch (error) {
+        console.error("Failed to fetch categories for mobile menu:", error);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   // Debounced search effect
   useEffect(() => {
@@ -301,23 +338,165 @@ const HeaderContent = ({ navLinks }: HeaderContentProps) => {
         </div>
 
         {/* Mobile Menu */}
-        <Sheet>
+        <Sheet open={openSheet} onOpenChange={setOpenSheet}>
           <SheetTrigger asChild>
             <Button variant="ghost" size="icon" className="lg:hidden" aria-label="Open navigation menu">
               <Menu />
             </Button>
           </SheetTrigger>
-          <SheetContent side="right" className="px-4">
-            <nav className="mt-14 space-y-2 flex flex-col ">
-              {navLinks.map((link) => (
-                <Link key={link.name} href={link.href}>
-                  {link.name}
-                </Link>
-              ))}
-            </nav>
+          <SheetContent side="right" className="px-6 overflow-y-auto">
+            <div className="mt-14 flex flex-col h-[calc(100vh-80px)] justify-between pb-8">
+              <div>
+                <Accordion type="single" collapsible className="w-full">
+                  {navLinks.map((link) => {
+                    if (link.hasDropdown) {
+                      const isCourses = link.name === "Courses";
+                      const isAbout = link.name === "About";
+                      
+                      return (
+                        <AccordionItem key={link.name} value={link.name} className="border-b border-muted/50">
+                          <AccordionTrigger className="text-base font-semibold py-3 hover:no-underline hover:text-primary transition-colors text-left">
+                            {link.name}
+                          </AccordionTrigger>
+                          <AccordionContent className="pl-4 pb-2 flex flex-col gap-2">
+                            {isCourses && (
+                              <>
+                                <Link
+                                  href={link.href}
+                                  onClick={() => setOpenSheet(false)}
+                                  className="py-1.5 text-sm font-medium hover:text-primary transition-colors"
+                                >
+                                  All Courses
+                                </Link>
+                                {categories.length > 0 ? (
+                                  categories.map((category) => (
+                                    <Link
+                                      key={category.id}
+                                      href={`/courses?category_id=${category.id}`}
+                                      onClick={() => setOpenSheet(false)}
+                                      className="py-1.5 text-sm text-muted-foreground hover:text-primary transition-colors"
+                                    >
+                                      {category.name}
+                                    </Link>
+                                  ))
+                                ) : (
+                                  <span className="py-1.5 text-sm text-muted-foreground italic">
+                                    No categories found
+                                  </span>
+                                )}
+                              </>
+                            )}
+                            {isAbout && (
+                              <>
+                                {aboutDropdownLinks.map((item) => (
+                                  <Link
+                                    key={item.href}
+                                    href={item.href}
+                                    onClick={() => setOpenSheet(false)}
+                                    className="py-1.5 text-sm text-muted-foreground hover:text-primary transition-colors"
+                                  >
+                                    {item.name}
+                                  </Link>
+                                ))}
+                              </>
+                            )}
+                          </AccordionContent>
+                        </AccordionItem>
+                      );
+                    }
 
-            <div className="mt-6 border-t pt-4 flex gap-2">
-              <AuthButtons role={session?.user?.roles} />
+                    return (
+                      <div key={link.name} className="border-b border-muted/50">
+                        <Link
+                          href={link.href}
+                          onClick={() => setOpenSheet(false)}
+                          className="flex py-3 text-base font-semibold hover:text-primary transition-colors"
+                        >
+                          {link.name}
+                        </Link>
+                      </div>
+                    );
+                  })}
+                </Accordion>
+              </div>
+
+              <div className="mt-6 border-t border-muted/50 pt-4">
+                {isAuthenticated ? (
+                  <div className="flex flex-col gap-4">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <button className="flex w-full cursor-pointer items-center justify-between rounded-md p-2 hover:bg-accent transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 text-left">
+                          <div className="flex items-center gap-3">
+                            <Avatar className="h-10 w-10 border-2 border-primary/20">
+                              <AvatarImage
+                                src={session?.user?.image || "/images/profile_avatar.png"}
+                                alt={session?.user?.name || "User"}
+                              />
+                              <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+                                {session?.user?.name
+                                  ?.split(" ")
+                                  .map((n) => n[0])
+                                  .join("")
+                                  .toUpperCase()
+                                  .slice(0, 2) || "U"}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div className="flex flex-col">
+                              <span className="text-sm font-medium leading-none">{session?.user?.name || "User"}</span>
+                              <span className="text-xs text-muted-foreground leading-none mt-1.5">
+                                {Array.isArray(session?.user?.roles) ? session?.user?.roles[0] : session?.user?.roles || "Student"}
+                              </span>
+                            </div>
+                          </div>
+                          <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                        </button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" side="top" className="w-56 z-[150]">
+                        <DropdownMenuItem asChild>
+                          <Link
+                            href={getDashboardUrl(session?.user?.roles)}
+                            onClick={() => setOpenSheet(false)}
+                            className="cursor-pointer flex items-center w-full"
+                          >
+                            <LayoutDashboard className="mr-2 h-4 w-4" />
+                            Dashboard
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Link
+                            href={getProfileUrl(session?.user?.roles)}
+                            onClick={() => setOpenSheet(false)}
+                            className="cursor-pointer flex items-center w-full"
+                          >
+                            <User className="mr-2 h-4 w-4" />
+                            Profile
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          className="cursor-pointer text-destructive focus:text-destructive flex items-center w-full"
+                          onClick={() => {
+                            setOpenSheet(false);
+                            signOut({ callbackUrl: "/" });
+                          }}
+                        >
+                          <LogOut className="mr-2 h-4 w-4" />
+                          Logout
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 flex-col ">
+                    <Button asChild size="sm" className="w-full justify-center" onClick={() => setOpenSheet(false)}>
+                      <Link href="/login">Login</Link>
+                    </Button>
+                    <Button asChild size="sm" className="w-full justify-center" onClick={() => setOpenSheet(false)}>
+                      <Link href="/register">Register</Link>
+                    </Button>
+                  </div>
+                )}
+              </div>
             </div>
           </SheetContent>
         </Sheet>

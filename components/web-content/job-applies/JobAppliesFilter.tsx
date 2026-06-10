@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Search, FilterX } from "lucide-react";
+import { useDebounce } from "@/hooks/useDebounce";
 
 interface FilterFormValues {
     search?: string;
@@ -40,39 +41,28 @@ export default function JobAppliesFilter({ careers }: JobAppliesFilterProps) {
         });
 
     const watchedValues = watch();
+    const debouncedValues = useDebounce(watchedValues, 300);
 
     useEffect(() => {
-        const handler = setTimeout(() => {
-            const params = new URLSearchParams(searchParams.toString());
-            let isChanged = false;
+        const params = new URLSearchParams(searchParams.toString());
+        params.delete("page");
 
-            Object.entries(watchedValues).forEach(([key, value]) => {
-                const urlValue = params.get(key) || "";
-                const formValue = String(value || "");
-                if (urlValue !== formValue) {
-                    isChanged = true;
-                }
-            });
-
-            if (isChanged) {
-                params.delete("page");
-                Object.entries(watchedValues).forEach(([key, value]) => {
-                    if (value && value !== "") {
-                        params.set(key, String(value));
-                    } else {
-                        params.delete(key);
-                    }
-                });
-
-                const newUrl = `${pathname}?${params.toString()}`;
-                router.replace(newUrl, { scroll: false });
+        Object.entries(debouncedValues).forEach(([key, value]) => {
+            if (value && value !== "") {
+                params.set(key, String(value));
+            } else {
+                params.delete(key);
             }
-        }, 600);
+        });
 
-        return () => {
-            clearTimeout(handler);
-        };
-    }, [JSON.stringify(watchedValues), router, pathname, searchParams]);
+        const newQuery = params.toString();
+        const currentQuery = searchParams.toString();
+
+        if (newQuery !== currentQuery) {
+            const newUrl = newQuery ? `${pathname}?${newQuery}` : pathname;
+            router.replace(newUrl, { scroll: false });
+        }
+    }, [debouncedValues, pathname, router, searchParams]);
 
     const handleSelectChange =
         (name: keyof FilterFormValues) => (value: string) => {
@@ -121,10 +111,11 @@ export default function JobAppliesFilter({ careers }: JobAppliesFilterProps) {
 
             <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
                 {/* Search */}
-                <div className="col-span-2">
-                    <Search className="absolute left-3 top-1/2 h-4 w-4 text-muted-foreground" />
+                <div className="col-span-2 relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                         placeholder="Search by name, email, phone..."
+                        className="pl-10"
                         {...register("search")}
                     />
                 </div>
