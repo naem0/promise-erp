@@ -3,13 +3,13 @@
 import { useState, useRef, useEffect, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Download, FileText, FileSpreadsheet, File, Loader2 } from "lucide-react";
-import { getCRMLeadReports, CRMLeadReportsItem } from "@/apiServices/crmLeadReportsService";
+import { getCRMNewLeadReports, CRMNewLeadReportsItem } from "@/apiServices/crmLeadReportsService";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 
-interface ExportCRMLeadReportsButtonProps {
+interface ExportCRMNewLeadReportsButtonProps {
   fileName?: string;
-  data?: CRMLeadReportsItem[];
+  data?: CRMNewLeadReportsItem[];
   page?: number;
   perPage?: number;
 }
@@ -19,8 +19,7 @@ const HEADERS = [
   "Consultant",
   "Course",
   "Branch",
-  "Total Lead",
-  "Assigned",
+  "Total Assigned",
   "Contacted",
   "New",
   "Busy",
@@ -33,13 +32,12 @@ const HEADERS = [
   "Progress",
 ];
 
-function buildRows(data: CRMLeadReportsItem[], page: number = 1, perPage: number = data.length) {
+function buildRows(data: CRMNewLeadReportsItem[], page: number = 1, perPage: number = data.length) {
   return data?.map((item, index) => [
     (page - 1) * perPage + (index + 1),
     item?.consultant_name || "N/A",
     item?.course_name || "N/A",
     item?.branch?.[0]?.branch_name || "N/A",
-    item?.total_lead || 0,
     item?.total_assigned || 0,
     item?.contacted || 0,
     item?.new || 0,
@@ -54,12 +52,12 @@ function buildRows(data: CRMLeadReportsItem[], page: number = 1, perPage: number
   ]);
 }
 
-export default function CRMLeadReportsExportButton({
-  fileName = "crm-lead-reports",
+export default function CRMNewLeadReportsExportButton({
+  fileName = "crm-new-lead-reports",
   data: providedData,
   page = 1,
   perPage = 15,
-}: ExportCRMLeadReportsButtonProps) {
+}: ExportCRMNewLeadReportsButtonProps) {
   const [open, setOpen] = useState(false);
   const [isExporting, startExporting] = useTransition();
   const menuRef = useRef<HTMLDivElement>(null);
@@ -76,7 +74,7 @@ export default function CRMLeadReportsExportButton({
   }, [open]);
 
   const fetchAllData = async () => {
-    let allData: CRMLeadReportsItem[] = [];
+    let allData: CRMNewLeadReportsItem[] = [];
     let currentPage = 1;
     let lastPage = 1;
     let hasError = false;
@@ -94,7 +92,7 @@ export default function CRMLeadReportsExportButton({
       };
 
       try {
-        const res = await getCRMLeadReports(params);
+        const res = await getCRMNewLeadReports(params);
         if (res?.success) {
           allData = [...allData, ...(res?.data?.report_data || [])];
           lastPage = res?.data?.pagination?.last_page || 1;
@@ -102,7 +100,7 @@ export default function CRMLeadReportsExportButton({
           hasError = true;
           break;
         }
-      } catch (error: unknown) {
+      } catch {
         hasError = true;
         break;
       }
@@ -154,26 +152,25 @@ export default function CRMLeadReportsExportButton({
       const ws = utils.aoa_to_sheet(wsData);
 
       ws["!cols"] = [
-        { wch: 5 },  // SL
-        { wch: 20 }, // Consultant
-        { wch: 30 }, // Course
-        { wch: 15 }, // Branch
-        { wch: 12 }, // Total Lead
-        { wch: 10 }, // Assigned
-        { wch: 10 }, // Contacted
-        { wch: 10 }, // New
-        { wch: 10 }, // Busy
-        { wch: 10 }, // Interested
-        { wch: 10 }, // Follow Up
-        { wch: 10 }, // Enrolled
-        { wch: 10 }, // Cancelled
-        { wch: 15 }, // Not Received
-        { wch: 15 }, // Call Rejected
-        { wch: 15 }, // Progress
+        { wch: 5 },
+        { wch: 20 },
+        { wch: 30 },
+        { wch: 15 },
+        { wch: 14 },
+        { wch: 10 },
+        { wch: 10 },
+        { wch: 10 },
+        { wch: 10 },
+        { wch: 10 },
+        { wch: 10 },
+        { wch: 10 },
+        { wch: 15 },
+        { wch: 15 },
+        { wch: 15 },
       ];
 
       const wb = utils.book_new();
-      utils.book_append_sheet(wb, ws, "Leads Report");
+      utils.book_append_sheet(wb, ws, "New Leads Report");
       writeFile(wb, `${fileName}.xlsx`);
       setOpen(false);
     });
@@ -195,7 +192,7 @@ export default function CRMLeadReportsExportButton({
         head: [HEADERS],
         body: rows.map((r) => r.map(String)),
         styles: { fontSize: 8 },
-        headStyles: { fillColor: [30, 120, 200] },
+        headStyles: { fillColor: [5, 150, 105] },
       });
 
       doc.save(`${fileName}.pdf`);

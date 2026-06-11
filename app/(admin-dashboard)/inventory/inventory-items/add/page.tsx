@@ -1,12 +1,12 @@
 import ItemsForm from "@/components/inventory/inventory-items/ItemsForm";
-import { getProductCategories, ProductCategoriesResponse } from "@/apiServices/inventoryCategoriesService";
+import { getProductCategories } from "@/apiServices/inventoryCategoriesService";
 import { getBrands } from "@/apiServices/inventoryBrandsService";
 import { getUnits } from "@/apiServices/inventoryUnitsService";
-import ErrorComponent from "@/components/common/ErrorComponent";
+
 
 export default async function ItemsAddPage() {
     let categories;
-    let categoryRes: ProductCategoriesResponse | null = null;
+    let categoryRes;
     let brands;
     let brandRes;
     let units;

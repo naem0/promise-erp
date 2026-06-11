@@ -27,14 +27,17 @@ export interface CRMLeadReportsSummary {
   total_target_progress: string;
 }
 
+export interface CRMLeadReportsBranch {
+  branch_id: number;
+  branch_name: string;
+}
+
 export interface CRMLeadReportsItem {
   user_id: number;
   consultant_name: string;
-  course_id: string;
+  course_id: number;
   course_name: string;
-  branch_id: string;
-  branch_name: string;
-  date: string;
+  branch: CRMLeadReportsBranch[];
   total_lead: number;
   total_assigned: number;
   contacted: number;
@@ -49,6 +52,48 @@ export interface CRMLeadReportsItem {
   call_rejected: number;
 }
 
+
+// Old Leads Report item (assigned outside date range, talked to during)
+export interface CRMOldLeadReportsItem {
+  user_id: number;
+  consultant_name: string;
+  course_id: number;
+  course_name: string;
+  branch: CRMLeadReportsBranch[];
+  total_lead: number;
+  contacted: number;
+  target_progress: string;
+  new: number;
+  busy: number;
+  interested: number;
+  follow_up: number;
+  enrolled: number;
+  lost: number;
+  not_received: number;
+  call_rejected: number;
+}
+
+// New Leads Report item (assigned within date range)
+export interface CRMNewLeadReportsItem {
+  user_id: number;
+  consultant_name: string;
+  course_id: number;
+  course_name: string;
+  branch: CRMLeadReportsBranch[];
+  total_assigned: number;
+  contacted: number;
+  target_progress: string;
+  new: number;
+  busy: number;
+  interested: number;
+  follow_up: number;
+  enrolled: number;
+  lost: number;
+  not_received: number;
+  call_rejected: number;
+}
+
+
 export interface CRMLeadReportsResponse {
   success: boolean;
   message: string;
@@ -59,6 +104,36 @@ export interface CRMLeadReportsResponse {
     total_summary: CRMLeadReportsSummary;
     total_records: number;
     report_data: CRMLeadReportsItem[];
+    pagination: PaginationType;
+  };
+  errors?: Record<string, string[]>;
+}
+
+export interface CRMOldLeadReportsResponse {
+  success: boolean;
+  message: string;
+  code: number;
+  data: {
+    total_course_lead: number;
+    total_branch_lead: number;
+    total_summary: CRMLeadReportsSummary;
+    total_records: number;
+    report_data: CRMOldLeadReportsItem[];
+    pagination: PaginationType;
+  };
+  errors?: Record<string, string[]>;
+}
+
+export interface CRMNewLeadReportsResponse {
+  success: boolean;
+  message: string;
+  code: number;
+  data: {
+    total_course_lead: number;
+    total_branch_lead: number;
+    total_summary: CRMLeadReportsSummary;
+    total_records: number;
+    report_data: CRMNewLeadReportsItem[];
     pagination: PaginationType;
   };
   errors?: Record<string, string[]>;
@@ -195,4 +270,126 @@ export async function getCRMLeadReportsSummaryCards(): Promise<CRMLeadReportsSum
       throw new Error("Error fetching CRM leads report summary cards");
     }
   }
+}
+
+// =======================
+// GET OLD LEADS REPORT (CACHED)
+// =======================
+
+export async function getCRMOldLeadReportsCached(
+  token: string,
+  params: Record<string, unknown> = {},
+): Promise<CRMOldLeadReportsResponse | null> {
+  "use cache: private";
+  cacheTag("crm-old-lead-reports");
+  try {
+    const urlParams = new URLSearchParams();
+    for (const key in params) {
+      if (params[key] !== undefined && params[key] !== null) {
+        urlParams.append(key, String(params[key]));
+      }
+    }
+
+    const res = await fetch(
+      `${API_BASE}/crm/lead/reports/old?${urlParams.toString()}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      },
+    );
+    if (res?.status === 404) {
+      console.warn("No old leads report data found for the given parameters.");
+      return null;
+    }
+    if (res?.status === 401) {
+      console.warn("Unauthorized: Access token not found.");
+      return null;
+    }
+    if (res?.status === 403) {
+      console.warn("Forbidden: Insufficient permissions.");
+      return null;
+    }
+    if (!res.ok) {
+      throw new Error(`Status: ${res.status} ${res.statusText}`);
+    }
+    return await res.json();
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    } else {
+      throw new Error("Error fetching CRM old leads report");
+    }
+  }
+}
+
+export async function getCRMOldLeadReports(
+  params: Record<string, unknown> = {},
+): Promise<CRMOldLeadReportsResponse | null> {
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+  if (!token) throw new Error("No valid session/token");
+  return getCRMOldLeadReportsCached(token, params);
+}
+
+// =======================
+// GET NEW LEADS REPORT (CACHED)
+// =======================
+
+export async function getCRMNewLeadReportsCached(
+  token: string,
+  params: Record<string, unknown> = {},
+): Promise<CRMNewLeadReportsResponse | null> {
+  "use cache: private";
+  cacheTag("crm-new-lead-reports");
+  try {
+    const urlParams = new URLSearchParams();
+    for (const key in params) {
+      if (params[key] !== undefined && params[key] !== null) {
+        urlParams.append(key, String(params[key]));
+      }
+    }
+
+    const res = await fetch(
+      `${API_BASE}/crm/lead/reports/new?${urlParams.toString()}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      },
+    );
+    if (res?.status === 404) {
+      console.warn("No new leads report data found for the given parameters.");
+      return null;
+    }
+    if (res?.status === 401) {
+      console.warn("Unauthorized: Access token not found.");
+      return null;
+    }
+    if (res?.status === 403) {
+      console.warn("Forbidden: Insufficient permissions.");
+      return null;
+    }
+    if (!res.ok) {
+      throw new Error(`Status: ${res.status} ${res.statusText}`);
+    }
+    return await res.json();
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    } else {
+      throw new Error("Error fetching CRM new leads report");
+    }
+  }
+}
+
+export async function getCRMNewLeadReports(
+  params: Record<string, unknown> = {},
+): Promise<CRMNewLeadReportsResponse | null> {
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+  if (!token) throw new Error("No valid session/token");
+  return getCRMNewLeadReportsCached(token, params);
 }

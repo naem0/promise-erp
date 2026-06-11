@@ -1,24 +1,34 @@
 'use client'
 
-import { useEffect, useState, useTransition, useMemo } from 'react'
-import { 
-  ComboboxRoot, 
-  ComboboxTrigger, 
-  ComboboxValue, 
-  ComboboxContent, 
-  ComboboxInput, 
-  ComboboxList, 
-  ComboboxItem, 
+import { useEffect, useState, useTransition, useMemo, useRef } from 'react'
+import {
+  Combobox,
+  ComboboxRoot,
+  ComboboxContent,
+  ComboboxList,
+  ComboboxItem,
   ComboboxEmpty,
-  ComboboxClear,
-  useComboboxAnchor
+  ComboboxChips,
+  ComboboxChip,
+  ComboboxChipsInput,
 } from '@/components/ui/combobox'
 import { getPublicCoursesAll, Course } from '@/apiServices/courseService'
 import { cn } from '@/lib/utils'
+import { ChevronDownIcon } from 'lucide-react'
 
-interface CourseSearchSelectProps {
-  value: string | null
-  onValueChange: (value: string | null) => void
+interface SingleSelectProps {
+  multiple?: false
+  value?: string | null
+  onValueChange?: (value: string | null) => void
+}
+
+interface MultiSelectProps {
+  multiple: true
+  value: string[]
+  onValueChange: (value: string[]) => void
+}
+
+type CourseSearchSelectProps = (SingleSelectProps | MultiSelectProps) & {
   placeholder?: string
   disabled?: boolean
   className?: string
@@ -26,18 +36,17 @@ interface CourseSearchSelectProps {
 }
 
 export default function CourseSearchSelect({
+  multiple = false,
   value,
   onValueChange,
-  placeholder = "Select course",
+  placeholder,
   disabled = false,
   className,
-  defaultValue
 }: CourseSearchSelectProps) {
   const [courses, setCourses] = useState<Course[]>([])
   const [isPending, startTransition] = useTransition()
   const [inputValue, setInputValue] = useState("")
-
-  const anchor = useComboboxAnchor()
+  const anchor = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
     startTransition(async () => {
@@ -63,66 +72,80 @@ export default function CourseSearchSelect({
 
   const filteredOptions = useMemo(() => {
     if (!inputValue) return options
-    const lowerInput = inputValue.toLowerCase()
-    return options.filter((option) =>
-      option.label.toLowerCase().includes(lowerInput)
-    )
+    const lower = inputValue.toLowerCase()
+    return options.filter(o => o.label.toLowerCase().includes(lower))
   }, [options, inputValue])
 
-  return (
-    <div>
-      <ComboboxRoot 
-        value={value || ""} 
-        onValueChange={(val) => onValueChange(val || null)}
+  if (multiple) {
+    const multiValue = (value as string[]) || []
+    const multiOnValueChange = onValueChange as (value: string[]) => void
+
+    return (
+      <ComboboxRoot
+        multiple={true}
+        value={multiValue}
+        onValueChange={(val) => multiOnValueChange(val as string[])}
         onInputValueChange={setInputValue}
         disabled={disabled || isPending}
         itemToStringLabel={(val) => options.find(o => o.value === val)?.label || ""}
       >
-        <div ref={anchor} className="relative group">
-          <ComboboxTrigger
+        <div ref={anchor} className="relative">
+          <ComboboxChips
             className={cn(
-              "flex h-10 w-full items-center justify-between rounded-md border border-input bg-background pl-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
-              value ? "pr-9" : "pr-3",
-              value && "[&_[data-slot=combobox-trigger-icon]]:hidden",
+              "min-h-10 w-full cursor-text rounded-md border border-input bg-background text-sm",
               className
             )}
           >
-            {value ? (
-              <span className="text-left flex-1 truncate">
-                <ComboboxValue />
-              </span>
-            ) : (
-              <span className="text-muted-foreground text-left flex-1 truncate">
-                {isPending ? "Loading courses..." : placeholder}
-              </span>
-            )}
-          </ComboboxTrigger>
-          {value && (
-            <div className="absolute right-2 top-1/2 -translate-y-1/2 z-10">
-              <ComboboxClear />
-            </div>
-          )}
+            {multiValue.map((v) => {
+              const label = options.find(o => o.value === v)?.label || v
+              return (
+                <ComboboxChip key={v}>
+                  {label}
+                </ComboboxChip>
+              )
+            })}
+            <ComboboxChipsInput
+              placeholder={
+                multiValue.length === 0
+                  ? isPending ? "Loading courses..." : (placeholder || "Select course(s)")
+                  : ""
+              }
+              className="min-w-[100px] text-sm outline-none bg-transparent"
+            />
+            <ChevronDownIcon className="ml-auto mr-1 size-4 shrink-0 text-muted-foreground self-center pointer-events-none" />
+          </ComboboxChips>
         </div>
-        
-        <ComboboxContent anchor={anchor} className="w-[--anchor-width] min-w-[300px]">
-          <ComboboxInput 
-            placeholder="Search course..." 
-            className="m-1 h-9 border-none shadow-none focus-visible:ring-0"
-            showTrigger={false}
-            autoFocus
-          />
-          <ComboboxList className="max-h-[300px] overflow-y-auto">
+
+        <ComboboxContent anchor={anchor} className="w-[--anchor-width] min-w-[280px]">
+          <ComboboxList className="max-h-[280px] overflow-y-auto p-1">
             {filteredOptions.map((option) => (
               <ComboboxItem key={option.value} value={option.value}>
                 {option.label}
               </ComboboxItem>
             ))}
-            {filteredOptions.length === 0 && (
-              <ComboboxEmpty>{isPending ? "Loading..." : "No courses found"}</ComboboxEmpty>
-            )}
+            <ComboboxEmpty>
+              {isPending ? "Loading..." : "No courses found"}
+            </ComboboxEmpty>
           </ComboboxList>
         </ComboboxContent>
       </ComboboxRoot>
-    </div>
+    )
+  }
+
+  // Single select mode
+  const singleValue = (value as string | null) || ""
+  const singleOnValueChange = onValueChange as (value: string | null) => void
+
+  return (
+    <Combobox
+      options={options}
+      value={singleValue}
+      onValueChange={singleOnValueChange}
+      placeholder={isPending ? "Loading courses..." : (placeholder || "Select course")}
+      searchPlaceholder="Search course..."
+      emptyMessage={isPending ? "Loading..." : "No courses found"}
+      disabled={disabled || isPending}
+      className={className}
+    />
   )
 }

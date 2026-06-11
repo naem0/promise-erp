@@ -154,6 +154,9 @@
 
     {"path": "/crm/consultants-performance", "permissions": ["view-users-performance"], "isDynamic": true },
     { "path": "/crm/lead-reports", "permissions": ["crm-lead-reports", "crm-reports-list","crm-assigned-reports-list"] },
+    { "path": "/crm/lead-reports/old", "permissions": ["crm-old-reports-list"] },
+    { "path": "/crm/lead-reports/new", "permissions": ["crm-new-reports-list"] },
+
     { "path": "/crm/notifications", "permissions": ["view-consultant-notifications","mark-consultant-notification-read","mark-all-consultant-notifications-read"] },
 
     { "path": "/inventory/inventory-items", "permissions": ["view-products"] },

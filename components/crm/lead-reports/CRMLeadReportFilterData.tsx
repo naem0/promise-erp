@@ -1,32 +1,9 @@
-import { getBranches } from "@/apiServices/branchService";
 import { Consultant, getConsultants } from "@/apiServices/crmLeadsActions";
-import { getCourses } from "@/apiServices/courseService";
 import ErrorComponent from "@/components/common/ErrorComponent";
 import CRMLeadReportsFilter from "./CRMLeadReportsFilter";
 
 export default async function CRMLeadReportsFilterData() {
-    let branches = [];
     let consultants: Consultant[] = [];
-    let courses = [];
-
-    try {
-        const res = await getBranches({ per_page: 500 });
-        branches = res?.data?.branches || [];
-    } catch (error: unknown) {
-        if (error instanceof Error) {
-            return (
-                <div className="py-8 md:py-12">
-                    <ErrorComponent message={`Error fetching branches: ${error.message}`} />
-                </div>
-            );
-        } else {
-            return (
-                <div className="py-8 md:py-12">
-                    <ErrorComponent message={`An unknown error occurred while fetching branches.`} />
-                </div>
-            );
-        }
-    }
 
     try {
         const res = await getConsultants();
@@ -47,30 +24,9 @@ export default async function CRMLeadReportsFilterData() {
         }
     }
 
-    try {
-        const res = await getCourses({ per_page: 500 });
-        courses = res?.data?.courses || [];
-    } catch (error: unknown) {
-        if (error instanceof Error) {
-            return (
-                <div className="py-8 md:py-12">
-                    <ErrorComponent message={`Error fetching courses: ${error.message}`} />
-                </div>
-            );
-        } else {
-            return (
-                <div className="py-8 md:py-12">
-                    <ErrorComponent message={`An unknown error occurred while fetching courses.`} />
-                </div>
-            );
-        }
-    }
-
     return (
         <CRMLeadReportsFilter
-            branches={branches}
             consultants={consultants}
-            courses={courses}
         />
     );
 }

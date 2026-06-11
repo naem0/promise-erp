@@ -9,23 +9,23 @@ import {
     TableRow,
     TableFooter,
 } from "@/components/ui/table";
-import { CRMLeadReportsItem, CRMLeadReportsSummary } from "@/apiServices/crmLeadReportsService";
+import { CRMNewLeadReportsItem, CRMLeadReportsSummary } from "@/apiServices/crmLeadReportsService";
 import { Badge } from "@/components/ui/badge";
 import { truncate } from "@/lib/utils";
 
-interface CRMLeadReportsTableProps {
-    data: CRMLeadReportsItem[];
+interface CRMNewLeadReportsTableProps {
+    data: CRMNewLeadReportsItem[];
     summary?: CRMLeadReportsSummary;
     page: number;
     perPage: number;
 }
 
-export default function CRMLeadReportsTable({
+export default function CRMNewLeadReportsTable({
     data,
     summary,
     page,
     perPage,
-}: CRMLeadReportsTableProps) {
+}: CRMNewLeadReportsTableProps) {
     return (
         <div className="rounded-md border bg-white overflow-hidden shadow-sm">
             <Table>
@@ -35,8 +35,7 @@ export default function CRMLeadReportsTable({
                         <TableHead className="font-semibold min-w-[150px]">Counsellor</TableHead>
                         <TableHead className="font-semibold min-w-[200px]">Course</TableHead>
                         <TableHead className="font-semibold">Branch</TableHead>
-                        <TableHead className="font-semibold text-center">Total Lead</TableHead>
-                        <TableHead className="font-semibold text-center">Assigned</TableHead>
+                        <TableHead className="font-semibold text-center">Total Assigned</TableHead>
                         <TableHead className="font-semibold text-center">Contacted</TableHead>
                         <TableHead className="font-semibold text-center">Remaining</TableHead>
                         <TableHead className="font-semibold text-center">Busy</TableHead>
@@ -73,7 +72,7 @@ export default function CRMLeadReportsTable({
                                                     <Badge
                                                         key={b.branch_id}
                                                         variant="secondary"
-                                                        className="bg-blue-50 text-blue-700 border-blue-100 font-normal"
+                                                        className="bg-emerald-50 text-emerald-700 border-emerald-100 font-normal"
                                                     >
                                                         {b.branch_name}
                                                     </Badge>
@@ -93,9 +92,6 @@ export default function CRMLeadReportsTable({
                                 </div>
                             </TableCell>
                             <TableCell className="text-center font-semibold text-slate-800">
-                                {item.total_lead}
-                            </TableCell>
-                            <TableCell className="text-center font-semibold text-slate-900">
                                 {item.total_assigned}
                             </TableCell>
                             <TableCell className="text-center text-blue-600 font-semibold">
@@ -126,7 +122,7 @@ export default function CRMLeadReportsTable({
                                 {item.call_rejected}
                             </TableCell>
                             <TableCell className="text-center">
-                                <Badge className="bg-indigo-50 text-indigo-700 border-indigo-100 font-medium">
+                                <Badge className="bg-emerald-50 text-emerald-700 border-emerald-100 font-medium">
                                     {item.target_progress}
                                 </Badge>
                             </TableCell>
@@ -137,7 +133,6 @@ export default function CRMLeadReportsTable({
                     <TableFooter className="bg-slate-100 font-bold border-t-2 border-slate-200">
                         <TableRow>
                             <TableCell colSpan={4} className="text-right pr-4 text-slate-900 uppercase tracking-wider">Total</TableCell>
-                            <TableCell className="text-center text-slate-800">{summary.total_lead}</TableCell>
                             <TableCell className="text-center text-slate-900">{summary.total_assigned}</TableCell>
                             <TableCell className="text-center text-blue-700">{summary.total_contacted}</TableCell>
                             <TableCell className="text-center text-gray-700">{summary.total_new}</TableCell>
@@ -148,7 +143,7 @@ export default function CRMLeadReportsTable({
                             <TableCell className="text-center text-rose-700">{summary.total_lost}</TableCell>
                             <TableCell className="text-center text-zinc-700">{summary.total_not_received}</TableCell>
                             <TableCell className="text-center text-red-700">{summary.total_call_rejected}</TableCell>
-                            <TableCell className="text-center text-indigo-700">{summary.total_target_progress}</TableCell>
+                            <TableCell className="text-center text-emerald-700">{summary.total_target_progress}</TableCell>
                         </TableRow>
                     </TableFooter>
                 )}

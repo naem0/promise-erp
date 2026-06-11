@@ -1,5 +1,5 @@
 "use client";
-import { useEffect} from "react";
+import { useEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 import {
@@ -12,40 +12,39 @@ import {
 import { Button } from "@/components/ui/button";
 import { FilterX } from "lucide-react";
 import { DatePickerWithRange } from "@/components/common/DatePickerWithRange";
-
-import { Branch } from "@/apiServices/branchService";
 import { Consultant } from "@/apiServices/crmLeadsActions";
-import { Course } from "@/apiServices/courseService";
+import CourseSearchSelect from "@/components/common/CourseSearchSelect";
+import BranchSearchSelect from "@/components/common/BranchSearchSelect";
 
 interface FilterFormValues {
     consultant_id?: string;
     branch_id?: string;
-    course_id?: string;
     status?: string;
     per_page?: string;
 }
 
 interface CRMLeadReportsFilterProps {
-    branches: Branch[];
     consultants: Consultant[];
-    courses: Course[];
 }
 
 export default function CRMLeadReportsFilter({
-    branches,
     consultants,
-    courses,
 }: CRMLeadReportsFilterProps) {
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
+
+    // course_ids is managed separately as string[]
+    const [selectedCourses, setSelectedCourses] = useState<string[]>(() => {
+        const raw = searchParams.get("course_id") || "";
+        return raw ? raw.split(",").filter(Boolean) : [];
+    });
 
     const { control, reset, watch, setValue } =
         useForm<FilterFormValues>({
             defaultValues: {
                 consultant_id: searchParams.get("consultant_id") || "",
                 branch_id: searchParams.get("branch_id") || "",
-                course_id: searchParams.get("course_id") || "",
                 status: searchParams.get("status") || "",
                 per_page: searchParams.get("per_page") || "15",
             },
@@ -53,6 +52,7 @@ export default function CRMLeadReportsFilter({
 
     const watchedValues = watch();
 
+    // Sync form values (except course) to URL
     useEffect(() => {
         const handler = setTimeout(() => {
             const params = new URLSearchParams(searchParams.toString());
@@ -81,10 +81,29 @@ export default function CRMLeadReportsFilter({
             }
         }, 600);
 
-        return () => {
-            clearTimeout(handler);
-        };
+        return () => clearTimeout(handler);
     }, [JSON.stringify(watchedValues), router, pathname, searchParams]);
+
+    // Sync selectedCourses to URL separately
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            const params = new URLSearchParams(searchParams.toString());
+            const currentInUrl = params.get("course_id") || "";
+            const newValue = selectedCourses.join(",");
+
+            if (currentInUrl !== newValue) {
+                params.delete("page");
+                if (newValue) {
+                    params.set("course_id", newValue);
+                } else {
+                    params.delete("course_id");
+                }
+                router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+            }
+        }, 300);
+
+        return () => clearTimeout(handler);
+    }, [JSON.stringify(selectedCourses), router, pathname, searchParams]);
 
     const handleSelectChange =
         (name: keyof FilterFormValues) => (value: string) => {
@@ -95,10 +114,10 @@ export default function CRMLeadReportsFilter({
         reset({
             consultant_id: "",
             branch_id: "",
-            course_id: "",
             status: "",
             per_page: "15",
         });
+        setSelectedCourses([]);
         router.replace(pathname, { scroll: false });
     };
 
@@ -107,11 +126,9 @@ export default function CRMLeadReportsFilter({
         searchParams.get("branch_id") ||
         searchParams.get("course_id") ||
         searchParams.get("status") ||
-        searchParams.get("per_page") !== "15" && searchParams.get("per_page") !== null ||
+        (searchParams.get("per_page") !== "15" && searchParams.get("per_page") !== null) ||
         searchParams.get("date_from") ||
         searchParams.get("date_to");
-
-
 
     return (
         <div className="p-6 mb-6 border rounded-xl bg-card shadow-sm">
@@ -133,6 +150,15 @@ export default function CRMLeadReportsFilter({
             </div>
 
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6">
+                 {/* Course - Multi-select CourseSearchSelect */}
+                <div className="col-span-2">
+                <CourseSearchSelect
+                    multiple={true}
+                    value={selectedCourses}
+                    onValueChange={(val) => setSelectedCourses(val)}
+                    placeholder="Search by Course"
+                />
+                </div>
 
                 {/* Consultant */}
                 <Controller
@@ -157,7 +183,7 @@ export default function CRMLeadReportsFilter({
                                         </SelectItem>
                                     ))
                                 ) : (
-                                    <SelectItem value="" disabled>
+                                    <SelectItem value="none" disabled>
                                         No Counsellor found
                                     </SelectItem>
                                 )}
@@ -166,69 +192,23 @@ export default function CRMLeadReportsFilter({
                     )}
                 />
 
-                {/* Branch */}
+                {/* Branch - BranchSearchSelect */}
                 <Controller
                     name="branch_id"
                     control={control}
                     render={({ field }) => (
-                        <Select
+                        <BranchSearchSelect
                             value={field.value || ""}
-                            onValueChange={(value) => {
-                                field.onChange(value);
-                                handleSelectChange("branch_id")(value);
+                            onValueChange={(val) => {
+                                field.onChange(val || "");
+                                handleSelectChange("branch_id")(val || "");
                             }}
-                        >
-                            <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Branch" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {branches?.length ? (
-                                    branches.map((branch) => (
-                                        <SelectItem key={branch.id} value={String(branch.id)}>
-                                            {branch.name}
-                                        </SelectItem>
-                                    ))
-                                ) : (
-                                    <SelectItem value="" disabled>
-                                        No branch found
-                                    </SelectItem>
-                                )}
-                            </SelectContent>
-                        </Select>
+                            placeholder="Search by Branch"
+                        />
                     )}
                 />
 
-                {/* Course */}
-                <Controller
-                    name="course_id"
-                    control={control}
-                    render={({ field }) => (
-                        <Select
-                            value={field.value || ""}
-                            onValueChange={(value) => {
-                                field.onChange(value);
-                                handleSelectChange("course_id")(value);
-                            }}
-                        >
-                            <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Course" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {courses?.length ? (
-                                    courses.map((course) => (
-                                        <SelectItem key={course.id} value={String(course.id)}>
-                                            {course.title}
-                                        </SelectItem>
-                                    ))
-                                ) : (
-                                    <SelectItem value="" disabled>
-                                        No course found
-                                    </SelectItem>
-                                )}
-                            </SelectContent>
-                        </Select>
-                    )}
-                />
+               
 
                 {/* Status */}
                 <Controller

@@ -79,7 +79,7 @@ export async function getUnitsCached(
     if (res.status === 403) {
         console.warn("Forbidden (403) when fetching units. Returning null.");
         return null;
-    }   
+    } 
     const result = await res.json();
 
     return result;
