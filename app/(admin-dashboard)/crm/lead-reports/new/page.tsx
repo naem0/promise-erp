@@ -18,9 +18,6 @@ export default function CRMNewLeadsReportPage({
                 <div className="flex justify-between items-center">
                     <div>
                         <h1 className="text-2xl font-semibold tracking-tight text-slate-800">New Leads Report</h1>
-                        <p className="text-sm text-slate-500 mt-1">
-                            Leads assigned within the filtered date range
-                        </p>
                     </div>
                 </div>
 

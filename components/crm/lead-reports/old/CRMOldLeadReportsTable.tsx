@@ -1,5 +1,4 @@
 "use client";
-
 import {
     Table,
     TableBody,
@@ -49,7 +48,7 @@ export default function CRMOldLeadReportsTable({
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {data.map((item, index) => (
+                    {data?.map((item, index) => (
                         <TableRow key={`${item.user_id}-${item.course_id}-${index}`} className="hover:bg-slate-50/50 transition-colors">
                             <TableCell className="text-center text-slate-500 font-medium">
                                 {(page - 1) * perPage + index + 1}

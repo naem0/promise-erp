@@ -57,7 +57,7 @@ const CRMOldLeadReportsData = async ({
         }
     }
 
-    if (!results || results?.data) {
+    if (!results || !results?.data) {
         return null;
     }
 
