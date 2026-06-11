@@ -341,7 +341,7 @@ export default function CRMLeadsForm({
                                                 </SelectItem>
                                             ))
                                         ) : (
-                                            <SelectItem value="" disabled>
+                                            <SelectItem value="none" disabled>
                                                 No source found
                                             </SelectItem>
                                         )}
@@ -371,7 +371,7 @@ export default function CRMLeadsForm({
                                                 </SelectItem>
                                             ))
                                         ) : (
-                                            <SelectItem value="" disabled>
+                                            <SelectItem value="none" disabled>
                                                 No category found
                                             </SelectItem>
                                         )}
@@ -399,7 +399,7 @@ export default function CRMLeadsForm({
                                                 <SelectItem key={b.id} value={b.id.toString()}>{b.name}</SelectItem>
                                             ))
                                         ) : (
-                                            <SelectItem value="" disabled>
+                                            <SelectItem value="none" disabled>
                                                 No branch found
                                             </SelectItem>
                                         )}

@@ -237,19 +237,17 @@ export default function ReferrersForm({
                                         <SelectValue placeholder="Select Branch" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        {
-                                            branches?.length === 0 ? (
-                                                <SelectItem value="" disabled>
-                                                    No branches available
+                                        {branches?.length === 0 ? (
+                                            <SelectItem value="none" disabled>
+                                                No branches available
+                                            </SelectItem>
+                                        ) : (
+                                            branches?.map((branch) => (
+                                                <SelectItem key={branch.id} value={branch.id.toString()}>
+                                                    {branch.name}
                                                 </SelectItem>
-                                            ) : (
-
-                                                branches?.map((branch) => (
-                                                    <SelectItem key={branch.id} value={branch.id.toString()}>
-                                                        {branch.name}
-                                                    </SelectItem>
-                                                ))
-                                            )}
+                                            ))
+                                        )}
                                     </SelectContent>
                                 </Select>
                             )}

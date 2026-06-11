@@ -253,7 +253,7 @@ export default function CRMLeadsFilter({
                                             </SelectItem>
                                         ))
                                     ) : (
-                                        <SelectItem value="" disabled>
+                                        <SelectItem value="none" disabled>
                                             No branch found
                                         </SelectItem>
                                     )}
@@ -285,7 +285,7 @@ export default function CRMLeadsFilter({
                                         </SelectItem>
                                     ))
                                 ) : (
-                                    <SelectItem value="" disabled>
+                                    <SelectItem value="none" disabled>
                                         No category found
                                     </SelectItem>
                                 )}
@@ -371,7 +371,7 @@ export default function CRMLeadsFilter({
                                             </SelectItem>
                                         ))
                                     ) : (
-                                        <SelectItem value="" disabled>
+                                        <SelectItem value="none" disabled>
                                             No consultant found
                                         </SelectItem>
                                     )}

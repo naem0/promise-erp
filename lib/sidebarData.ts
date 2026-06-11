@@ -465,6 +465,16 @@ export const sidebarData = {
               permissions: ["crm-lead-reports", "crm-reports-list","crm-assigned-reports-list"],
             },
             {
+              title: "Old Lead Reports",
+              url: "/crm/lead-reports/old",
+              permissions: ["crm-old-reports-list", "crm-assigned-old-reports-list"],
+            },
+            {
+              title: "New Lead Reports",
+              url: "/crm/lead-reports/new",
+              permissions: ["crm-new-reports-list", "crm-assigned-new-reports-list"],
+            },
+            {
               title: "Counsellor Performance",
               url: "/crm/consultants-performance",
               permissions: ["view-users-performance"],

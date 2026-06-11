@@ -14,6 +14,8 @@ export default async function LeadsActivitySummaryWrapper({
     search: typeof resolvedSearchParams.search === "string" ? resolvedSearchParams.search : undefined,
     status: typeof resolvedSearchParams.status === "string" ? resolvedSearchParams.status : undefined,
     user_id: typeof resolvedSearchParams.user_id === "string" ? resolvedSearchParams.user_id : undefined,
+    date_from: typeof resolvedSearchParams.date_from === "string" ? resolvedSearchParams.date_from: undefined,
+    date_to: typeof resolvedSearchParams.date_to === "string"? resolvedSearchParams.date_to: undefined,
   };
  
   let results;

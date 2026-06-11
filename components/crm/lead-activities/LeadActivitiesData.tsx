@@ -141,6 +141,8 @@ const LeadsActivityData = async ({
               <TableHead className="text-center">Messages</TableHead>
               <TableHead className="text-center">Counsellor</TableHead>
               <TableHead className="text-center">Status</TableHead>
+              <TableHead className="text-center">last Activity</TableHead>
+              <TableHead className="text-center">Lead Created Date</TableHead>
               <TableHead className="text-center">Note</TableHead>
             </TableRow>
           </TableHeader>
@@ -152,10 +154,6 @@ const LeadsActivityData = async ({
                   {(page - 1) * per_page + (index + 1)}
                 </TableCell>
                 <TableCell className="text-center">
-                  {/* <LeadActivityAction
-                    leadId={activity?.lead_id || activity?.id}
-                    leadName={activity?.lead_name || "Lead"}
-                  /> */}
                   <PermissionGuard requiredPermission="create-lead-activities">
                     <Link
                       href={`/crm/lead-activities/${activity?.lead_id || activity?.id}/manage${queryStr}`}
@@ -202,6 +200,16 @@ const LeadsActivityData = async ({
                   >
                     {activity?.status_text}
                   </Badge>
+                </TableCell>
+                <TableCell
+                  className="text-center"
+                >
+                  {activity?.last_activity}
+                </TableCell>
+                <TableCell
+                  className="text-center"
+                >
+                  {activity?.lead_created_date}
                 </TableCell>
                 <TableCell
                   className="max-w-[200px] text-center"

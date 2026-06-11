@@ -283,7 +283,7 @@ export default function ItemsForm({
                                                 </SelectItem>
                                             ))
                                         ) : (
-                                            <SelectItem value="" disabled>
+                                            <SelectItem value="none" disabled>
                                                 No Brands Found
                                             </SelectItem>
                                         )}
@@ -314,7 +314,7 @@ export default function ItemsForm({
                                                     </SelectItem>
                                                 ))
                                             ) : (
-                                                <SelectItem value="" disabled>
+                                                <SelectItem value="none" disabled>
                                                     No Units Found
                                                 </SelectItem>
                                             )
