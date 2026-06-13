@@ -36,7 +36,6 @@ export default function CRMOldLeadReportsTable({
                         <TableHead className="font-semibold">Branch</TableHead>
                         <TableHead className="font-semibold text-center">Total Lead</TableHead>
                         <TableHead className="font-semibold text-center">Contacted</TableHead>
-                        <TableHead className="font-semibold text-center">Remaining</TableHead>
                         <TableHead className="font-semibold text-center">Busy</TableHead>
                         <TableHead className="font-semibold text-center">Interested</TableHead>
                         <TableHead className="font-semibold text-center">Follow Up</TableHead>
@@ -95,9 +94,6 @@ export default function CRMOldLeadReportsTable({
                             </TableCell>
                             <TableCell className="text-center text-blue-600 font-semibold">
                                 {item.contacted}
-                            </TableCell>
-                            <TableCell className="text-center text-gray-500 font-medium">
-                                {item.new}
                             </TableCell>
                             <TableCell className="text-center text-purple-600 font-medium">
                                 {item.busy}

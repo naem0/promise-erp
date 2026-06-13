@@ -54,8 +54,14 @@ const JobAppliesData = async (
         typeof resolvedSearchParams.page === "string"
             ? Number(resolvedSearchParams.page)
             : 1;
+    const per_page =
+        typeof resolvedSearchParams.per_page === "string"
+            ? Number(resolvedSearchParams.per_page)
+            : 15;
+
     const params = {
         page,
+        per_page,
         search:
             typeof resolvedSearchParams.search === "string"
                 ? resolvedSearchParams.search
@@ -120,7 +126,7 @@ const JobAppliesData = async (
                         { applies?.map((apply: JobApply, index: number) => (
                             <TableRow key={apply?.id}>
                                 <TableCell className="text-center">
-                                    {(page - 1) * 15 + (index + 1)}
+                                    {(page - 1) * per_page + (index + 1)}
                                 </TableCell>
                                 <TableCell className="text-center">
                                     <DropdownMenu>

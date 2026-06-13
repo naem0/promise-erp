@@ -237,3 +237,53 @@ body {
   background-color: oklch(0.6 0 0 / 70%);
 }
 
+/* Fix for rich text / prose list styles (e.g., in Job Circular details) */
+.prose ul, .prose-sm ul, .prose-base ul, .prose-lg ul {
+  list-style-type: disc !important;
+  padding-left: 1.5rem !important;
+  margin-top: 0.5rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.prose ol, .prose-sm ol, .prose-base ol, .prose-lg ol {
+  list-style-type: decimal !important;
+  padding-left: 1.5rem !important;
+  margin-top: 0.5rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+/* Handle Quill editor lists which use <ol> for both bullet and ordered lists */
+.prose ol:has(li[data-list="bullet"]),
+.prose-sm ol:has(li[data-list="bullet"]),
+.prose-base ol:has(li[data-list="bullet"]),
+.prose-lg ol:has(li[data-list="bullet"]) {
+  list-style-type: none !important;
+}
+
+.prose li[data-list="bullet"],
+.prose-sm li[data-list="bullet"],
+.prose-base li[data-list="bullet"],
+.prose-lg li[data-list="bullet"] {
+  list-style-type: disc !important;
+  display: list-item !important;
+  list-style-position: outside !important;
+}
+
+.prose li[data-list="ordered"],
+.prose-sm li[data-list="ordered"],
+.prose-base li[data-list="ordered"],
+.prose-lg li[data-list="ordered"] {
+  list-style-type: decimal !important;
+  display: list-item !important;
+  list-style-position: outside !important;
+}
+
+.prose li, .prose-sm li, .prose-base li, .prose-lg li {
+  list-style-position: outside !important;
+  display: list-item !important;
+  margin-top: 0.25rem !important;
+  margin-bottom: 0.25rem !important;
+}
+
+
+

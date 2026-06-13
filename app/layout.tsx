@@ -27,6 +27,9 @@ export const metadata: Metadata = {
   keywords: ['IT training', 'software development', 'ERP solutions', 'web development', 'programming courses'],
   authors: [{ name: 'Promise IT Ltd' }],
   creator: 'Promise IT Ltd',
+  icons: {
+    icon: "/favicon.png",
+  },
   openGraph: {
     type: 'website',
     locale: 'en_US',

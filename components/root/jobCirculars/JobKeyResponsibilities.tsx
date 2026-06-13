@@ -11,7 +11,7 @@ const JobKeyResponsibilities = ({jobCirculars}: JobCircularParams) => {
       <div className="h-2 bg-linear-to-r from-secondary via-primary to-secondary rounded-tl-xl rounded-tr-xl "></div>
       <CardHeader>
         <CardTitle className="text-2xl font-bold text-secondary flex items-center gap-2">
-          Key Responsibilities
+          Job Description
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-2 pb-4">
