@@ -19,6 +19,7 @@ interface FilterFormValues {
     sort_order?: string;
     status?: string;
     career_id?: string;
+    per_page?: string;
 }
 
 interface JobAppliesFilterProps {
@@ -37,6 +38,7 @@ export default function JobAppliesFilter({ careers }: JobAppliesFilterProps) {
                 sort_order: searchParams.get("sort_order") || "",
                 status: searchParams.get("status") || "",
                 career_id: searchParams.get("career_id") || "",
+                per_page: searchParams.get("per_page") || "",
             },
         });
 
@@ -75,6 +77,7 @@ export default function JobAppliesFilter({ careers }: JobAppliesFilterProps) {
             sort_order: "",
             status: "",
             career_id: "",
+            per_page: "",
         });
         router.replace(pathname, { scroll: false });
     };
@@ -83,12 +86,14 @@ export default function JobAppliesFilter({ careers }: JobAppliesFilterProps) {
     const currentSortOrder = searchParams.get("sort_order") || "";
     const currentStatus = searchParams.get("status") || "";
     const currentCareerId = searchParams.get("career_id") || "";
+    const currentPerPage = searchParams.get("per_page") || "";
 
     const hasActiveFilters =
         currentSearch !== "" ||
         currentSortOrder !== "" ||
         currentStatus !== "" ||
-        currentCareerId !== "";
+        currentCareerId !== "" ||
+        currentPerPage !== "";
 
     return (
         <div className="p-6 mb-6 border rounded-xl bg-card shadow-sm">
@@ -109,7 +114,7 @@ export default function JobAppliesFilter({ careers }: JobAppliesFilterProps) {
                 )}
             </div>
 
-            <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
                 {/* Search */}
                 <div className="col-span-2 relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -188,6 +193,31 @@ export default function JobAppliesFilter({ careers }: JobAppliesFilterProps) {
                                         {career.title}
                                     </SelectItem>
                                 ))}
+                            </SelectContent>
+                        </Select>
+                    )}
+                />
+
+                {/* Per Page */}
+                <Controller
+                    name="per_page"
+                    control={control}
+                    render={({ field }) => (
+                        <Select
+                            value={field.value}
+                            onValueChange={(value) => {
+                                field.onChange(value);
+                                handleSelectChange("per_page")(value);
+                            }}
+                        >
+                            <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Show Per Page" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="15">15 Per Page</SelectItem>
+                                <SelectItem value="30">30 Per Page</SelectItem>
+                                <SelectItem value="50">50 Per Page</SelectItem>
+                                <SelectItem value="100">100 Per Page</SelectItem>
                             </SelectContent>
                         </Select>
                     )}

@@ -13,7 +13,7 @@ export default function CRMNewLeadsReportPage({
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
     return (
-        <PermissionGuard requiredPermission="crm-new-reports-list">
+        <PermissionGuard requiredPermission={["crm-new-reports-list", "crm-assigned-new-reports-list"]} mode="any">
             <div className="mx-auto space-y-6">
                 <div className="flex justify-between items-center">
                     <div>

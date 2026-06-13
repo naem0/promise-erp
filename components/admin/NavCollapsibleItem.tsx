@@ -113,7 +113,14 @@ export function NavCollapsibleItem({
                 <CollapsibleContent>
                     <SidebarMenuSub>
                         {visibleSubItems?.map((subItem) => {
-                            const isSubItemActive = pathname === subItem.url || pathname?.startsWith(subItem.url + "/")
+                            const isSubItemActive = pathname === subItem.url || (
+                                pathname?.startsWith(subItem.url + "/") &&
+                                !item.items?.some(otherSubItem => 
+                                    otherSubItem.url !== subItem.url && 
+                                    otherSubItem.url.startsWith(subItem.url + "/") && 
+                                    (pathname === otherSubItem.url || pathname?.startsWith(otherSubItem.url + "/"))
+                                )
+                            )
                             return (
                                 <SidebarMenuSubItem key={subItem.title}>
                                     <SidebarMenuSubButton asChild isActive={isSubItemActive} className="data-[active=true]:bg-primary/10 data-[active=true]:text-primary font-medium hover:bg-primary/5 hover:text-primary">
