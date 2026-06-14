@@ -130,7 +130,7 @@ export default function CRMOldLeadReportsTable({
                             <TableCell colSpan={4} className="text-right pr-4 text-slate-900 uppercase tracking-wider">Total</TableCell>
                             <TableCell className="text-center text-slate-800">{summary.total_lead}</TableCell>
                             <TableCell className="text-center text-blue-700">{summary.total_contacted}</TableCell>
-                            <TableCell className="text-center text-gray-700">{summary.total_new}</TableCell>
+                            
                             <TableCell className="text-center text-purple-700">{summary.total_busy}</TableCell>
                             <TableCell className="text-center text-cyan-700">{summary.total_interested}</TableCell>
                             <TableCell className="text-center text-orange-700">{summary.total_follow_up}</TableCell>

@@ -218,13 +218,75 @@ export async function getLeadsActivity(
 ): Promise<LeadsActivityResponse> {
   const session = await getServerSession(authOptions);
   const token = session?.accessToken;
- 
+
   if (!token) throw new Error("No valid session/token");
- 
+
   const _cachedResult = await getLeadsActivityCached(token, params);
- 
+
   if (!_cachedResult) throw new Error("Failed to fetch data from cache.");
- 
+
+  return _cachedResult;
+}
+
+// =======================
+// GET TODAY FOLLOW-UP LEADS (CACHED)
+// =======================
+
+export async function getTodayFollowUpLeadsCached(
+  token: string,
+  params: Record<string, unknown> = {},
+): Promise<LeadsActivityResponse | null> {
+  "use cache";
+  cacheTag("today-follow-up-leads");
+
+  try {
+    const urlParams = new URLSearchParams();
+    for (const key in params) {
+      if (params[key] !== undefined && params[key] !== null) {
+        urlParams.append(key, String(params[key]));
+      }
+    }
+
+    const res = await fetch(`${API_BASE}/crm/leads/today-follow-ups?${urlParams.toString()}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error(`Status: ${res.status} ${res.statusText}`);
+    }
+    const result = await res.json();
+
+    return result;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Service error:", error.message);
+      return null;
+    } else {
+      console.error("Service error:", "Error fetching today follow up leads");
+      return null;
+    }
+  }
+}
+
+// =======================
+// GET TODAY FOLLOW-UP LEADS WRAPPER
+// =======================
+
+export async function getTodayFollowUpLeads(
+  params: Record<string, unknown> = {},
+): Promise<LeadsActivityResponse> {
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+
+  if (!token) throw new Error("No valid session/token");
+
+  const _cachedResult = await getTodayFollowUpLeadsCached(token, params);
+
+  if (!_cachedResult) throw new Error("Failed to fetch today's follow-up data from cache.");
+
   return _cachedResult;
 }
  
@@ -294,8 +356,9 @@ export async function createLeadActivity(
     });
  
     const result = await res.json();
- 
+
     updateTag("leads-activity-list");
+    updateTag("today-follow-up-leads");
     updateTag("crm-notifications-list");
     return result;
   } catch (error: unknown) {

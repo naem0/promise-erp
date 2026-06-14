@@ -73,8 +73,10 @@ const LeadActivityForm = ({ leadId, lastLeadActivityStatus }: LeadActivityFormPr
         if (values.status === "5") {
           window.open(`/lms/enrollments/add?lead_id=${leadId}`, "_blank");
         }
-        const paramsString = searchParams.toString();
-        router.push(`/crm/lead-activities${paramsString ? `?${paramsString}` : ""}`);
+        const fromPage = searchParams.get("from_page") || "/crm/lead-activities";
+        const backParams = new URLSearchParams(searchParams.toString());
+        backParams.delete("from_page");
+        router.push(`${fromPage}${backParams.toString() ? `?${backParams.toString()}` : ""}`);
         router.refresh();
       } else {
         if (res.errors) {

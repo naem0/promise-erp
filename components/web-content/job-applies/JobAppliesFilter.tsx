@@ -47,7 +47,20 @@ export default function JobAppliesFilter({ careers }: JobAppliesFilterProps) {
 
     useEffect(() => {
         const params = new URLSearchParams(searchParams.toString());
-        params.delete("page");
+        
+        // Check if any filter has actually changed from the current URL params
+        let filterChanged = false;
+        Object.entries(debouncedValues).forEach(([key, value]) => {
+            const currentValue = searchParams.get(key) || "";
+            const newValue = value !== undefined && value !== null ? String(value) : "";
+            if (currentValue !== newValue) {
+                filterChanged = true;
+            }
+        });
+
+        if (filterChanged) {
+            params.delete("page");
+        }
 
         Object.entries(debouncedValues).forEach(([key, value]) => {
             if (value && value !== "") {
