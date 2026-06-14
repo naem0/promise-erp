@@ -14,6 +14,7 @@ export default async function LeadManagePage({
 }) {
     const { id } = await params;
     const leadId = Number(id);
+    
  
     const resolvedSearchParams = await searchParams;
     const searchParamsString = new URLSearchParams(
