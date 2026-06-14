@@ -450,6 +450,15 @@ export const sidebarData = {
               ],
             },
             {
+              title: "Today's Follow-ups",
+              url: "/crm/today-follow-ups",
+              permissions: [
+                "view-lead-activity-list",
+                "view-assigned-lead-activity-list",
+                "create-enrollments",
+              ],
+            },
+            {
               title: "Lead Categories",
               url: "/crm/categories",
               permissions: ["view-crm-categories"],

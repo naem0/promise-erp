@@ -17,9 +17,10 @@ export default async function LeadManagePage({
     
  
     const resolvedSearchParams = await searchParams;
-    const searchParamsString = new URLSearchParams(
+    const fromPage = typeof resolvedSearchParams.from_page === "string" ? resolvedSearchParams.from_page : "/crm/lead-activities";
+    const backParams = new URLSearchParams(
         Object.entries(resolvedSearchParams).reduce((acc, [key, value]) => {
-            if (value !== undefined) {
+            if (value !== undefined && key !== "from_page") {
                 if (Array.isArray(value)) {
                     value.forEach(v => acc.append(key, v));
                 } else {
@@ -29,7 +30,7 @@ export default async function LeadManagePage({
             return acc;
         }, new URLSearchParams())
     ).toString();
-    const backUrl = `/crm/lead-activities${searchParamsString ? `?${searchParamsString}` : ""}`;
+    const backUrl = `${fromPage}${backParams ? `?${backParams}` : ""}`;
  
     let leadData;
     try {
