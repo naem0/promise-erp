@@ -436,3 +436,67 @@ export async function getLeadEnrollmentInfo(
   }
 }
 
+
+
+
+// ======================= getLeadActivitiesSummary =======================
+export interface LeadActivitySummary {
+  total_leads: number;
+  today_leads: number;
+  total_enrollments: number;
+  today_enrollments: number;
+  total_follow_up: number;
+  today_follow_up: number;
+  total_lost: number;
+  today_lost: number;
+  conversion_rate: string;
+}
+export interface LeadActivitiesSummaryResponse {
+  success: boolean;
+  message: string;
+  code: number;
+  data: {
+    stats: LeadActivitySummary;
+  }
+  errors?: Record<string, string[]>;
+}
+export async function getLeadActivitiesSummary(
+): Promise<LeadActivitiesSummaryResponse | null> {
+  try {
+    const session = await getServerSession(authOptions);
+    const token = session?.accessToken;
+ 
+    if (!token) throw new Error("No valid session/token");
+ 
+    const res = await fetch(`${API_BASE}/crm/leads/activity-summary`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (res.status === 404) {
+      console.log("Lead not found for enrollment");
+      return null;
+    }
+    if (res.status === 401 || res.status === 403) {
+      console.log("Unauthorized to fetch lead enrollment info");
+      return null;
+    }
+ 
+    if (!res.ok) {
+      throw new Error(`Status: ${res.status} ${res.statusText}`);
+    }
+ 
+    const result = await res.json();
+ 
+    return result;
+  } catch (error: unknown) {
+    console.error("Error in getLeadActivitiesSummary:", error);
+    if (error instanceof Error) {
+      throw new Error(error.message || "Failed to fetch lead activities");
+    } else {
+      throw new Error("Failed to fetch lead activities");
+    }
+  }
+}

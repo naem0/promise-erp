@@ -22,7 +22,7 @@ export default function LeadsActivityPage({
                         <div key={i} className="h-32 bg-slate-100 animate-pulse rounded-xl"></div>
                     ))}
                 </div>}>
-                    <LeadsActivitySummaryWrapper searchParams={searchParams} />
+                    <LeadsActivitySummaryWrapper/>
                 </Suspense>
      
                 <LeadsActivityFilterData />

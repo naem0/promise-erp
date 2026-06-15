@@ -135,6 +135,7 @@ const LeadsActivityData = async ({
               <TableHead className="text-center">Action</TableHead>
               <TableHead className="text-center">Lead Name</TableHead>
               <TableHead className="text-center">Course</TableHead>
+              <TableHead className="text-center">Lead Created Date</TableHead>
               <TableHead className="text-center">Last Follow Up</TableHead>
               <TableHead className="text-center">Next Follow Up</TableHead>
               <TableHead className="text-center">Calls</TableHead>
@@ -142,7 +143,6 @@ const LeadsActivityData = async ({
               <TableHead className="text-center">Counsellor</TableHead>
               <TableHead className="text-center">Status</TableHead>
               <TableHead className="text-center">last Activity</TableHead>
-              <TableHead className="text-center">Lead Created Date</TableHead>
               <TableHead className="text-center">Note</TableHead>
             </TableRow>
           </TableHeader>
@@ -172,6 +172,11 @@ const LeadsActivityData = async ({
                   title={activity?.course_name}
                 >
                   {truncate(activity?.course_name || "—", 25)}
+                </TableCell>
+                <TableCell
+                  className="text-center"
+                >
+                  {activity?.lead_created_date}
                 </TableCell>
                 <TableCell className="text-center">
                   {activity?.last_follow_up_date || "—"}
@@ -205,11 +210,6 @@ const LeadsActivityData = async ({
                   className="text-center"
                 >
                   {activity?.last_activity}
-                </TableCell>
-                <TableCell
-                  className="text-center"
-                >
-                  {activity?.lead_created_date}
                 </TableCell>
                 <TableCell
                   className="max-w-[200px] text-center"

@@ -14,7 +14,7 @@ export default function TodayFollowUpsPage({
         <PermissionGuard requiredPermission={["view-lead-activity-list", "view-assigned-lead-activity-list"]} mode="any">
             <div className="mx-auto space-y-6">
                 <div className="flex justify-between items-center">
-                    <h1 className="text-2xl font-semibold tracking-tight text-slate-800">Today's Leads</h1>
+                    <h1 className="text-2xl font-semibold tracking-tight text-slate-800">Today {`'`}s Leads</h1>
                 </div>
 
                 <Suspense fallback={<div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6 mb-6">

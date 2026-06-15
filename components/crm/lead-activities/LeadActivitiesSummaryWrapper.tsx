@@ -1,26 +1,12 @@
-import { getLeadsActivity } from "@/apiServices/crmLeadActivitiesService";
+import { getLeadActivitiesSummary, LeadActivitiesSummaryResponse } from "@/apiServices/crmLeadActivitiesService";
 import ErrorComponent from "@/components/common/ErrorComponent";
-import { Zap, GraduationCap, MessageSquare, TrendingUp, ArrowUp, ArrowDown, PhoneCall } from "lucide-react";
- 
-export default async function LeadsActivitySummaryWrapper({
-  searchParams,
-}: {
-  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
-}) {
-  const resolvedSearchParams = await searchParams || {};
-  const params = {
-    page: 1,
-    per_page: 15,
-    search: typeof resolvedSearchParams.search === "string" ? resolvedSearchParams.search : undefined,
-    status: typeof resolvedSearchParams.status === "string" ? resolvedSearchParams.status : undefined,
-    user_id: typeof resolvedSearchParams.user_id === "string" ? resolvedSearchParams.user_id : undefined,
-    date_from: typeof resolvedSearchParams.date_from === "string" ? resolvedSearchParams.date_from: undefined,
-    date_to: typeof resolvedSearchParams.date_to === "string"? resolvedSearchParams.date_to: undefined,
-  };
- 
-  let results;
+import { Zap, Users, Network, AlertCircle, Star } from "lucide-react";
+
+export default async function LeadsActivitySummaryWrapper() {
+
+  let results: LeadActivitiesSummaryResponse | null;
   try {
-    results = await getLeadsActivity(params);
+    results = await getLeadActivitiesSummary();
   } catch (error: unknown) {
     if (error instanceof Error) {
       return <ErrorComponent message={error.message} />;
@@ -28,138 +14,102 @@ export default async function LeadsActivitySummaryWrapper({
       return <ErrorComponent message="An unexpected error occurred." />;
     }
   }
- 
+
   if (!results || !results?.success || !results?.data || !results?.data?.stats) {
     return null;
   }
- 
-  const { stats, growth } = results?.data;
- 
+
+  const { stats } = results.data;
+
   const statCards = [
     {
-      id: "total_leads",
-      title: "Total Leads",
-      value: stats.total_leads,
-      label: "Leads",
+      id: "leads",
+      title: "Leads",
       icon: Zap,
-      gradient: "from-[#00B686] to-[#00D19D]",
+      gradient: "from-[#3B82F6] to-[#1D4ED8]",
+      stats: [
+        { label: "Total", value: stats.total_leads ?? 0 },
+        { label: "Today", value: stats.today_leads ?? 0 },
+      ],
     },
     {
-      id: "new_enrollments",
-      title: "New Enrollments",
-      value: stats.new_enrollments,
-      label: "Students",
-      icon: GraduationCap,
-      gradient: "from-[#2D76E5] to-[#4A90E2]",
+      id: "enrolment",
+      title: "Enrolment",
+      icon: Users,
+      gradient: "from-[#8B5CF6] to-[#6D28D9]",
+      stats: [
+        { label: "Total", value: stats.total_enrollments ?? 0 },
+        { label: "Today", value: stats.today_enrollments ?? 0 },
+      ],
+    },
+    {
+      id: "follow_up",
+      title: "Follow Up",
+      icon: Network,
+      gradient: "from-[#EA580C] to-[#C2410C]",
+      stats: [
+        { label: "Total", value: stats.total_follow_up ?? 0 },
+        { label: "Today", value: stats.today_follow_up ?? 0 },
+      ],
     },
     {
       id: "lost_leads",
       title: "Lost Leads",
-      value: stats.lost_leads,
-      label: "Lost",
-      icon: MessageSquare,
-      gradient: "from-[#E64A6E] to-[#F06292]",
+      icon: AlertCircle,
+      gradient: "from-[#4C1D95] to-[#1E1B4B]",
+      stats: [
+        { label: "Lost", value: stats.total_lost ?? 0 },
+        { label: "Old", value: (stats.total_lost ?? 0) - (stats.today_lost ?? 0) },
+      ],
     },
     {
-      id: "conversion_rate",
-      title: "Conversion Rate",
-      value: stats.conversion_rate,
-      label: "",
-      icon: TrendingUp,
-      gradient: "from-[#E67E00] to-[#FFA726]",
-    },
-    {
-      id: "old_leads",
-      title: "Old Leads",
-      value: stats.old_leads ?? 0,
-      label: "Students",
-      icon: Zap,
-      gradient: "from-[#2D76E5] to-[#4A90E2]",
-    },
-    {
-      id: "today_leads",
-      title: "Today Leads",
-      value: stats.today_leads ?? 0,
-      label: "Students",
-      icon: Zap,
-      gradient: "from-[#9333EA] to-[#C084FC]",
-    },
-    {
-      id: "total_follow_up",
-      title: "Total Follow-Up",
-      value: stats.total_follow_up ?? 0,
-      label: "Students",
-      icon: PhoneCall,
-      gradient: "from-[#00C6FF] to-[#0072FF]",
-    },
-    {
-      id: "today_follow_up",
-      title: "Today Follow-Up",
-      value: stats.today_follow_up ?? 0,
-      label: "Students",
-      icon: PhoneCall,
-      gradient: "from-[#059669] to-[#34D399]",
+      id: "status",
+      title: "Status",
+      icon: Star,
+      gradient: "from-[#06B6D4] to-[#0891B2]",
+      stats: [
+        { label: "Conversion", value: stats.conversion_rate ?? "0%" },
+      ],
     },
   ];
 
- return (
-    <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-4 md:gap-6 mb-6">
-      {statCards.map((card, index) => {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 mb-6">
+      {statCards?.map((card, index) => {
         const Icon = card.icon;
-
-        // growth value dynamically get by card id
-        const growthValue = growth?.[card.id as keyof typeof growth] ?? 0;
-        const isNegative = Number(growthValue) < 0;
 
         return (
           <div
             key={index}
-            className={`text-white rounded-xl p-5 flex flex-col h-full shadow-sm relative overflow-hidden bg-linear-to-br ${card.gradient}`}
+            className={`text-white rounded-2xl p-4 flex flex-col h-full shadow-md relative overflow-hidden bg-gradient-to-br ${card.gradient} transition-all duration-300 hover:shadow-lg hover:-translate-y-1 group`}
           >
             {/* Header */}
-            <div className="flex items-center gap-2 mb-2 relative z-10">
-              <div className="p-2 bg-white/20 rounded-lg">
+            <div className="flex items-center gap-3 mb-3 relative z-10">
+              <div className="p-2.5 bg-white/15 rounded-xl backdrop-blur-sm flex items-center justify-center">
                 <Icon className="w-5 h-5 text-white" />
               </div>
-
-              <h3 className="font-medium text-lg">{card?.title}</h3>
+              <h3 className="font-semibold text-base tracking-wide">{card.title}</h3>
             </div>
 
-            {/* Content */}
-            <div className="flex items-end justify-between mt-4 relative z-10">
-              <div className="flex items-baseline gap-2 flex-wrap">
-                <span className="text-5xl font-bold">
-                  {card?.value}
-                </span>
-
-                {card?.label && (
-                  <span className="text-xl font-medium opacity-90">
-                    {card?.label}
+            {/* Content / Stats */}
+            <div className="flex gap-2 mt-auto relative z-10">
+              {card.stats.map((stat, sIndex) => (
+                <div key={sIndex} className="flex flex-col border border-white/20 rounded-lg py-1 px-3 bg-white/10 flex-1">
+                  <span className="text-[11px] font-medium text-white/70 uppercase tracking-wider mb-1">
+                    {stat.label}
                   </span>
-                )}
-              </div>
+                  <span className="text-2xl font-bold tracking-tight">
+                    {stat.value}
+                  </span>
+                </div>
+              ))}
             </div>
 
             {/* Background Icon */}
             <Icon
-              className="absolute right-4 top-1/2 -translate-y-1/2 w-24 h-24 opacity-20 z-0"
+              className="absolute -right-4 -bottom-4 w-24 h-24 opacity-15 stroke-[1.5] text-white z-0 pointer-events-none group-hover:scale-110 group-hover:-rotate-12 transition-all duration-500 ease-out"
               strokeWidth={1.5}
             />
-
-            {/* Footer */}
-            <div className="mt-6 relative z-10">
-              <div className="flex items-center gap-1 text-sm bg-white/20 w-fit px-3 py-1 rounded-md">
-                {isNegative ? (
-                  <ArrowDown className="w-4 h-4 text-red-200" />
-                ) : (
-                  <ArrowUp className="w-4 h-4 text-green-100" />
-                )}
-
-                <span>
-                  {Math.abs(Number(growthValue))}% From Last Week
-                </span>
-              </div>
-            </div>
           </div>
         );
       })}

@@ -450,7 +450,7 @@ export const sidebarData = {
               ],
             },
             {
-              title: "Today's Follow-ups",
+              title: "Today's Leads",
               url: "/crm/today-follow-ups",
               permissions: [
                 "view-lead-activity-list",
