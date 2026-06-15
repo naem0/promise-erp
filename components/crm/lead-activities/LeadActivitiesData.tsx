@@ -107,17 +107,17 @@ const LeadsActivityData = async ({
       case 2:
         return "border-[#E67E00]/20 text-[#E67E00] bg-[#E67E00]/10";
       case 3:
-        return "border-[#00B686]/20 text-[#00B686] bg-[#00B686]/10";
+        return "border-secondary/20 text-secondary bg-secondary/10";
       case 4:
         return "border-[#9148EF]/20 text-[#9148EF] bg-[#9148EF]/10";
       case 5:
-        return "border-[#E64A6E]/20 text-[#E64A6E] bg-[#E64A6E]/10";
+        return "border-primary/20 text-primary bg-primary/10";
       case 6:
-        return "border-[#00B8E6]/20 text-[#00B8E6] bg-[#00B8E6]/10";
+        return "border-red-500/20 text-red-500 bg-red-500/10";
       case 7:
-        return "border-[#64748B]/20 text-[#64748B] bg-[#64748B]/10";
+        return "border-red-400/20 text-red-400 bg-red-400/10";
       case 8:
-        return "border-[#EF4444]/20 text-[#EF4444] bg-[#EF4444]/10";
+        return "border-orange-400/20 text-orange-400 bg-orange-400/10";
       case 9:
         return "border-[#6366F1]/20 text-[#6366F1] bg-[#6366F1]/10";
       default:
@@ -135,6 +135,7 @@ const LeadsActivityData = async ({
               <TableHead className="text-center">Action</TableHead>
               <TableHead className="text-center">Lead Name</TableHead>
               <TableHead className="text-center">Course</TableHead>
+              <TableHead className="text-center">Lead Created Date</TableHead>
               <TableHead className="text-center">Last Follow Up</TableHead>
               <TableHead className="text-center">Next Follow Up</TableHead>
               <TableHead className="text-center">Calls</TableHead>
@@ -142,7 +143,6 @@ const LeadsActivityData = async ({
               <TableHead className="text-center">Counsellor</TableHead>
               <TableHead className="text-center">Status</TableHead>
               <TableHead className="text-center">last Activity</TableHead>
-              <TableHead className="text-center">Lead Created Date</TableHead>
               <TableHead className="text-center">Note</TableHead>
             </TableRow>
           </TableHeader>
@@ -172,6 +172,11 @@ const LeadsActivityData = async ({
                   title={activity?.course_name}
                 >
                   {truncate(activity?.course_name || "—", 25)}
+                </TableCell>
+                <TableCell
+                  className="text-center"
+                >
+                  {activity?.lead_created_date}
                 </TableCell>
                 <TableCell className="text-center">
                   {activity?.last_follow_up_date || "—"}
@@ -205,11 +210,6 @@ const LeadsActivityData = async ({
                   className="text-center"
                 >
                   {activity?.last_activity}
-                </TableCell>
-                <TableCell
-                  className="text-center"
-                >
-                  {activity?.lead_created_date}
                 </TableCell>
                 <TableCell
                   className="max-w-[200px] text-center"
