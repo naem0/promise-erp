@@ -44,7 +44,7 @@ export default async function LeadsActivitySummaryWrapper() {
     },
     {
       id: "follow_up",
-      title: "Follow Up",
+      title: "Follow Up & Interested",
       icon: Network,
       gradient: "from-[#EA580C] to-[#C2410C]",
       stats: [
@@ -58,8 +58,8 @@ export default async function LeadsActivitySummaryWrapper() {
       icon: AlertCircle,
       gradient: "from-[#4C1D95] to-[#1E1B4B]",
       stats: [
-        { label: "Lost", value: stats.total_lost ?? 0 },
-        { label: "Old", value: (stats.total_lost ?? 0) - (stats.today_lost ?? 0) },
+        { label: "Total", value: stats.total_lost ?? 0 },
+        { label: "Today", value: (stats.today_lost ?? 0) - (stats.today_lost ?? 0) },
       ],
     },
     {

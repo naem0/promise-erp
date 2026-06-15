@@ -14,7 +14,6 @@ const LeadActivityManagement = ({
 }) => {
 
   const lastLeadActivity = leadActivities[0]?.status_text;
-  console.log("Last Lead Activity:", lastLeadActivity);
   
   return (
     <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
