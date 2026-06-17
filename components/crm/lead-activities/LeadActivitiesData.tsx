@@ -130,6 +130,7 @@ const LeadsActivityData = async ({
               <TableHead className="text-center">Messages</TableHead>
               <TableHead className="text-center">Counsellor</TableHead>
               <TableHead className="text-center">Status</TableHead>
+              <TableHead className="text-center">Time Count</TableHead>
               <TableHead className="text-center">last Activity</TableHead>
               <TableHead className="text-center">Note</TableHead>
             </TableRow>
@@ -193,6 +194,9 @@ const LeadsActivityData = async ({
                   >
                     {activity?.status_text}
                   </Badge>
+                </TableCell>
+                <TableCell className="text-center">
+                  {activity?.time ?? "00:00:00"}
                 </TableCell>
                 <TableCell
                   className="text-center"

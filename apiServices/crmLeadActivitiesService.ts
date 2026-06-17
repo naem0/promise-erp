@@ -32,6 +32,7 @@ export interface LeadActivity {
   created_at: string;
   last_activity: string;
   lead_created_date: string;
+  time?: string;
 }
 export interface GrowthStats {
   total_leads: number;
