@@ -40,7 +40,7 @@ export interface CRMLeadReportsLeadsGroup {
 export interface CRMLeadReportsStatusGroup4 {
   new: number;
   followup: number;
-  working: number;
+  walking_visitor: number;
   old: number;
 }
 
@@ -57,7 +57,7 @@ export interface CRMLeadReportsStatusGroup3Busy {
 
 export interface CRMLeadReportsStatusGroup3 {
   new: number;
-  working: number;
+  walking_visitor: number;
   old: number;
 }
 

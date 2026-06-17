@@ -338,6 +338,7 @@ export async function createLeadActivity(
     type: number;
     status: number;
     note: string;
+    time?: string;
   },
 ): Promise<SingleLeadActivityResponse> {
   try {

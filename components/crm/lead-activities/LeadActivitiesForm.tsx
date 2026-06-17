@@ -29,6 +29,7 @@ interface FormValues {
   type: string;
   status: string;
   note: string;
+  time: string;
 }
 
 const LeadActivityForm = ({ leadId, lastLeadActivityStatus }: LeadActivityFormProps) => {
@@ -49,6 +50,7 @@ const LeadActivityForm = ({ leadId, lastLeadActivityStatus }: LeadActivityFormPr
       type: "",
       status: "",
       note: "",
+      time: "",
     },
   });
 
@@ -65,6 +67,7 @@ const LeadActivityForm = ({ leadId, lastLeadActivityStatus }: LeadActivityFormPr
         type: Number(values.type),
         status: Number(values.status),
         note: values.note,
+        time: values.time,
       });
 
       if (res.success) {
@@ -155,6 +158,7 @@ const LeadActivityForm = ({ leadId, lastLeadActivityStatus }: LeadActivityFormPr
                     <SelectItem value="2">Message</SelectItem>
                     <SelectItem value="3">Email</SelectItem>
                     <SelectItem value="4">Whatsapp</SelectItem>
+                    <SelectItem value="5">Walkin Visitor</SelectItem>
                   </SelectContent>
                 </Select>
               )}
@@ -188,7 +192,6 @@ const LeadActivityForm = ({ leadId, lastLeadActivityStatus }: LeadActivityFormPr
                     <SelectItem value="6">Cancelled</SelectItem>
                     <SelectItem value="7">Not Received</SelectItem>
                     <SelectItem value="8">Call Rejected</SelectItem>
-                    <SelectItem value="9">Direct Contact</SelectItem>
                   </SelectContent>
                 </Select>
               )}
@@ -197,6 +200,26 @@ const LeadActivityForm = ({ leadId, lastLeadActivityStatus }: LeadActivityFormPr
               <p className="text-sm text-red-500 mt-1">
                 {errors.status.message}
               </p>
+            )}
+          </div>
+          <div className="space-y-2">
+            <Label
+              htmlFor="time"
+              className="text-sm font-medium text-slate-700"
+            >
+              Time
+            </Label>
+            <Input
+              id="time"
+              type="text"
+              min="0"
+              {...register("time")}
+              className="w-full border-slate-200 focus:ring-green-500 focus:border-green-500"
+              disabled={isDateDisabled || isFormDisabled}
+              required={!isDateDisabled}
+            />
+            {errors.time && (
+              <p className="text-sm text-red-500 mt-1">{errors.time.message}</p>
             )}
           </div>
 
