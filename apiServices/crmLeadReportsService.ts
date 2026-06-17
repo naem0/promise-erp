@@ -40,7 +40,7 @@ export interface CRMLeadReportsLeadsGroup {
 export interface CRMLeadReportsStatusGroup4 {
   new: number;
   followup: number;
-  working: number;
+  walking_visitor: number;
   old: number;
 }
 
@@ -57,7 +57,7 @@ export interface CRMLeadReportsStatusGroup3Busy {
 
 export interface CRMLeadReportsStatusGroup3 {
   new: number;
-  working: number;
+  walking_visitor: number;
   old: number;
 }
 
@@ -74,6 +74,7 @@ export interface CRMLeadReportsTotalGroup {
   not_received: CRMLeadReportsStatusGroup3;
   call_rejected: CRMLeadReportsStatusGroup3;
   target_progress: string;
+  total_time?: string;
 }
 
 export interface CRMLeadReportsCourseItem {
@@ -92,6 +93,7 @@ export interface CRMLeadReportsCourseItem {
   not_received: CRMLeadReportsStatusGroup3;
   call_rejected: CRMLeadReportsStatusGroup3;
   target_progress: string;
+  total_time?: string;
 }
 
 export interface CRMLeadReportsConsultantItem {
