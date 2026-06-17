@@ -21,25 +21,13 @@ import Link from "next/link";
 import PermissionGuard from "@/components/auth/PermissionGuard";
 
 const LeadsActivityData = async ({
-  searchParams,
+  resolvedSearchParams,
+  queryString,
 }: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+  resolvedSearchParams: { [key: string]: string | string[] | undefined };
+  queryString: string;
 }) => {
-  const resolvedSearchParams = await searchParams;
-
-  const searchParamsString = new URLSearchParams(
-    Object.entries(resolvedSearchParams).reduce((acc, [key, value]) => {
-      if (value !== undefined) {
-        if (Array.isArray(value)) {
-          value.forEach(v => acc.append(key, v));
-        } else {
-          acc.append(key, value);
-        }
-      }
-      return acc;
-    }, new URLSearchParams())
-  ).toString();
-  const queryStr = searchParamsString ? `?${searchParamsString}` : "";
+  const queryStr = queryString ? `?${queryString}` : "";
 
   const page =
     typeof resolvedSearchParams.page === "string"
