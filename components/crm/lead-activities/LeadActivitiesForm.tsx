@@ -320,8 +320,8 @@ const LeadActivityForm = ({ leadId, lastLeadActivityStatus }: LeadActivityFormPr
                 </span>
               )}
             </Label>
-            <div className="flex gap-3 items-center">
-              <div className="relative flex-1">
+            <div className="flex gap-1.5 2xl:gap-3 items-center">
+              <div className="relative flex-1 shrink-0">
                 <Input
                   id="time"
                   type="text"
@@ -342,7 +342,7 @@ const LeadActivityForm = ({ leadId, lastLeadActivityStatus }: LeadActivityFormPr
                 variant={isTimerRunning ? "destructive" : "default"}
                 onClick={handleTimerToggle}
                 disabled={isFormDisabled || isDateDisabled}
-                className={`w-32 shrink-0 flex items-center justify-center gap-2 font-semibold h-[52px] transition-all duration-300 ${isTimerRunning
+                className={`w-24 shrink-0 flex items-center justify-center gap-2 font-semibold h-[52px] transition-all duration-300 ${isTimerRunning
                     ? "bg-red-600 hover:bg-red-700 shadow-md"
                     : "bg-primary/90 hover:bg-primary shadow-md hover:shadow-lg"
                   }`}
