@@ -43,8 +43,6 @@ const EnrollmentWrapper = ({ slug }: Props) => {
           return;
         }
 
-        console.log("Enrollment----->", res);
-
         if (res?.success) {
           setEnrollmentDetails(res);
         }
