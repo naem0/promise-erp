@@ -13,7 +13,7 @@ const HomeCoursesWrapper = () => {
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
   const [coursesData, setCoursesData] = useState<ApiResponse | null>(null);
-  const branchId = searchParams.get("branch_id") ?? "1";
+  const branchId = searchParams.get("branch_id") ?? "";
 
   useEffect(() => {
     startTransition(() => {
