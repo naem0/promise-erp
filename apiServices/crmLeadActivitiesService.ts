@@ -464,12 +464,13 @@ export interface LeadActivitiesSummaryResponse {
 }
 export async function getLeadActivitiesSummary(
 ): Promise<LeadActivitiesSummaryResponse | null> {
+  // try-এর বাইরে রাখা হয়েছে যাতে Next.js build-time dynamic signal সঠিকভাবে প্রপাগেট হয়
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+
+  if (!token) throw new Error("No valid session/token");
+
   try {
-    const session = await getServerSession(authOptions);
-    const token = session?.accessToken;
- 
-    if (!token) throw new Error("No valid session/token");
- 
     const res = await fetch(`${API_BASE}/crm/leads/activity-summary`, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -485,13 +486,13 @@ export async function getLeadActivitiesSummary(
       console.log("Unauthorized to fetch lead enrollment info");
       return null;
     }
- 
+
     if (!res.ok) {
       throw new Error(`Status: ${res.status} ${res.statusText}`);
     }
- 
+
     const result = await res.json();
- 
+
     return result;
   } catch (error: unknown) {
     console.error("Error in getLeadActivitiesSummary:", error);

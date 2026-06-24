@@ -96,14 +96,15 @@ export async function getDistrictsCached(
 export async function getDistricts(
   params: Record<string, unknown> = {}
 ): Promise<DistrictResponse> {
+  // try-এর বাইরে রাখা হয়েছে যাতে Next.js build-time dynamic signal সঠিকভাবে প্রপাগেট হয়
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+
+  if (!token) {
+    throw new Error("No valid session or access token found.");
+  }
+
   try {
-    const session = await getServerSession(authOptions);
-    const token = session?.accessToken;
-
-    if (!token) {
-      throw new Error("No valid session or access token found.");
-    }
-
     const _cachedResult = await getDistrictsCached(token, params);
 
     if (!_cachedResult) throw new Error("Failed to fetch data from cache.");

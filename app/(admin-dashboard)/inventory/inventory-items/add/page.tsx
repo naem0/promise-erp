@@ -16,6 +16,7 @@ export default async function ItemsAddPage() {
         categoryRes = await getProductCategories({ per_page: 500 });
         categories = categoryRes?.data?.categories || [];
     } catch (error: unknown) {
+        if (typeof error === 'object' && error !== null && 'digest' in error) throw error;
         if (error instanceof Error) {
             console.error(error);
         } else {
@@ -27,6 +28,7 @@ export default async function ItemsAddPage() {
         brandRes = await getBrands({ per_page: 500 });
         brands = brandRes?.data?.brands || [];
     } catch (error: unknown) {
+        if (typeof error === 'object' && error !== null && 'digest' in error) throw error;
         if (error instanceof Error) {
             console.error(error);
         } else {
@@ -38,6 +40,7 @@ export default async function ItemsAddPage() {
         unitsRes = await getUnits({ per_page: 500 });
         units = unitsRes?.data?.units || [];
     } catch (error) {
+        if (typeof error === 'object' && error !== null && 'digest' in error) throw error;
         if (error instanceof Error) {
             console.error(error);
         } else {

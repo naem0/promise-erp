@@ -8,6 +8,7 @@ export default async function LeadsActivitySummaryWrapper() {
   try {
     results = await getLeadActivitiesSummary();
   } catch (error: unknown) {
+    if (typeof error === 'object' && error !== null && 'digest' in error) throw error;
     if (error instanceof Error) {
       return <ErrorComponent message={error.message} />;
     } else {

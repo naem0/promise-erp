@@ -4,19 +4,18 @@ import {
   Card,
   CardHeader,
   CardContent,
-  CardFooter,
   CardTitle,
 } from "@/components/ui/card";
 import { getCourseWiseDuePayments } from "@/apiServices/studentDashboardService";
 import NotFoundComponent from "../common/NotFoundComponent";
 import ErrorComponent from "../common/ErrorComponent";
-import DuePaymentPayNow from "./DuePaymentPayNow";
 
 const PaymentCard = async () => {
   let duePayments;
   try {
     duePayments = await getCourseWiseDuePayments();
   } catch (error: unknown) {
+    if (typeof error === 'object' && error !== null && 'digest' in error) throw error;
     console.error("getCourseWiseDuePayments Error:", error);
     const message = error instanceof Error ? error.message : "Unknown error occurred";
     return <ErrorComponent message={message} />;
