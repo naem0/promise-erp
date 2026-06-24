@@ -96,15 +96,15 @@ export default function ChapterLessonAddForm({
         try {
           const res = await getChaptersByCourseId(courseId);
 
-          if (res.success && res.data) {
-            const existingChapters: Chapter[] = res.data;
+          if (res?.success && res?.data) {
+            const existingChapters: Chapter[] = res?.data;
             const sanitizedChapters = sanitizeChaptersForForm(existingChapters);
 
             if (sanitizedChapters.length > 0) {
               replaceChapters(sanitizedChapters);
             }
           } else {
-            toast.error(res.message || "Failed to load existing chapters");
+            toast.error(res?.message || "Failed to load existing chapters");
           }
         } catch (error: unknown) {
           console.error("Error fetching chapters:", error);
@@ -148,19 +148,19 @@ export default function ChapterLessonAddForm({
       const apiCall = isEdit ? updateChaptersWithLessons : createChaptersWithLessons;
       const res = await apiCall(transformedData);
 
-      if (res.success) {
-        toast.success(res.message || (isEdit ? "Chapters updated successfully!" : "Chapters created successfully!"));
+      if (res?.success) {
+        toast.success(res?.message || (isEdit ? "Chapters updated successfully!" : "Chapters created successfully!"));
         
         // Update form with response data to ensure IDs are synced
-        if (res.data && res.data.length > 0) {
-          const sanitizedChapters = sanitizeChaptersForForm(res.data);
+        if (res?.data && res?.data?.length > 0) {
+          const sanitizedChapters = sanitizeChaptersForForm(res?.data);
           replaceChapters(sanitizedChapters);
         }
         
         onSuccess();
       } else {
         // Handle validation errors from backend
-        if (res.errors) {
+        if (res?.errors) {
           Object.entries(res.errors).forEach(([field, messages]) => {
             const errorMessage = Array.isArray(messages) ? messages[0] : messages;
             // Use Path<FormValues> for proper type safety with nested paths

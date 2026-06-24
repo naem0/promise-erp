@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { getFaqs, Faq } from "@/apiServices/faqsService";
 import {
@@ -21,6 +22,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Search, X } from "lucide-react";
 import NotFoundComponent from "@/components/common/NotFoundComponent";
 
 /* =======================
@@ -46,7 +49,13 @@ export default function FAQSelection({
   onSuccess,
   isEdit = false,
 }: FAQSelectionProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
   const [faqs, setFaqs] = useState<Faq[]>([]);
+  const [searchVal, setSearchVal] = useState(searchParams.get("faq_search") || "");
+  const [debouncedSearch, setDebouncedSearch] = useState(searchParams.get("faq_search") || "");
   const [loadError, setLoadError] = useState<string | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -59,9 +68,9 @@ export default function FAQSelection({
   const selectedFaqIds = watch("faqs");
 
   /* =======================
-     Load all FAQs
+     Load FAQs
   ======================= */
-  const loadFaqs = () => {
+  const loadFaqs = (searchQuery = "") => {
     setLoadError(null);
     setIsLoading(true);
 
@@ -71,12 +80,13 @@ export default function FAQSelection({
           per_page: "1000",
           page: "1",
           status: "1",
+          search: searchQuery || undefined,
         };
 
         const response = await getFaqs(queryParams);
 
         if (response?.data?.faq_sections) {
-          setFaqs(response.data.faq_sections);
+          setFaqs(response?.data?.faq_sections);
         } else {
           throw new Error("Failed to load FAQs");
         }
@@ -94,9 +104,36 @@ export default function FAQSelection({
     });
   };
 
+  // 1. Debounce searchVal -> debouncedSearch
   useEffect(() => {
-    loadFaqs();
-  }, []);
+    if (!searchVal) {
+      setDebouncedSearch("");
+      return;
+    }
+
+    const handler = setTimeout(() => {
+      setDebouncedSearch(searchVal);
+    }, 600);
+
+    return () => clearTimeout(handler);
+  }, [searchVal]);
+
+  // 2. Fetch FAQs and update URL parameters when debouncedSearch changes
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    const currentVal = params.get("faq_search") || "";
+    if (debouncedSearch !== currentVal) {
+      params.delete("page");
+      if (debouncedSearch) {
+        params.set("faq_search", debouncedSearch);
+      } else {
+        params.delete("faq_search");
+      }
+      router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+    }
+
+    loadFaqs(debouncedSearch);
+  }, [debouncedSearch, router, pathname]);
 
   /* =======================
      Load assigned FAQs (Edit mode)
@@ -107,11 +144,9 @@ export default function FAQSelection({
     const fetchAssignedFaqs = async () => {
       try {
         const response: AssignedFaqsResponse = await getCourseFaqs(courseId);
-        console.log("getCourseFaqs response:", response);
 
-        if (response.success && response.data) {
-          let faqsList: Faq[] = response.data;
-
+        if (response?.success && response?.data) {
+          const faqsList: Faq[] = response?.data;
 
           if (faqsList.length > 0) {
             const assignedFaqIds = faqsList.map((faq) => faq.id);
@@ -188,6 +223,11 @@ export default function FAQSelection({
     });
   };
 
+  const handleClear = () => {
+    setSearchVal("");
+    setDebouncedSearch("");
+  };
+
   /* =======================
      UI
   ======================= */
@@ -213,21 +253,10 @@ export default function FAQSelection({
           {loadError && (
             <NotFoundComponent
               message={loadError}
-              onActionClick={loadFaqs}
+              onActionClick={() => loadFaqs(debouncedSearch)}
               actionLabel="Try Again"
             />
           )}
-
-          {/* Empty */}
-          {!loadError &&
-            !isLoading &&
-            faqs.length === 0 && (
-              <NotFoundComponent
-                message="No active FAQs found. Please create FAQs first."
-                onActionClick={loadFaqs}
-                actionLabel="Refresh"
-              />
-            )}
 
           {/* Validation Error */}
           {saveError && (
@@ -237,12 +266,35 @@ export default function FAQSelection({
           )}
 
           {/* FAQs List */}
-          {!isLoading &&
-            !loadError &&
-            faqs.length > 0 && (
-              <div className="grid gap-4">
-                <Label>Select FAQs for this course:</Label>
+          {!loadError && (
+            <div className="grid gap-4">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <Label className="text-base font-semibold">Select FAQs for this course:</Label>
+                <div className="relative w-full sm:max-w-xs">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search FAQs..."
+                    className="pl-10 pr-10"
+                    value={searchVal}
+                    onChange={(e) => setSearchVal(e.target.value)}
+                  />
+                  {searchVal && (
+                    <button
+                      type="button"
+                      onClick={handleClear}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  )}
+                </div>
+              </div>
 
+              {!isLoading && faqs.length === 0 ? (
+                <div className="text-center py-8 border border-dashed rounded-lg text-muted-foreground">
+                  No FAQs found.
+                </div>
+              ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {faqs.map((faq) => {
                     const isSelected = selectedFaqIds.includes(faq.id);
@@ -266,18 +318,19 @@ export default function FAQSelection({
                             htmlFor={`faq-${faq.id}`}
                             className="cursor-pointer font-medium text-base leading-none stretched-link after:absolute after:inset-0"
                           >
-                            {faq.question}
+                            {faq.question || "—"}
                           </Label>
                           <p className="text-sm text-muted-foreground line-clamp-2">
-                            {faq.answer}
+                            {faq.answer || "—"}
                           </p>
                         </div>
                       </div>
                     );
                   })}
                 </div>
-              </div>
-            )}
+              )}
+            </div>
+          )}
 
           {/* Save Button */}
           {!isLoading &&

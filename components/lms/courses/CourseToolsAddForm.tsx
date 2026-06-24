@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { getTools, Tool } from "@/apiServices/toolsService";
 import {
@@ -21,9 +22,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Search, Wrench, X } from "lucide-react";
 import NotFoundComponent from "@/components/common/NotFoundComponent";
 import Image from "next/image";
-import { Wrench } from "lucide-react";
 
 /* =======================
    Types & Interfaces
@@ -39,17 +41,24 @@ interface FormValues {
   tools: number[];
 }
 
-/* =================== Component================ */
+/* =================== Component ================ */
 
 export default function CourseToolsAddForm({
   courseId,
   onSuccess,
   isEdit = false,
 }: CourseToolsAddFormProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
   const [tools, setTools] = useState<Tool[]>([]);
+  const [searchVal, setSearchVal] = useState(searchParams.get("tool_search") || "");
+  const [debouncedSearch, setDebouncedSearch] = useState(searchParams.get("tool_search") || "");
   const [loadError, setLoadError] = useState<string | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [isLoading, setIsLoading] = useState(true);
 
   const { watch, setValue, handleSubmit, setError } = useForm<FormValues>({
     defaultValues: { tools: [] },
@@ -58,10 +67,11 @@ export default function CourseToolsAddForm({
   const selectedToolIds = watch("tools");
 
   /* =======================
-     Load all tools
+     Load tools
   ======================= */
-  const loadTools = () => {
+  const loadTools = (searchQuery = "") => {
     setLoadError(null);
+    setIsLoading(true);
 
     startTransition(async () => {
       try {
@@ -69,6 +79,7 @@ export default function CourseToolsAddForm({
           per_page: "1000",
           page: "1",
           status: "1",
+          search: searchQuery || undefined,
         };
 
         const response = await getTools(queryParams);
@@ -82,13 +93,42 @@ export default function CourseToolsAddForm({
         const errorMessage =
           error instanceof Error ? error.message : "Failed to load tools";
         setLoadError(errorMessage);
+      } finally {
+        setIsLoading(false);
       }
     });
   };
 
+  // 1. Debounce searchVal -> debouncedSearch
   useEffect(() => {
-    loadTools();
-  }, []);
+    if (!searchVal) {
+      setDebouncedSearch("");
+      return;
+    }
+
+    const handler = setTimeout(() => {
+      setDebouncedSearch(searchVal);
+    }, 600);
+
+    return () => clearTimeout(handler);
+  }, [searchVal]);
+
+  // 2. Fetch tools and update URL parameters when debouncedSearch changes
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    const currentVal = params.get("tool_search") || "";
+    if (debouncedSearch !== currentVal) {
+      params.delete("page");
+      if (debouncedSearch) {
+        params.set("tool_search", debouncedSearch);
+      } else {
+        params.delete("tool_search");
+      }
+      router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+    }
+
+    loadTools(debouncedSearch);
+  }, [debouncedSearch, router, pathname]);
 
   /*==================== Load assigned tools (Edit mode)===================*/
   useEffect(() => {
@@ -113,7 +153,7 @@ export default function CourseToolsAddForm({
     fetchAssignedTools();
   }, [isEdit, courseId, setValue]);
 
-  /* ==================Toggle tool selection================== */
+  /* ================== Toggle tool selection ================== */
   const toggleTool = (toolId: number, isChecked: boolean) => {
     const updatedToolIds = isChecked
       ? [...selectedToolIds, toolId]
@@ -123,7 +163,7 @@ export default function CourseToolsAddForm({
     setSaveError(null);
   };
 
-  /* ====================Submit selected tools==================== */
+  /* ==================== Submit selected tools ==================== */
   const onSubmit = (formData: FormValues) => {
     if (formData.tools.length === 0) {
       const errorMessage = "Please select at least 1 tool";
@@ -153,8 +193,6 @@ export default function CourseToolsAddForm({
                 message: errorMessage as string,
               });
             });
-
-
           }
         }
       } catch (error: unknown) {
@@ -166,7 +204,12 @@ export default function CourseToolsAddForm({
     });
   };
 
-  /*==================== UI==================== */
+  const handleClear = () => {
+    setSearchVal("");
+    setDebouncedSearch("");
+  };
+
+  /*==================== UI ==================== */
   return (
     <Card className="w-full mx-auto">
       <CardHeader>
@@ -178,23 +221,12 @@ export default function CourseToolsAddForm({
 
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} className="grid gap-6">
-
-
           {/* Error */}
           {loadError && (
             <NotFoundComponent
               message={loadError}
-              onActionClick={loadTools}
+              onActionClick={() => loadTools(debouncedSearch)}
               actionLabel="Try Again"
-            />
-          )}
-
-          {/* Empty */}
-          {!loadError && tools.length === 0 && (
-            <NotFoundComponent
-              message="No active tools found. Please create tools first."
-              onActionClick={loadTools}
-              actionLabel="Refresh"
             />
           )}
 
@@ -206,63 +238,91 @@ export default function CourseToolsAddForm({
           )}
 
           {/* Tools List */}
-          {!loadError && tools.length > 0 && (
+          {!loadError && (
             <div className="grid gap-4">
-              <Label>Select tools for this course:</Label>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                {tools.map((tool) => {
-                  const isSelected = selectedToolIds.includes(tool.id);
-                  return (
-                    <div
-                      key={tool.id}
-                      className={`flex items-center gap-3 p-4 rounded-lg border transition-all select-none relative group ${isSelected
-                        ? "bg-accent border-primary"
-                        : "hover:bg-accent/50"
-                        }`}
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <Label className="text-base font-semibold">Select tools for this course:</Label>
+                <div className="relative w-full sm:max-w-xs">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search tools..."
+                    className="pl-10 pr-10"
+                    value={searchVal}
+                    onChange={(e) => setSearchVal(e.target.value)}
+                  />
+                  {searchVal && (
+                    <button
+                      type="button"
+                      onClick={handleClear}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer"
                     >
-                      <Checkbox
-                        id={`tool-${tool.id}`}
-                        checked={isSelected}
-                        onCheckedChange={(checked) =>
-                          toggleTool(tool.id, Boolean(checked))
-                        }
-                        className="z-10"
-                      />
-
-                      <Image
-                        src={tool.image || "/images/placeholder.png"}
-                        width={45}
-                        height={45}
-                        alt={tool.title}
-                        className="rounded object-cover"
-                      />
-
-                      <Label
-                        htmlFor={`tool-${tool.id}`}
-                        className="cursor-pointer font-medium stretched-link after:absolute after:inset-0"
-                      >
-                        {tool.title}
-                      </Label>
-                    </div>
-                  );
-                })}
+                      <X className="h-4 w-4" />
+                    </button>
+                  )}
+                </div>
               </div>
+
+              {!isLoading && tools.length === 0 ? (
+                <div className="text-center py-8 border border-dashed rounded-lg text-muted-foreground">
+                  No tools found.
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {tools.map((tool) => {
+                    const isSelected = selectedToolIds.includes(tool.id);
+                    return (
+                      <div
+                        key={tool.id}
+                        className={`flex items-center gap-3 p-4 rounded-lg border transition-all select-none relative group ${isSelected
+                          ? "bg-accent border-primary"
+                          : "hover:bg-accent/50"
+                          }`}
+                      >
+                        <Checkbox
+                          id={`tool-${tool.id}`}
+                          checked={isSelected}
+                          onCheckedChange={(checked) =>
+                            toggleTool(tool.id, Boolean(checked))
+                          }
+                          className="z-10"
+                        />
+
+                        <Image
+                          src={tool.image || "/images/placeholder.png"}
+                          width={45}
+                          height={45}
+                          alt={tool.title || "Tool"}
+                          className="rounded object-cover"
+                        />
+
+                        <Label
+                          htmlFor={`tool-${tool.id}`}
+                          className="cursor-pointer font-medium stretched-link after:absolute after:inset-0"
+                        >
+                          {tool.title || "—"}
+                        </Label>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           )}
 
           {/* Save Button */}
-          {!loadError && tools.length > 0 && (
-            <div className="flex justify-end">
-              <Button
-                type="submit"
-                className="w-36"
-                disabled={isPending || selectedToolIds.length === 0}
-              >
-                {isPending ? "Saving..." : "Save Tools"}
-              </Button>
-            </div>
-          )}
+          {!isLoading &&
+            !loadError &&
+            tools.length > 0 && (
+              <div className="flex justify-end">
+                <Button
+                  type="submit"
+                  className="w-36"
+                  disabled={isPending || selectedToolIds.length === 0}
+                >
+                  {isPending ? "Saving..." : "Save Tools"}
+                </Button>
+              </div>
+            )}
         </form>
       </CardContent>
     </Card>
