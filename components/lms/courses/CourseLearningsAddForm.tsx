@@ -43,7 +43,6 @@ export default function CourseLearningsAddForm({
     handleSubmit,
     setError,
     formState: { isSubmitting, errors },
-    reset,
   } = useForm<FormValues>({
     defaultValues: {
       course_id: courseId,
@@ -62,7 +61,6 @@ export default function CourseLearningsAddForm({
       const fetchLearnings = async () => {
         try {
           const res = await getCourseLearnings(courseId);
-          console.log("Fetched learnings:", res);
           const fetchedData = Array.isArray(res.data) ? res.data : (res.data?.course_learnings || []);
 
           if (fetchedData.length > 0) {
@@ -73,8 +71,8 @@ export default function CourseLearningsAddForm({
             }));
             replace(sanitizedLearnings);
           }
-        } catch (err: unknown) {
-          toast.error("Failed to load course learnings.");
+        } catch (error: unknown) {
+          toast.error(error instanceof Error ? error.message : "Failed to load course learnings.");
         } finally {
           setLoading(false);
         }
@@ -100,8 +98,8 @@ export default function CourseLearningsAddForm({
         }
         toast.error(res.message || "Failed to save learnings");
       }
-    } catch (err: unknown) {
-      toast.error(err instanceof Error ? err.message : "Failed to save learnings");
+    } catch (error: unknown) {
+      toast.error(error instanceof Error ? error.message : "Failed to save learnings");
     }
   };
 

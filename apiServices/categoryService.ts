@@ -2,7 +2,7 @@
 "use server";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { cacheTag, updateTag } from "next/cache";
+import { cacheTag, updateTag, revalidatePath } from "next/cache";
 import { PaginationType } from "@/types/pagination";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
@@ -277,6 +277,9 @@ export async function deleteCategory(id: number): Promise<SingleCategoryResponse
 // functions for home page getHomeCourseCategories ---
 
 export async function getHomeCourseCategories(): Promise<CategoriesResponse | null> {
+  "use cache";
+  cacheTag("categories-list");
+
   try {
     const res = await fetch(
       `${API_BASE}/public/course-categories/with-count`

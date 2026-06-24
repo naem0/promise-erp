@@ -28,7 +28,7 @@ export default function JoinFilter() {
   const { register, control, reset, watch, setValue } = useForm<FilterFormValues>({
     defaultValues: {
       search: searchParams.get("search") || "",
-      sort_by: searchParams.get("sort_by") || "",
+      sort_order: searchParams.get("sort_order") || "",
       status: searchParams.get("status") || "",
     },
   });

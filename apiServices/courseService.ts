@@ -436,6 +436,7 @@ export async function assignBranchesToCourse(
       throw new Error(result.message || "Failed to assign branches");
     }
 
+    updateTag("courses-list");
     return result;
   } catch (error: unknown) {
     console.error("Error in assignBranchesToCourse:", error);
@@ -546,6 +547,7 @@ export async function assignFaqsToCourse(
       throw new Error(result.message || "Failed to assign FAQs");
     }
 
+    updateTag("courses-list");
     return result;
   } catch (error: unknown) {
     console.error("Error in assignFaqsToCourse:", error);
@@ -591,6 +593,7 @@ export async function assignFacilitiesToCourse(
       throw new Error(result.message || "Failed to assign facilities");
     }
 
+    updateTag("courses-list");
     return result;
   } catch (error: unknown) {
     console.error("Error in assignFacilitiesToCourse:", error);
@@ -879,6 +882,7 @@ export async function assignJoinsToCourse(
       throw new Error(result.message || "Failed to assign joins");
     }
 
+    updateTag("courses-list");
     return result;
   } catch (error: unknown) {
     console.error("Error in assignJoinsToCourse:", error);
@@ -959,6 +963,11 @@ export async function assignToolsToCourse(
 
     const result = await response.json();
 
+    if (!result.success) {
+      throw new Error(result.message || "Failed to assign tools");
+    }
+
+    updateTag("courses-list");
     return result;
   } catch (error: unknown) {
     console.error("Error in assignToolsToCourse:", error);

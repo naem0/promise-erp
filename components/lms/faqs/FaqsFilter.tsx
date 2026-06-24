@@ -29,6 +29,7 @@ export default function FaqsFilter() {
     defaultValues: {
       search: searchParams.get("search") || "",
       sort_order: searchParams.get("sort_order") || "",
+      status: searchParams.get("status") || "",
     },
   });
 
@@ -78,6 +79,7 @@ export default function FaqsFilter() {
     reset({
       search: "",
       sort_order: "",
+      status: "",
     });
   };
 

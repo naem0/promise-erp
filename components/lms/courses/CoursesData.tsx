@@ -31,17 +31,38 @@ export default async function CoursesData({
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const resolvedSearchParams = await searchParams;
-  const page = typeof resolvedSearchParams.page === "string" ? Number(resolvedSearchParams.page) : 1;
-  const per_page = typeof resolvedSearchParams.per_page === "string" ? Number(resolvedSearchParams.per_page) : 15;
+  const page =
+    typeof resolvedSearchParams.page === "string"
+      ? Number(resolvedSearchParams.page)
+      : 1;
+  const per_page =
+    typeof resolvedSearchParams.per_page === "string"
+      ? Number(resolvedSearchParams.per_page)
+      : 15;
 
   const params = {
     page,
     per_page,
-    search: typeof resolvedSearchParams.search === "string" ? resolvedSearchParams.search : undefined,
-    sort_order: typeof resolvedSearchParams.sort_order === "string" ? resolvedSearchParams.sort_order : undefined,
-    level: typeof resolvedSearchParams.level === "string" ? resolvedSearchParams.level : undefined,
-    branch_id: typeof resolvedSearchParams.branch_id === "string" ? resolvedSearchParams.branch_id : undefined,
-    category_id: typeof resolvedSearchParams.category_id === "string" ? resolvedSearchParams.category_id : undefined,
+    search:
+      typeof resolvedSearchParams.search === "string"
+        ? resolvedSearchParams.search
+        : undefined,
+    sort_order:
+      typeof resolvedSearchParams.sort_order === "string"
+        ? resolvedSearchParams.sort_order
+        : undefined,
+    level:
+      typeof resolvedSearchParams.level === "string"
+        ? resolvedSearchParams.level
+        : undefined,
+    branch_id:
+      typeof resolvedSearchParams.branch_id === "string"
+        ? resolvedSearchParams.branch_id
+        : undefined,
+    category_id:
+      typeof resolvedSearchParams.category_id === "string"
+        ? resolvedSearchParams.category_id
+        : undefined,
   };
 
   let data;
@@ -55,12 +76,14 @@ export default async function CoursesData({
     }
   }
 
-  const courses = data.data.courses;
-  const pagination = data.data.pagination;
-  console.log("CoursesData - Fetched pagination:", pagination);
+  if (!data?.success || !data?.data ) {
+    return null;
+  }
 
+  const courses = data?.data?.courses || [];
+  const pagination = data?.data?.pagination;
 
-  if (courses.length === 0) {
+  if (courses?.length === 0) {
     return <NotFoundComponent message={data?.message} title="Course List" />;
   }
 
@@ -69,7 +92,7 @@ export default async function CoursesData({
       <div className="rounded-md border">
         <Table>
           <TableHeader>
-            <TableRow >
+            <TableRow>
               <TableHead className="text-center">Sl</TableHead>
               <TableHead className="text-center">Action</TableHead>
               <TableHead className="text-start">Course</TableHead>
@@ -87,7 +110,9 @@ export default async function CoursesData({
           <TableBody>
             {courses.map((course, index) => (
               <TableRow key={course.id}>
-                <TableCell className="text-center">{(page - 1) * 15 + (index + 1)}</TableCell>
+                <TableCell className="text-center">
+                  {(page - 1) * 15 + (index + 1)}
+                </TableCell>
 
                 {/* Action Dropdown */}
                 <TableCell className="text-center">
@@ -143,9 +168,11 @@ export default async function CoursesData({
                 {/*  Course Info */}
                 <TableCell className="text-center">
                   <div className="flex items-center gap-3">
-                    <div className="relative w-10 h-10 overflow-hidden rounded-md border text-center" >
+                    <div className="relative w-10 h-10 overflow-hidden rounded-md border text-center">
                       <Image
-                        src={course.featured_image || "/images/placeholder_img.jpg"}
+                        src={
+                          course.featured_image || "/images/placeholder_img.jpg"
+                        }
                         alt={course.title}
                         fill
                         className="object-scale-cover"
@@ -171,33 +198,51 @@ export default async function CoursesData({
                     </small>
                   )}
                   <span className="font-semibold text-primary">
-                    {course.after_discount ? Number(course.after_discount).toFixed(2) : (Number(course.price) - Number(course.discount)).toFixed(2)} ৳
+                    {course.after_discount
+                      ? Number(course.after_discount).toFixed(2)
+                      : (
+                          Number(course.price) - Number(course.discount)
+                        ).toFixed(2)}{" "}
+                    ৳
                   </span>
                 </TableCell>
 
-                <TableCell className="text-center">{course.category?.name || "N/A"}</TableCell>
+                <TableCell className="text-center">
+                  {course.category?.name || "N/A"}
+                </TableCell>
                 <TableCell className="text-center">
                   <div className="flex items-center justify-center gap-1">
                     <span className="text-yellow-500">★</span>
-                    <span className="font-medium">{course.ratings ? Number(course.ratings).toFixed(2) : "0.00"}</span>
+                    <span className="font-medium">
+                      {course.ratings
+                        ? Number(course.ratings).toFixed(2)
+                        : "0.00"}
+                    </span>
                   </div>
                 </TableCell>
                 <TableCell className="text-center">
                   <Badge
                     variant="secondary"
-                    className={`capitalize ${course.level === "beginner"
+                    className={`capitalize ${
+                      course.level === "beginner"
                         ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200"
                         : course.level === "intermediate"
                           ? "bg-blue-100 text-blue-700 hover:bg-blue-200"
                           : "bg-pink-100 text-pink-700 hover:bg-pink-200"
-                      }`}
+                    }`}
                   >
                     {course.level}
                   </Badge>
                 </TableCell>
-                <TableCell className="text-center">{course.total_seats}</TableCell>
-                <TableCell className="text-center">{course.total_enrolled}</TableCell>
-                <TableCell className="text-center">{course.branch_count || 0}</TableCell>
+                <TableCell className="text-center">
+                  {course.total_seats}
+                </TableCell>
+                <TableCell className="text-center">
+                  {course.total_enrolled}
+                </TableCell>
+                <TableCell className="text-center">
+                  {course.branch_count || 0}
+                </TableCell>
 
                 <TableCell className="text-center">
                   {course.status === "Published" ? (
@@ -219,7 +264,7 @@ export default async function CoursesData({
         </Table>
       </div>
 
-      {pagination && pagination?.last_page > 1  && (
+      {pagination && pagination?.last_page > 1 && (
         <div className="mt-4">
           <Pagination pagination={pagination} />
         </div>
