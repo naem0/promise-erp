@@ -9,6 +9,7 @@ export default async function BranchFilterData() {
         const res = await getDistricts({ per_page: 999 });
         districts = res?.data?.districts || [];
     } catch (error: unknown) {
+        if (typeof error === 'object' && error !== null && 'digest' in error) throw error;
         if (error instanceof Error) {
             return (
                 <div className="py-8 md:py-12">

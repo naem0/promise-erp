@@ -11,6 +11,7 @@ export default async function FreeSeminarsFilterData() {
     const branchesRes = await getBranches({ per_page: 999 });
     branches = branchesRes?.data?.branches || [];
   } catch (error: unknown) {
+    if (typeof error === 'object' && error !== null && 'digest' in error) throw error;
     console.error("Branches error:", error);
     if (error instanceof Error) {
       return <ErrorComponent message={error.message} />;
@@ -24,6 +25,7 @@ export default async function FreeSeminarsFilterData() {
     const categoriesRes = await getCategories({ per_page: 999 });
     categories = categoriesRes?.data?.categories || [];
   } catch (error: unknown) {
+    if (typeof error === 'object' && error !== null && 'digest' in error) throw error;
     console.error("Categories error:", error);
     if (error instanceof Error) {
       return <ErrorComponent message={error.message} />;

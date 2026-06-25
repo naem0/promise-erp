@@ -10,9 +10,10 @@ interface PageProps {
 }
 
 export default async function EditFreeSeminarPage({ params }: PageProps) {
-  try {
-    const { id } = await params;
+  // await params কে try-এর বাইরে রাখা হয়েছে যাতে Next.js dynamic signal সঠিকভাবে প্রপাগেট হয়
+  const { id } = await params;
 
+  try {
     const response = await getFreeSeminarById(id);
 
     if (!response.success) {
@@ -37,6 +38,7 @@ export default async function EditFreeSeminarPage({ params }: PageProps) {
       <FreeSeminarForm title="Edit Free Seminar" freeSeminar={freeSeminar} />
     );
   } catch (error) {
+    if (typeof error === 'object' && error !== null && 'digest' in error) throw error;
     console.error("Error in EditFreeSeminarPage:", error);
     return (
       <ErrorComponent
