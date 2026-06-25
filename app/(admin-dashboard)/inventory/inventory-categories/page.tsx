@@ -6,6 +6,7 @@ import { PlusCircle } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
 import PermissionGuard from "@/components/auth/PermissionGuard";
+import CategoriesSummaryWrapper from "@/components/inventory/CategoriesSummaryWrapper";
 
 export default function InventoryCategoriesPage({
     searchParams,
@@ -26,6 +27,18 @@ export default function InventoryCategoriesPage({
                     </Button>
                 </PermissionGuard>
             </div>
+
+            <Suspense
+                fallback={
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4 md:gap-6 mb-6">
+                        {[...Array(5)].map((_, i) => (
+                            <div key={i} className="h-32 bg-slate-400 animate-pulse rounded-xl"></div>
+                        ))}
+                    </div>
+                }
+            >
+                <CategoriesSummaryWrapper />
+            </Suspense>
 
             <Suspense fallback={<div>Loading filters...</div>}>
                 <CategoriesFilterData />
