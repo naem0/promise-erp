@@ -212,10 +212,14 @@ export async function updateUnit(
     const token = session?.accessToken;
 
     if (!token) throw new Error("No valid session/token");
+    // Laravel 12 requires _method for PUT/PATCH requests
+    if (!formData.has("_method")) {
+      formData.append("_method", "PUT");
+    }
 
     // The user specified POST/inventory/units/{id} for update
     const res = await fetch(`${API_BASE}/inventory/units/${id}`, {
-      method: "PUT",
+      method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
       },
