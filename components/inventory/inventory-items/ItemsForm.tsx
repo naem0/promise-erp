@@ -35,6 +35,9 @@ interface FormValues {
     brand_id: string;
     unit_id: string;
     model: string;
+    purchase_price: string;
+    mrp_price: string;
+    stock: string;
     description: string;
     specification: string;
     status: string;
@@ -69,6 +72,9 @@ export default function ItemsForm({
             brand_id: "",
             unit_id: "",
             model: "",
+            purchase_price: "",
+            mrp_price: "",
+            stock: "",
             description: "",
             specification: "",
             status: "",
@@ -85,6 +91,9 @@ export default function ItemsForm({
                 brand_id: item.brand_id?.toString() || "",
                 unit_id: item.unit_id?.toString() || "",
                 model: item.model || "",
+                purchase_price: item.purchase_price?.toString() || "",
+                mrp_price: item.mrp_price?.toString() || "",
+                stock: item.stock?.toString() || "",
                 description: item.description || "",
                 specification: item.specification || "",
                 status: item.status?.toString() || "",
@@ -136,6 +145,8 @@ export default function ItemsForm({
             const res = item
                 ? await updateProductItem(Number(item.id), formData)
                 : await createProductItem(formData);
+
+                console.log("res--->",res);
 
             if (res.success) {
                 reset();
@@ -239,7 +250,7 @@ export default function ItemsForm({
                     <div>
                         <label className="block text-sm font-medium mb-1">Barcode</label>
                         <Input placeholder="Enter barcode" {...register("barcode")} />
-                        {errors.barcode && <p className="text-sm text-red-500 mt-1">{errors.barcode.message}</p>}
+                        {errors.barcode && <p className="text-sm text-red-500 mt-1">{errors.barcode?.message}</p>}
                     </div>
 
                     {/* Category */}
@@ -331,6 +342,27 @@ export default function ItemsForm({
                         <label className="block text-sm font-medium mb-1">Model</label>
                         <Input placeholder="Enter model" {...register("model")} />
                         {errors.model && <p className="text-sm text-red-500 mt-1">{errors.model.message}</p>}
+                    </div>
+
+                    {/* Purchase Price */}
+                    <div>
+                        <label className="block text-sm font-medium mb-1">Purchase Price</label>
+                        <Input type="number" step="0.01" placeholder="0.00" {...register("purchase_price")} />
+                        {errors.purchase_price && <p className="text-sm text-red-500 mt-1">{errors.purchase_price.message}</p>}
+                    </div>
+
+                    {/* MRP Price */}
+                    <div>
+                        <label className="block text-sm font-medium mb-1">MRP Price</label>
+                        <Input type="number" step="0.01" placeholder="0.00" {...register("mrp_price")} />
+                        {errors.mrp_price && <p className="text-sm text-red-500 mt-1">{errors.mrp_price.message}</p>}
+                    </div>
+
+                    {/* Stock */}
+                    <div>
+                        <label className="block text-sm font-medium mb-1">Stock</label>
+                        <Input type="number" placeholder="0" {...register("stock")} />
+                        {errors.stock && <p className="text-sm text-red-500 mt-1">{errors.stock.message}</p>}
                     </div>
 
                     {/* Status */}

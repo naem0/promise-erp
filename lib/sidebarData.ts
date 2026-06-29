@@ -525,6 +525,11 @@ export const sidebarData = {
                 url: "/inventory/inventory-delivery-partners",
                 permissions: ["view-delivery-partners"],
               },
+              {
+              title: "Requisitions",
+              url: "/inventory/requisitions",
+              permissions: ["view-requisitions", "view-my-requisitions"],
+            },
           ],
         },
       ],

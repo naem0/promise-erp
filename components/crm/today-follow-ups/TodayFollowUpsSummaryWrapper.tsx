@@ -12,7 +12,7 @@ export default async function TodayFollowUpsSummaryWrapper({
     page: 1,
     per_page: 15,
     search: typeof resolvedSearchParams.search === "string" ? resolvedSearchParams.search : undefined,
-    status: typeof resolvedSearchParams.status === "string" ? resolvedSearchParams.status : undefined,
+    status_id: typeof resolvedSearchParams.status_id === "string" ? resolvedSearchParams.status_id : undefined,
     user_id: typeof resolvedSearchParams.user_id === "string" ? resolvedSearchParams.user_id : undefined,
     date_from: typeof resolvedSearchParams.date_from === "string" ? resolvedSearchParams.date_from: undefined,
     date_to: typeof resolvedSearchParams.date_to === "string"? resolvedSearchParams.date_to: undefined,

@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Search, FilterX } from "lucide-react";
+import PerPageSelect from "@/components/common/PerPageSelect";
 
 interface FilterFormValues {
     search?: string;
@@ -85,11 +86,13 @@ export default function BrandsFilter() {
     const currentSearch = searchParams.get("search") || "";
     const currentStatus = searchParams.get("status") || "";
     const currentSortOrder = searchParams.get("sort_order") || "";
+    const currentPerPage = searchParams.get("per_page") || "";
 
     const hasActiveFilters =
         currentSearch !== "" ||
         currentStatus !== "" ||
-        currentSortOrder !== "";
+        currentSortOrder !== "" ||
+        currentPerPage !== "";
 
     return (
         <div className="p-6 mb-6 border rounded-xl bg-card shadow-sm">
@@ -110,7 +113,7 @@ export default function BrandsFilter() {
                 )}
             </div>
 
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
                 {/* Search - Spans 2 columns on medium and larger screens */}
                 <div className="relative md:col-span-2">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -166,6 +169,11 @@ export default function BrandsFilter() {
                         </Select>
                     )}
                 />
+
+                {/* Per Page Select */}
+                <div className="flex items-center justify-start md:col-span-1">
+                    <PerPageSelect className="w-full" />
+                </div>
             </div>
         </div>
     );

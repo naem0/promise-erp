@@ -44,9 +44,9 @@ const LeadsActivityData = async ({
       typeof resolvedSearchParams.search === "string"
         ? resolvedSearchParams.search
         : undefined,
-    status:
-      typeof resolvedSearchParams.status === "string"
-        ? resolvedSearchParams.status
+    status_id:
+      typeof resolvedSearchParams.status_id === "string"
+        ? resolvedSearchParams.status_id
         : undefined,
     user_id:
       typeof resolvedSearchParams.user_id === "string"
@@ -190,7 +190,7 @@ const LeadsActivityData = async ({
                 <TableCell className="text-center">
                   <Badge
                     variant="outline"
-                    className={getStatusStyles(activity?.status)}
+                    className={getStatusStyles(activity?.status_id)}
                   >
                     {activity?.status_text}
                   </Badge>

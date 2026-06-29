@@ -148,13 +148,11 @@ const ItemsData = async ({
             <TableRow>
               <TableHead className="text-center font-semibold w-[60px]">Sl</TableHead>
               <TableHead className="text-center font-semibold w-[100px]">Action</TableHead>
-              <TableHead className="font-semibold w-[80px]">Image</TableHead>
-              <TableHead className="font-semibold min-w-[150px]">Name</TableHead>
+              <TableHead className="font-semibold min-w-[300px]">Product</TableHead>
               <TableHead className="font-semibold min-w-[100px]">Barcode</TableHead>
               <TableHead className="font-semibold min-w-[120px]">Category</TableHead>
               <TableHead className="font-semibold min-w-[120px]">Brand</TableHead>
               <TableHead className="font-semibold">Model</TableHead>
-              <TableHead className="text-center font-semibold">Unit</TableHead>
               <TableHead className="text-center font-semibold">Status</TableHead>
             </TableRow>
           </TableHeader>
@@ -200,22 +198,45 @@ const ItemsData = async ({
                   </DropdownMenu>
                 </TableCell>
 
+                {/* Product: Image + Name + Buy/MRP Price + Stock/Unit */}
                 <TableCell>
-                    <div className="relative w-12 h-12">
-                        <Image
-                          src={item.image || "/images/placeholder.png"}
-                          alt={item.name}
-                          className="object-cover"
-                          fill
-                          sizes="40px"
-                        />
+                  <div className="flex items-center gap-3">
+                    <div className="relative w-12 h-12 rounded-md overflow-hidden border border-slate-100 flex-shrink-0">
+                      <Image
+                        src={item.image || "/images/placeholder.png"}
+                        alt={item.name}
+                        className="object-cover"
+                        fill
+                      />
                     </div>
-               
-                </TableCell>
-
-                <TableCell className="font-medium text-slate-900" title={item?.name}>
-                    {truncate(item?.name, 20) || item?.name}
-
+                    <div className="flex flex-col min-w-0 gap-0.5">
+                      <span className="font-medium text-slate-900 truncate" title={item?.name}>
+                        {truncate(item?.name, 28) || item?.name}
+                      </span>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-xs text-slate-400">Buy:</span>
+                        <span className="text-xs font-semibold text-slate-600">
+                          {item?.purchase_price !== undefined && item?.purchase_price !== null
+                            ? Number(item.purchase_price).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                            : "—"}
+                        </span>
+                        <span className="text-xs text-slate-300">|</span>
+                        <span className="text-xs text-slate-400">MRP:</span>
+                        <span className="text-xs font-semibold text-emerald-600">
+                          {item?.mrp_price !== undefined && item?.mrp_price !== null
+                            ? Number(item.mrp_price).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                            : "—"}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <span className="text-xs text-slate-400">Stock:</span>
+                        <span className="text-xs font-semibold text-slate-700">{item?.stock ?? 0}</span>
+                        {item?.unit_name && (
+                          <span className="text-xs text-slate-400">{item.unit_name}</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
                 </TableCell>
 
                 <TableCell className="text-slate-600">
@@ -232,10 +253,6 @@ const ItemsData = async ({
 
                 <TableCell className="text-slate-600">
                   {item?.model || "—"}
-                </TableCell>
-
-                <TableCell className="text-center font-semibold text-slate-700">
-                  {item?.unit_name || "—"}
                 </TableCell>
 
                 <TableCell className="text-center">

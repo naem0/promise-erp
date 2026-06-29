@@ -29,7 +29,7 @@ interface LeadActivityFormProps {
 interface FormValues {
   date: string;
   type: string;
-  status: string;
+  status_id: string;
   note: string;
   time: string;
 }
@@ -51,13 +51,13 @@ const LeadActivityForm = ({ leadId, lastLeadActivityStatus }: LeadActivityFormPr
     defaultValues: {
       date: new Date().toISOString().split("T")[0],
       type: "",
-      status: "",
+      status_id: "",
       note: "",
       time: "",
     },
   });
 
-  const currentStatus = watch("status");
+  const currentStatus = watch("status_id");
   const isDateDisabled = currentStatus === "5" || currentStatus === "6";
 
   const isFormDisabled = lastLeadActivityStatus === "Enrolled";
@@ -168,7 +168,7 @@ const LeadActivityForm = ({ leadId, lastLeadActivityStatus }: LeadActivityFormPr
         lead_id: leadId,
         date: isDateDisabled ? "" : values.date,
         type: Number(values.type),
-        status: Number(values.status),
+        status_id: Number(values.status_id),
         note: values.note,
         time: values.time,
       });
@@ -177,7 +177,7 @@ const LeadActivityForm = ({ leadId, lastLeadActivityStatus }: LeadActivityFormPr
         toast.success(res.message || "Activity saved successfully");
         reset();
         setTimerSeconds(0);
-        if (values.status === "5") {
+        if (values.status_id === "5") {
           window.open(`/lms/enrollments/add?lead_id=${leadId}`, "_blank");
         }
         const fromPage = searchParams.get("from_page") || "/crm/lead-activities";
@@ -280,7 +280,7 @@ const LeadActivityForm = ({ leadId, lastLeadActivityStatus }: LeadActivityFormPr
               Status
             </Label>
             <Controller
-              name="status"
+              name="status_id"
               control={control}
               render={({ field }) => (
                 <Select value={field.value} onValueChange={field.onChange} disabled={isFormDisabled}>
@@ -300,9 +300,9 @@ const LeadActivityForm = ({ leadId, lastLeadActivityStatus }: LeadActivityFormPr
                 </Select>
               )}
             />
-            {errors.status && (
+            {errors.status_id && (
               <p className="text-sm text-red-500 mt-1">
-                {errors.status.message}
+                {errors.status_id.message}
               </p>
             )}
           </div>

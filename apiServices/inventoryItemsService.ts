@@ -24,9 +24,13 @@ export interface ProductItem {
   specification?: string;
   unit_id?: number;
   unit_name?: string;
+  purchase_price?: number;
+  mrp_price?: number;
   model?: string;
+  stock?: number;
   image?: string | null;
   status: number;
+  status_text?: string;
 }
 
 export interface ProductItemsResponse {
@@ -200,7 +204,9 @@ export async function createProductItem(
 
     const result = await res.json();
 
-    updateTag("product-items-list");
+    if (result.success) {
+      updateTag("product-items-list");
+    }
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -236,7 +242,9 @@ export async function updateProductItem(
 
     const result = await res.json();
 
-    updateTag("product-items-list");
+    if (result.success) {
+      updateTag("product-items-list");
+    }
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
