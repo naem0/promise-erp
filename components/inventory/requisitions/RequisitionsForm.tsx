@@ -175,8 +175,9 @@ export default function RequisitionsForm({
       setActiveType(type);
       let initialAmountItems = [{ amount_requested: "", amount_reason: "", amount_expected_date: "", docs: [] as AmountFile[] }];
       if (requisition.type === 2) {
-        if (requisition.amount && Array.isArray(requisition.amount) && requisition.amount.length > 0) {
-          initialAmountItems = requisition.amount.map((item: any) => ({
+        const amtItems = requisition.amount_items || requisition.amount;
+        if (amtItems && Array.isArray(amtItems) && amtItems.length > 0) {
+          initialAmountItems = amtItems.map((item: any) => ({
             amount_requested: String(item.amount_requested || ""),
             amount_reason: String(item.amount_reason || ""),
             amount_expected_date: item.amount_expected_date ? String(item.amount_expected_date).split("T")[0] : "",

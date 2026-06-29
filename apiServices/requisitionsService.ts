@@ -80,11 +80,20 @@ export interface Requisition {
   remarks?: string;
   status_remarks?: string;
   items?: RequisitionItem[];
+  amount_items?: {
+    id: number;
+    amount_requested: number;
+    amount_reason: string | null;
+    amount_expected_date: string | null;
+    approved_amount: number;
+    docs: unknown[];
+    status: number;
+  }[];
   amount?: {
     id: number;
     amount_requested: number;
-    amount_reason: string;
-    amount_expected_date: string;
+    amount_reason: string | null;
+    amount_expected_date: string | null;
     approved_amount: number;
     docs: unknown[];
     status: number;
