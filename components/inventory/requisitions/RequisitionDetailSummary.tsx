@@ -2,14 +2,12 @@ import { CalendarDays, Building2, User, ArrowLeft, Truck } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Requisition } from "@/apiServices/requisitionsService";
-import PermissionGuard from "@/components/auth/PermissionGuard";
 
 interface RequisitionDetailProps {
   requisition: Requisition;
 }
 
 const RequisitionDetailSummary = ({ requisition }: RequisitionDetailProps) => {
-  console.log("from detail", requisition);
   return (
     <div className="bg-white border rounded-2xl p-6 shadow-sm space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -35,12 +33,14 @@ const RequisitionDetailSummary = ({ requisition }: RequisitionDetailProps) => {
             Transfer
           </Button>
 
-          <PermissionGuard requiredPermission="requisition-shiping">
+
+          <Link href={`/inventory/requisitions/${requisition?.id}/shipping`}>
             <Button className="bg-[#15803d] hover:bg-[#166534] text-white font-medium px-5 py-2 h-9 rounded-lg gap-2 flex items-center shadow-sm">
               <Truck className="h-4 w-4" />
               Shipping
             </Button>
-          </PermissionGuard>
+          </Link>
+
         </div>
       </div>
 
