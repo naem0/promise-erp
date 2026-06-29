@@ -35,7 +35,7 @@ const LeadActivityManagement = ({
       <div className="lg:col-span-1">
         <div className="sticky top-6 space-y-6">
           <LeadActionCard lead={leadInfo} />
-          <LeadActivityForm leadId={leadActivities[0]?.lead_id} lastLeadActivityStatus={lastLeadActivity} />
+          <LeadActivityForm leadId={leadInfo?.id ?? 0} lastLeadActivityStatus={lastLeadActivity} />
         </div>
       </div>
     </div>

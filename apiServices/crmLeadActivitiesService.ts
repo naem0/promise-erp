@@ -21,7 +21,7 @@ export interface LeadActivity {
   last_follow_up_date?: string;
   call_count?: number;
   message_count?: number;
-  status: number;
+  status_id: number;
   status_text: string;
   note: string;
   user_name?: string;
@@ -93,6 +93,7 @@ export interface SingleLeadResponse {
 }
  
 export interface LeadInfo {
+  id?: number;
   name: string;
   phone?: string;
   whatsapp: string;
@@ -100,7 +101,7 @@ export interface LeadInfo {
   email?: string;
   referrer_name?: string;
   referrer_phone?: string;
-  status?: number;
+  status_id?: number;
   status_name?: string;
   course_type?: number;
   course_type_name?: string;
@@ -337,7 +338,7 @@ export async function createLeadActivity(
     lead_id: number;
     date: string;
     type: number;
-    status: number;
+    status_id: number;
     note: string;
     time?: string;
   },

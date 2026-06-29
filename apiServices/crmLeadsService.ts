@@ -53,7 +53,7 @@ export interface CRMLead {
   course_type_text: string;
   shift: number;
   shift_text: string;
-  status: number;
+  status_id: number;
   status_text: string;
   source?: {
     id: number;

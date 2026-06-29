@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Search, FilterX } from "lucide-react";
 import { ProductCategory } from "@/apiServices/inventoryCategoriesService";
 import { Brand } from "@/apiServices/inventoryBrandsService";
+import PerPageSelect from "@/components/common/PerPageSelect";
 
 interface FilterFormValues {
     search?: string;
@@ -100,13 +101,15 @@ export default function ItemsFilter({ categories = [], brands = [] }: ItemsFilte
     const currentSortOrder = searchParams.get("sort_order") || "";
     const currentCategoryId = searchParams.get("category_id") || "";
     const currentBrandId = searchParams.get("brand_id") || "";
+    const currentPerPage = searchParams.get("per_page") || "";
 
     const hasActiveFilters =
         currentSearch !== "" ||
         currentStatus !== "" ||
         currentSortOrder !== "" ||
         currentCategoryId !== "" ||
-        currentBrandId !== "";
+        currentBrandId !== "" ||
+        currentPerPage !== "";
 
     return (
         <div className="p-6 mb-6 border rounded-xl bg-card shadow-sm">
@@ -127,7 +130,7 @@ export default function ItemsFilter({ categories = [], brands = [] }: ItemsFilte
                 )}
             </div>
 
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
                 {/* Search */}
                 <div className="relative md:col-span-2">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -234,6 +237,11 @@ export default function ItemsFilter({ categories = [], brands = [] }: ItemsFilte
                         </Select>
                     )}
                 />
+
+                {/* Per Page Select */}
+                <div className="flex items-center justify-start md:col-span-1">
+                    <PerPageSelect className="w-full" />
+                </div>
             </div>
         </div>
     );

@@ -408,7 +408,7 @@ export default function CRMLeadsClientTable({
                                 <TableCell className="text-center text-xs">
                                     <Badge
                                         variant="outline"
-                                        className={getStatusColor(lead.status)}
+                                        className={getStatusColor(lead.status_id)}
                                     >
                                         {lead?.status_text || "—"}
                                     </Badge>

@@ -24,10 +24,16 @@ export interface UserProfile {
     name: string;
   };
   department?: string;
-  designation?: string;
+  designation?: {
+    id: number;
+    name: string;
+  };
   salary_scale?: string;
   subscription?: string;
-  branches?: string[];
+  branches?: {
+    id: number;
+    name: string;
+  }[];
   roles?: string[];
   tools?: string[];
 }

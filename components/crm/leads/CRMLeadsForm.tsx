@@ -42,7 +42,7 @@ interface FormValues {
     course_id: string;
     course_type: string;
     shift: string;
-    status: string;
+    status_id: string;
     source_id: string;
     category_id: string;
     branch_id: string;
@@ -84,7 +84,7 @@ export default function CRMLeadsForm({
             course_id: lead?.course?.id?.toString() || "",
             course_type: lead?.course_type?.toString() || "",
             shift: lead?.shift?.toString() || "",
-            status: lead?.status?.toString() || "",
+            status_id: lead?.status_id?.toString() || "",
             source_id: lead?.source?.id?.toString() || "",
             category_id: lead?.category?.id?.toString() || "",
             branch_id: lead?.branch?.id?.toString() || "",
@@ -299,7 +299,7 @@ export default function CRMLeadsForm({
                     <div>
                         <label className="block text-sm font-medium mb-1">Status</label>
                         <Controller
-                            name="status"
+                            name="status_id"
                             control={control}
                             render={({ field }) => (
                                 <Select value={field.value} onValueChange={field.onChange}>
@@ -317,9 +317,9 @@ export default function CRMLeadsForm({
                                         <SelectItem value="8">Call Rejected</SelectItem> */}
                                     </SelectContent>
                                 </Select>
-                            )}
-                        />
-                        {errors.status && <p className="text-sm text-red-500 mt-1">{errors.status.message}</p>}
+                             )}
+                         />
+                         {errors.status_id && <p className="text-sm text-red-500 mt-1">{errors.status_id.message}</p>}
                     </div>
 
                     {/* Source */}
