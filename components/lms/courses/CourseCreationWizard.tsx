@@ -14,15 +14,8 @@ import CourseLearningsAddForm from "./CourseLearningsAddForm";
 import CourseToolsAddForm from "./CourseToolsAddForm";
 import WhoCanJoinSelection from "./WhoCanJoinSelection";
 
-import { createCourse } from "@/apiServices/courseService";
-import { handleFormErrors, handleFormSuccess } from "@/lib/formErrorHandler";
-import { UseFormSetError } from "react-hook-form";
-import { ApiErrorResponse } from "@/lib/apiErrorHandler";
 import { Button } from "@/components/ui/button";
 
-// -----------------------------------------
-// Step Header Component
-// -----------------------------------------
 interface StepHeaderProps {
   number: number;
   title: string;
@@ -52,19 +45,14 @@ function StepHeader({ number, title, isActive, isCompleted }: StepHeaderProps) {
   );
 }
 
-// -----------------------------------------
-// Wizard Page
-// -----------------------------------------
 export default function CourseCreationWizard() {
   const router = useRouter();
 
   const [step, setStep] = useState<number>(1);
   const [courseId, setCourseId] = useState<number | null>(null);
-  const [error, setError] = useState<any>(null);
 
   const goNext = () => setStep((prev) => prev + 1);
 
-  // Redirect to courses page after completion
   useEffect(() => {
     if (step === 8) {
       const timer = setTimeout(() => router.push("/lms/courses"), 1500);

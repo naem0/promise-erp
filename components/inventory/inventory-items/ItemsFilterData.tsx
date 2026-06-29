@@ -13,6 +13,7 @@ export default async function ItemsFilterData() {
         categoryRes = await getProductCategories({ per_page: 500 });
         categories = categoryRes?.data?.categories || [];
     } catch (error: unknown) {
+        if (typeof error === 'object' && error !== null && 'digest' in error) throw error;
         if (error instanceof Error) {
             console.error(error);
         } else {
@@ -24,6 +25,7 @@ export default async function ItemsFilterData() {
         brandRes = await getBrands({ per_page: 500 });
         brands = brandRes?.data?.brands || [];
     } catch (error: unknown) {
+        if (typeof error === 'object' && error !== null && 'digest' in error) throw error;
         if (error instanceof Error) {
             console.error(error);
         } else {

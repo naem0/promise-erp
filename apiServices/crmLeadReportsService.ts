@@ -32,24 +32,89 @@ export interface CRMLeadReportsBranch {
   branch_name: string;
 }
 
-export interface CRMLeadReportsItem {
-  user_id: number;
-  consultant_name: string;
+export interface CRMLeadReportsLeadsGroup {
+  "total-leads": number | string;
+  "available-leads": number;
+}
+
+export interface CRMLeadReportsStatusGroup4 {
+  new: number;
+  followup: number;
+  walking_visitor: number;
+  old: number;
+}
+
+export interface CRMLeadReportsStatusGroup2 {
+  new: number;
+  followup: number;
+}
+
+export interface CRMLeadReportsStatusGroup3Busy {
+  new: number;
+  followup: number;
+  old: number;
+}
+
+export interface CRMLeadReportsStatusGroup3 {
+  new: number;
+  walking_visitor: number;
+  old: number;
+}
+
+export interface CRMLeadReportsTotalGroup {
+  leads: CRMLeadReportsLeadsGroup;
+  assigned: CRMLeadReportsStatusGroup4;
+  contacted: CRMLeadReportsStatusGroup4;
+  remaining: CRMLeadReportsStatusGroup2;
+  busy: CRMLeadReportsStatusGroup3Busy;
+  interested: CRMLeadReportsStatusGroup3;
+  follow_up: CRMLeadReportsStatusGroup3;
+  enrolled: CRMLeadReportsStatusGroup3;
+  cancelled: CRMLeadReportsStatusGroup3;
+  not_received: CRMLeadReportsStatusGroup3;
+  call_rejected: CRMLeadReportsStatusGroup3;
+  target_progress: string;
+  total_time?: string;
+}
+
+export interface CRMLeadReportsCourseItem {
   course_id: number;
   course_name: string;
-  branch: CRMLeadReportsBranch[];
-  total_lead: number;
-  total_assigned: number;
-  contacted: number;
+  total_lead: string;
+  leads: CRMLeadReportsLeadsGroup;
+  assigned: CRMLeadReportsStatusGroup4;
+  contacted: CRMLeadReportsStatusGroup4;
+  remaining: CRMLeadReportsStatusGroup2;
+  busy: CRMLeadReportsStatusGroup3Busy;
+  interested: CRMLeadReportsStatusGroup3;
+  follow_up: CRMLeadReportsStatusGroup3;
+  enrolled: CRMLeadReportsStatusGroup3;
+  cancelled: CRMLeadReportsStatusGroup3;
+  not_received: CRMLeadReportsStatusGroup3;
+  call_rejected: CRMLeadReportsStatusGroup3;
   target_progress: string;
-  new: number;
-  busy: number;
-  interested: number;
-  follow_up: number;
-  enrolled: number;
-  lost: number;
-  not_received: number;
-  call_rejected: number;
+  total_time?: string;
+}
+
+export interface CRMLeadReportsConsultantItem {
+  user_id: number;
+  consultant_name: string;
+  branch: CRMLeadReportsBranch[];
+  courses: CRMLeadReportsCourseItem[];
+  total: CRMLeadReportsTotalGroup;
+}
+
+export interface CRMLeadReportsResponse {
+  success: boolean;
+  message: string;
+  code: number;
+  data: {
+    grand_total: CRMLeadReportsTotalGroup;
+    total_records: number;
+    report_data: CRMLeadReportsConsultantItem[];
+    pagination?: PaginationType;
+  };
+  errors?: Record<string, string[]>;
 }
 
 
@@ -93,23 +158,8 @@ export interface CRMNewLeadReportsItem {
   call_rejected: number;
 }
 
-
-export interface CRMLeadReportsResponse {
-  success: boolean;
-  message: string;
-  code: number;
-  data: {
-    total_course_lead: number;
-    total_branch_lead: number;
-    total_summary: CRMLeadReportsSummary;
-    total_records: number;
-    report_data: CRMLeadReportsItem[];
-    pagination: PaginationType;
-  };
-  errors?: Record<string, string[]>;
-}
-
 export interface CRMOldLeadReportsResponse {
+
   success: boolean;
   message: string;
   code: number;

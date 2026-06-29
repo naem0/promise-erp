@@ -147,7 +147,7 @@ export default function CourseAddForm({
     const fetchCategories = async () => {
       try {
         const res: CategoriesResponse = await getCategories();
-        if (res.success && res?.data?.categories) {
+        if (res?.success && res?.data?.categories) {
           setCategories(res?.data?.categories || []);
         } else {
           toast.error(res.message || "Failed to load categories");
@@ -293,7 +293,6 @@ export default function CourseAddForm({
 
       <CardContent>
         <form onSubmit={handleSubmit(submitForm)} className="grid gap-6">
-          {/* Category + Title + Sub Title */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="grid gap-2">
               <Label htmlFor="category_id">

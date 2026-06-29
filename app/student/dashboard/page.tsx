@@ -3,15 +3,12 @@ import StudentDashboardWrapper from "@/components/student-dashboard/StudentDashb
 import DashboardLoadingSkeleton from "@/components/common/DashboardLoadingSkeleton";
 
 const StudentDashboardPage = () => {
-
   return (
-    <>
-      <section className="py-4 px-4">
-        <Suspense fallback={<DashboardLoadingSkeleton />}>
-          <StudentDashboardWrapper />
-        </Suspense>
-      </section>
-    </>
+    <section className="py-4 px-4">
+      <Suspense fallback={<DashboardLoadingSkeleton />}>
+        <StudentDashboardWrapper />
+      </Suspense>
+    </section>
   );
 };
 

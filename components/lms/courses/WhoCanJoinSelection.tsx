@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { getJoins, JoinType } from "@/apiServices/joinService";
 import {
@@ -21,6 +22,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Search, X } from "lucide-react";
 import NotFoundComponent from "@/components/common/NotFoundComponent";
 
 /* =======================
@@ -46,7 +49,13 @@ export default function WhoCanJoinSelection({
     onSuccess,
     isEdit = false,
 }: WhoCanJoinSelectionProps) {
+    const router = useRouter();
+    const pathname = usePathname();
+    const searchParams = useSearchParams();
+
     const [joins, setJoins] = useState<JoinType[]>([]);
+    const [searchVal, setSearchVal] = useState(searchParams.get("join_search") || "");
+    const [debouncedSearch, setDebouncedSearch] = useState(searchParams.get("join_search") || "");
     const [loadError, setLoadError] = useState<string | null>(null);
     const [saveError, setSaveError] = useState<string | null>(null);
     const [isPending, startTransition] = useTransition();
@@ -59,9 +68,9 @@ export default function WhoCanJoinSelection({
     const selectedJoinIds = watch("joins");
 
     /* =======================
-       Load all joins
+       Load joins
     ======================= */
-    const loadJoins = () => {
+    const loadJoins = (searchQuery = "") => {
         setLoadError(null);
         setIsLoading(true);
 
@@ -71,6 +80,7 @@ export default function WhoCanJoinSelection({
                     per_page: "1000",
                     page: "1",
                     status: "1",
+                    search: searchQuery || undefined,
                 };
 
                 const response = await getJoins(queryParams);
@@ -94,9 +104,36 @@ export default function WhoCanJoinSelection({
         });
     };
 
+    // 1. Debounce searchVal -> debouncedSearch
     useEffect(() => {
-        loadJoins();
-    }, []);
+        if (!searchVal) {
+            setDebouncedSearch("");
+            return;
+        }
+
+        const handler = setTimeout(() => {
+            setDebouncedSearch(searchVal);
+        }, 600);
+
+        return () => clearTimeout(handler);
+    }, [searchVal]);
+
+    // 2. Fetch joins and update URL parameters when debouncedSearch changes
+    useEffect(() => {
+        const params = new URLSearchParams(searchParams.toString());
+        const currentVal = params.get("join_search") || "";
+        if (debouncedSearch !== currentVal) {
+            params.delete("page");
+            if (debouncedSearch) {
+                params.set("join_search", debouncedSearch);
+            } else {
+                params.delete("join_search");
+            }
+            router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+        }
+
+        loadJoins(debouncedSearch);
+    }, [debouncedSearch, router, pathname]);
 
     /* =======================
        Load assigned joins (Edit mode)
@@ -109,7 +146,7 @@ export default function WhoCanJoinSelection({
                 const response: AssignedJoinsResponse = await getCourseJoins(courseId);
 
                 if (response.success && response.data) {
-                    let joinsList: JoinType[] = response.data;
+                    const joinsList: JoinType[] = response.data;
 
                     if (joinsList.length > 0) {
                         const assignedJoinIds = joinsList.map((join) => join.id);
@@ -187,6 +224,11 @@ export default function WhoCanJoinSelection({
         });
     };
 
+    const handleClear = () => {
+        setSearchVal("");
+        setDebouncedSearch("");
+    };
+
     /* =======================
        UI
     ======================= */
@@ -214,21 +256,10 @@ export default function WhoCanJoinSelection({
                     {loadError && (
                         <NotFoundComponent
                             message={loadError}
-                            onActionClick={loadJoins}
+                            onActionClick={() => loadJoins(debouncedSearch)}
                             actionLabel="Try Again"
                         />
                     )}
-
-                    {/* Empty */}
-                    {!loadError &&
-                        !isLoading &&
-                        joins.length === 0 && (
-                            <NotFoundComponent
-                                message="No active options found. Please create 'Who Can Join' items first."
-                                onActionClick={loadJoins}
-                                actionLabel="Refresh"
-                            />
-                        )}
 
                     {/* Validation Error */}
                     {saveError && (
@@ -238,14 +269,37 @@ export default function WhoCanJoinSelection({
                     )}
 
                     {/* Joins List */}
-                    {!isLoading &&
-                        !loadError &&
-                        joins.length > 0 && (
-                            <div className="grid gap-4">
-                                <Label>
+                    {!loadError && (
+                        <div className="grid gap-4">
+                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                                <Label className="text-base font-semibold">
                                     Select who can join this course:
                                 </Label>
+                                <div className="relative w-full sm:max-w-xs">
+                                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                    <Input
+                                        placeholder="Search options..."
+                                        className="pl-10 pr-10"
+                                        value={searchVal}
+                                        onChange={(e) => setSearchVal(e.target.value)}
+                                    />
+                                    {searchVal && (
+                                        <button
+                                            type="button"
+                                            onClick={handleClear}
+                                            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer"
+                                        >
+                                            <X className="h-4 w-4" />
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
 
+                            {!isLoading && joins.length === 0 ? (
+                                <div className="text-center py-8 border border-dashed rounded-lg text-muted-foreground">
+                                    No options found.
+                                </div>
+                            ) : (
                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                                     {joins.map((join) => {
                                         const isSelected = selectedJoinIds.includes(join.id);
@@ -268,14 +322,15 @@ export default function WhoCanJoinSelection({
                                                     htmlFor={`join-${join.id}`}
                                                     className="cursor-pointer font-medium w-full stretched-link after:absolute after:inset-0"
                                                 >
-                                                    {join.title}
+                                                    {join.title || "—"}
                                                 </Label>
                                             </div>
                                         );
                                     })}
                                 </div>
-                            </div>
-                        )}
+                            )}
+                        </div>
+                    )}
 
                     {/* Save Button */}
                     {!isLoading &&

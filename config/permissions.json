@@ -142,6 +142,7 @@
     { "path": "/crm/contacts/edit", "permissions": ["edit-crm-contacts"], "isDynamic": true },
 
     { "path": "/crm/lead-activities", "permissions": ["view-lead-activity-list", "view-assigned-lead-activity-list", "create-enrollments"] },
+    { "path": "/crm/today-follow-ups", "permissions": ["view-lead-activity-list", "view-assigned-lead-activity-list", "create-enrollments"] },
     { "path": "/crm/lead-activities/manage", "permissions": ["view-lead-activities", "create-lead-activities"], "isDynamic": true },
 
     { "path": "/crm/categories", "permissions": ["view-crm-categories"] },

@@ -58,7 +58,7 @@ const CRMLeadReportsData = async ({
     }
 
     const reportData = results?.data?.report_data || [];
-    const summary = results?.data?.total_summary;
+    const summary = results?.data?.grand_total;
     const paginationData = results?.data?.pagination;
 
     if (!reportData.length) {

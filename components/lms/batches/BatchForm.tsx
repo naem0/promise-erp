@@ -49,6 +49,8 @@ export default function BatchForm({ title, batch }: BatchFormProps) {
     const [branches, setBranches] = useState<Branch[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [teachers, setTeachers] = useState<Teacher[]>([]);
+    const [branchSearch, setBranchSearch] = useState("");
+    const [branchSearching, setBranchSearching] = useState(false);
     const router = useRouter();
 
     const {
@@ -126,13 +128,7 @@ export default function BatchForm({ title, batch }: BatchFormProps) {
         async function loadInitialData() {
             try {
                 setIsLoading(true);
-                const [branchesRes, coursesRes] = await Promise.all([
-                    getBranches({ per_page: 999 }),
-                    getCourses({ per_page: 999 }),
-                ]);
-                if (branchesRes.success) {
-                    setBranches(branchesRes.data?.branches || []);
-                }
+                await getCourses({ per_page: 999 });
             } catch (error) {
                 console.error("Error loading initial data:", error);
             } finally {
@@ -141,6 +137,35 @@ export default function BatchForm({ title, batch }: BatchFormProps) {
         }
         loadInitialData();
     }, []);
+
+    // 3s debounce-সহ branch search এবং clear করার জন্য একক useEffect
+    useEffect(() => {
+        let active = true;
+        const delay = branchSearch === "" ? 0 : 3000;
+
+        const timer = setTimeout(async () => {
+            try {
+                setBranchSearching(true);
+                const res = await getBranches(
+                    branchSearch ? { search: branchSearch, per_page: 999 } : { per_page: 999 }
+                );
+                if (active && res.success) {
+                    setBranches(res.data?.branches || []);
+                }
+            } catch (error) {
+                console.error("Error fetching branches:", error);
+            } finally {
+                if (active) {
+                    setBranchSearching(false);
+                }
+            }
+        }, delay);
+
+        return () => {
+            active = false;
+            clearTimeout(timer);
+        };
+    }, [branchSearch]);
 
     const submitHandler = async (values: FormValues) => {
         const baseData = {
@@ -228,7 +253,31 @@ export default function BatchForm({ title, batch }: BatchFormProps) {
                     {/* Only show branch selection when creating a new batch, not when editing */}
                     {!batch && (
                         <div className="grid gap-2 relative pb-5">
-                            <Label htmlFor="branch_ids">Branches<span className="text-red-500">*</span></Label>
+                            <div className="flex items-center justify-between gap-2">
+                                <Label htmlFor="branch_ids">Branches<span className="text-red-500">*</span></Label>
+                                <div className="relative flex items-center w-56">
+                                    <input
+                                        type="text"
+                                        value={branchSearch}
+                                        onChange={(e) => setBranchSearch(e.target.value)}
+                                        placeholder="Search branches..."
+                                        className="w-full border rounded-md px-3 py-1.5 text-sm pr-8 focus:outline-none focus:ring-1 focus:ring-primary"
+                                    />
+                                    {branchSearching && (
+                                        <span className="absolute right-2 text-xs text-muted-foreground animate-pulse">...</span>
+                                    )}
+                                    {branchSearch && !branchSearching && (
+                                        <button
+                                            type="button"
+                                            onClick={() => setBranchSearch("")}
+                                            className="absolute right-2 text-muted-foreground hover:text-foreground transition-colors text-base leading-none"
+                                            title="Clear search"
+                                        >
+                                            ✕
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
                             <Controller
                                 name="branch_ids"
                                 control={control}
@@ -253,7 +302,16 @@ export default function BatchForm({ title, batch }: BatchFormProps) {
                                             </Label>
                                         </div>
                                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                                            {branches?.map((branch) => (
+                                            {branches.length === 0 ? (
+                                                <div className="col-span-4 py-6 text-center text-sm text-muted-foreground">
+                                                    {branchSearching
+                                                        ? "Searching..."
+                                                        : branchSearch
+                                                        ? `No branches found for "${branchSearch}"`
+                                                        : "No branches available"}
+                                                </div>
+                                            ) : (
+                                                branches?.map((branch) => (
                                                 <div key={branch.id} className={`flex items-center space-x-2 p-2 rounded-md hover:bg-primary/50 transition-colors border ${field.value?.includes(branch.id.toString()) ? "bg-primary/50" : "border-transparent"}`}>
                                                     <input
                                                         type="checkbox"
@@ -274,7 +332,7 @@ export default function BatchForm({ title, batch }: BatchFormProps) {
                                                         {branch.name}
                                                     </Label>
                                                 </div>
-                                            ))}
+                                            )))}
                                         </div>
                                     </div>
                                 )}

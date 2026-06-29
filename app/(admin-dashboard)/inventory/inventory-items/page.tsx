@@ -6,34 +6,52 @@ import { PlusCircle } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
 import PermissionGuard from "@/components/auth/PermissionGuard";
+import ItemsSummaryWrapper from "@/components/inventory/ItemsSummaryWrapper";
 
 export default function InventoryItemsPage({
-    searchParams,
+  searchParams,
 }: {
-    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-    return (
-        <div className="mx-auto space-y-6">
-            <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-semibold tracking-tight text-slate-800">Products</h1>
+  return (
+    <div className="mx-auto space-y-6">
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-semibold tracking-tight text-slate-800">
+          Products
+        </h1>
 
-                <PermissionGuard requiredPermission="create-products">
-                    <Button asChild className="">
-                        <Link href="/inventory/inventory-items/add">
-                            <PlusCircle className="w-4 h-4 mr-2" />
-                            Add Product
-                        </Link>
-                    </Button>
-                </PermissionGuard>
-            </div>
+        <PermissionGuard requiredPermission="create-products">
+          <Button asChild className="">
+            <Link href="/inventory/inventory-items/add">
+              <PlusCircle className="w-4 h-4 mr-2" />
+              Add Product
+            </Link>
+          </Button>
+        </PermissionGuard>
+      </div>
+      
+      <Suspense
+        fallback={
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4 md:gap-6 mb-6">
+            {[...Array(5)].map((_, i) => (
+              <div
+                key={i}
+                className="h-32 bg-slate-100 animate-pulse rounded-xl"
+              ></div>
+            ))}
+          </div>
+        }
+      >
+        <ItemsSummaryWrapper />
+      </Suspense>
 
-            <Suspense fallback={<div>Loading filters...</div>}>
-                <ItemsFilterData />
-            </Suspense>
+      <Suspense fallback={<div>Loading filters...</div>}>
+        <ItemsFilterData />
+      </Suspense>
 
-            <Suspense fallback={<TableSkeleton columns={10} rows={10} />}>
-                <ItemsData searchParams={searchParams} />
-            </Suspense>
-        </div>
-    );
+      <Suspense fallback={<TableSkeleton columns={10} rows={10} />}>
+        <ItemsData searchParams={searchParams} />
+      </Suspense>
+    </div>
+  );
 }

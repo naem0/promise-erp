@@ -19,7 +19,7 @@ import { DatePickerWithRange } from "@/components/common/DatePickerWithRange";
 
 interface FilterFormValues {
     search?: string;
-    status?: string;
+    status_id?: string;
     user_id?: string;
     course_id?: string;
     per_page?: string;
@@ -34,7 +34,7 @@ export default function LeadsActivityFilter({ consultants }: { consultants?: Con
         useForm<FilterFormValues>({
             defaultValues: {
                 search: searchParams.get("search") || "",
-                status: searchParams.get("status") || "",
+                status_id: searchParams.get("status_id") || "",
                 user_id: searchParams.get("user_id") || "",
                 course_id: searchParams.get("course_id") || "",
                 per_page: searchParams.get("per_page") || "",
@@ -84,7 +84,7 @@ export default function LeadsActivityFilter({ consultants }: { consultants?: Con
     const handleReset = () => {
         reset({
             search: "",
-            status: "",
+            status_id: "",
             user_id: "",
             course_id: "",
             per_page: "",
@@ -93,7 +93,7 @@ export default function LeadsActivityFilter({ consultants }: { consultants?: Con
     };
 
     const currentSearch = searchParams.get("search") || "";
-    const currentStatus = searchParams.get("status") || "";
+    const currentStatus = searchParams.get("status_id") || "";
     const currentUserId = searchParams.get("user_id") || "";
     const currentCourseId = searchParams.get("course_id") || "";
     const currentDateFrom = searchParams.get("date_from") || "";
@@ -161,14 +161,14 @@ export default function LeadsActivityFilter({ consultants }: { consultants?: Con
 
                 {/* Status */}
                 <Controller
-                    name="status"
+                    name="status_id"
                     control={control}
                     render={({ field }) => (
                         <Select
                             value={field.value}
                             onValueChange={(value) => {
                                 field.onChange(value);
-                                handleSelectChange("status")(value);
+                                handleSelectChange("status_id")(value);
                             }}
                         >
                             <SelectTrigger className="w-full">

@@ -116,6 +116,7 @@ export async function assignLeadsToUser(
 
     updateTag("crm-leads-list");
     updateTag("leads-activity-list");
+    updateTag("today-follow-up-leads");
     
     const result = await res.json();
     return result;

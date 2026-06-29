@@ -402,28 +402,6 @@ export const sidebarData = {
             // },
           ],
         },
-        {
-          title: "Requisition Manage",
-          url: "#",
-          icon: HouseIcon,
-          items: [
-            {
-              title: "Your Requisition",
-              url: "#",
-              permissions: ["view-requisitions"],
-            },
-            {
-              title: "All Branches",
-              url: "#",
-              permissions: ["view-branches-requisitions"],
-            },
-            {
-              title: "Head office",
-              url: "#",
-              permissions: ["view-head-office-requisitions"],
-            },
-          ],
-        },
       ],
     },
 
@@ -443,6 +421,15 @@ export const sidebarData = {
             {
               title: "Lead Activities",
               url: "/crm/lead-activities",
+              permissions: [
+                "view-lead-activity-list",
+                "view-assigned-lead-activity-list",
+                "create-enrollments",
+              ],
+            },
+            {
+              title: "Today's Leads",
+              url: "/crm/today-follow-ups",
               permissions: [
                 "view-lead-activity-list",
                 "view-assigned-lead-activity-list",
@@ -853,68 +840,6 @@ export const sidebarData = {
       ],
     },
 
-    {
-      label: "Inventory",
-      items: [
-        {
-          title: "Inventory Management",
-          url: "#",
-          icon: BoxesIcon,
-          items: [
-            {
-              title: "Dashboard",
-              url: "#",
-              permissions: ["view-inventory-dashboard"],
-            },
-            {
-              title: "Requisitions",
-              url: "#",
-              permissions: ["view-requisitions"],
-            },
-            {
-              title: "Requisition Overview",
-              url: "#",
-              permissions: ["view-requisition-overview"],
-            },
-            {
-              title: "Requisition Accepts",
-              url: "#",
-              permissions: ["view-requisition-accepts"],
-            },
-            {
-              title: "Purchase",
-              url: "#",
-              permissions: ["view-purchase"],
-            },
-            {
-              title: "Manual Entry Form / POS",
-              url: "#",
-              permissions: ["view-manual-entry-form-pos"],
-            },
-            {
-              title: "Item Management",
-              url: "#",
-              permissions: ["view-item-management"],
-            },
-            {
-              title: "Stock Management",
-              url: "#",
-              permissions: ["view-stock-management"],
-            },
-            {
-              title: "Supplier / Vendor Management",
-              url: "#",
-              permissions: ["view-supplier-vendor-management"],
-            },
-            {
-              title: "Warehouse Management",
-              url: "#",
-              permissions: ["view-warehouse-management"],
-            },
-          ],
-        },
-      ],
-    },
 
     // {
     //   label: "Sales",

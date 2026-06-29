@@ -3,13 +3,13 @@
 import { useState, useRef, useEffect, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Download, FileText, FileSpreadsheet, File, Loader2 } from "lucide-react";
-import { getCRMLeadReports, CRMLeadReportsItem } from "@/apiServices/crmLeadReportsService";
+import { getCRMLeadReports, CRMLeadReportsConsultantItem } from "@/apiServices/crmLeadReportsService";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 
 interface ExportCRMLeadReportsButtonProps {
   fileName?: string;
-  data?: CRMLeadReportsItem[];
+  data?: CRMLeadReportsConsultantItem[];
   page?: number;
   perPage?: number;
 }
@@ -19,39 +19,156 @@ const HEADERS = [
   "Consultant",
   "Course",
   "Branch",
-  "Total Lead",
-  "Assigned",
-  "Contacted",
-  "New",
-  "Busy",
-  "Interested",
-  "Follow Up",
-  "Enrolled",
-  "Cancelled",
-  "Not Received",
-  "Call Rejected",
+  "Leads (T)",
+  "Leads (A)",
+  "Assigned (N)",
+  "Assigned (F)",
+  "Assigned (W)",
+  "Assigned (O)",
+  "Contacted (N)",
+  "Contacted (F)",
+  "Contacted (W)",
+  "Contacted (O)",
+  "Remaining (N)",
+  "Remaining (F)",
+  "Busy (N)",
+  "Busy (F)",
+  "Busy (O)",
+  "Interested (N)",
+  "Interested (W)",
+  "Interested (O)",
+  "Follow Up (N)",
+  "Follow Up (W)",
+  "Follow Up (O)",
+  "Enrolled (N)",
+  "Enrolled (W)",
+  "Enrolled (O)",
+  "Cancelled (N)",
+  "Cancelled (W)",
+  "Cancelled (O)",
+  "Not Received (N)",
+  "Not Received (W)",
+  "Not Received (O)",
+  "Call Rejected (N)",
+  "Call Rejected (W)",
+  "Call Rejected (O)",
   "Progress",
 ];
 
-function buildRows(data: CRMLeadReportsItem[], page: number = 1, perPage: number = data.length) {
-  return data?.map((item, index) => [
-    (page - 1) * perPage + (index + 1),
-    item?.consultant_name || "N/A",
-    item?.course_name || "N/A",
-    item?.branch?.[0]?.branch_name || "N/A",
-    item?.total_lead || 0,
-    item?.total_assigned || 0,
-    item?.contacted || 0,
-    item?.new || 0,
-    item?.busy || 0,
-    item?.interested || 0,
-    item?.follow_up || 0,
-    item?.enrolled || 0,
-    item?.lost || 0,
-    item?.not_received || 0,
-    item?.call_rejected || 0,
-    item?.target_progress || "",
-  ]);
+const PDF_HEADERS = [
+  "#SL",
+  "Consultant",
+  "Course Name",
+  "Branch",
+  "L-T", "L-A",
+  "As-N", "As-F", "As-W", "As-O",
+  "Co-N", "Co-F", "Co-W", "Co-O",
+  "Re-N", "Re-F",
+  "Bu-N", "Bu-F", "Bu-O",
+  "In-N", "In-W", "In-O",
+  "Fo-N", "Fo-W", "Fo-O",
+  "En-N", "En-W", "En-O",
+  "Ca-N", "Ca-W", "Ca-O",
+  "NR-N", "NR-W", "NR-O",
+  "CR-N", "CR-W", "CR-O",
+  "Progress",
+];
+
+function buildRows(data: CRMLeadReportsConsultantItem[], page: number = 1, perPage: number = data.length) {
+  const rows: any[][] = [];
+  
+  data?.forEach((item, index) => {
+    const serial = (page - 1) * perPage + (index + 1);
+    const consultantName = item?.consultant_name || "N/A";
+    
+    // For each course of this consultant
+    item.courses?.forEach((course, courseIndex) => {
+      rows.push([
+        serial,
+        consultantName,
+        course.course_name || "N/A",
+        item.branch?.[courseIndex]?.branch_name || item.branch?.[0]?.branch_name || "",
+        course.leads?.["total-leads"] ?? 0,
+        course.leads?.["available-leads"] ?? 0,
+        course.assigned?.new ?? 0,
+        course.assigned?.followup ?? 0,
+        course.assigned?.walking_visitor ?? 0,
+        course.assigned?.old ?? 0,
+        course.contacted?.new ?? 0,
+        course.contacted?.followup ?? 0,
+        course.contacted?.walking_visitor ?? 0,
+        course.contacted?.old ?? 0,
+        course.remaining?.new ?? 0,
+        course.remaining?.followup ?? 0,
+        course.busy?.new ?? 0,
+        course.busy?.followup ?? 0,
+        course.busy?.old ?? 0,
+        course.interested?.new ?? 0,
+        course.interested?.walking_visitor ?? 0,
+        course.interested?.old ?? 0,
+        course.follow_up?.new ?? 0,
+        course.follow_up?.walking_visitor ?? 0,
+        course.follow_up?.old ?? 0,
+        course.enrolled?.new ?? 0,
+        course.enrolled?.walking_visitor ?? 0,
+        course.enrolled?.old ?? 0,
+        course.cancelled?.new ?? 0,
+        course.cancelled?.walking_visitor ?? 0,
+        course.cancelled?.old ?? 0,
+        course.not_received?.new ?? 0,
+        course.not_received?.walking_visitor ?? 0,
+        course.not_received?.old ?? 0,
+        course.call_rejected?.new ?? 0,
+        course.call_rejected?.walking_visitor ?? 0,
+        course.call_rejected?.old ?? 0,
+        course.target_progress || "",
+      ]);
+    });
+    
+    // Also add the consultant total row
+    rows.push([
+      `Total [${consultantName}]`,
+      consultantName,
+      "Total",
+      "", // Branch empty
+      item.total?.leads?.["total-leads"] ?? 0,
+      item.total?.leads?.["available-leads"] ?? 0,
+      item.total?.assigned?.new ?? 0,
+      item.total?.assigned?.followup ?? 0,
+      item.total?.assigned?.walking_visitor ?? 0,
+      item.total?.assigned?.old ?? 0,
+      item.total?.contacted?.new ?? 0,
+      item.total?.contacted?.followup ?? 0,
+      item.total?.contacted?.walking_visitor ?? 0,
+      item.total?.contacted?.old ?? 0,
+      item.total?.remaining?.new ?? 0,
+      item.total?.remaining?.followup ?? 0,
+      item.total?.busy?.new ?? 0,
+      item.total?.busy?.followup ?? 0,
+      item.total?.busy?.old ?? 0,
+      item.total?.interested?.new ?? 0,
+      item.total?.interested?.walking_visitor ?? 0,
+      item.total?.interested?.old ?? 0,
+      item.total?.follow_up?.new ?? 0,
+      item.total?.follow_up?.walking_visitor ?? 0,
+      item.total?.follow_up?.old ?? 0,
+      item.total?.enrolled?.new ?? 0,
+      item.total?.enrolled?.walking_visitor ?? 0,
+      item.total?.enrolled?.old ?? 0,
+      item.total?.cancelled?.new ?? 0,
+      item.total?.cancelled?.walking_visitor ?? 0,
+      item.total?.cancelled?.old ?? 0,
+      item.total?.not_received?.new ?? 0,
+      item.total?.not_received?.walking_visitor ?? 0,
+      item.total?.not_received?.old ?? 0,
+      item.total?.call_rejected?.new ?? 0,
+      item.total?.call_rejected?.walking_visitor ?? 0,
+      item.total?.call_rejected?.old ?? 0,
+      item.total?.target_progress || "",
+    ]);
+  });
+  
+  return rows;
 }
 
 export default function CRMLeadReportsExportButton({
@@ -76,7 +193,7 @@ export default function CRMLeadReportsExportButton({
   }, [open]);
 
   const fetchAllData = async () => {
-    let allData: CRMLeadReportsItem[] = [];
+    let allData: CRMLeadReportsConsultantItem[] = [];
     let currentPage = 1;
     let lastPage = 1;
     let hasError = false;
@@ -154,22 +271,34 @@ export default function CRMLeadReportsExportButton({
       const ws = utils.aoa_to_sheet(wsData);
 
       ws["!cols"] = [
-        { wch: 5 },  // SL
+        { wch: 15 }, // SL
         { wch: 20 }, // Consultant
         { wch: 30 }, // Course
         { wch: 15 }, // Branch
-        { wch: 12 }, // Total Lead
-        { wch: 10 }, // Assigned
-        { wch: 10 }, // Contacted
-        { wch: 10 }, // New
-        { wch: 10 }, // Busy
-        { wch: 10 }, // Interested
-        { wch: 10 }, // Follow Up
-        { wch: 10 }, // Enrolled
-        { wch: 10 }, // Cancelled
-        { wch: 15 }, // Not Received
-        { wch: 15 }, // Call Rejected
-        { wch: 15 }, // Progress
+        // 2 Leads
+        { wch: 10 }, { wch: 10 },
+        // 4 Assigned
+        { wch: 10 }, { wch: 10 }, { wch: 10 }, { wch: 10 },
+        // 4 Contacted
+        { wch: 10 }, { wch: 10 }, { wch: 10 }, { wch: 10 },
+        // 2 Remaining
+        { wch: 10 }, { wch: 10 },
+        // 3 Busy
+        { wch: 10 }, { wch: 10 }, { wch: 10 },
+        // 3 Interested
+        { wch: 10 }, { wch: 10 }, { wch: 10 },
+        // 3 Follow Up
+        { wch: 10 }, { wch: 10 }, { wch: 10 },
+        // 3 Enrolled
+        { wch: 10 }, { wch: 10 }, { wch: 10 },
+        // 3 Cancelled
+        { wch: 10 }, { wch: 10 }, { wch: 10 },
+        // 3 Not Received
+        { wch: 10 }, { wch: 10 }, { wch: 10 },
+        // 3 Call Rejected
+        { wch: 10 }, { wch: 10 }, { wch: 10 },
+        // Progress
+        { wch: 15 },
       ];
 
       const wb = utils.book_new();
@@ -190,12 +319,41 @@ export default function CRMLeadReportsExportButton({
       const doc = new jsPDF({ orientation: "landscape" });
 
       const rows = buildRows(data, providedData ? page : 1, providedData ? perPage : data.length);
+      
+      const columnStyles: Record<number, { cellWidth: number }> = {
+        0: { cellWidth: 8 },  // SL
+        1: { cellWidth: 25 }, // Consultant
+        2: { cellWidth: 35 }, // Course
+        3: { cellWidth: 15 }, // Branch
+      };
+      for (let i = 4; i <= 36; i++) {
+        columnStyles[i] = { cellWidth: 5.5 };
+      }
+      columnStyles[37] = { cellWidth: 12.5 }; // Progress
+
       autoTable(doc, {
-        startY: 20,
-        head: [HEADERS],
+        startY: 15,
+        head: [PDF_HEADERS],
         body: rows.map((r) => r.map(String)),
-        styles: { fontSize: 8 },
-        headStyles: { fillColor: [30, 120, 200] },
+        styles: { 
+          fontSize: 5,
+          cellPadding: 1,
+          valign: 'middle',
+          halign: 'center',
+          overflow: 'linebreak'
+        },
+        columnStyles: columnStyles,
+        headStyles: { 
+          fillColor: [30, 120, 200],
+          textColor: 255,
+          fontStyle: 'bold',
+          fontSize: 5
+        },
+        didParseCell: function(cellData) {
+          if (cellData.column.index === 1 || cellData.column.index === 2) {
+            cellData.cell.styles.halign = 'left';
+          }
+        }
       });
 
       doc.save(`${fileName}.pdf`);

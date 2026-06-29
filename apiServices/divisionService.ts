@@ -81,14 +81,15 @@ export async function getDivisionsCached(
 export async function getDivisions(
   params: Record<string, unknown> = {}
 ): Promise<DivisionSuccessResponse> {
-  try {
-    const session = await getServerSession(authOptions)
-    const token = session?.accessToken
-    
-    if (!token) {
-      throw new Error("No valid session or access token found.")
-    }
+  // try-এর বাইরে রাখা হয়েছে যাতে Next.js build-time dynamic signal সঠিকভাবে প্রপাগেট হয়
+  const session = await getServerSession(authOptions)
+  const token = session?.accessToken
 
+  if (!token) {
+    throw new Error("No valid session or access token found.")
+  }
+
+  try {
     return await getDivisionsCached(token, params)
   } catch (error) {
     console.error("Error in getDivisions:", error)

@@ -21,7 +21,7 @@ export interface LeadActivity {
   last_follow_up_date?: string;
   call_count?: number;
   message_count?: number;
-  status: number;
+  status_id: number;
   status_text: string;
   note: string;
   user_name?: string;
@@ -32,6 +32,7 @@ export interface LeadActivity {
   created_at: string;
   last_activity: string;
   lead_created_date: string;
+  time?: string;
 }
 export interface GrowthStats {
   total_leads: number;
@@ -92,6 +93,7 @@ export interface SingleLeadResponse {
 }
  
 export interface LeadInfo {
+  id?: number;
   name: string;
   phone?: string;
   whatsapp: string;
@@ -99,7 +101,7 @@ export interface LeadInfo {
   email?: string;
   referrer_name?: string;
   referrer_phone?: string;
-  status?: number;
+  status_id?: number;
   status_name?: string;
   course_type?: number;
   course_type_name?: string;
@@ -218,13 +220,75 @@ export async function getLeadsActivity(
 ): Promise<LeadsActivityResponse> {
   const session = await getServerSession(authOptions);
   const token = session?.accessToken;
- 
+
   if (!token) throw new Error("No valid session/token");
- 
+
   const _cachedResult = await getLeadsActivityCached(token, params);
- 
+
   if (!_cachedResult) throw new Error("Failed to fetch data from cache.");
- 
+
+  return _cachedResult;
+}
+
+// =======================
+// GET TODAY FOLLOW-UP LEADS (CACHED)
+// =======================
+
+export async function getTodayFollowUpLeadsCached(
+  token: string,
+  params: Record<string, unknown> = {},
+): Promise<LeadsActivityResponse | null> {
+  "use cache";
+  cacheTag("today-follow-up-leads");
+
+  try {
+    const urlParams = new URLSearchParams();
+    for (const key in params) {
+      if (params[key] !== undefined && params[key] !== null) {
+        urlParams.append(key, String(params[key]));
+      }
+    }
+
+    const res = await fetch(`${API_BASE}/crm/leads/today-follow-ups?${urlParams.toString()}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error(`Status: ${res.status} ${res.statusText}`);
+    }
+    const result = await res.json();
+
+    return result;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Service error:", error.message);
+      return null;
+    } else {
+      console.error("Service error:", "Error fetching today follow up leads");
+      return null;
+    }
+  }
+}
+
+// =======================
+// GET TODAY FOLLOW-UP LEADS WRAPPER
+// =======================
+
+export async function getTodayFollowUpLeads(
+  params: Record<string, unknown> = {},
+): Promise<LeadsActivityResponse> {
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+
+  if (!token) throw new Error("No valid session/token");
+
+  const _cachedResult = await getTodayFollowUpLeadsCached(token, params);
+
+  if (!_cachedResult) throw new Error("Failed to fetch today's follow-up data from cache.");
+
   return _cachedResult;
 }
  
@@ -274,8 +338,9 @@ export async function createLeadActivity(
     lead_id: number;
     date: string;
     type: number;
-    status: number;
+    status_id: number;
     note: string;
+    time?: string;
   },
 ): Promise<SingleLeadActivityResponse> {
   try {
@@ -294,8 +359,9 @@ export async function createLeadActivity(
     });
  
     const result = await res.json();
- 
+
     updateTag("leads-activity-list");
+    updateTag("today-follow-up-leads");
     updateTag("crm-notifications-list");
     return result;
   } catch (error: unknown) {
@@ -373,3 +439,68 @@ export async function getLeadEnrollmentInfo(
   }
 }
 
+
+
+
+// ======================= getLeadActivitiesSummary =======================
+export interface LeadActivitySummary {
+  total_leads: number;
+  today_leads: number;
+  total_enrollments: number;
+  today_enrollments: number;
+  total_follow_up: number;
+  today_follow_up: number;
+  total_lost: number;
+  today_lost: number;
+  conversion_rate: string;
+}
+export interface LeadActivitiesSummaryResponse {
+  success: boolean;
+  message: string;
+  code: number;
+  data: {
+    stats: LeadActivitySummary;
+  }
+  errors?: Record<string, string[]>;
+}
+export async function getLeadActivitiesSummary(
+): Promise<LeadActivitiesSummaryResponse | null> {
+  // try-এর বাইরে রাখা হয়েছে যাতে Next.js build-time dynamic signal সঠিকভাবে প্রপাগেট হয়
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+
+  if (!token) throw new Error("No valid session/token");
+
+  try {
+    const res = await fetch(`${API_BASE}/crm/leads/activity-summary`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (res.status === 404) {
+      console.log("Lead not found for enrollment");
+      return null;
+    }
+    if (res.status === 401 || res.status === 403) {
+      console.log("Unauthorized to fetch lead enrollment info");
+      return null;
+    }
+
+    if (!res.ok) {
+      throw new Error(`Status: ${res.status} ${res.statusText}`);
+    }
+
+    const result = await res.json();
+
+    return result;
+  } catch (error: unknown) {
+    console.error("Error in getLeadActivitiesSummary:", error);
+    if (error instanceof Error) {
+      throw new Error(error.message || "Failed to fetch lead activities");
+    } else {
+      throw new Error("Failed to fetch lead activities");
+    }
+  }
+}

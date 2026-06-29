@@ -99,7 +99,7 @@ const LeadActivityTimeline = ({ activities }: LeadActivityTimelineProps) => {
               <div className="text-sm mb-2">
                 <p><strong>Next Follow-up : </strong> {formatDate(activity?.date)}</p>
                 <p><strong>Created At : </strong> {formatDate(activity?.created_at)} <span className="mx-2">•</span>  {formatTime(activity?.created_at)}</p>
-                
+                <p><strong>Time Duration : </strong> {activity?.time ?? "00:00:00"}</p>
               </div>
               <p className="text-slate-600 leading-relaxed text-sm">
                 <strong>Note:</strong> {activity?.note}
