@@ -46,6 +46,7 @@ export const sidebarData = {
           title: "Dashboard",
           url: "/dashboard",
           icon: HouseIcon,
+          permissions: ["view-students","govt","paid"],
         },
       ],
     },

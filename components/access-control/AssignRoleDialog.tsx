@@ -58,10 +58,10 @@ const AssignRoleDialog: React.FC<AssignRoleDialogProps> = ({
           token: session.accessToken,
         });
 
-        if (response.success) {
+        if (response?.success) {
           setRoles(response?.data?.roles || []);
         } else {
-          setError(response.message || "Failed to load roles");
+          setError(response?.message || "Failed to load roles");
         }
       } catch (err: unknown) {
         if (err instanceof Error) {
@@ -183,7 +183,7 @@ const AssignRoleDialog: React.FC<AssignRoleDialogProps> = ({
               <SelectContent>
                 {userList.map((user) => (
                   <SelectItem key={user.id} value={user.id.toString()}>
-                    {user.name} {" "} {"->"} {" "} {user.email}
+                    {user.name} {"->"} {user.email}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -193,10 +193,15 @@ const AssignRoleDialog: React.FC<AssignRoleDialogProps> = ({
         </div>
 
         <AlertDialogFooter className="mt-6 gap-2">
-          <Button variant="outline" onClick={resetAndClose}>
+          <Button
+            variant="outline"
+            className="cursor-pointer"
+            onClick={resetAndClose}
+          >
             Cancel
           </Button>
           <Button
+            className="cursor-pointer"
             onClick={saveAssignedRole}
             disabled={!selectedRole || !selectedUser || isPending}
           >
