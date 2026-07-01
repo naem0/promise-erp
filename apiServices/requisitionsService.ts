@@ -435,7 +435,7 @@ export async function getApprovalDetails(
 export async function requisitionRequestApproval(
   id: number,
   body: {
-    items: Array<{ id: number; approved_qty?: number; price?: number }>;
+    items: Array<{ id: number; approved_qty?: number; approved_amount?: number; price?: number }>;
     action: "Approve" | "Reject";
     note?: string;
   },
