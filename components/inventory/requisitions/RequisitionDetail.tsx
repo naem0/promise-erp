@@ -127,7 +127,7 @@ export default function RequisitionDetail({
       .filter((item) => item.selected)
       .map((item) => ({
         id: item.id,
-        approved_qty: item.approved_amount, // Map approved_amount to approved_qty for approval action API structure
+        approved_amount: item.approved_amount,
         price: 0,
       }));
 
@@ -139,7 +139,10 @@ export default function RequisitionDetail({
     }
 
     // Check if any selected item has approved quantity/amount < 1
-    const hasInvalidQty = selectedItems.some((item) => (item.approved_qty ?? 0) < 1);
+    const hasInvalidQty = selectedItems.some(
+      (item) =>
+        ((item as { approved_qty?: number }).approved_qty ?? (item as { approved_amount?: number }).approved_amount ?? 0) < 1
+    );
     if (hasInvalidQty) {
       toast.error("Approved Quantity/Amount cannot be less than 1 for selected items.");
       return;

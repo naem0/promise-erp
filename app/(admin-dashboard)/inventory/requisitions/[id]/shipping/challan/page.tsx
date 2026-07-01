@@ -11,7 +11,7 @@ export default async function DeliveryChallanRoute({
   const requisitionId = Number(id);
 
   return (
-    <div className="mx-auto">
+    <div className="mx-auto print:mx-0 print:w-full print:max-w-none">
       <DeliveryChallanPage requisitionId={requisitionId} />
     </div>
   );

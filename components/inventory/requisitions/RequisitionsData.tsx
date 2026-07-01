@@ -175,7 +175,7 @@ const RequisitionsData = async ({
                       </DropdownMenuTrigger>
 
                       <DropdownMenuContent align="center">
-                        <PermissionGuard requiredPermission="view-requisitions">
+                        <PermissionGuard requiredPermission={["view-requisitions", "view-my-requisitions", "view-my-departments-requisitions"]} mode="any">
                           <DropdownMenuItem asChild>
                             <Link
                               href={`/inventory/requisitions/${requisition?.id}`}

@@ -37,6 +37,7 @@ interface AddEditRoleDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     initialRoleName?: string | null;
+    initialDisplayName?: string | null;
     roleId?: number | null;
     token?: string;
     setRoleAfterAddEdit: (value: boolean) => void;
@@ -47,12 +48,14 @@ const AddEditRoleDialog: React.FC<AddEditRoleDialogProps> = ({
     open,
     onOpenChange,
     initialRoleName = null,
+    initialDisplayName = null,
     roleId = null,
     token,
     setRoleAfterAddEdit,
     roleAfterAddEdit,
 }) => {
-    const [roleName, setRoleName] = useState("");
+    const [roleName, setRoleName] = useState<string>("");
+    const [displayName, setDisplayName] = useState<string>("");
     const [rolePermissionList, setRolePermissionList] = useState<
         RolePermissionModule[]
     >([]);
@@ -67,8 +70,8 @@ const AddEditRoleDialog: React.FC<AddEditRoleDialogProps> = ({
         startTransition(async () => {
             try {
                 const response = await getRolePermissionslist({ token });
-                if (response.success) {
-                    setRolePermissionList(response.data.permissions || []);
+                if (response?.success) {
+                    setRolePermissionList(response?.data?.permissions || []);
                 }
             } catch (error) {
                 console.error("Permission fetch error:", error);
@@ -76,10 +79,21 @@ const AddEditRoleDialog: React.FC<AddEditRoleDialogProps> = ({
         });
     }, [token, open]);
 
-    //==== Set role name (Edit mode)=====
+    //==== Reset and Set states (Add / Edit mode transition & dialog open/close) =====
     useEffect(() => {
-        setRoleName(initialRoleName || "");
-    }, [initialRoleName]);
+        if (!open) {
+            setRoleName("");
+            setDisplayName("");
+            setSelectedPermissions([]);
+            setRoleWiseUsers([]);
+        } else {
+            setRoleName(initialRoleName || "");
+            setDisplayName(initialDisplayName || "");
+            if (!roleId) {
+                setSelectedPermissions([]);
+            }
+        }
+    }, [open, roleId, initialRoleName, initialDisplayName]);
 
     //===== Fetch role by id (Edit mode)====
     useEffect(() => {
@@ -92,8 +106,14 @@ const AddEditRoleDialog: React.FC<AddEditRoleDialogProps> = ({
                     id: roleId,
                 });
 
-                if (response.success) {
-                    setSelectedPermissions(response.data.role.permissions || []);
+                if (response?.success) {
+                    setSelectedPermissions(response?.data?.role?.permissions || []);
+                    if (response?.data?.role?.name) {
+                        setRoleName(response.data.role.name);
+                    }
+                    if (response?.data?.role?.display_name) {
+                        setDisplayName(response.data.role.display_name);
+                    }
                 }
             } catch (error) {
                 console.error("getRoleById error:", error);
@@ -141,6 +161,10 @@ const AddEditRoleDialog: React.FC<AddEditRoleDialogProps> = ({
             toast.error("Role name is required");
             return;
         }
+        if (!displayName.trim()) {
+            toast.error("Role display name is required");
+            return;
+        }
 
         if (selectedPermissions.length === 0) {
             toast.error("At least one permission is required");
@@ -149,6 +173,7 @@ const AddEditRoleDialog: React.FC<AddEditRoleDialogProps> = ({
 
         const payload = {
             name: roleName,
+            display_name: displayName,
             guard_name: "api",
             permissions: selectedPermissions,
         };
@@ -270,6 +295,15 @@ const AddEditRoleDialog: React.FC<AddEditRoleDialogProps> = ({
                                         onChange={(e) => setRoleName(e.target.value)}
                                         className="w-full border rounded-lg px-3 py-2.5 bg-white text-sm"
                                         placeholder="Enter role name"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label className="text-sm font-medium">Role Display Name</Label>
+                                    <input
+                                        value={displayName}
+                                        onChange={(e) => setDisplayName(e.target.value)}
+                                        className="w-full border rounded-lg px-3 py-2.5 bg-white text-sm"
+                                        placeholder="Enter role display name"
                                     />
                                 </div>
 
