@@ -22,7 +22,6 @@ import DeleteBrandButton from "./DeleteBrandButton";
 import Pagination from "@/components/common/Pagination";
 import PermissionGuard from "@/components/auth/PermissionGuard";
 import { truncate } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 
 const BrandsData = async ({
   searchParams,

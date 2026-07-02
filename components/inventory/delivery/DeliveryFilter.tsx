@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import {
@@ -11,94 +12,148 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Search, Calendar, Printer, Download } from "lucide-react";
+import { Search, Calendar, FilterX } from "lucide-react";
+import PerPageSelect from "@/components/common/PerPageSelect";
+import BranchSearchSelect from "@/components/common/BranchSearchSelect";
 
 interface FilterFormValues {
   search?: string;
-  branch?: string;
-  type?: string;
+  delivery_branch?: string;
+  delivery_type?: string;
   status?: string;
-  date?: string;
-  pageSize?: string;
+  delivery_date?: string;
+  sort_order?: string;
 }
 
 export default function DeliveryFilter() {
-  const [pageSize, setPageSize] = useState("10");
-  const { register, control } = useForm<FilterFormValues>({
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const { register, control, reset, watch, setValue } = useForm<FilterFormValues>({
     defaultValues: {
-      search: "",
-      branch: "",
-      type: "dhaka", // Styled as active/selected in the mockup image
-      status: "dhaka", // Styled as active/selected in the mockup image
-      date: "",
-      pageSize: "10",
+      search: searchParams.get("search") || "",
+      delivery_branch: searchParams.get("delivery_branch") || "",
+      delivery_type: searchParams.get("delivery_type") || "",
+      status: searchParams.get("status") || "",
+      delivery_date: searchParams.get("delivery_date") || "",
+      sort_order: searchParams.get("sort_order") || "",
     },
   });
 
-  const { onBlur: dateOnBlur, ...dateProps } = register("date");
+  const watchedValues = watch();
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      const params = new URLSearchParams(searchParams.toString());
+      let isChanged = false;
+
+      Object.entries(watchedValues).forEach(([key, value]) => {
+        const urlValue = params.get(key) || "";
+        const formValue = String(value || "");
+        if (urlValue !== formValue) {
+          isChanged = true;
+        }
+      });
+
+      if (isChanged) {
+        params.delete("page"); // Reset to page 1 on filter change
+        Object.entries(watchedValues).forEach(([key, value]) => {
+          if (value && value !== "") {
+            params.set(key, String(value));
+          } else {
+            params.delete(key);
+          }
+        });
+
+        const newUrl = `${pathname}?${params.toString()}`;
+        router.replace(newUrl, { scroll: false });
+      }
+    }, 600);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [JSON.stringify(watchedValues), router, pathname, searchParams]);
+
+  const handleSelectChange = (name: keyof FilterFormValues) => (value: string) => {
+    setValue(name, value);
+  };
+
+  const handleReset = () => {
+    reset({
+      search: "",
+      delivery_branch: "",
+      delivery_type: "",
+      status: "",
+      delivery_date: "",
+      sort_order: "",
+    });
+    router.replace(pathname, { scroll: false });
+  };
+
+  const currentSearch = searchParams.get("search") || "";
+  const currentBranch = searchParams.get("delivery_branch") || "";
+  const currentType = searchParams.get("delivery_type") || "";
+  const currentStatus = searchParams.get("status") || "";
+  const currentDate = searchParams.get("delivery_date") || "";
+  const currentSortOrder = searchParams.get("sort_order") || "";
+  const currentPerPage = searchParams.get("per_page") || "";
+
+  const hasActiveFilters =
+    currentSearch !== "" ||
+    currentBranch !== "" ||
+    currentType !== "" ||
+    currentStatus !== "" ||
+    currentDate !== "" ||
+    currentSortOrder !== "" ||
+    currentPerPage !== "";
 
   return (
-    <div className="bg-card border border-slate-100 dark:border-slate-800 rounded-xl shadow-sm p-6 space-y-6">
-      {/* Header and Controls (Moved from Table) */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-100 dark:border-slate-800 pb-4">
-        <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100">
-          Filters
-        </h2>
-        <div className="flex items-center gap-3 w-full sm:w-auto">
+    <div className="p-6 mb-6 border rounded-xl bg-card shadow-sm">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-lg font-semibold text-foreground">Filters</h3>
+
+        {hasActiveFilters && (
           <Button
+            type="button"
             variant="outline"
             size="sm"
-            className="flex items-center gap-2 border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-900 text-slate-700 dark:text-slate-300 font-medium px-4 h-10 cursor-pointer"
+            onClick={handleReset}
+            className="flex items-center gap-2 cursor-pointer"
           >
-            <Printer className="h-4 w-4 text-slate-500" />
-            Print
+            <FilterX className="h-4 w-4" />
+            Clear Filters
           </Button>
-          <Button
-            size="sm"
-            className="flex items-center gap-2 bg-[#292464] hover:bg-[#292464]/95 text-white font-medium px-4 h-10 border-0 cursor-pointer"
-          >
-            <Download className="h-4 w-4" />
-            Export
-          </Button>
-        </div>
+        )}
       </div>
 
-      {/* Filters Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-7 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {/* Search */}
-        <div className="relative sm:col-span-2 xl:col-span-2">
-          <div className="relative">
-            <Input
-              placeholder="Type Requisition ID/Challan"
-              className="pr-10 border-slate-200 dark:border-slate-800 focus-visible:ring-emerald-500 rounded-lg text-slate-800 dark:text-slate-100 text-sm h-10!"
-              {...register("search")}
-            />
-            <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
-          </div>
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search Requisition ID/Challan..."
+            className="pl-10"
+            {...register("search")}
+          />
         </div>
 
         {/* Delivery Branch */}
         <div className="relative">
           <Controller
-            name="branch"
+            name="delivery_branch"
             control={control}
             render={({ field }) => (
-              <Select value={field.value} onValueChange={field.onChange}>
-                <SelectTrigger className="w-full border-slate-200 dark:border-slate-800 focus:ring-emerald-500 focus:border-emerald-500 rounded-lg h-10! text-slate-400 data-[size=default]:h-10!">
-                  <SelectValue placeholder="Select" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="dhaka">Dhaka</SelectItem>
-                  <SelectItem value="cumilla">Cumilla</SelectItem>
-                  <SelectItem value="brahmanbaria">Brahmanbaria</SelectItem>
-                  <SelectItem value="feni">Feni</SelectItem>
-                  <SelectItem value="gazipur">Gazipur</SelectItem>
-                  <SelectItem value="satkhira">Satkhira</SelectItem>
-                  <SelectItem value="bandarban">Bandarban</SelectItem>
-                  <SelectItem value="chattogram">Chattogram</SelectItem>
-                  <SelectItem value="narsingdi">Narsingdi</SelectItem>
-                </SelectContent>
-              </Select>
+              <BranchSearchSelect
+                value={field.value || ""}
+                onValueChange={(val) => {
+                  field.onChange(val);
+                  handleSelectChange("delivery_branch")(val || "");
+                }}
+                placeholder="Branch"
+                className="w-full"
+              />
             )}
           />
         </div>
@@ -106,19 +161,24 @@ export default function DeliveryFilter() {
         {/* Delivery Type */}
         <div className="relative">
           <Controller
-            name="type"
+            name="delivery_type"
             control={control}
             render={({ field }) => (
-              <Select value={field.value} onValueChange={field.onChange}>
-                <SelectTrigger className="w-full border-slate-200 dark:border-slate-800 focus:ring-emerald-500 focus:border-emerald-500 rounded-lg h-10! text-slate-400 data-[size=default]:h-10!">
-                  <SelectValue placeholder="Select" />
+              <Select
+                value={field.value}
+                onValueChange={(value) => {
+                  field.onChange(value);
+                  handleSelectChange("delivery_type")(value);
+                }}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Delivery Type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="dhaka">Dhaka</SelectItem>
-                  <SelectItem value="courier">Courier</SelectItem>
-                  <SelectItem value="transfer">Transfer</SelectItem>
-                  <SelectItem value="physical">Physical</SelectItem>
-                  <SelectItem value="air">Air</SelectItem>
+                  <SelectItem value="Courier">Courier</SelectItem>
+                  <SelectItem value="Transfer">Transfer</SelectItem>
+                  <SelectItem value="Physical">Physical</SelectItem>
+                  <SelectItem value="Air">Air</SelectItem>
                 </SelectContent>
               </Select>
             )}
@@ -131,16 +191,21 @@ export default function DeliveryFilter() {
             name="status"
             control={control}
             render={({ field }) => (
-              <Select value={field.value} onValueChange={field.onChange}>
-                <SelectTrigger className="w-full border-slate-200 dark:border-slate-800 focus:ring-emerald-500 focus:border-emerald-500 rounded-lg h-10! text-slate-400 data-[size=default]:h-10!">
-                  <SelectValue placeholder="Select" />
+              <Select
+                value={field.value}
+                onValueChange={(value) => {
+                  field.onChange(value);
+                  handleSelectChange("status")(value);
+                }}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Status" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="dhaka">Dhaka</SelectItem>
-                  <SelectItem value="delivering">Delivering</SelectItem>
-                  <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="shipped">Shipped</SelectItem>
-                  <SelectItem value="return">Return</SelectItem>
+                  <SelectItem value="1">Pending</SelectItem>
+                  <SelectItem value="2">Delivering</SelectItem>
+                  <SelectItem value="3">Shipped</SelectItem>
+                  <SelectItem value="4">Return</SelectItem>
                 </SelectContent>
               </Select>
             )}
@@ -149,35 +214,47 @@ export default function DeliveryFilter() {
 
         {/* Date */}
         <div className="relative">
-          <div className="relative">
-            <Input
-              type="text"
-              placeholder="mm/dd/yyyy"
-              className="pr-10 border-slate-200 dark:border-slate-800 focus-visible:ring-emerald-500 rounded-lg text-slate-800 dark:text-slate-100 text-sm h-10!"
-              onFocus={(e) => (e.target.type = "date")}
-              {...dateProps}
-              onBlur={(e) => {
-                if (!e.target.value) e.target.type = "text";
-                dateOnBlur(e);
-              }}
-            />
-            <Calendar className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
-          </div>
+          <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+          <Input
+            type="text"
+            placeholder="yyyy-mm-dd"
+            className="pl-10"
+            onFocus={(e) => (e.target.type = "date")}
+            {...register("delivery_date")}
+            onBlur={(e) => {
+              if (!e.target.value) e.target.type = "text";
+            }}
+          />
         </div>
 
-        {/* Show (Page Size Select - Moved from Table) */}
+        {/* Sort Order */}
         <div className="relative">
-          <Select value={pageSize} onValueChange={setPageSize}>
-            <SelectTrigger className="w-full border-slate-200 dark:border-slate-800 focus:ring-emerald-500 focus:border-emerald-500 rounded-lg h-10! text-slate-700 dark:text-slate-300 font-medium data-[size=default]:h-10!">
-              <SelectValue placeholder="10" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="10">10</SelectItem>
-              <SelectItem value="25">25</SelectItem>
-              <SelectItem value="50">50</SelectItem>
-              <SelectItem value="100">100</SelectItem>
-            </SelectContent>
-          </Select>
+          <Controller
+            name="sort_order"
+            control={control}
+            render={({ field }) => (
+              <Select
+                value={field.value}
+                onValueChange={(value) => {
+                  field.onChange(value);
+                  handleSelectChange("sort_order")(value);
+                }}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Sort Order" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="asc">ASC</SelectItem>
+                  <SelectItem value="desc">DESC</SelectItem>
+                </SelectContent>
+              </Select>
+            )}
+          />
+        </div>
+
+        {/* Per Page Select */}
+        <div className="flex items-center justify-start">
+          <PerPageSelect className="w-full" />
         </div>
       </div>
     </div>
