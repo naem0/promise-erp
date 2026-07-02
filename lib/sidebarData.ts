@@ -46,6 +46,7 @@ export const sidebarData = {
           title: "Dashboard",
           url: "/dashboard",
           icon: HouseIcon,
+          // permissions: ["view-students","govt","paid"],
         },
       ],
     },
@@ -525,6 +526,15 @@ export const sidebarData = {
                 url: "/inventory/inventory-delivery-partners",
                 permissions: ["view-delivery-partners"],
               },
+              {
+                title: "Delivery",
+                url: "/inventory/delivery",
+              },
+              {
+              title: "Requisitions",
+              url: "/inventory/requisitions",
+              permissions: ["view-requisitions", "view-my-requisitions", "view-my-departments-requisitions"],
+            },
           ],
         },
       ],

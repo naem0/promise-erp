@@ -149,7 +149,18 @@ const CategoriesData = async ({
                 </TableCell>
 
                 <TableCell>
-                  {category?.parent_name ? (
+                  {category?.ancestors && category.ancestors.length > 0 ? (
+                    <div className="flex flex-wrap items-center gap-1 text-xs">
+                      {category.ancestors.map((ancestor, idx) => (
+                        <span key={ancestor.id} className="flex items-center gap-1">
+                          {idx > 0 && <span className="text-slate-300">→</span>}
+                          <Badge variant="secondary" className="bg-blue-50/60 text-blue-700 border-blue-100/40 font-normal py-0 px-1.5 text-[11px] h-5">
+                            {ancestor.name}
+                          </Badge>
+                        </span>
+                      ))}
+                    </div>
+                  ) : category?.parent_name ? (
                     <Badge variant="secondary" className="bg-blue-50 text-blue-700 border-blue-100 font-normal">
                       {category.parent_name}
                     </Badge>

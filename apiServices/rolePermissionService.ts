@@ -85,11 +85,13 @@ export async function getAllPermissionsList({
 export interface Role {
   id: number;
   name: string;
+  technical_name?: string;
   guard_name?: string;
   permissions: string[];
   users_count: number;
   created_at: string;
   updated_at: string;
+  display_name?: string;
 }
 export interface RolesData {
   roles: Role[];
@@ -112,7 +114,7 @@ export async function getAllRolesList({
 }: {
   token?: string;
   params?: Record<string, unknown>;
-} = {}): Promise<RolesApiResponse> {
+} = {}): Promise<RolesApiResponse | null> {
   if (!token) {
     throw new Error("Unauthorized: Access token not found");
   }
@@ -136,6 +138,17 @@ export async function getAllRolesList({
         "Content-Type": "application/json",
       },
     });
+
+    if(res.status === 404) {
+      console.log("No roles found (404). Returning empty list.");
+      return null;
+    }
+
+    if (res.status === 401 || res.status === 403) {
+      console.log("Unauthorized: Access token not found");
+      return  null;
+    }
+
 
     if (!res.ok) {
       throw new Error(`roles API Error: ${res.status} ${res.statusText}`);
@@ -265,6 +278,7 @@ export async function getRolePermissionslist({
 export interface CreateUpdateRole {
   id: number;
   name: string;
+  display_name?: string;
   permissions: string[];
 }
 
@@ -283,6 +297,7 @@ export interface CreateUpdateRoleApiResponse {
 export interface CreateRolePayload {
   name: string;
   guard_name: string;
+  display_name?: string;
   permissions: string[];
 }
 
@@ -357,6 +372,7 @@ export async function updateRole(
 export interface RoleByIdItem {
   id: number;
   name: string;
+  display_name?: string;
   permissions: string[];
   users_count: number;
   created_at: string;

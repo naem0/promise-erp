@@ -18,6 +18,7 @@ export interface ProductCategory {
   description?: string;
   parent_id?: number;
   parent_name?: string;
+  ancestors?: { id: number; name: string }[] | null;
   status: number;
   products_count: number;
   children_count: number;
