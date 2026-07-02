@@ -24,7 +24,7 @@ export default function ChallanPageHeader({
     <div className="challan-action-bar flex items-center justify-between gap-3 print:hidden">
       {/* Left — Back + Title */}
       <div className="flex items-center gap-3">
-        <Link href={backHref}>
+        <Link href={`/inventory/delivery`}>
           <button
             type="button"
             aria-label="Go back"

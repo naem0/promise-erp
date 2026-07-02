@@ -17,7 +17,10 @@ export default function DeliveryPageClient({ deliveriesList }: DeliveryPageClien
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
 
   useEffect(() => {
-    setSelectedIds((prev) => (prev.size === 0 ? prev : new Set()));
+    const timer = setTimeout(() => {
+      setSelectedIds((prev) => (prev.size === 0 ? prev : new Set()));
+    }, 0);
+    return () => clearTimeout(timer);
   }, []);
 
   const deliveries = deliveriesList?.data?.deliveries || [];
