@@ -272,3 +272,112 @@ export async function deleteBrand(
     }
   }
 }
+
+
+
+// =======================Start GET Inventory Deliveries =======================
+
+export interface Delivery {
+  id: number;
+  requisition: string;
+  delivery_branch: string;
+  aspect_delivery: string;
+  challan: string;
+  delivery_type: string;
+  status: number;
+  status_text: string;
+}
+
+export interface DeliveriesData {
+  total_deliveries: number;
+  deliveries: Delivery[];
+  pagination: PaginationType;
+}
+
+export interface DeliveriesResponse {
+  success: boolean;
+  message: string;
+  code: number;
+  data: DeliveriesData;
+  errors?: Record<string, string[]>
+}
+
+export async function getInventoryDeliveriesCached(
+  token: string,
+  params: Record<string, unknown> = {},
+): Promise<DeliveriesResponse | null> {
+  "use cache";
+  cacheTag("deliveries-list");
+
+  try {
+    const urlParams = new URLSearchParams();
+
+    for (const key in params) {
+      if (params[key] !== undefined && params[key] !== null) {
+        urlParams.append(key, String(params[key]));
+      }
+    }
+
+    const res = await fetch(
+      `${API_BASE}/inventory/deliveries?${urlParams.toString()}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      },
+    );
+
+    if (res.status === 404) {
+      console.warn("No deliveries found (404). Returning empty list.");
+      return null;
+    }
+
+    if (res.status === 401) {
+      console.warn("Unauthorized access to deliveries (401)");
+      return null;
+    }
+
+    if (res.status === 403) {
+      console.warn("Forbidden access to deliveries (403)");
+      return null;
+    }
+
+    if (!res.ok) {
+      throw new Error(`Status: ${res.status} ${res.statusText}`);
+    }
+
+    const result: DeliveriesResponse = await res.json();
+
+    return result;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Service error:", error.message);
+      return null;
+    } else {
+      console.error("Service error:", "Error fetching deliveries");
+      return null;
+    }
+  }
+}
+
+export async function getInventoryDeliveries(
+  params: Record<string, unknown> = {},
+): Promise<DeliveriesResponse> {
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+
+  if (!token) {
+    throw new Error("No valid session/token");
+  }
+
+  const cachedResult = await getInventoryDeliveriesCached(token, params);
+
+  if (!cachedResult) {
+    throw new Error("Failed to fetch data from cache.");
+  }
+
+  return cachedResult;
+}
+
+// =======================End GET Inventory Deliveries =======================

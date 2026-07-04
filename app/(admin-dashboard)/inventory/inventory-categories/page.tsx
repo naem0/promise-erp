@@ -16,7 +16,7 @@ export default function InventoryCategoriesPage({
     return (
         <div className="mx-auto space-y-6">
             <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-semibold tracking-tight text-slate-800">Product Categories</h1>
+                <h1 className="text-2xl font-semibold tracking-tight text-slate-800">Item Categories</h1>
 
                 <PermissionGuard requiredPermission="create-product-categories">
                     <Button asChild className="">

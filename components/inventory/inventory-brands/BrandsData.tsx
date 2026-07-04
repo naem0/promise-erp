@@ -22,7 +22,6 @@ import DeleteBrandButton from "./DeleteBrandButton";
 import Pagination from "@/components/common/Pagination";
 import PermissionGuard from "@/components/auth/PermissionGuard";
 import { truncate } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 
 const BrandsData = async ({
   searchParams,
@@ -89,7 +88,7 @@ const BrandsData = async ({
               <TableHead className="text-center font-semibold w-[100px]">Action</TableHead>
               <TableHead className="font-semibold min-w-[150px]">Name</TableHead>
               <TableHead className="font-semibold min-w-[200px]">Description</TableHead>
-              <TableHead className="text-center font-semibold">Products</TableHead>
+              <TableHead className="text-center font-semibold">Items</TableHead>
               <TableHead className="text-center font-semibold">Status</TableHead>
             </TableRow>
           </TableHeader>

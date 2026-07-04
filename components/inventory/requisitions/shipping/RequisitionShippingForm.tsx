@@ -110,7 +110,7 @@ export default function RequisitionShippingForm({
       // TODO: Call real delivery API
       await new Promise((r) => setTimeout(r, 1200));
       toast.success("Shipment processed successfully!");
-      router.push(`/inventory/requisitions/${requisitionId}/shipping/challan`);
+      router.push(`/inventory/delivery/${requisitionId}/challan`);
     } catch {
       toast.error("Failed to process shipment.");
       setIsSubmitting(false);
@@ -121,10 +121,10 @@ export default function RequisitionShippingForm({
     <div className="space-y-5">
       {/* ── Page Header ── */}
       <div className="flex items-center gap-3">
-        <Link href={`/inventory/requisitions/${requisitionId}`}>
+        <Link href={`/inventory/delivery`}>
           <button
             type="button"
-            className="h-8 w-8 rounded-full bg-[#15803d] hover:bg-[#166534] text-white flex items-center justify-center transition-colors shadow-sm"
+            className="h-8 w-8 cursor-pointer rounded-full bg-[#15803d] hover:bg-[#166534] text-white flex items-center justify-center transition-colors shadow-sm"
             aria-label="Back to requisition"
           >
             <ArrowLeft className="h-4 w-4" />
@@ -134,9 +134,6 @@ export default function RequisitionShippingForm({
           <h1 className="text-xl font-semibold tracking-tight text-slate-800 leading-none">
             Create Delivery
           </h1>
-          <p className="text-sm text-slate-400 mt-0.5">
-            Fill in delivery information and select requisitions
-          </p>
         </div>
       </div>
 

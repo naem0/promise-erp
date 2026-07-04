@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import {
   Table,
   TableBody,
@@ -9,16 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Printer, Download, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import {
   DropdownMenu,
@@ -26,109 +16,61 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Delivery } from "@/apiServices/inventoryBrandsService";
+import Pagination from "@/components/common/Pagination";
+import { Checkbox } from "@/components/ui/checkbox";
+import { PaginationType } from "@/types/pagination";
 
-interface DeliveryRow {
-  requisition: string;
-  branch: string;
-  expectedDelivery: string;
-  challan: string;
-  type: string;
-  status: "Delivering" | "Pending" | "Shipped" | "Return";
+interface DeliveryTableProps {
+  deliveries: Delivery[];
+  paginationData?: PaginationType;
+  selectedIds: Set<number>;
+  setSelectedIds: React.Dispatch<React.SetStateAction<Set<number>>>;
 }
 
-const mockDeliveries: DeliveryRow[] = [
-  {
-    requisition: "REQ-2025-2026",
-    branch: "Dhaka",
-    expectedDelivery: "07-07-2026",
-    challan: "EL-C-0001",
-    type: "Courier",
-    status: "Delivering",
-  },
-  {
-    requisition: "REQ-2025-2026",
-    branch: "Cumilla",
-    expectedDelivery: "---",
-    challan: "---",
-    type: "---",
-    status: "Pending",
-  },
-  {
-    requisition: "REQ-2025-2026",
-    branch: "Brahmanbaria",
-    expectedDelivery: "---",
-    challan: "---",
-    type: "---",
-    status: "Pending",
-  },
-  {
-    requisition: "REQ-2025-2026",
-    branch: "Cumilla",
-    expectedDelivery: "EL-C-0001",
-    challan: "EL-C-0001",
-    type: "Transfer",
-    status: "Shipped",
-  },
-  {
-    requisition: "REQ-2025-2026",
-    branch: "Feni",
-    expectedDelivery: "---",
-    challan: "---",
-    type: "---",
-    status: "Pending",
-  },
-  {
-    requisition: "REQ-2025-2026",
-    branch: "Gazipur",
-    expectedDelivery: "EL-C-0001",
-    challan: "EL-C-0001",
-    type: "Physical",
-    status: "Shipped",
-  },
-  {
-    requisition: "REQ-2025-2026",
-    branch: "Satkhira",
-    expectedDelivery: "---",
-    challan: "---",
-    type: "---",
-    status: "Pending",
-  },
-  {
-    requisition: "REQ-2025-2026",
-    branch: "Bandarban",
-    expectedDelivery: "---",
-    challan: "---",
-    type: "---",
-    status: "Pending",
-  },
-  {
-    requisition: "REQ-2025-2026",
-    branch: "Chattogram",
-    expectedDelivery: "---",
-    challan: "---",
-    type: "---",
-    status: "Pending",
-  },
-  {
-    requisition: "REQ-2025-2026",
-    branch: "Narsingdi",
-    expectedDelivery: "EL-C-0001",
-    challan: "EL-C-0001",
-    type: "Air",
-    status: "Return",
-  },
-];
+export default function DeliveryTable({
+  deliveries,
+  paginationData,
+  selectedIds,
+  setSelectedIds,
+}: DeliveryTableProps) {
+  const allSelected =
+    deliveries.length > 0 && deliveries.every((item) => selectedIds.has(item.id));
 
-export default function DeliveryTable() {
-  const getStatusBadgeStyle = (status: DeliveryRow["status"]) => {
-    switch (status) {
-      case "Delivering":
+  const toggleAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedIds(new Set(deliveries.map((item) => item.id)));
+    } else {
+      setSelectedIds(new Set());
+    }
+  };
+
+  const toggleOne = (id: number) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  };
+
+  const getStatusBadgeStyle = (status: string | number) => {
+    const statusStr = String(status).toLowerCase();
+    switch (statusStr) {
+      case "delivering":
+      case "2":
         return "bg-cyan-50 dark:bg-cyan-950/20 text-cyan-500 dark:text-cyan-400 border border-cyan-100 dark:border-cyan-900/30";
-      case "Pending":
+      case "pending":
+      case "1":
         return "bg-amber-50 dark:bg-amber-950/20 text-amber-500 dark:text-amber-400 border border-amber-100 dark:border-amber-900/30";
-      case "Shipped":
+      case "shipped":
+      case "3":
         return "bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30";
-      case "Return":
+      case "return":
+      case "4":
         return "bg-red-50 dark:bg-red-950/20 text-red-500 dark:text-red-400 border border-red-100 dark:border-red-900/30";
       default:
         return "bg-slate-50 dark:bg-slate-900 text-slate-500 dark:text-slate-400 border border-slate-100 dark:border-slate-800";
@@ -138,10 +80,17 @@ export default function DeliveryTable() {
   return (
     <div className="bg-card border border-slate-100 dark:border-slate-800 rounded-xl shadow-sm overflow-hidden p-4 sm:p-6">
       {/* Table Content */}
-      <div className="rounded-lg border border-slate-100 dark:border-slate-800 overflow-x-auto">
+      <div className="rounded-lg border border-slate-100 dark:border-slate-800 overflow-x-auto mb-4">
         <Table>
           <TableHeader className="bg-slate-50/75 dark:bg-slate-900/50">
             <TableRow className="border-slate-100 dark:border-slate-800 hover:bg-transparent">
+              <TableHead className="w-12 py-2 px-6 text-center">
+                <Checkbox
+                  checked={allSelected}
+                  onCheckedChange={toggleAll}
+                  aria-label="Select all deliveries"
+                />
+              </TableHead>
               <TableHead className="font-semibold text-slate-600 dark:text-slate-300 py-2 px-6 text-left">
                 Requisition
               </TableHead>
@@ -166,82 +115,107 @@ export default function DeliveryTable() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {mockDeliveries.map((row, idx) => (
-              <TableRow
-                key={idx}
-                className="border-slate-100 dark:border-slate-900 hover:bg-slate-50/25 dark:hover:bg-slate-900/25 transition-colors"
-              >
-                <TableCell className="py-2 px-6 font-medium text-left">
-                  <Link
-                    href={`/inventory/requisitions`}
-                    className="text-emerald-600 hover:underline dark:text-emerald-500"
-                  >
-                    {row.requisition}
-                  </Link>
-                </TableCell>
-                <TableCell className="py-2 px-6 text-center">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Badge
-                        variant="default"
-                        role="button"
-                        tabIndex={0}
-                        className="cursor-pointer"
-                      >
-                        Action
-                      </Badge>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="center">
-                      <DropdownMenuItem className="cursor-pointer">
-                        View Details
-                      </DropdownMenuItem>
-                      <DropdownMenuItem className="cursor-pointer">
-                        Update Status
-                      </DropdownMenuItem>
-                      <DropdownMenuItem className="cursor-pointer text-red-600 focus:text-red-600">
-                        Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
-                <TableCell className="py-2 px-6 text-center text-slate-600 dark:text-slate-400">
-                  {row.branch}
-                </TableCell>
-                <TableCell className="py-2 px-6 text-center text-slate-600 dark:text-slate-400">
-                  {row.expectedDelivery}
-                </TableCell>
-                <TableCell className="py-2 px-6 text-center font-medium">
-                  {row.challan !== "---" ? (
+            {deliveries?.map((item: Delivery, idx) => {
+              const isChecked = selectedIds.has(item.id);
+              return (
+                <TableRow
+                  key={item.id || idx}
+                  className="border-slate-100 dark:border-slate-900 hover:bg-slate-50/25 dark:hover:bg-slate-900/25 transition-colors"
+                >
+                  <TableCell className="w-12 py-2 px-6 text-center">
+                    <Checkbox
+                      checked={isChecked}
+                      onCheckedChange={() => toggleOne(item.id)}
+                      aria-label={`Select delivery requisition ${item.requisition}`}
+                    />
+                  </TableCell>
+                  <TableCell className="py-2 px-6 font-medium text-left">
                     <Link
-                      href="#"
-                      className="text-blue-600 hover:underline dark:text-blue-500"
+                      href={`/inventory/requisitions`}
+                      className="text-emerald-600 hover:underline dark:text-emerald-500"
                     >
-                      {row.challan}
+                      {item?.requisition}
                     </Link>
-                  ) : (
-                    <span className="text-slate-400 dark:text-slate-600">
-                      ---
-                    </span>
-                  )}
-                </TableCell>
-                <TableCell className="py-2 px-6 text-center text-slate-600 dark:text-slate-400">
-                  {row.type}
-                </TableCell>
-                <TableCell className="py-2 px-6 text-center">
-                  <Badge
-                    variant="outline"
-                    className={`rounded-full px-3 py-1 font-medium text-xs ${getStatusBadgeStyle(
-                      row.status
-                    )}`}
-                  >
-                    {row.status}
-                  </Badge>
-                </TableCell>
-              </TableRow>
-            ))}
+                  </TableCell>
+                  <TableCell className="py-2 px-6 text-center">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Badge
+                          variant="default"
+                          role="button"
+                          tabIndex={0}
+                          className="cursor-pointer"
+                        >
+                          Action
+                        </Badge>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="center">
+                        <DropdownMenuItem className="cursor-pointer" asChild>
+                          <Link href={`/inventory/delivery/${item.id}/shipping`}>
+                            Delivery
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="cursor-pointer" asChild>
+                          <Link href={`/inventory/delivery/${item.id}/challan`}>
+                            View Challan
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="cursor-pointer">
+                          View Details
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="cursor-pointer">
+                          Update Status
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="cursor-pointer text-red-600 focus:text-red-600">
+                          Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                  <TableCell className="py-2 px-6 text-center text-slate-600 dark:text-slate-400">
+                    {item?.delivery_branch}
+                  </TableCell>
+                  <TableCell className="py-2 px-6 text-center text-slate-600 dark:text-slate-400">
+                    {item?.aspect_delivery || "---"}
+                  </TableCell>
+                  <TableCell className="py-2 px-6 text-center font-medium">
+                    {item?.challan && item?.challan !== "---" ? (
+                      <Link
+                        href={`/inventory/delivery/${item.id}/challan`}
+                        className="text-blue-600 hover:underline dark:text-blue-500"
+                      >
+                        {item?.challan}
+                      </Link>
+                    ) : (
+                      <span className="text-slate-400 dark:text-slate-600">
+                        ---
+                      </span>
+                    )}
+                  </TableCell>
+                  <TableCell className="py-2 px-6 text-center text-slate-600 dark:text-slate-400">
+                    {item?.delivery_type}
+                  </TableCell>
+                  <TableCell className="py-2 px-6 text-center">
+                    <Badge
+                      variant="outline"
+                      className={`rounded-full px-3 py-1 font-medium text-xs ${getStatusBadgeStyle(
+                        item?.status_text || item?.status,
+                      )}`}
+                    >
+                      {item?.status_text || "---"}
+                    </Badge>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </div>
+      {paginationData && paginationData.last_page > 1 && (
+        <div className="mt-4">
+          <Pagination pagination={paginationData} />
+        </div>
+      )}
     </div>
   );
 }

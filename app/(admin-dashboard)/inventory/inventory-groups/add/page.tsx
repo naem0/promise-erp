@@ -26,7 +26,7 @@ export default async function GroupItemsAddPage() {
         const errMsg = error instanceof Error ? error.message : "An unknown error occurred.";
         return (
             <div className="py-8 md:py-12">
-                <ErrorComponent message={`Error fetching products: ${errMsg}`} />
+                <ErrorComponent message={`Error fetching items: ${errMsg}`} />
             </div>
         );
     }

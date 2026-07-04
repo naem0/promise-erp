@@ -154,8 +154,8 @@ export default function DeliveryChallanPage({
   requisitionId,
 }: DeliveryChallanPageProps) {
   const challanRef = useRef<HTMLDivElement>(null);
-  const backHref = `/inventory/requisitions/${requisitionId}/shipping`;
-  const qrValue = `${typeof window !== "undefined" ? window.location.origin : ""}/inventory/requisitions/${requisitionId}/shipping/challan`;
+  const backHref = `/inventory/delivery/${requisitionId}/shipping`;
+  const qrValue = `${typeof window !== "undefined" ? window.location.origin : ""}/inventory/delivery/${requisitionId}/challan`;
 
   const handlePrint = useCallback(() => {
     if (challanRef.current) {
