@@ -16,15 +16,13 @@ export default function InventoryItemsPage({
   return (
     <div className="mx-auto space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-semibold tracking-tight text-slate-800">
-          Products
+        <h1 className="text-2xl font-semibold tracking-tight text-slate-800">Items
         </h1>
 
         <PermissionGuard requiredPermission="create-products">
           <Button asChild className="">
             <Link href="/inventory/inventory-items/add">
-              <PlusCircle className="w-4 h-4 mr-2" />
-              Add Product
+              <PlusCircle className="w-4 h-4 mr-2" />Add Item
             </Link>
           </Button>
         </PermissionGuard>

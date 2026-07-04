@@ -60,7 +60,7 @@ export default async function ItemsAddPage() {
 
     return (
         <ItemsForm
-            title="Add Product"
+            title="Add Item"
             categories={categories}
             brands={brands}
             units={units}
