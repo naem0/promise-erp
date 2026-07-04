@@ -5,18 +5,21 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import AssignRoleDialog from "./AssignRoleDialog";
 
-import Image from "next/image";
 import { getAllRolesList, Role } from "@/apiServices/rolePermissionService";
 import ErrorComponent from "../common/ErrorComponent";
 import { useSession } from "next-auth/react";
 import { Skeleton } from "../ui/skeleton";
 import AddEditRoleDialog from "./AddEditRoleDialog";
 import PermissionGuard from "../auth/PermissionGuard";
+import { useSearchParams } from "next/navigation";
+import Pagination from "@/components/common/Pagination";
+import { PaginationType } from "@/types/pagination";
 
 const RolesWrapper = () => {
   const [roles, setRoles] = useState<Role[]>([]);
   const [rolAfterAddEdit, setRoleAfterAddEdit] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [pagination, setPagination] = useState<PaginationType | null>(null);
 
   const [assignRoleDialogOpen, setAssignRoleDialogOpen] = useState(false);
   const [addEditRoleDialogOpen, setAddEditRoleDialogOpen] = useState(false);
@@ -24,6 +27,10 @@ const RolesWrapper = () => {
 
   const [isPending, startTransition] = useTransition();
   const { data: session } = useSession();
+  const searchParams = useSearchParams();
+
+  const page = searchParams.get("page") || "1";
+  const perPage = searchParams.get("per_page") || "16";
 
   // Fetch Roles (useTransition)
   useEffect(() => {
@@ -35,10 +42,15 @@ const RolesWrapper = () => {
 
         const response = await getAllRolesList({
           token: session?.accessToken,
+          params: {
+            page,
+            per_page: perPage,
+          },
         });
 
         if (response?.success) {
           setRoles(response?.data?.roles || []);
+          setPagination(response?.data?.pagination || null);
         } else {
           setError(response?.message || "Failed to load roles");
         }
@@ -49,7 +61,7 @@ const RolesWrapper = () => {
         }
       }
     });
-  }, [session?.accessToken, rolAfterAddEdit]);
+  }, [session?.accessToken, rolAfterAddEdit, page, perPage]);
 
   //==== Dialog handlers =====
 
@@ -96,37 +108,45 @@ const RolesWrapper = () => {
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-          {/* Add New Role Card */}
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+            {/* Add New Role Card */}
 
-          {/* Role Cards */}
-          {roles.map((role) => (
-            <Card
-              key={role?.id}
-              className="flex justify-between items-center p-4"
-            >
-              <CardContent className="p-0 text-center">
-                <div className="text-base ">
-                  <p className="font-semibold">
-                    Role: {role?.technical_name || "---"}
-                  </p>
-                  <p className="font-normal text-base">
-                    Display : {role?.display_name || "---"}
-                  </p>
-                </div>
-                <PermissionGuard requiredPermission="edit-roles">
-                  <Button
-                    variant="outline"
-                    className="mt-1 cursor-pointer"
-                    onClick={() => openEditRoleDialog(role)}
-                  >
-                    Edit Role
-                  </Button>
-                </PermissionGuard>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+            {/* Role Cards */}
+            {roles.map((role) => (
+              <Card
+                key={role?.id}
+                className="flex justify-between items-center p-4"
+              >
+                <CardContent className="p-0 text-center">
+                  <div className="text-base ">
+                    <p className="font-semibold">
+                      Role: {role?.technical_name || "---"}
+                    </p>
+                    <p className="font-normal text-base">
+                      Display : {role?.display_name || "---"}
+                    </p>
+                  </div>
+                  <PermissionGuard requiredPermission="edit-roles">
+                    <Button
+                      variant="outline"
+                      className="mt-1 cursor-pointer"
+                      onClick={() => openEditRoleDialog(role)}
+                    >
+                      Edit Role
+                    </Button>
+                  </PermissionGuard>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {pagination && pagination.last_page > 1 && (
+            <div className="mt-6 flex justify-center">
+              <Pagination pagination={pagination} />
+            </div>
+          )}
+        </>
       )}
 
       {/* Assign Role Dialog */}
