@@ -17,11 +17,9 @@ interface ChallanMetaRowProps {
 // ─────────────────────────────────────────────
 function MetaItem({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex flex-col gap-0.5">
-      <span className="text-[10px] uppercase tracking-wider font-semibold text-slate-400">
-        {label}
-      </span>
-      <span className="text-sm font-semibold text-slate-700">{value}</span>
+    <div className="text-sm text-slate-700 font-medium">
+      <span className="text-slate-500 font-normal">{label} ID: </span>
+      <span className="text-slate-800 font-semibold">{value}</span>
     </div>
   );
 }
@@ -31,11 +29,23 @@ function MetaItem({ label, value }: { label: string; value: string }) {
 // ─────────────────────────────────────────────
 export default function ChallanMetaRow({ data }: ChallanMetaRowProps) {
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 bg-slate-50 border border-slate-100 rounded-xl px-5 py-4">
-      <MetaItem label="Req ID" value={data.reqId} />
-      <MetaItem label="Challan No" value={data.challanNo} />
-      <MetaItem label="Challan Date" value={data.challanDate} />
-      <MetaItem label="Delivery Date" value={data.deliveryDate} />
+    <div className="border-t border-b border-slate-200 py-3 flex flex-wrap justify-between items-center gap-4 px-2">
+      <div className="text-sm text-slate-700">
+        <span className="text-slate-500 font-normal">Req ID: </span>
+        <span className="text-slate-800 font-semibold">{data.reqId}</span>
+      </div>
+      <div className="text-sm text-slate-700">
+        <span className="text-slate-500 font-normal">Challan No: </span>
+        <span className="text-slate-800 font-semibold">{data.challanNo}</span>
+      </div>
+      <div className="text-sm text-slate-700">
+        <span className="text-slate-500 font-normal">Challan Date: </span>
+        <span className="text-slate-800 font-semibold">{data.challanDate}</span>
+      </div>
+      <div className="text-sm text-slate-700">
+        <span className="text-slate-500 font-normal">Delivery Date: </span>
+        <span className="text-slate-800 font-semibold">{data.deliveryDate}</span>
+      </div>
     </div>
   );
 }

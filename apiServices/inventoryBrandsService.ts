@@ -60,13 +60,16 @@ export async function getBrandsCached(
       }
     }
 
-    const res = await fetch(`${API_BASE}/inventory/brands?${urlParams.toString()}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
+    const res = await fetch(
+      `${API_BASE}/inventory/brands?${urlParams.toString()}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
       },
-    });
-    
+    );
+
     if (res.status === 404) {
       console.warn("No brands found (404). Returning empty list.");
       return null;
@@ -79,7 +82,7 @@ export async function getBrandsCached(
     if (res.status === 403) {
       console.warn("Forbidden access to brands (403)");
       return null;
-    }   
+    }
 
     if (!res.ok) {
       throw new Error(`Status: ${res.status} ${res.statusText}`);
@@ -242,9 +245,7 @@ export async function updateBrand(
 // DELETE BRAND
 // =======================
 
-export async function deleteBrand(
-  id: number,
-): Promise<SingleBrandResponse> {
+export async function deleteBrand(id: number): Promise<SingleBrandResponse> {
   try {
     const session = await getServerSession(authOptions);
     const token = session?.accessToken;
@@ -273,8 +274,6 @@ export async function deleteBrand(
   }
 }
 
-
-
 // =======================Start GET Inventory Deliveries =======================
 
 export interface Delivery {
@@ -299,7 +298,7 @@ export interface DeliveriesResponse {
   message: string;
   code: number;
   data: DeliveriesData;
-  errors?: Record<string, string[]>
+  errors?: Record<string, string[]>;
 }
 
 export async function getInventoryDeliveriesCached(
@@ -381,3 +380,99 @@ export async function getInventoryDeliveries(
 }
 
 // =======================End GET Inventory Deliveries =======================
+
+// =======================Start GET Delivery Challan Invoice =============================
+
+export interface DeliveredFrom {
+  name: string;
+  phone: string;
+  website: string;
+  address: string;
+  bin_no: string | null;
+}
+
+export interface DeliveredTo {
+  name: string;
+  branch: string;
+  phone: string;
+}
+
+export interface DeliveryInvoiceItem {
+  id: number;
+  product_name: string;
+  quantity: number;
+}
+
+export interface DeliveryInvoiceData {
+  req_id: string;
+  challan_no: string;
+  challan_date: string;
+  delivery_date: string;
+  delivered_from: DeliveredFrom;
+  delivered_to: DeliveredTo;
+  items: DeliveryInvoiceItem[];
+  total_quantity: number;
+  delivery_cost: number;
+  scan_url: string;
+}
+
+export interface DeliveryInvoiceResponse {
+  success: boolean;
+  message: string;
+  code: number;
+  data: DeliveryInvoiceData;
+  errors?: Record<string, string[]>;
+}
+
+export async function getDeliveryChallanInvoice(
+  id: string | number,
+): Promise<DeliveryInvoiceResponse | null> {
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+
+  if (!token) {
+    throw new Error("No valid session/token");
+  }
+  try {
+    const res = await fetch(`${API_BASE}/inventory/deliveries/${id}/invoice`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (res.status === 404) {
+      console.warn("No deliveries found (404). Returning empty list.");
+      return null;
+    }
+
+    if (res.status === 401) {
+      console.warn("Unauthorized access to deliveries (401)");
+      return null;
+    }
+
+    if (res.status === 403) {
+      console.warn("Forbidden access to deliveries (403)");
+      return null;
+    }
+
+    if (!res.ok) {
+      throw new Error(
+        `Failed to fetch delivery invoice: ${res.status} ${res.statusText}`,
+      );
+    }
+
+    const result: DeliveryInvoiceResponse = await res.json();
+    return result;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error fetching delivery invoice:", error.message);
+      return null;
+    } else {
+      console.error("Error fetching delivery invoice:", error);
+      return null;
+    }
+  }
+}
+
+// =======================End GET Delivery Challan Invoice =============================

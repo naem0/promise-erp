@@ -9,49 +9,8 @@ import ChallanAddressSection, {
 } from "./ChallanAddressSection";
 import ChallanItemsTable, { ChallanItem } from "./ChallanItemsTable";
 import ChallanFooter from "./ChallanFooter";
+import { DeliveryInvoiceData } from "@/apiServices/inventoryBrandsService";
 
-// ─────────────────────────────────────────────
-// Mock Data — replace with real API response
-// ─────────────────────────────────────────────
-const MOCK_META: ChallanMetaRowData = {
-  reqId: "REQ-2023-2026",
-  challanNo: "EL-C-0001",
-  challanDate: "01-07-2026",
-  deliveryDate: "05-07-2026",
-};
-
-const MOCK_ADDRESS: ChallanAddressData = {
-  fromName: "e-Learning & Earning Ltd.",
-  fromCompany: "090000000000",
-  fromPhone: "090000000000",
-  fromWebsite: "www.e-learnt.com",
-  fromAddress:
-    "Khaja Super Market, 2nd to 7th Floor, Kallyanpur Bus Stop, Mirpur Road, Dhaka-1207.",
-  fromBin: "5066046406406",
-  toName: "Rahman Khandokar",
-  toBranch: "Cumilla Branch",
-  toPhone: "+880171717171",
-};
-
-const MOCK_ITEMS: ChallanItem[] = [
-  { name: "A4 Paper", quantity: 8 },
-  { name: "A4 Paper", quantity: 8 },
-  { name: "A4 Paper", quantity: 8 },
-  { name: "A4 Paper", quantity: 8 },
-  { name: "A4 Paper", quantity: 8 },
-  { name: "A4 Paper", quantity: 8 },
-  { name: "A4 Paper", quantity: 8 },
-  { name: "A4 Paper", quantity: 8 },
-  { name: "A4 Paper", quantity: 8 },
-  { name: "A4 Paper", quantity: 8 },
-];
-
-const MOCK_TOTAL_QUANTITY = "200Pcs";
-const MOCK_DELIVERY_COST = "2000 TK";
-
-// ─────────────────────────────────────────────
-// Helper
-// ─────────────────────────────────────────────
 function formatNow(): string {
   const now = new Date();
   const date = now
@@ -61,23 +20,20 @@ function formatNow(): string {
       year: "numeric",
     })
     .replace(/\//g, "-");
-  const time = now.toLocaleTimeString("en-US", {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: true,
-  });
+  const time = now
+    .toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    })
+    .replace(":", ".");
   return `${date}, ${time}`;
 }
 
-// ─────────────────────────────────────────────
-// Print helper — opens a clean popup window with
-// only the challan content so the admin layout
-// never interferes with the print output.
-// ─────────────────────────────────────────────
 function printChallanElement(el: HTMLElement) {
   // Collect every <link rel="stylesheet"> href from the current page
   const cssLinks = Array.from(
-    document.querySelectorAll<HTMLLinkElement>('link[rel="stylesheet"]')
+    document.querySelectorAll<HTMLLinkElement>('link[rel="stylesheet"]'),
   )
     .map((l) => `<link rel="stylesheet" href="${l.href}" />`)
     .join("\n");
@@ -139,23 +95,15 @@ function printChallanElement(el: HTMLElement) {
     win.addEventListener("afterprint", () => win.close());
   });
 }
-
-// ─────────────────────────────────────────────
-// Props
-// ─────────────────────────────────────────────
 interface DeliveryChallanPageProps {
-  requisitionId: number;
+  invoiceData: DeliveryInvoiceData;
 }
 
-// ─────────────────────────────────────────────
-// Main Component
-// ─────────────────────────────────────────────
 export default function DeliveryChallanPage({
-  requisitionId,
+  invoiceData,
 }: DeliveryChallanPageProps) {
   const challanRef = useRef<HTMLDivElement>(null);
-  const backHref = `/inventory/delivery/${requisitionId}/shipping`;
-  const qrValue = `${typeof window !== "undefined" ? window.location.origin : ""}/inventory/delivery/${requisitionId}/challan`;
+  const qrValue = invoiceData.scan_url || "#";
 
   const handlePrint = useCallback(() => {
     if (challanRef.current) {
@@ -170,16 +118,42 @@ export default function DeliveryChallanPage({
     }
   }, []);
 
+  // Map invoiceData to Challan components format
+  const meta: ChallanMetaRowData = {
+    reqId: invoiceData.req_id,
+    challanNo: invoiceData.challan_no,
+    challanDate: invoiceData.challan_date,
+    deliveryDate: invoiceData.delivery_date,
+  };
+
+  const address: ChallanAddressData = {
+    fromName: invoiceData.delivered_from.name,
+    fromPhone: invoiceData.delivered_from.phone,
+    fromWebsite: invoiceData.delivered_from.website,
+    fromAddress: invoiceData.delivered_from.address,
+    fromBin: invoiceData.delivered_from.bin_no,
+    toName: invoiceData.delivered_to.name,
+    toBranch: invoiceData.delivered_to.branch,
+    toPhone: invoiceData.delivered_to.phone,
+  };
+
+  const items: ChallanItem[] = invoiceData.items.map((item) => ({
+    name: item.product_name,
+    quantity: item.quantity,
+  }));
+
+  const totalQuantity = String(invoiceData.total_quantity);
+  const deliveryCost = invoiceData.delivery_cost
+    ? `${invoiceData.delivery_cost} TK`
+    : "0 TK";
+
   return (
     <div className="space-y-4 sm:space-y-5">
       {/* ── Top Action Bar ── */}
       <ChallanPageHeader
-        backHref={backHref}
         onPrint={handlePrint}
         onExport={handleExport}
       />
-
-      {/* ── Challan Document ── */}
       <div
         ref={challanRef}
         id="challan-print-root"
@@ -189,23 +163,14 @@ export default function DeliveryChallanPage({
           space-y-5
         "
       >
-        {/* 1. Company info + Challan number */}
-        <ChallanCompanyInfo challanNumber={MOCK_META.challanNo} />
-
-        {/* Divider */}
-        <div className="border-t border-slate-100" />
-
-        {/* 2. Meta row — Req ID, Challan No, Dates */}
-        <ChallanMetaRow data={MOCK_META} />
-
-        {/* 3. Address section — Delivered From / To */}
-        <ChallanAddressSection data={MOCK_ADDRESS} />
-
-        {/* 4. Items table + QR + Totals */}
+        <ChallanCompanyInfo challanNumber={meta.challanNo} />
+        <ChallanMetaRow data={meta} />
+        <ChallanAddressSection data={address} />
+        <div className="border-t border-slate-200" />
         <ChallanItemsTable
-          items={MOCK_ITEMS}
-          totalQuantity={MOCK_TOTAL_QUANTITY}
-          deliveryCost={MOCK_DELIVERY_COST}
+          items={items}
+          totalQuantity={totalQuantity}
+          deliveryCost={deliveryCost}
           qrValue={qrValue}
         />
 
