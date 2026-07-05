@@ -44,7 +44,7 @@ export default function DeliveryTable({
       setSelectedIds(new Set());
     }
   };
-
+console.log("---->>>>>",deliveries);
   const toggleOne = (id: number) => {
     setSelectedIds((prev) => {
       const next = new Set(prev);
@@ -156,7 +156,7 @@ export default function DeliveryTable({
                           </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem className="cursor-pointer" asChild>
-                          <Link href={`/inventory/delivery/${item.id}/challan`}>
+                          <Link href={`/inventory/delivery/${item.challan}/challan`}>
                             View Challan
                           </Link>
                         </DropdownMenuItem>
@@ -181,7 +181,7 @@ export default function DeliveryTable({
                   <TableCell className="py-2 px-6 text-center font-medium">
                     {item?.challan && item?.challan !== "---" ? (
                       <Link
-                        href={`/inventory/delivery/${item.id}/challan`}
+                        href={`/inventory/delivery/${item.challan}/challan`}
                         className="text-blue-600 hover:underline dark:text-blue-500"
                       >
                         {item?.challan}

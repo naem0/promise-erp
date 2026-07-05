@@ -1,27 +1,21 @@
-// ─────────────────────────────────────────────
-// Types
-// ─────────────────────────────────────────────
+
 export interface ChallanAddressData {
-  // Delivered From (sender)
   fromName: string;
-  fromCompany: string;
-  fromPhone: string;
-  fromWebsite: string;
-  fromAddress: string;
-  fromBin: string;
+  fromCompany?: string;
+  fromPhone?: string;
+  fromWebsite?: string;
+  fromAddress?: string;
+  fromBin?: string | null;
   // Delivered To (receiver)
   toName: string;
-  toBranch: string;
-  toPhone: string;
+  toBranch?: string;
+  toPhone?: string;
 }
 
 interface ChallanAddressSectionProps {
   data: ChallanAddressData;
 }
 
-// ─────────────────────────────────────────────
-// Sub-component: Address Column
-// ─────────────────────────────────────────────
 function AddressColumn({
   title,
   children,
@@ -41,36 +35,37 @@ function AddressColumn({
   );
 }
 
-// ─────────────────────────────────────────────
-// Component
-// ─────────────────────────────────────────────
+
 export default function ChallanAddressSection({
   data,
 }: ChallanAddressSectionProps) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 border border-slate-100 rounded-xl px-5 py-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 py-2 relative">
       {/* Delivered From */}
       <AddressColumn title="Delivered From">
         <p className="font-semibold text-slate-700">{data.fromName}</p>
-        <p>{data.fromCompany}</p>
-        <p>{data.fromPhone}</p>
-        <p>{data.fromWebsite}</p>
-        <p>{data.fromAddress}</p>
-        <p className="text-slate-500 text-xs mt-1">BIN No: {data.fromBin}</p>
+        {data.fromCompany && <p>{data.fromCompany}</p>}
+        {data.fromPhone && <p>{data.fromPhone}</p>}
+        {data.fromWebsite && <p>{data.fromWebsite}</p>}
+        {data.fromAddress && <p>{data.fromAddress}</p>}
+        {data.fromBin && <p className="text-slate-500 text-xs mt-1">BIN No: {data.fromBin}</p>}
       </AddressColumn>
 
-      {/* Divider — vertical on sm+, horizontal on mobile */}
-      <div className="hidden sm:block absolute left-1/2 top-4 bottom-4 w-px bg-slate-100" />
+      {/* Vertical divider line */}
+      <div className="hidden sm:block absolute left-1/2 top-2 bottom-2 w-px bg-slate-200" />
 
       {/* Delivered To */}
       <AddressColumn title="Delivered To">
         <p className="font-semibold text-slate-700">{data.toName}</p>
-        <p>{data.toBranch}</p>
-        <p>
-          Phone :{" "}
-          <span className="font-medium text-slate-700">{data.toPhone}</span>
-        </p>
+        {data.toBranch && <p>{data.toBranch}</p>}
+        {data.toPhone && (
+          <p>
+            Phone :{" "}
+            <span className="font-medium text-slate-700">{data.toPhone}</span>
+          </p>
+        )}
       </AddressColumn>
     </div>
   );
 }
+

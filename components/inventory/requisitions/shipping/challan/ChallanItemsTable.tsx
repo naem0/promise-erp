@@ -1,6 +1,3 @@
-// ─────────────────────────────────────────────
-// Types
-// ─────────────────────────────────────────────
 export interface ChallanItem {
   name: string;
   quantity: number;
@@ -14,9 +11,6 @@ interface ChallanItemsTableProps {
   qrValue?: string;       // URL or text for QR code
 }
 
-// ─────────────────────────────────────────────
-// Component
-// ─────────────────────────────────────────────
 export default function ChallanItemsTable({
   items,
   totalQuantity,
@@ -24,43 +18,36 @@ export default function ChallanItemsTable({
   qrValue,
 }: ChallanItemsTableProps) {
   return (
-    <div className="space-y-0 overflow-hidden rounded-xl border border-slate-100">
+    <div className="space-y-6">
       {/* Table */}
       <div className="overflow-x-auto">
-        <table className="w-full text-sm">
+        <table className="w-full text-sm border-collapse border border-slate-200">
           {/* Head */}
           <thead>
-            <tr className="bg-slate-100">
-              <th className="w-12 sm:w-16 px-3 sm:px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
+            <tr className="bg-slate-100/80">
+              <th className="border border-slate-200 w-12 sm:w-16 px-3 sm:px-4 py-3 text-center text-xs font-semibold text-slate-600 uppercase tracking-wider">
                 Sl
               </th>
-              <th className="px-3 sm:px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
+              <th className="border border-slate-200 px-3 sm:px-4 py-3 text-center text-xs font-semibold text-slate-600 uppercase tracking-wider">
                 Product Name
               </th>
-              <th className="w-20 sm:w-28 px-3 sm:px-4 py-3 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider">
+              <th className="border border-slate-200 w-24 sm:w-36 px-3 sm:px-4 py-3 text-center text-xs font-semibold text-slate-600 uppercase tracking-wider">
                 Quantity
               </th>
             </tr>
           </thead>
 
           {/* Body */}
-          <tbody className="divide-y divide-slate-50">
+          <tbody>
             {items.map((item, i) => (
-              <tr
-                key={i}
-                className={
-                  i % 2 === 0
-                    ? "bg-white hover:bg-slate-50/60 transition-colors"
-                    : "bg-slate-50/40 hover:bg-slate-50/80 transition-colors"
-                }
-              >
-                <td className="px-3 sm:px-4 py-2.5 text-slate-500 font-medium tabular-nums">
+              <tr key={i} className="bg-white">
+                <td className="border border-slate-200 px-3 sm:px-4 py-2.5 text-slate-500 font-medium text-center tabular-nums">
                   {String(i + 1).padStart(2, "0")}
                 </td>
-                <td className="px-3 sm:px-4 py-2.5 text-slate-700 font-medium">
+                <td className="border border-slate-200 px-4 py-2.5 text-slate-700 font-medium text-left">
                   {item.name}
                 </td>
-                <td className="px-3 sm:px-4 py-2.5 text-slate-700 font-semibold text-center tabular-nums">
+                <td className="border border-slate-200 px-3 sm:px-4 py-2.5 text-slate-700 font-medium text-center tabular-nums">
                   {String(item.quantity).padStart(2, "0")}
                 </td>
               </tr>
@@ -70,9 +57,9 @@ export default function ChallanItemsTable({
       </div>
 
       {/* Footer row — QR + Totals */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 px-4 py-4 border-t border-slate-100 bg-slate-50/40">
+      <div className="flex flex-row items-start justify-between gap-4 pt-2">
         {/* QR Code */}
-        <div className="flex flex-col items-center gap-1.5">
+        <div className="flex flex-col items-center gap-1.5 shrink-0">
           {qrValue ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -92,24 +79,28 @@ export default function ChallanItemsTable({
           </p>
         </div>
 
-        {/* Summary Totals */}
-        <div className="flex flex-col gap-1.5 w-full sm:w-auto min-w-[180px]">
-          <div className="flex items-center justify-between gap-4 border border-slate-200 rounded-lg px-3 py-2 bg-white">
-            <span className="text-xs font-semibold text-slate-600">
-              Total Quantity
-            </span>
-            <span className="text-sm font-bold text-slate-800 tabular-nums">
-              {totalQuantity}
-            </span>
-          </div>
-          <div className="flex items-center justify-between gap-4 border border-slate-200 rounded-lg px-3 py-2 bg-white">
-            <span className="text-xs font-semibold text-slate-600">
-              Delivery Cost
-            </span>
-            <span className="text-sm font-bold text-[#15803d] tabular-nums">
-              {deliveryCost}
-            </span>
-          </div>
+        {/* Summary Totals Table */}
+        <div className="w-full sm:w-auto min-w-[220px] sm:min-w-[280px]">
+          <table className="w-full text-sm border-collapse border border-slate-200">
+            <tbody>
+              <tr>
+                <td className="border border-slate-200 px-4 py-2 text-slate-500 font-medium text-left bg-slate-50/50">
+                  Total Quantity
+                </td>
+                <td className="border border-slate-200 px-4 py-2 text-slate-700 font-medium text-center min-w-[80px] sm:min-w-[100px] tabular-nums">
+                  {totalQuantity}
+                </td>
+              </tr>
+              <tr>
+                <td className="border border-slate-200 px-4 py-2 text-slate-500 font-medium text-left bg-slate-50/50">
+                  Delivery Cost
+                </td>
+                <td className="border border-slate-200 px-4 py-2 text-slate-700 font-medium text-center min-w-[80px] sm:min-w-[100px] tabular-nums">
+                  {deliveryCost}
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
