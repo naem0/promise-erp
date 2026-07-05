@@ -35,7 +35,8 @@ export default function DeliveryTable({
   setSelectedIds,
 }: DeliveryTableProps) {
   const allSelected =
-    deliveries.length > 0 && deliveries.every((item) => selectedIds.has(item.id));
+    deliveries.length > 0 &&
+    deliveries.every((item) => selectedIds.has(item.id));
 
   const toggleAll = (checked: boolean) => {
     if (checked) {
@@ -44,7 +45,6 @@ export default function DeliveryTable({
       setSelectedIds(new Set());
     }
   };
-console.log("---->>>>>",deliveries);
   const toggleOne = (id: number) => {
     setSelectedIds((prev) => {
       const next = new Set(prev);
@@ -131,7 +131,7 @@ console.log("---->>>>>",deliveries);
                   </TableCell>
                   <TableCell className="py-2 px-6 font-medium text-left">
                     <Link
-                      href={`/inventory/requisitions`}
+                      href={`/inventory/delivery/${item.requisition}/details`}
                       className="text-emerald-600 hover:underline dark:text-emerald-500"
                     >
                       {item?.requisition}
@@ -151,23 +151,25 @@ console.log("---->>>>>",deliveries);
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="center">
                         <DropdownMenuItem className="cursor-pointer" asChild>
-                          <Link href={`/inventory/delivery/${item.id}/shipping`}>
+                          <Link
+                            href={`/inventory/delivery/${item.id}/shipping`}
+                          >
                             Delivery
                           </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem className="cursor-pointer" asChild>
-                          <Link href={`/inventory/delivery/${item.challan}/challan`}>
+                          <Link
+                            href={`/inventory/delivery/${item.challan}/challan`}
+                          >
                             View Challan
                           </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem className="cursor-pointer">
-                          View Details
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="cursor-pointer">
-                          Update Status
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="cursor-pointer text-red-600 focus:text-red-600">
-                          Delete
+                          <Link
+                            href={`/inventory/delivery/${item.requisition}/details`}
+                          >
+                            View Details
+                          </Link>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
