@@ -476,3 +476,113 @@ export async function getDeliveryChallanInvoice(
 }
 
 // =======================End GET Delivery Challan Invoice =============================
+
+// =======================Start GET Delivery By ID =============================
+
+export interface DeliveryApplicant {
+  name: string;
+  mob: string;
+}
+
+export interface RequestedItem {
+  id: number;
+  product_name: string;
+  request_quantity: number;
+  stock_qty: number;
+  approved_qty: number;
+  after_delivery_qty: number;
+}
+
+export interface DeliveryInvoice {
+  invoice_no: string;
+  branch: string;
+  applicant: string;
+  total_item: number;
+  delivery_type: string;
+  delivery_by: string;
+  status: number;
+  status_text: string;
+  attachment?: string;
+  description?: string;
+}
+
+export interface ApprovalDashboardItem {
+  role_name: string;
+  status: string;
+  date_time: string;
+  note?: string;
+}
+
+export interface DeliveryDetailData {
+  requisition_no: string;
+  delivery_branch: string;
+  delivery_branch_id: number;
+  applicant: DeliveryApplicant;
+  expected_date?: string;
+  requested_items: RequestedItem[];
+  invoice?: DeliveryInvoice;
+  approval_dashboard: ApprovalDashboardItem[];
+}
+
+export interface DeliveryDetailResponse {
+  success: boolean;
+  message: string;
+  code: number;
+  data: DeliveryDetailData;
+  errors?: Record<string, string[]>;
+}
+
+export async function getDeliveryById(
+  id: string | number,
+): Promise<DeliveryDetailResponse | null> {
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+
+  if (!token) {
+    throw new Error("No valid session/token");
+  }
+  try {
+    const res = await fetch(`${API_BASE}/inventory/deliveries/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (res.status === 404) {
+      console.warn("Delivery not found (404). Returning null.");
+      throw new Error(`${res.status} ${res.statusText}`);
+    }
+
+    if (res.status === 401) {
+      console.warn("Unauthorized access to delivery (401)");
+      throw new Error(`${res.status} ${res.statusText}`);
+    }
+
+    if (res.status === 403) {
+      console.warn("Forbidden access to delivery (403)");
+      throw new Error(`${res.status} ${res.statusText}`);
+    }
+
+    if (!res.ok) {
+      throw new Error(
+        `Failed to fetch delivery details: ${res.status} ${res.statusText}`,
+      );
+    }
+
+    const result: DeliveryDetailResponse = await res.json();
+    return result;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error fetching delivery details:", error.message);
+      throw new Error(error.message || "Failed to fetch delivery details");
+    } else {
+      console.error("Error fetching delivery details:", error);
+      throw new Error("Failed to fetch delivery details");
+
+    }
+  }
+}
+
+// =======================End GET Delivery By ID =============================
+
