@@ -14,7 +14,7 @@ interface DeliveryPageClientProps {
 }
 
 export default function DeliveryPageClient({ deliveriesList }: DeliveryPageClientProps) {
-  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
+  const [selectedIds, setSelectedIds] = useState<Set<number | string>>(new Set());
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -34,14 +34,6 @@ export default function DeliveryPageClient({ deliveriesList }: DeliveryPageClien
   const deliveryUrl = firstSelectedId 
     ? `/inventory/delivery/${firstSelectedId}/shipping?ids=${selectedIdsParam}`
     : "#";
-
-  if (deliveries.length === 0) {
-    return (
-      <div className="mx-auto">
-        <NotFoundComponent message="No deliveries found." />
-      </div>
-    );
-  }
 
   if (!deliveriesList || !deliveriesList.data) {
     return null;
@@ -82,12 +74,18 @@ export default function DeliveryPageClient({ deliveriesList }: DeliveryPageClien
       <DeliveryFilter />
 
       {/* Table Section */}
+      {deliveries.length === 0 ? (
+        <div className="mx-auto">
+          <NotFoundComponent message="No deliveries found." />
+        </div>
+      ) : (
         <DeliveryTable 
           deliveries={deliveries} 
           paginationData={paginationData}
           selectedIds={selectedIds}
           setSelectedIds={setSelectedIds}
         />
+      )}
 
     </div>
   );

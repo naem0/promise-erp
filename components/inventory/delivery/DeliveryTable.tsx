@@ -24,8 +24,8 @@ import { PaginationType } from "@/types/pagination";
 interface DeliveryTableProps {
   deliveries: Delivery[];
   paginationData?: PaginationType;
-  selectedIds: Set<number>;
-  setSelectedIds: React.Dispatch<React.SetStateAction<Set<number>>>;
+  selectedIds: Set<number | string>;
+  setSelectedIds: React.Dispatch<React.SetStateAction<Set<number | string>>>;
 }
 
 export default function DeliveryTable({
@@ -45,7 +45,7 @@ export default function DeliveryTable({
       setSelectedIds(new Set());
     }
   };
-  const toggleOne = (id: number) => {
+  const toggleOne = (id: number | string) => {
     setSelectedIds((prev) => {
       const next = new Set(prev);
       if (next.has(id)) {
@@ -116,7 +116,8 @@ export default function DeliveryTable({
           </TableHeader>
           <TableBody>
             {deliveries?.map((item: Delivery, idx) => {
-              const isChecked = selectedIds.has(item.id);
+              console.log("Rendering delivery item:", item); // Debugging log
+              const isChecked = selectedIds.has(item?.requisition);
               return (
                 <TableRow
                   key={item.id || idx}
@@ -125,7 +126,7 @@ export default function DeliveryTable({
                   <TableCell className="w-12 py-2 px-6 text-center">
                     <Checkbox
                       checked={isChecked}
-                      onCheckedChange={() => toggleOne(item.id)}
+                      onCheckedChange={() => toggleOne(item?.requisition)}
                       aria-label={`Select delivery requisition ${item.requisition}`}
                     />
                   </TableCell>
@@ -152,7 +153,7 @@ export default function DeliveryTable({
                       <DropdownMenuContent align="center">
                         <DropdownMenuItem className="cursor-pointer" asChild>
                           <Link
-                            href={`/inventory/delivery/${item.id}/shipping`}
+                            href={`/inventory/delivery/${item.requisition}/shipping`}
                           >
                             Delivery
                           </Link>

@@ -297,12 +297,12 @@ export async function deleteProductItem(
 
 export interface InventoryDashboardMetrics {
   total: number;
-  today: number;
+  today?: number;
 }
 
 export interface InventoryStockStatusMetrics {
-  total_stock: number;
-  low_stock_products: number;
+  total_stock?: number;
+  low_stock_products?: number;
 }
 
 export interface InventoryDashboardStat {
@@ -364,3 +364,45 @@ export async function getInventoryItemDashboardStats(): Promise<InventoryMiniSta
 // =======================
 //End of Inventory Dashboard
 // =======================
+
+
+export async function getInventoryDeliveryDashboardStats(): Promise<InventoryMiniStatsResponse | null> {
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+  if (!token) throw new Error("No valid session/token");
+
+  try {
+    const res = await fetch(`${API_BASE}/inventory/deliveries/summary`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (res.status === 404) {
+      console.warn("Dashboard stats not found (404).");
+      return null;
+    }
+
+    if (res.status === 401 || res.status === 403) {
+      console.warn("Unauthorized: Access token not found.");
+      return null;
+    }
+
+    if (!res.ok) {
+      throw new Error(`Status: ${res.status} ${res.statusText}`);
+    }
+
+    const result: InventoryMiniStatsResponse = await res.json();
+
+    return result;
+  } catch (error: unknown) {
+    console.error("getInventoryDashboardStats error:", error);
+
+    if (error instanceof Error) {
+      throw error;
+    }
+
+    throw new Error("Failed to fetch inventory dashboard stats");
+  }
+}

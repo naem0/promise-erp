@@ -38,7 +38,7 @@ const InventoryCommonSummary = ({ data }: Props) => {
         return (
           <div
             key={index}
-            className={`text-white rounded-[22px] p-5 flex flex-col shadow-sm relative overflow-hidden bg-gradient-to-br ${gradient} transition-all duration-300 hover:shadow-lg hover:-translate-y-1 group`}
+            className={`text-white rounded-[22px] p-3 flex flex-col shadow-sm relative overflow-hidden bg-gradient-to-br ${gradient} transition-all duration-300 hover:shadow-lg hover:-translate-y-1 group`}
           >
             {/* Header */}
             <div className="flex items-center gap-3 relative z-10">
@@ -55,12 +55,12 @@ const InventoryCommonSummary = ({ data }: Props) => {
               {metricEntries.map(([key, value]) => (
                 <div
                   key={key}
-                  className="flex flex-col border border-white/15 rounded-[14px] py-2.5 px-3.5 bg-white/10 flex-1 backdrop-blur-sm"
+                  className="flex flex-col border border-white/15 rounded-[14px] py-1.5 px-3 bg-white/10 flex-1 backdrop-blur-sm"
                 >
                   <span className="text-[10px] font-semibold text-white/75 uppercase tracking-wider mb-1">
                     {key.replace(/_/g, " ")}
                   </span>
-                  <span className="text-2xl font-extrabold tracking-tight text-white leading-none">
+                  <span className="text-xl font-semibold tracking-tight text-white leading-none">
                     {value || 0}
                   </span>
                 </div>
