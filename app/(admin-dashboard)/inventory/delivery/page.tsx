@@ -2,6 +2,7 @@ import DeliveryPageClient from "@/components/inventory/delivery/DeliveryPageClie
 import { getInventoryDeliveries } from "@/apiServices/inventoryBrandsService";
 import { Suspense } from "react";
 import TableSkeleton from "@/components/TableSkeleton";
+import DeliverySummaryWrapper from "@/components/inventory/DeliverySummaryWrapper";
 
 interface DeliveryPageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -43,6 +44,7 @@ export default async function DeliveryPage({
   };
 
   let DeliveriesList = null;
+
   try {
     DeliveriesList = await getInventoryDeliveries(params);
   } catch (error: unknown) {
@@ -56,8 +58,22 @@ export default async function DeliveryPage({
   }
 
   return (
-    <Suspense fallback={<TableSkeleton columns={8} rows={10} />}>
-      <DeliveryPageClient deliveriesList={DeliveriesList} />
-    </Suspense>
+    <div className="mx-auto space-y-6">
+      <Suspense
+        fallback={
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4 md:gap-6">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="h-32 bg-slate-400 animate-pulse rounded-xl"></div>
+            ))}
+          </div>
+        }
+      >
+        <DeliverySummaryWrapper />
+      </Suspense>
+
+      <Suspense fallback={<TableSkeleton columns={8} rows={10} />}>
+        <DeliveryPageClient deliveriesList={DeliveriesList} />
+      </Suspense>
+    </div>
   );
 }

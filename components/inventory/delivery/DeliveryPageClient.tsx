@@ -35,14 +35,6 @@ export default function DeliveryPageClient({ deliveriesList }: DeliveryPageClien
     ? `/inventory/delivery/${firstSelectedId}/shipping?ids=${selectedIdsParam}`
     : "#";
 
-  if (deliveries.length === 0) {
-    return (
-      <div className="mx-auto">
-        <NotFoundComponent message="No deliveries found." />
-      </div>
-    );
-  }
-
   if (!deliveriesList || !deliveriesList.data) {
     return null;
   }
@@ -82,12 +74,18 @@ export default function DeliveryPageClient({ deliveriesList }: DeliveryPageClien
       <DeliveryFilter />
 
       {/* Table Section */}
+      {deliveries.length === 0 ? (
+        <div className="mx-auto">
+          <NotFoundComponent message="No deliveries found." />
+        </div>
+      ) : (
         <DeliveryTable 
           deliveries={deliveries} 
           paginationData={paginationData}
           selectedIds={selectedIds}
           setSelectedIds={setSelectedIds}
         />
+      )}
 
     </div>
   );
