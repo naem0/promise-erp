@@ -1,4 +1,3 @@
-import React from "react";
 import { getDeliveryById } from "@/apiServices/inventoryBrandsService";
 import ErrorComponent from "@/components/common/ErrorComponent";
 import NotFoundComponent from "@/components/common/NotFoundComponent";
