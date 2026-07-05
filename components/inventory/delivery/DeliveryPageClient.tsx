@@ -14,7 +14,7 @@ interface DeliveryPageClientProps {
 }
 
 export default function DeliveryPageClient({ deliveriesList }: DeliveryPageClientProps) {
-  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
+  const [selectedIds, setSelectedIds] = useState<Set<number | string>>(new Set());
 
   useEffect(() => {
     const timer = setTimeout(() => {
