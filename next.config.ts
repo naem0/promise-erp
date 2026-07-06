@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  distDir: process.env.BUILD_DIR || ".next",
   // Production optimizations
   compress: true,
   poweredByHeader: false,
