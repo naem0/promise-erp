@@ -3,20 +3,12 @@
 import { ArrowLeft, Printer, Download } from "lucide-react";
 import Link from "next/link";
 
-// ─────────────────────────────────────────────
-// Props
-// ─────────────────────────────────────────────
 interface ChallanPageHeaderProps {
-  backHref: string;
   onPrint: () => void;
   onExport: () => void;
 }
 
-// ─────────────────────────────────────────────
-// Component
-// ─────────────────────────────────────────────
 export default function ChallanPageHeader({
-  backHref,
   onPrint,
   onExport,
 }: ChallanPageHeaderProps) {
@@ -24,11 +16,11 @@ export default function ChallanPageHeader({
     <div className="challan-action-bar flex items-center justify-between gap-3 print:hidden">
       {/* Left — Back + Title */}
       <div className="flex items-center gap-3">
-        <Link href={backHref}>
+        <Link href={`/inventory/delivery`}>
           <button
             type="button"
             aria-label="Go back"
-            className="h-8 w-8 rounded-full bg-[#15803d] hover:bg-[#166534] active:scale-95 text-white flex items-center justify-center transition-all shadow-sm shrink-0"
+            className="h-8 w-8 rounded-full cursor-pointer bg-[#15803d] hover:bg-[#166534] active:scale-95 text-white flex items-center justify-center transition-all shadow-sm shrink-0"
           >
             <ArrowLeft className="h-4 w-4" />
           </button>

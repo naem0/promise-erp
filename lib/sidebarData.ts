@@ -535,6 +535,12 @@ export const sidebarData = {
               url: "/inventory/requisitions",
               permissions: ["view-requisitions", "view-my-requisitions", "view-my-departments-requisitions"],
             },
+            {
+              title: "Roles-Power",
+              url: "/inventory/roles-power",
+              permissions: ["view-roles-power"],
+            },
+            
           ],
         },
       ],

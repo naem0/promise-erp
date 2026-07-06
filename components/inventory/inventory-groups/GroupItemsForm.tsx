@@ -340,15 +340,15 @@ export default function GroupItemsForm({
 
                     {/* Autocomplete Product Search Section */}
                     <div className="md:col-span-2 pt-4 mt-2">
-                        <label className="block text-sm font-semibold mb-2 text-slate-800">Add Products to Group</label>
+                        <label className="block text-sm font-semibold mb-2 text-slate-800">Add Items to Group</label>
                         
                         {/* Streamlined Autocomplete Container */}
                         <div className="relative w-full">
-                            <label className="block text-xs text-slate-500 mb-1">Search & Click to Add Product<span className="text-red-500"> *</span></label>
+                            <label className="block text-xs text-slate-500 mb-1">Search & Click to Add Item<span className="text-red-500"> *</span></label>
                             <div className="relative">
                                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
                                 <Input 
-                                    placeholder="Type product name to search..."
+                                    placeholder="Type item name to search..."
                                     value={searchQuery}
                                     onChange={(e) => {
                                         setSearchQuery(e.target.value);
@@ -517,7 +517,7 @@ export default function GroupItemsForm({
                         </div>
                     ) : (
                         <div className="md:col-span-2 border border-dashed rounded-2xl p-6 bg-slate-50/50 text-center text-slate-400 text-sm py-8">
-                            No products associated with this group item yet. Use the search input above to query and instantly add products.
+                            No items associated with this group item yet. Use the search input above to query and instantly add items.
                         </div>
                     )}
 

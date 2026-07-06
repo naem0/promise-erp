@@ -195,6 +195,19 @@
     { "path": "/inventory/requisitions/edit", "permissions": ["edit-requisitions"], "isDynamic": true },
     { "path": "/inventory/requisitions/view", "permissions": ["view-requisitions", "view-my-requisitions", "view-my-departments-requisitions"], "isDynamic": true },
 
+    { "path": "/inventory/roles-power", "permissions": ["view-roles-power"] },
+    { "path": "/inventory/roles-power/add", "permissions": ["create-roles-power"] },
+    { "path": "/inventory/roles-power/edit", "permissions": ["edit-roles-power"], "isDynamic": true },
+
+    { "path": "/settings/users", "permissions": ["view-users"] },
+    { "path": "/settings/users/add", "permissions": ["create-users"] },
+    { "path": "/settings/users/edit", "permissions": ["edit-users"], "isDynamic": true },
+
+    { "path": "/settings/profile", "permissions": ["view-my-profile"] },
+    { "path": "/settings/users/add", "permissions": ["create-users"] },
+    { "path": "/settings/users/edit", "permissions": ["edit-users"], "isDynamic": true },
+
+
     { "path": "/settings/profile", "permissions": ["view-my-profile"] }
 
   ]

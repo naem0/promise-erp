@@ -12,7 +12,7 @@ export default async function RequisitionShippingPage({
 
   return (
     <div className="mx-auto">
-      <RequisitionShippingForm requisitionId={requisitionId} />
+      <RequisitionShippingForm requisitionIds={[requisitionId]} />
     </div>
   );
 }

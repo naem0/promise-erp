@@ -31,7 +31,7 @@ export default async function EditItemPage({ params }: PageProps) {
     if (!itemRes?.data) {
         return (
             <div className="py-8 md:py-12">
-                <NotFoundComponent message={itemRes?.message || "Product not found."} />
+                <NotFoundComponent message={itemRes?.message || "Item not found."} />
             </div>
         );
     }
@@ -103,7 +103,7 @@ export default async function EditItemPage({ params }: PageProps) {
 
     return (
         <ItemsForm
-            title="Edit Product"
+            title="Edit Item"
             item={itemRes?.data}
             categories={categories}
             brands={brands}

@@ -101,6 +101,7 @@ export const config = {
     '/hr/:path*',
     '/crm/:path*',
     '/lms/:path*',
+    '/inventory/:path*',
     '/profile/:path*',
     '/settings/:path*',
     '/divisions/:path*',
