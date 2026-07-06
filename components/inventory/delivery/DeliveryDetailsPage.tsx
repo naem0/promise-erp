@@ -229,7 +229,7 @@ export default function DeliveryDetailsPage({ data }: DeliveryDetailsPageProps) 
               <div className="relative pl-1">
                 {data?.approval_dashboard && data?.approval_dashboard?.length > 0 ? (
                   data?.approval_dashboard?.map((step, index) => {
-                    const isApproved = step.status?.toLowerCase() === "approved" || step.status?.toLowerCase() === "completed" || step.status?.toLowerCase() === "pending";
+                    // const isApproved = step.status?.toLowerCase() === "approved" || step.status?.toLowerCase() === "completed" || step.status?.toLowerCase() === "pending";
                     // Note: Figma screenshot shows checkmarks for all listed items with green cards, so let's style them as success timeline items.
 
                     return (

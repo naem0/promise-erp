@@ -29,10 +29,9 @@ export default function DeliveryPageClient({ deliveriesList }: DeliveryPageClien
   const hasSelection = selectedIds.size > 0;
   
   // Create navigation link containing all selected ID parameters
-  const firstSelectedId = Array.from(selectedIds)[0];
   const selectedIdsParam = Array.from(selectedIds).join(",");
-  const deliveryUrl = firstSelectedId 
-    ? `/inventory/delivery/${firstSelectedId}/shipping?ids=${selectedIdsParam}`
+  const deliveryUrl = selectedIds.size > 0 
+    ? `/inventory/delivery/bulk/shipping?ids=${selectedIdsParam}`
     : "#";
 
   if (!deliveriesList || !deliveriesList.data) {

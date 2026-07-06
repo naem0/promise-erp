@@ -36,11 +36,11 @@ export default function DeliveryTable({
 }: DeliveryTableProps) {
   const allSelected =
     deliveries.length > 0 &&
-    deliveries.every((item) => selectedIds.has(item.id));
+    deliveries.every((item) => selectedIds.has(item.requisition));
 
   const toggleAll = (checked: boolean) => {
     if (checked) {
-      setSelectedIds(new Set(deliveries.map((item) => item.id)));
+      setSelectedIds(new Set(deliveries.map((item) => item.requisition)));
     } else {
       setSelectedIds(new Set());
     }
@@ -116,7 +116,6 @@ export default function DeliveryTable({
           </TableHeader>
           <TableBody>
             {deliveries?.map((item: Delivery, idx) => {
-              console.log("Rendering delivery item:", item); // Debugging log
               const isChecked = selectedIds.has(item?.requisition);
               return (
                 <TableRow

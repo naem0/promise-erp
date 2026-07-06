@@ -68,14 +68,14 @@ const DEFAULT_FORM: DeliveryFormValues = {
 // Props
 // ─────────────────────────────────────────────
 interface RequisitionShippingFormProps {
-  requisitionId: number;
+  requisitionIds: number[];
 }
 
 // ─────────────────────────────────────────────
 // Main Component
 // ─────────────────────────────────────────────
 export default function RequisitionShippingForm({
-  requisitionId,
+  requisitionIds,
 }: RequisitionShippingFormProps) {
   const router = useRouter();
   const [formValues, setFormValues] = useState<DeliveryFormValues>(DEFAULT_FORM);
@@ -110,7 +110,11 @@ export default function RequisitionShippingForm({
       // TODO: Call real delivery API
       await new Promise((r) => setTimeout(r, 1200));
       toast.success("Shipment processed successfully!");
-      router.push(`/inventory/delivery/${requisitionId}/challan`);
+      if (requisitionIds.length === 1) {
+        router.push(`/inventory/delivery/${requisitionIds[0]}/challan`);
+      } else {
+        router.push(`/inventory/delivery`);
+      }
     } catch {
       toast.error("Failed to process shipment.");
       setIsSubmitting(false);
