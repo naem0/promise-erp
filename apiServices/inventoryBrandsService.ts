@@ -305,9 +305,6 @@ export async function getInventoryDeliveriesCached(
   token: string,
   params: Record<string, unknown> = {},
 ): Promise<DeliveriesResponse | null> {
-  "use cache";
-  cacheTag("deliveries-list");
-
   try {
     const urlParams = new URLSearchParams();
 
@@ -411,8 +408,11 @@ export interface DeliveryInvoiceData {
   delivered_from: DeliveredFrom;
   delivered_to: DeliveredTo;
   items: DeliveryInvoiceItem[];
+  grouped_items: any[];
   total_quantity: number;
   delivery_cost: number;
+  delivery_status: number;
+  delivery_status_text: string;
   scan_url: string;
 }
 

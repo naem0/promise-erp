@@ -1,5 +1,5 @@
 import {
-  getInventoryItemDashboardStats,
+  getInventoryRoomsStats,
   InventoryMiniStatsResponse,
 } from "@/apiServices/inventoryItemsService";
 import ErrorComponent from "../common/ErrorComponent";
@@ -9,11 +9,11 @@ const RoomsSummaryWrapper = async () => {
   let stats: InventoryMiniStatsResponse | null = null;
 
   try {
-    stats = await getInventoryItemDashboardStats();
+    stats = await getInventoryRoomsStats();
   } catch (error: unknown) {
     if (typeof error === "object" && error !== null && "digest" in error) throw error;
-    console.error("Error fetching inventory dashboard stats:", error);
-    const message = error instanceof Error ? error.message : "Failed to fetch dashboard stats";
+    console.error("Error fetching inventory rooms stats:", error);
+    const message = error instanceof Error ? error.message : "Failed to fetch rooms stats";
     return (
       <div className="py-10 xl:py-16">
         <ErrorComponent message={message} />

@@ -319,7 +319,22 @@ export const sidebarData = {
               url: "/web-content/contact-page",
               permissions: ["view-contact-pages"],
             },
-
+            {
+              title: "Management Messages",
+              url: "/web-content/about-page/chairman-messages",
+              permissions: ["view-chairman-messages"],
+            },
+            {
+              title: "Achievements",
+              url: "/web-content/about-page/achievements",
+              permissions: ["view-achievements"],
+            },
+            {
+              title: "Licenses",
+              url: "/web-content/about-page/licenses",
+              permissions: ["view-licenses"],
+            },
+            
             {
               title: "Branches",
               url: "/lms/branches",

@@ -549,7 +549,7 @@ export async function getPublicAllExecutives(): Promise<ChairmanMessageResponse 
     const res = await fetch(url);
 
     if (res.status === 404) {
-      console.warn("No chairman messages found.");
+      console.warn("No Management messages found.");
       return null;
     }
     
