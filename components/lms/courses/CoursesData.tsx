@@ -111,7 +111,7 @@ export default async function CoursesData({
             {courses.map((course, index) => (
               <TableRow key={course.id}>
                 <TableCell className="text-center">
-                  {(page - 1) * 15 + (index + 1)}
+                  {(page - 1) * per_page + (index + 1)}
                 </TableCell>
 
                 {/* Action Dropdown */}
