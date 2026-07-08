@@ -208,6 +208,8 @@
      { "path": "/inventory/inventory-delivery-types", "permissions": ["view-delivery-types"] },
      { "path": "/inventory/inventory-delivery-types/add", "permissions": ["create-delivery-types"] },
      { "path": "/inventory/inventory-delivery-types/edit", "permissions": ["edit-delivery-types"], "isDynamic": true },
+     
+      { "path": "/inventory/delivery", "permissions": ["view-deliveries", "create-deliveries", "edit-deliveries", "delete-deliveries"] },
 
     { "path": "/inventory/requisitions", "permissions": ["view-requisitions", "view-my-requisitions", "view-my-departments-requisitions"] },
     { "path": "/inventory/requisitions/add", "permissions": ["create-requisitions"] },

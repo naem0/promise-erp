@@ -567,6 +567,7 @@ export const sidebarData = {
             {
               title: "Delivery",
               url: "/inventory/delivery",
+              permissions: ["view-deliveries"],
             },
             {
               title: "Requisitions",
