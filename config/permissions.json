@@ -205,6 +205,10 @@
      { "path": "/inventory/inventory-delivery-partners/add", "permissions": ["create-delivery-partners"] },
      { "path": "/inventory/inventory-delivery-partners/edit", "permissions": ["edit-delivery-partners"], "isDynamic": true },
 
+     { "path": "/inventory/inventory-delivery-types", "permissions": ["view-delivery-types"] },
+     { "path": "/inventory/inventory-delivery-types/add", "permissions": ["create-delivery-types"] },
+     { "path": "/inventory/inventory-delivery-types/edit", "permissions": ["edit-delivery-types"], "isDynamic": true },
+
     { "path": "/inventory/requisitions", "permissions": ["view-requisitions", "view-my-requisitions", "view-my-departments-requisitions"] },
     { "path": "/inventory/requisitions/add", "permissions": ["create-requisitions"] },
     { "path": "/inventory/requisitions/edit", "permissions": ["edit-requisitions"], "isDynamic": true },
