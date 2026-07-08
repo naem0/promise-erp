@@ -33,14 +33,6 @@ const RequisitionDetailSummary = ({ requisition }: RequisitionDetailProps) => {
             Transfer
           </Button>
 
-
-          <Link href={`/inventory/requisitions/${requisition?.id}/shipping`}>
-            <Button className="bg-[#15803d] hover:bg-[#166534] text-white font-medium px-5 py-2 h-9 rounded-lg gap-2 flex items-center shadow-sm">
-              <Truck className="h-4 w-4" />
-              Shipping
-            </Button>
-          </Link>
-
         </div>
       </div>
 
