@@ -152,8 +152,20 @@ export async function getBranchesCached(
       },
     });
 
-    return await res.json();
-  } catch (error) {
+    if (res.status === 404) {
+      console.warn("Courses not found (404). Returning null.");
+      throw new Error(`${res.status} ${res.statusText}`);
+    }
+    if (res.status === 401 || res.status === 403) {
+      console.warn(
+        "Unauthorized or forbidden access (401/403). Returning null.",
+      );
+      throw new Error(`${res.status} ${res.statusText}`);
+    }
+
+    const result = await res.json();
+    return result;
+  } catch (error: unknown) {
     console.error("Error in getBranchesCached:", error);
     throw new Error(
       error instanceof Error
@@ -175,11 +187,11 @@ export async function getBranches(
   }
 
   try {
-    const _cachedResult = await getBranchesCached(token, params);
+    const cachedResult = await getBranchesCached(token, params);
 
-    if (!_cachedResult) throw new Error("Failed to fetch data from cache.");
+    if (!cachedResult) throw new Error("Failed to fetch data from cache.");
 
-    return _cachedResult;
+    return cachedResult;
   } catch (error) {
     console.error("Error in get branches:", error);
     throw new Error(

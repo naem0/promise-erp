@@ -1,42 +1,42 @@
-'use client'
+"use client";
 
-import { useEffect } from "react"
-import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { useForm, Controller } from "react-hook-form"
-import { Input } from "@/components/ui/input"
+import { useEffect } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useForm, Controller } from "react-hook-form";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { Button } from "@/components/ui/button"
-import { Branch } from "@/apiServices/branchService"
-import { Division } from "@/apiServices/divisionService"
-import { Category } from "@/apiServices/categoryService"
-import { Search, FilterX } from "lucide-react"
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Branch } from "@/apiServices/branchService";
+import { Division } from "@/apiServices/divisionService";
+import { Category } from "@/apiServices/categoryService";
+import { Search, FilterX } from "lucide-react";
 
 interface FilterFormValues {
-  search?: string
-  sort_order?: string
-  level?: string
-  branch_id?: string
-  category_id?: string
+  search?: string;
+  sort_order?: string;
+  level?: string;
+  branch_id?: string;
+  category_id?: string;
 }
 
 interface CourseFilterProps {
-  branches: Branch[]
-  categories: Category[]
+  branches: Branch[];
+  categories: Category[];
 }
 
 export default function CourseFilter({
   branches,
   categories,
 }: CourseFilterProps) {
-  const router = useRouter()
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { register, control, reset, watch } = useForm<FilterFormValues>({
     defaultValues: {
       search: searchParams.get("search") || "",
@@ -45,26 +45,26 @@ export default function CourseFilter({
       branch_id: searchParams.get("branch_id") || "",
       category_id: searchParams.get("category_id") || "",
     },
-  })
+  });
 
-  const watchedValues = watch()
+  const watchedValues = watch();
 
   useEffect(() => {
-    const params = new URLSearchParams(searchParams)
+    const params = new URLSearchParams(searchParams);
     Object.entries(watchedValues).forEach(([key, value]) => {
       if (value) {
-        params.set(key, String(value))
+        params.set(key, String(value));
       } else {
-        params.delete(key)
+        params.delete(key);
       }
-    })
-    params.set("page", "1")
+    });
+    params.set("page", "1");
     const timer = setTimeout(() => {
-      router.replace(`${pathname}?${params.toString()}`)
-    }, 500)
+      router.replace(`${pathname}?${params.toString()}`);
+    }, 500);
 
-    return () => clearTimeout(timer)
-  }, [JSON.stringify(watchedValues), router, pathname])
+    return () => clearTimeout(timer);
+  }, [JSON.stringify(watchedValues), router, pathname]);
 
   const handleReset = () => {
     reset({
@@ -73,13 +73,13 @@ export default function CourseFilter({
       level: "",
       branch_id: "",
       category_id: "",
-    })
-    router.replace(pathname)
-  }
+    });
+    router.replace(pathname);
+  };
 
   const hasActiveFilters = Object.values(watchedValues).some(
-    (value) => value && value !== ""
-  )
+    (value) => value && value !== "",
+  );
 
   return (
     <div className="p-6 mb-6 border rounded-xl bg-card shadow-sm">
@@ -155,11 +155,15 @@ export default function CourseFilter({
                 <SelectValue placeholder="Branch" />
               </SelectTrigger>
               <SelectContent>
-                {branches?.map((branch) => (
-                  <SelectItem key={branch.id} value={String(branch.id)}>
-                    {branch.name}
-                  </SelectItem>
-                ))}
+                {branches?.length === 0 ? (
+                  <SelectItem value="">No Branches</SelectItem>
+                ) : (
+                  branches?.map((branch) => (
+                    <SelectItem key={branch.id} value={String(branch.id)}>
+                      {branch.name}
+                    </SelectItem>
+                  ))
+                )}
               </SelectContent>
             </Select>
           )}
@@ -175,16 +179,20 @@ export default function CourseFilter({
                 <SelectValue placeholder="Category" />
               </SelectTrigger>
               <SelectContent>
-                {categories?.map((category) => (
-                  <SelectItem key={category.id} value={String(category.id)}>
-                    {category.name}
-                  </SelectItem>
-                ))}
+                {categories?.length === 0 ? (
+                  <SelectItem value="">No Categories</SelectItem>
+                ) : (
+                  categories?.map((category) => (
+                    <SelectItem key={category.id} value={String(category.id)}>
+                      {category.name}
+                    </SelectItem>
+                  ))
+                )}
               </SelectContent>
             </Select>
           )}
         />
       </div>
-    </div >
-  )
+    </div>
+  );
 }
