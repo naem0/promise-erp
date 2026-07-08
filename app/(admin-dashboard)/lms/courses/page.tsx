@@ -7,7 +7,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import PermissionGuard from "@/components/auth/PermissionGuard";
 
-export default async function CoursesPage({
+export default function CoursesPage({
   searchParams,
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;

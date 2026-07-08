@@ -77,7 +77,7 @@ export default async function CoursesData({
   }
 
   if (!data?.success || !data?.data ) {
-    return null;
+    return <ErrorComponent message={data?.message || "Failed to fetch courses."} />;
   }
 
   const courses = data?.data?.courses || [];
