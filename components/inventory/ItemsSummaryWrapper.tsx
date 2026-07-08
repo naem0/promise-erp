@@ -1,5 +1,5 @@
 import {
-  getInventoryItemDashboardStats,
+  getInventoryProductItemStats,
   InventoryMiniStatsResponse,
 } from "@/apiServices/inventoryItemsService";
 import ErrorComponent from "../common/ErrorComponent";
@@ -9,7 +9,7 @@ const ItemsSummaryWrapper = async () => {
   let stats: InventoryMiniStatsResponse | null = null;
 
   try {
-    stats = await getInventoryItemDashboardStats();
+    stats = await getInventoryProductItemStats();
   } catch (error: unknown) {
     if (typeof error === "object" && error !== null && "digest" in error) throw error;
     console.error("Error fetching inventory dashboard stats:", error);

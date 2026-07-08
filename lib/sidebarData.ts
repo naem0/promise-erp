@@ -67,7 +67,7 @@ export const sidebarData = {
             {
               title: "Students",
               url: "/lms/students",
-              permissions: ["view-students","govt","paid"],
+              permissions: ["view-students", "govt", "paid"],
             },
             {
               title: "Designations",
@@ -319,6 +319,21 @@ export const sidebarData = {
               url: "/web-content/contact-page",
               permissions: ["view-contact-pages"],
             },
+            {
+              title: "Management Messages",
+              url: "/web-content/about-page/chairman-messages",
+              permissions: ["view-chairman-messages"],
+            },
+            {
+              title: "Achievements",
+              url: "/web-content/about-page/achievements",
+              permissions: ["view-achievements"],
+            },
+            {
+              title: "Licenses",
+              url: "/web-content/about-page/licenses",
+              permissions: ["view-licenses"],
+            },
 
             {
               title: "Branches",
@@ -450,17 +465,27 @@ export const sidebarData = {
             {
               title: "Lead Reports",
               url: "/crm/lead-reports",
-              permissions: ["crm-lead-reports", "crm-reports-list","crm-assigned-reports-list"],
+              permissions: [
+                "crm-lead-reports",
+                "crm-reports-list",
+                "crm-assigned-reports-list",
+              ],
             },
             {
               title: "Old Lead Reports",
               url: "/crm/lead-reports/old",
-              permissions: ["crm-old-reports-list", "crm-assigned-old-reports-list"],
+              permissions: [
+                "crm-old-reports-list",
+                "crm-assigned-old-reports-list",
+              ],
             },
             {
               title: "New Lead Reports",
               url: "/crm/lead-reports/new",
-              permissions: ["crm-new-reports-list", "crm-assigned-new-reports-list"],
+              permissions: [
+                "crm-new-reports-list",
+                "crm-assigned-new-reports-list",
+              ],
             },
             {
               title: "Counsellor Performance",
@@ -475,13 +500,17 @@ export const sidebarData = {
             {
               title: "All Notifications",
               url: "/crm/notifications",
-              permissions: ["view-consultant-notifications","mark-consultant-notification-read","mark-all-consultant-notifications-read"],
+              permissions: [
+                "view-consultant-notifications",
+                "mark-consultant-notification-read",
+                "mark-all-consultant-notifications-read",
+              ],
             },
           ],
         },
       ],
     },
-     {
+    {
       label: "INVENTORY",
       items: [
         {
@@ -497,7 +526,7 @@ export const sidebarData = {
             {
               title: "Group Items",
               url: "/inventory/inventory-groups",
-              permissions: ["view-group-items"],  
+              permissions: ["view-group-items"],
             },
             {
               title: "Categories",
@@ -520,27 +549,39 @@ export const sidebarData = {
               url: "/inventory/inventory-rooms",
               permissions: ["view-rooms"],
             },
-            
-              { 
-                title: "Delivery Partners",
-                url: "/inventory/inventory-delivery-partners",
-                permissions: ["view-delivery-partners"],
-              },
-              {
-                title: "Delivery",
-                url: "/inventory/delivery",
-              },
-              {
+            {
+              title: "Delivery Types",
+              url: "/inventory/inventory-delivery-types",
+              permissions: ["view-delivery-types"],
+            },
+            {
+              title: "Delivery Partners",
+              url: "/inventory/inventory-delivery-partners",
+              permissions: ["view-delivery-partners"],
+            },
+            {
+              title: "Delivery Types",
+              url: "/inventory/inventory-delivery-types",
+              permissions: ["view-delivery-types"],
+            },
+            {
+              title: "Delivery",
+              url: "/inventory/delivery",
+            },
+            {
               title: "Requisitions",
               url: "/inventory/requisitions",
-              permissions: ["view-requisitions", "view-my-requisitions", "view-my-departments-requisitions"],
+              permissions: [
+                "view-requisitions",
+                "view-my-requisitions",
+                "view-my-departments-requisitions",
+              ],
             },
             {
               title: "Roles-Power",
               url: "/inventory/roles-power",
               permissions: ["view-roles-power"],
             },
-            
           ],
         },
       ],
@@ -855,7 +896,6 @@ export const sidebarData = {
         },
       ],
     },
-
 
     // {
     //   label: "Sales",

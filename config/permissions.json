@@ -132,6 +132,21 @@
     { "path": "/web-content/contact-page/add", "permissions": ["create-contact-pages"] },
     { "path": "/web-content/contact-page/edit", "permissions": ["edit-contact-pages"], "isDynamic": true },
 
+
+    { "path": "/web-content/about-page/chairman-messages", "permissions": ["view-chairman-messages"] },
+    { "path": "/web-content/about-page/chairman-messages/add", "permissions": ["create-chairman-messages"] },
+    { "path": "/web-content/about-page/chairman-messages/edit", "permissions": ["edit-chairman-messages"], "isDynamic": true },
+    
+    { "path": "/web-content/about-page/achievements", "permissions": ["view-achievements"] },
+    { "path": "/web-content/about-page/achievements/add", "permissions": ["create-achievements"] },
+    { "path": "/web-content/about-page/achievements/edit", "permissions": ["edit-achievements"], "isDynamic": true },
+    
+    { "path": "/web-content/about-page/licenses", "permissions": ["view-licenses"] },
+    { "path": "/web-content/about-page/licenses/add", "permissions": ["create-licenses"] },
+    { "path": "/web-content/about-page/licenses/edit", "permissions": ["edit-licenses"], "isDynamic": true },
+
+    
+
     { "path": "/crm/leads", "permissions": ["view-leads", "view-assign-leads"] },
     { "path": "/crm/leads/add", "permissions": ["create-leads"] },
     { "path": "/crm/leads/edit", "permissions": ["edit-leads"], "isDynamic": true },
@@ -189,6 +204,10 @@
      { "path": "/inventory/inventory-delivery-partners", "permissions": ["view-delivery-partners"] },
      { "path": "/inventory/inventory-delivery-partners/add", "permissions": ["create-delivery-partners"] },
      { "path": "/inventory/inventory-delivery-partners/edit", "permissions": ["edit-delivery-partners"], "isDynamic": true },
+
+     { "path": "/inventory/inventory-delivery-types", "permissions": ["view-delivery-types"] },
+     { "path": "/inventory/inventory-delivery-types/add", "permissions": ["create-delivery-types"] },
+     { "path": "/inventory/inventory-delivery-types/edit", "permissions": ["edit-delivery-types"], "isDynamic": true },
 
     { "path": "/inventory/requisitions", "permissions": ["view-requisitions", "view-my-requisitions", "view-my-departments-requisitions"] },
     { "path": "/inventory/requisitions/add", "permissions": ["create-requisitions"] },

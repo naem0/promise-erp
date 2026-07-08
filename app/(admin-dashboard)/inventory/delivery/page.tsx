@@ -44,21 +44,30 @@ export default async function DeliveryPage({
   };
 
   let DeliveriesList = null;
+  let errorMsg = "";
 
   try {
     DeliveriesList = await getInventoryDeliveries(params);
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error("Error fetching inventory deliveries:", error.message);
+      errorMsg = error.message;
     } else {
       console.error(
         "An unknown error occurred while fetching inventory deliveries.",
       );
+      errorMsg = "An unknown error occurred.";
     }
   }
 
   return (
     <div className="mx-auto space-y-6">
+      {errorMsg && (
+        <div className="p-4 text-sm text-red-800 rounded-xl bg-red-50 border border-red-100 dark:bg-gray-800 dark:text-red-400 dark:border-red-900">
+          <span className="font-semibold">Fetch Error:</span> {errorMsg}
+        </div>
+      )}
+
       <Suspense
         fallback={
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4 md:gap-6">

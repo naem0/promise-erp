@@ -4,7 +4,7 @@ module.exports = {
     script: 'node_modules/.bin/next',
     args: 'start -p 3002',
     exec_mode: 'cluster',    // Run in Cluster mode for zero-downtime reloads
-    instances: 'max',        // Scale instances based on CPU cores (e.g. 2 cores)
+    instances: 2,           // Set to 2 instances to save RAM (takes ~300-400MB) while maintaining zero-downtime
     env: {
       NODE_ENV: 'production'
     }
