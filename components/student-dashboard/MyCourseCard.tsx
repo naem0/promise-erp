@@ -61,11 +61,13 @@ const MyCourseCard = ({ course, isUpdatedCourse, setIsUpdatedCourse }: MyCourseC
       </CardContent>
       <CardFooter className="p-4 pt-0 flex justify-center gap-3 flex-col items-center">
         {course?.status === "Active" ? (
-          <Link
-            href={`/student/mycourses/${course?.course?.slug}?batch_id=${course?.batch?.id}`}
-          >
-            <Button>Continue</Button>
-          </Link>
+          <Button asChild>
+            <Link
+              href={`/student/mycourses/${course?.course?.slug}?batch_id=${course?.batch?.id}`}
+            >
+              Continue
+            </Link>
+          </Button>
         ) : course?.status === "Expired" ? (
           <Button
             variant="outline"
