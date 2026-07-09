@@ -281,6 +281,7 @@ export interface Delivery {
   requisition: string;
   delivery_branch: string;
   aspect_delivery: string;
+  delivery_date: string;
   challan: string;
   delivery_type: string;
   status: number;

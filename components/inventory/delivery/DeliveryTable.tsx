@@ -106,7 +106,10 @@ export default function DeliveryTable({
                 Delivery Branch
               </TableHead>
               <TableHead className="font-semibold text-slate-600 dark:text-slate-300 py-2 px-6 text-center">
-                Aspect Delivery
+                Expected Date
+              </TableHead>
+              <TableHead className="font-semibold text-slate-600 dark:text-slate-300 py-2 px-6 text-center">
+                Delivery Date
               </TableHead>
               <TableHead className="font-semibold text-slate-600 dark:text-slate-300 py-2 px-6 text-center">
                 Challan
@@ -188,6 +191,9 @@ export default function DeliveryTable({
                   </TableCell>
                   <TableCell className="py-2 px-6 text-center text-slate-600 dark:text-slate-400">
                     {item?.aspect_delivery || "---"}
+                  </TableCell>
+                  <TableCell className="py-2 px-6 text-center text-slate-600 dark:text-slate-400">
+                    {item?.delivery_date || "---"}
                   </TableCell>
                   <TableCell className="py-2 px-6 text-center font-medium">
                     {item?.challan && item?.challan !== "---" ? (
