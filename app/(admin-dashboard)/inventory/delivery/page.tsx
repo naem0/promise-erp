@@ -60,8 +60,6 @@ export default async function DeliveryPage({
     }
   }
 
-  console.log("DeliveriesList", DeliveriesList)
-
   return (
     <div className="mx-auto space-y-6">
       {errorMsg && (

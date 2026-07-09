@@ -185,7 +185,7 @@ export default function RequisitionShippingForm({
       
       if (response && (response.success || response.code === 201 || response.code === 200)) {
         toast.success("Shipment processed successfully!");
-        router.push("/inventory/delivery");
+        router.push(`/inventory/delivery/${response.data?.invoice?.invoice_no}/challan`);
         router.refresh();
       } else {
         if (response?.errors) {
