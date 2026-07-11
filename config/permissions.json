@@ -224,6 +224,10 @@
     { "path": "/inventory/roles-power/add", "permissions": ["create-roles-power"] },
     { "path": "/inventory/roles-power/edit", "permissions": ["edit-roles-power"], "isDynamic": true },
 
+    { "path": "/inventory/requisition-flows", "permissions": ["view-requisition-flows"] },
+    { "path": "/inventory/requisition-flows/add", "permissions": ["create-requisition-flows"] },
+    { "path": "/inventory/requisition-flows/edit", "permissions": ["edit-requisition-flows"], "isDynamic": true },
+
     { "path": "/settings/users", "permissions": ["view-users"] },
     { "path": "/settings/users/add", "permissions": ["create-users"] },
     { "path": "/settings/users/edit", "permissions": ["edit-users"], "isDynamic": true },

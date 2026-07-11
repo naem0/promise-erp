@@ -583,6 +583,11 @@ export const sidebarData = {
               url: "/inventory/roles-power",
               permissions: ["view-roles-power"],
             },
+            {
+              title: "Requisition Flows",
+              url: "/inventory/requisition-flows",
+              permissions: ["view-requisition-flows"],
+            },
           ],
         },
       ],
