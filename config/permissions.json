@@ -62,6 +62,10 @@
     { "path": "/lms/designations/add", "permissions": ["create-designations"] },
     { "path": "/lms/designations/edit", "permissions": ["edit-designations"], "isDynamic": true },
 
+    { "path": "/lms/departments", "permissions": ["view-departments"] },
+    { "path": "/lms/departments/add", "permissions": ["create-departments"] },
+    { "path": "/lms/departments/edit", "permissions": ["edit-departments"], "isDynamic": true },
+
     { "path": "/lms/teachers", "permissions": ["view-teachers"] },
     { "path": "/lms/teachers/add", "permissions": ["create-teachers"] },
     { "path": "/lms/teachers/edit", "permissions": ["edit-teachers"], "isDynamic": true },
@@ -219,6 +223,10 @@
     { "path": "/inventory/roles-power", "permissions": ["view-roles-power"] },
     { "path": "/inventory/roles-power/add", "permissions": ["create-roles-power"] },
     { "path": "/inventory/roles-power/edit", "permissions": ["edit-roles-power"], "isDynamic": true },
+
+    { "path": "/inventory/requisition-flows", "permissions": ["view-requisition-flows"] },
+    { "path": "/inventory/requisition-flows/add", "permissions": ["create-requisition-flows"] },
+    { "path": "/inventory/requisition-flows/edit", "permissions": ["edit-requisition-flows"], "isDynamic": true },
 
     { "path": "/settings/users", "permissions": ["view-users"] },
     { "path": "/settings/users/add", "permissions": ["create-users"] },

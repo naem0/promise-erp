@@ -1,14 +1,18 @@
+import { Metadata } from "next";
 import { Suspense } from "react";
-import CommonSectionsData from "@/components/web-content/common-sections/CommonSectionsData";
-import CommonSectionsFilterData from "@/components/web-content/common-sections/CommonSectionsFilterData";
+import RequisitionFlowsData from "@/components/inventory/requisition-flows/RequisitionFlowsData";
+import RequisitionFlowsFilterData from "@/components/inventory/requisition-flows/RequisitionFlowsFilterData";
 import TableSkeleton from "@/components/TableSkeleton";
 import PermissionGuard from "@/components/auth/PermissionGuard";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
 import Link from "next/link";
 
+export const metadata: Metadata = {
+  title: "Requisition Flows | Promise ERP",
+};
 
-export default function CommonSectionsPage({
+export default function RequisitionFlowsPage({
   searchParams,
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -17,25 +21,25 @@ export default function CommonSectionsPage({
     <div className="mx-auto space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-semibold tracking-tight text-slate-800">
-          Common Sections
+          Requisition Flows
         </h1>
 
-        <PermissionGuard requiredPermission="create-sections">
+        <PermissionGuard requiredPermission="create-requisition-flows">
           <Button asChild>
-            <Link href="/web-content/common-sections/add">
+            <Link href="/inventory/requisition-flows/add">
               <PlusCircle className="w-4 h-4 mr-2" />
-              Add Common Section
+              Add Requisition Flow
             </Link>
           </Button>
         </PermissionGuard>
       </div>
 
       <Suspense fallback={<div>Loading filters...</div>}>
-        <CommonSectionsFilterData />
+        <RequisitionFlowsFilterData />
       </Suspense>
 
-      <Suspense fallback={<TableSkeleton columns={7} rows={8} />}>
-        <CommonSectionsData searchParams={searchParams} />
+      <Suspense fallback={<TableSkeleton columns={5} rows={5} />}>
+        <RequisitionFlowsData searchParams={searchParams} />
       </Suspense>
     </div>
   );

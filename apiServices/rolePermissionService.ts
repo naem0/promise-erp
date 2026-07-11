@@ -106,7 +106,6 @@ export interface RolesApiResponse {
   errors?: Record<string, string[]>;
 }
 
-
 // ======================= getAll Roles =======================
 export async function getAllRolesList({
   token,
@@ -139,16 +138,15 @@ export async function getAllRolesList({
       },
     });
 
-    if(res.status === 404) {
+    if (res.status === 404) {
       console.log("No roles found (404). Returning empty list.");
       return null;
     }
 
     if (res.status === 401 || res.status === 403) {
       console.log("Unauthorized: Access token not found");
-      return  null;
+      return null;
     }
-
 
     if (!res.ok) {
       throw new Error(`roles API Error: ${res.status} ${res.statusText}`);
@@ -268,7 +266,9 @@ export async function getRolePermissionslist({
       throw error;
     }
 
-    throw new Error("Unknown error occurred while fetching getRolePermissionslist");
+    throw new Error(
+      "Unknown error occurred while fetching getRolePermissionslist",
+    );
   }
 }
 // =======================End Role Permission List =======================
@@ -448,13 +448,12 @@ export interface CreateAssignRoleResponse {
 export async function assignRole(
   token: string | undefined,
   userId: number,
-  roleName: string, 
+  roleName: string,
 ): Promise<CreateAssignRoleResponse> {
   if (!token) {
     throw new Error("Unauthorized: Access token not found");
   }
   try {
-
     const url = `${API_BASE}/users/${userId}/roles/assign`;
     const res = await fetch(url, {
       method: "POST",
@@ -502,10 +501,19 @@ export interface UserListApiResponse {
   errors?: Record<string, string[]>;
 }
 
-export async function getAllUserlist(token: string | undefined): Promise<UserListApiResponse> {
-
+export async function getAllUserlist(
+  token: string | undefined,
+  params: Record<string, unknown> = {},
+): Promise<UserListApiResponse> {
   if (!token) {
     throw new Error("Unauthorized: Access token not found");
+  }
+
+  const urlParams = new URLSearchParams();
+  for (const key in params) {
+    if (params[key] !== undefined && params[key] !== null) {
+      urlParams.append(key, String(params[key]));
+    }
   }
 
   try {
@@ -517,9 +525,11 @@ export async function getAllUserlist(token: string | undefined): Promise<UserLis
         "Content-Type": "application/json",
       },
     });
-    
+
     if (!res.ok) {
-      throw new Error(`getAllUserlist API Error: ${res.status} ${res.statusText}`);
+      throw new Error(
+        `getAllUserlist API Error: ${res.status} ${res.statusText}`,
+      );
     }
 
     const data: UserListApiResponse = await res.json();
@@ -535,7 +545,7 @@ export async function getAllUserlist(token: string | undefined): Promise<UserLis
 }
 // =======================End GET ALL USERS LIST =======================
 
-// ======================= Start  Role-Wise users list  ======================= 
+// ======================= Start  Role-Wise users list  =======================
 export interface RoleWiseUserRole {
   id: number;
   name: string;
@@ -568,9 +578,8 @@ export interface RoleWiseUserListApiResponse {
 
 export async function getUserWiseByRole(
   roleId: number,
-  token: string | undefined
+  token: string | undefined,
 ): Promise<RoleWiseUserListApiResponse> {
-  
   if (!token) {
     throw new Error("Unauthorized: Access token not found");
   }
@@ -588,13 +597,12 @@ export async function getUserWiseByRole(
 
     if (!res.ok) {
       throw new Error(
-        `getUserWiseByRole API Error: ${res.status} ${res.statusText}`
+        `getUserWiseByRole API Error: ${res.status} ${res.statusText}`,
       );
     }
 
     const data: RoleWiseUserListApiResponse = await res.json();
     return data;
-
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error("getUserWiseByRole Error:", error.message);

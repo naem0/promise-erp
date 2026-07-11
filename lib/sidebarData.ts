@@ -70,6 +70,11 @@ export const sidebarData = {
               permissions: ["view-students", "govt", "paid"],
             },
             {
+              title: "Departments",
+              url: "/lms/departments",
+              permissions: ["view-departments"],
+            },
+            {
               title: "Designations",
               url: "/lms/designations",
               permissions: ["view-designations"],
@@ -560,11 +565,6 @@ export const sidebarData = {
               permissions: ["view-delivery-partners"],
             },
             {
-              title: "Delivery Types",
-              url: "/inventory/inventory-delivery-types",
-              permissions: ["view-delivery-types"],
-            },
-            {
               title: "Delivery",
               url: "/inventory/delivery",
               permissions: ["view-deliveries"],
@@ -582,6 +582,11 @@ export const sidebarData = {
               title: "Roles-Power",
               url: "/inventory/roles-power",
               permissions: ["view-roles-power"],
+            },
+            {
+              title: "Requisition Flows",
+              url: "/inventory/requisition-flows",
+              permissions: ["view-requisition-flows"],
             },
           ],
         },

@@ -28,17 +28,18 @@ export interface ShippingApplicant {
 }
 
 export interface RequisitionShippingDetail {
+  requisition_id: number;
   requisition_no: string;
-  delivery_branch: string | null;
-  delivery_branch_id: number | null;
+  delivery_branch?: string ;
+  delivery_branch_id: number;
   applicant: ShippingApplicant;
-  expected_date: string | null;
-  delivery_date: string | null;
+  expected_date: string ;
+  delivery_date: string ;
   delivery_status: number;
   delivery_status_text: string;
   requested_items: ShippingItem[];
-  invoice: any | null;
-  approval_dashboard: any[];
+  invoice: string ;
+  approval_dashboard: string[];
 }
 
 export interface ShippingDetailsResponse {
@@ -47,6 +48,20 @@ export interface ShippingDetailsResponse {
   code: number;
   data: RequisitionShippingDetail | RequisitionShippingDetail[];
   errors?: Record<string, string[]>;
+}
+
+export interface CreateDeliveryResponse {
+  success: boolean;
+  message: string;
+  code: number;
+  data?: {
+    invoice?: {
+      invoice_no: string;
+      [key: string]: unknown;
+    };
+    [key: string]: unknown;
+  };
+  errors?: Record<string, string[] | string>;
 }
 
 // =======================
@@ -70,6 +85,11 @@ export async function getShippingDetailsCached(
 
     if (res.status === 404) {
       console.warn("Shipping details not found (404).");
+      return null;
+    }
+
+    if (res.status === 401 || res.status === 403) {
+      console.warn("Unauthorized: Access token not found.");
       return null;
     }
 
@@ -108,7 +128,7 @@ export async function getShippingDetails(ids: string): Promise<ShippingDetailsRe
 // CREATE DELIVERY
 // =======================
 
-export async function createDelivery(formData: FormData): Promise<any> {
+export async function createDelivery(formData: FormData): Promise<CreateDeliveryResponse> {
   try {
     const session = await getServerSession(authOptions);
     const token = session?.accessToken;
