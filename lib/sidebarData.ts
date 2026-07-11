@@ -70,6 +70,11 @@ export const sidebarData = {
               permissions: ["view-students", "govt", "paid"],
             },
             {
+              title: "Departments",
+              url: "/lms/departments",
+              permissions: ["view-departments"],
+            },
+            {
               title: "Designations",
               url: "/lms/designations",
               permissions: ["view-designations"],
@@ -558,11 +563,6 @@ export const sidebarData = {
               title: "Delivery Partners",
               url: "/inventory/inventory-delivery-partners",
               permissions: ["view-delivery-partners"],
-            },
-            {
-              title: "Delivery Types",
-              url: "/inventory/inventory-delivery-types",
-              permissions: ["view-delivery-types"],
             },
             {
               title: "Delivery",

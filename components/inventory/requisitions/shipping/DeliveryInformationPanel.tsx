@@ -12,6 +12,9 @@ import {
   ClipboardList,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { DeliveryPartner } from "@/apiServices/inventoryDeliveryPartnersService";
+import { Employee } from "@/apiServices/employeeService";
+import { Controller, Control, UseFormRegister, FieldErrors, UseFormWatch, UseFormSetValue } from "react-hook-form";
 
 // ─────────────────────────────────────────────
 // Types
@@ -29,12 +32,14 @@ export interface DeliveryFormValues {
 }
 
 interface DeliveryInformationPanelProps {
-  values: DeliveryFormValues;
-  onChange: (updated: Partial<DeliveryFormValues>) => void;
-  onSubmit: () => void;
+  control: Control<any>;
+  register: UseFormRegister<any>;
+  errors: FieldErrors<any>;
+  watch: UseFormWatch<any>;
+  setValue: UseFormSetValue<any>;
   isSubmitting: boolean;
-  deliveryPartners: any[];
-  employees: any[];
+  deliveryPartners: DeliveryPartner[];
+  employees: Employee[];
 }
 
 // ─────────────────────────────────────────────
@@ -183,21 +188,21 @@ const DELIVERY_TYPES: {
 ];
 
 export default function DeliveryInformationPanel({
-  values,
-  onChange,
-  onSubmit,
+  control,
+  register,
+  watch,
+  setValue,
   isSubmitting,
   deliveryPartners,
   employees,
 }: DeliveryInformationPanelProps) {
-  const isCourier = values.deliveryType === "Courier";
+  const deliveryType = watch("deliveryType");
+  const isCourier = deliveryType === "Courier";
 
   const handleTypeClick = (type: DeliveryType) => {
-    onChange({
-      deliveryType: type,
-      deliveredBy: "",
-      deliveryPartnerId: "",
-    });
+    setValue("deliveryType", type);
+    setValue("deliveredBy", "");
+    setValue("deliveryPartnerId", "");
   };
 
   return (
@@ -223,7 +228,7 @@ export default function DeliveryInformationPanel({
                 key={label}
                 label={label}
                 icon={icon}
-                selected={values.deliveryType === label}
+                selected={deliveryType === label}
                 onClick={() => handleTypeClick(label)}
               />
             ))}
@@ -236,8 +241,7 @@ export default function DeliveryInformationPanel({
           <div className="relative">
             {isCourier ? (
               <select
-                value={values.deliveryPartnerId}
-                onChange={(e) => onChange({ deliveryPartnerId: e.target.value })}
+                {...register("deliveryPartnerId")}
                 className="w-full border border-slate-200 rounded-lg px-3 py-3 text-sm text-slate-700 bg-white appearance-none focus:outline-none focus:ring-2 focus:ring-[#008738]/10 focus:border-[#008738] transition-colors cursor-pointer"
               >
                 <option value="">Select</option>
@@ -249,8 +253,7 @@ export default function DeliveryInformationPanel({
               </select>
             ) : (
               <select
-                value={values.deliveredBy}
-                onChange={(e) => onChange({ deliveredBy: e.target.value })}
+                {...register("deliveredBy")}
                 className="w-full border border-slate-200 rounded-lg px-3 py-3 text-sm text-slate-700 bg-white appearance-none focus:outline-none focus:ring-2 focus:ring-[#008738]/10 focus:border-[#008738] transition-colors cursor-pointer"
               >
                 <option value="">Select</option>
@@ -274,8 +277,7 @@ export default function DeliveryInformationPanel({
           <FieldLabel>Status</FieldLabel>
           <div className="relative">
             <select
-              value={values.status}
-              onChange={(e) => onChange({ status: e.target.value })}
+              {...register("status")}
               className="w-full border border-slate-200 rounded-lg px-3 py-3 text-sm text-slate-700 bg-white appearance-none focus:outline-none focus:ring-2 focus:ring-[#008738]/10 focus:border-[#008738] transition-colors cursor-pointer"
             >
               <option value="">Select</option>
@@ -298,8 +300,7 @@ export default function DeliveryInformationPanel({
             type="number"
             min={0}
             placeholder="e.g: 2000 TK"
-            value={values.deliveryCost}
-            onChange={(e) => onChange({ deliveryCost: e.target.value })}
+            {...register("deliveryCost")}
             className="w-full border border-slate-200 rounded-lg px-3 py-3 text-sm text-slate-700 bg-white focus:outline-none focus:ring-2 focus:ring-[#008738]/10 focus:border-[#008738] transition-colors placeholder:text-slate-300"
           />
         </div>
@@ -307,17 +308,22 @@ export default function DeliveryInformationPanel({
         {/* Upload Invoice/Bill/Voucher */}
         <div>
           <FieldLabel>Upload Invoice/Bill/Voucher</FieldLabel>
-          <FileUploadArea
-            file={values.invoiceFile}
-            onChange={(file) => onChange({ invoiceFile: file })}
+          <Controller
+            control={control}
+            name="invoiceFile"
+            render={({ field }) => (
+              <FileUploadArea
+                file={field.value}
+                onChange={field.onChange}
+              />
+            )}
           />
         </div>
 
-        {/* Shipped Action Button (matches Figma positioning) */}
+        {/* Shipped Action Button */}
         <div className="flex justify-end pt-2">
           <Button
-            type="button"
-            onClick={onSubmit}
+            type="submit"
             disabled={isSubmitting}
             className="bg-[#008738] hover:bg-[#00702f] text-white px-6 py-5 rounded-lg flex items-center gap-2 text-sm font-semibold shadow-sm transition-colors cursor-pointer disabled:opacity-50"
           >

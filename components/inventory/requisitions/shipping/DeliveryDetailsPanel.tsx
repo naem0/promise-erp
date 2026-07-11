@@ -18,12 +18,12 @@ interface SelectedItem {
 interface SelectedRequisition {
   requisition_id: number;
   requisition_no: string;
-  delivery_branch: string | null;
+  delivery_branch?: string | null;
   applicant: {
     name: string;
-    mob: string | null;
+    mob?: string | null;
   };
-  expected_date: string | null;
+  expected_date?: string | null;
   items: SelectedItem[];
 }
 

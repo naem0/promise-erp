@@ -1,32 +1,44 @@
 "use client";
 
-import React, { useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
+import { useForm } from "react-hook-form";
 import DeliveryInformationPanel, {
-  DeliveryFormValues,
+  DeliveryType,
 } from "./DeliveryInformationPanel";
 import DeliveryDetailsPanel from "./DeliveryDetailsPanel";
-import { createDelivery } from "@/apiServices/inventoryDeliveriesService";
+import { createDelivery, RequisitionShippingDetail, ShippingItem } from "@/apiServices/inventoryDeliveriesService";
+import { DeliveryPartner } from "@/apiServices/inventoryDeliveryPartnersService";
+import { Employee } from "@/apiServices/employeeService";
 
-interface RequisitionShippingFormProps {
-  initialRequisitions: any[];
-  deliveryPartners: any[];
-  employees: any[];
+interface ShippingItemWithState extends ShippingItem {
+  checked: boolean;
+  deliver_qty: number;
 }
 
-const DEFAULT_FORM: DeliveryFormValues = {
-  deliveryType: "Courier", // Default to Courier as shown in Figma
-  deliveredBy: "",
-  deliveryPartnerId: "",
-  status: "3", // Default to Shipped (3)
-  deliveryCost: "",
-  description: "",
-  invoiceFile: null,
-};
+interface RequisitionWithItems extends RequisitionShippingDetail {
+  items: ShippingItemWithState[];
+}
+
+export interface FormValues {
+  deliveryType: DeliveryType | "";
+  deliveredBy: number | string;
+  deliveryPartnerId: number | string;
+  status: string;
+  deliveryCost: string;
+  description: string;
+  invoiceFile: File | null;
+  requisitions: RequisitionWithItems[];
+}
+
+interface RequisitionShippingFormProps {
+  initialRequisitions: RequisitionShippingDetail[];
+  deliveryPartners: DeliveryPartner[];
+  employees: Employee[];
+}
 
 export default function RequisitionShippingForm({
   initialRequisitions,
@@ -35,89 +47,95 @@ export default function RequisitionShippingForm({
 }: RequisitionShippingFormProps) {
   const router = useRouter();
   const { data: session } = useSession();
-  
-  const [formValues, setFormValues] = useState<DeliveryFormValues>(DEFAULT_FORM);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Initialize the requisitions state with checked and deliver_qty fields
-  const [requisitions, setRequisitions] = useState<any[]>(() => {
-    return initialRequisitions.map((req) => ({
-      ...req,
-      items: (req.requested_items || []).map((item: any) => ({
-        ...item,
-        checked: true, // Checked by default
-        deliver_qty: item.remaining_qty, // Defaults to full remaining quantity
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    control,
+    formState: { errors, isSubmitting },
+  } = useForm<FormValues>({
+    defaultValues: {
+      deliveryType: "Courier",
+      deliveredBy: "",
+      deliveryPartnerId: "",
+      status: "3",
+      deliveryCost: "",
+      description: "",
+      invoiceFile: null,
+      requisitions: initialRequisitions.map((req) => ({
+        ...req,
+        items: (req.requested_items || []).map((item) => ({
+          ...item,
+          checked: true,
+          deliver_qty: item.remaining_qty,
+        })),
       })),
-    }));
+    },
   });
 
-  const handleFormChange = (updated: Partial<DeliveryFormValues>) => {
-    setFormValues((prev) => ({ ...prev, ...updated }));
-  };
+  const requisitions = watch("requisitions");
 
   const handleItemCheckToggle = (reqNo: string, itemId: number) => {
-    setRequisitions((prev) =>
-      prev.map((req) => {
-        if (req.requisition_no !== reqNo) return req;
-        return {
-          ...req,
-          items: req.items.map((item: any) =>
-            item.id === itemId ? { ...item, checked: !item.checked } : item
-          ),
-        };
-      })
-    );
+    const updated = requisitions.map((req) => {
+      if (req.requisition_no !== reqNo) return req;
+      return {
+        ...req,
+        items: req.items.map((item) =>
+          item.id === itemId ? { ...item, checked: !item.checked } : item
+        ),
+      };
+    });
+    setValue("requisitions", updated, { shouldValidate: true });
   };
 
   const handleItemQtyChange = (reqNo: string, itemId: number, newQty: number) => {
-    setRequisitions((prev) =>
-      prev.map((req) => {
-        if (req.requisition_no !== reqNo) return req;
-        return {
-          ...req,
-          items: req.items.map((item: any) => {
-            if (item.id !== itemId) return item;
-            // Bound quantity between 1 and remaining_qty
-            const bounded = Math.max(1, Math.min(item.remaining_qty, newQty));
-            return { ...item, deliver_qty: bounded };
-          }),
-        };
-      })
-    );
+    const updated = requisitions.map((req) => {
+      if (req.requisition_no !== reqNo) return req;
+      return {
+        ...req,
+        items: req.items.map((item) => {
+          if (item.id !== itemId) return item;
+          const bounded = Math.max(1, Math.min(item.remaining_qty, newQty));
+          return { ...item, deliver_qty: bounded };
+        }),
+      };
+    });
+    setValue("requisitions", updated, { shouldValidate: true });
   };
 
   const handleSelectAllCard = (reqNo: string, checked: boolean) => {
-    setRequisitions((prev) =>
-      prev.map((req) => {
-        if (req.requisition_no !== reqNo) return req;
-        return {
-          ...req,
-          items: req.items.map((item: any) => ({ ...item, checked })),
-        };
-      })
-    );
+    const updated = requisitions.map((req) => {
+      if (req.requisition_no !== reqNo) return req;
+      return {
+        ...req,
+        items: req.items.map((item) => ({ ...item, checked })),
+      };
+    });
+    setValue("requisitions", updated, { shouldValidate: true });
   };
 
   const handleRemoveRequisition = (reqNo: string) => {
-    setRequisitions((prev) => prev.filter((r) => r.requisition_no !== reqNo));
+    const updated = requisitions.filter((r) => r.requisition_no !== reqNo);
+    setValue("requisitions", updated, { shouldValidate: true });
   };
 
-  const handleDelivery = async () => {
-    if (!formValues.deliveryType) {
+  const handleDelivery = async (values: FormValues) => {
+    if (!values.deliveryType) {
       toast.error("Please select a delivery type.");
       return;
     }
 
     // Resolve delivery credentials based on type
-    let deliveredByUserId = formValues.deliveredBy;
-    let partnerId = formValues.deliveryPartnerId;
+    let deliveredByUserId = values.deliveredBy;
+    let partnerId = values.deliveryPartnerId;
 
-    if (formValues.deliveryType === "Courier") {
+    if (values.deliveryType === "Courier") {
       if (!partnerId) {
         toast.error("Please select a courier partner under 'Delivered Via'.");
         return;
       }
-      // Courier requires employee (delivered_by) to be the current logged-in user
       if (session?.user?.id) {
         deliveredByUserId = session.user.id;
       } else {
@@ -125,17 +143,15 @@ export default function RequisitionShippingForm({
         return;
       }
     } else {
-      // In-house types (Physical, Transport, Air) require an employee select
       if (!deliveredByUserId) {
         toast.error("Please select an employee under 'Delivered Via'.");
         return;
       }
-      partnerId = ""; // No courier partner
+      partnerId = "";
     }
 
-    // Gather active requisitions (requisitions with at least one checked item)
-    const activeReqs = requisitions.filter((req) =>
-      req.items.some((item: any) => item.checked && item.deliver_qty > 0)
+    const activeReqs = values.requisitions.filter((req) =>
+      req.items.some((item) => item.checked && item.deliver_qty > 0)
     );
 
     if (activeReqs.length === 0) {
@@ -143,37 +159,33 @@ export default function RequisitionShippingForm({
       return;
     }
 
-    setIsSubmitting(true);
     try {
       const formData = new FormData();
 
-      // Append general fields
-      formData.append("delivery_type", formValues.deliveryType);
+      formData.append("delivery_type", values.deliveryType);
       if (partnerId) {
         formData.append("delivery_partner_id", String(partnerId));
       }
       formData.append("delivered_by", String(deliveredByUserId));
-      formData.append("status", formValues.status || "3"); // 3 = Shipped
-      if (formValues.deliveryCost) {
-        formData.append("delivery_cost", String(formValues.deliveryCost));
+      formData.append("status", values.status || "3");
+      if (values.deliveryCost) {
+        formData.append("delivery_cost", String(values.deliveryCost));
       }
-      if (formValues.description) {
-        formData.append("description", formValues.description);
+      if (values.description) {
+        formData.append("description", values.description);
       }
-      if (formValues.invoiceFile) {
-        formData.append("attachments[]", formValues.invoiceFile);
+      if (values.invoiceFile) {
+        formData.append("attachments[]", values.invoiceFile);
       }
 
-      // Append requisition IDs
       activeReqs.forEach((req) => {
         if (req.requisition_id) {
           formData.append("requisition_ids[]", String(req.requisition_id));
         }
       });
 
-      // Append items details (item_ids[] and deliver_qtys[])
       activeReqs.forEach((req) => {
-        req.items.forEach((item: any) => {
+        req.items.forEach((item) => {
           if (item.checked && item.deliver_qty > 0) {
             formData.append("item_ids[]", String(item.id));
             formData.append("deliver_qtys[]", String(item.deliver_qty));
@@ -195,17 +207,15 @@ export default function RequisitionShippingForm({
             const firstError = response.errors[firstKey];
             const errorMsg = Array.isArray(firstError) ? firstError[0] : firstError;
             toast.error(errorMsg || "Validation failed.");
-            setIsSubmitting(false);
             return;
           }
         }
         toast.error(response?.message || "Failed to process shipment.");
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error(error);
-      toast.error(error.message || "Failed to process shipment.");
-    } finally {
-      setIsSubmitting(false);
+      const errMsg = error instanceof Error ? error.message : "Failed to process shipment.";
+      toast.error(errMsg);
     }
   };
 
@@ -229,14 +239,16 @@ export default function RequisitionShippingForm({
         </div>
       </div>
 
-      {/* ── Two-Panel Layout ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-[380px_1fr] gap-6 items-start">
+      {/* ── Two-Panel Layout Form ── */}
+      <form onSubmit={handleSubmit(handleDelivery)} className="grid grid-cols-1 lg:grid-cols-[380px_1fr] gap-6 items-start">
         {/* Left — Delivery Information */}
         <div className="lg:sticky lg:top-4">
           <DeliveryInformationPanel
-            values={formValues}
-            onChange={handleFormChange}
-            onSubmit={handleDelivery}
+            control={control}
+            register={register}
+            errors={errors}
+            watch={watch}
+            setValue={setValue}
             isSubmitting={isSubmitting}
             deliveryPartners={deliveryPartners}
             employees={employees}
@@ -251,7 +263,7 @@ export default function RequisitionShippingForm({
           onItemQtyChange={handleItemQtyChange}
           onSelectAllCard={handleSelectAllCard}
         />
-      </div>
+      </form>
     </div>
   );
 }
