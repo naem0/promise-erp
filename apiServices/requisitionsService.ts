@@ -44,6 +44,12 @@ export interface RequisitionItem {
   after_delivery_qty: number;
   status: number;
   note?: string;
+  room_id?: number | string | null;
+  room?: {
+    id: number;
+    name: string;
+    room_no?: string;
+  };
 }
 
 export interface Requisition {
@@ -105,6 +111,29 @@ export interface Requisition {
     actioned_by: string;
     actioned_at: string;
     note: string;
+  }[];
+}
+
+export interface RequisitionInput {
+  type: number;
+  requisition_condition?: number | null;
+  description?: string;
+  user_id?: number;
+  branch_from?: number;
+  branch_to?: number;
+  items?: {
+    product_id: number;
+    price: number;
+    quantity: number;
+    reason_for_requirement?: string;
+    expected_date?: string;
+    room_id?: number | string;
+  }[];
+  amount?: {
+    amount_requested: number;
+    amount_reason?: string;
+    amount_expected_date?: string;
+    docs?: { fileName: string; fileData: string }[];
   }[];
 }
 
@@ -256,7 +285,7 @@ export async function getRequisitionById(
 // =======================
 
 export async function createRequisition(
-  body: Record<string, unknown>,
+  body: RequisitionInput,
 ): Promise<SingleRequisitionResponse> {
   try {
     const session = await getServerSession(authOptions);
@@ -294,7 +323,7 @@ export async function createRequisition(
 
 export async function updateRequisition(
   id: number,
-  body: Record<string, unknown>,
+  body: RequisitionInput,
 ): Promise<SingleRequisitionResponse> {
   try {
     const session = await getServerSession(authOptions);
@@ -422,7 +451,7 @@ export async function getApprovalDetails(
 
     if (!res.ok) throw new Error(`Status: ${res.status} ${res.statusText}`);
     return await res.json();
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Error in getApprovalDetails:", error);
     return null;
   }

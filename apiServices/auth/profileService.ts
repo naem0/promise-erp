@@ -34,6 +34,10 @@ export interface UserProfile {
     id: number;
     name: string;
   }[];
+  main_branch?: {
+    id: number;
+    name: string;
+  };
   roles?: string[];
   tools?: string[];
 }

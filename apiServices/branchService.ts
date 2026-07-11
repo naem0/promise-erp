@@ -29,10 +29,10 @@ export interface Branch {
   phone?: string[];
   email?: string[];
   google_map?: string;
-  social_links?: SocialLink[] ;
+  social_links?: SocialLink[];
   student_count?: number;
   teacher_count?: number;
-  employee_count?: number ;
+  employee_count?: number;
 
   district?: {
     id: number;
@@ -48,11 +48,11 @@ export interface BranchCreate {
   name: string;
   code?: string;
   district_id?: number;
-  address?: string ;
+  address?: string;
   phone?: string[];
   email?: string[];
   google_map?: string;
-  social_links?: SocialLink[] ;
+  social_links?: SocialLink[];
 }
 export interface BranchResponse {
   success: boolean;
@@ -71,18 +71,7 @@ export interface SingleBranchResponse {
   errors?: Record<string, string[] | string>;
 }
 
-/* ===============================
-   Helper – Get Auth Token
-================================== */
-async function getAuthToken(): Promise<string> {
-  const session = await getServerSession(authOptions);
 
-  if (!session?.accessToken) {
-    throw new Error("No valid session or access token found.");
-  }
-
-  return session.accessToken;
-}
 
 /* ===============================
    Add Branch
@@ -90,11 +79,12 @@ async function getAuthToken(): Promise<string> {
 export async function createBranch(
   formData: FormData,
 ): Promise<SingleBranchResponse> {
-  try {
-    const session = await getServerSession(authOptions);
-    const token = session?.accessToken;
 
-    if (!token) throw new Error("No valid session/token");
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+  if (!token) throw new Error("No valid session/token");
+
+  try {
 
     const res = await fetch(`${API_BASE}/branches`, {
       method: "POST",
@@ -104,22 +94,19 @@ export async function createBranch(
       body: formData,
     });
 
-    if (!res.ok) {
-      const text = await res.text();
-      console.error("Create Branch Failed:", text);
-      try {
-        return JSON.parse(text);
-      } catch (e) {
-        throw new Error(`Failed to create branch: ${res.statusText}`);
-      }
-    }
-
     const result = await res.json();
+
     updateTag("branches-list");
+
     return result;
   } catch (error: unknown) {
-    console.error("Error in createBranch:", error);
-    throw new Error(error instanceof Error ? error.message : "Failed to create branch");
+    if (error instanceof Error) {
+      console.error(`Error in createBranch: ${error.message}`);
+      throw new Error(`Failed to create branch: ${error.message}`);
+    } else {
+      console.error("Error in createBranch:", error);
+      throw new Error("Failed to create branch");
+    }
   }
 }
 
@@ -131,7 +118,7 @@ export async function getBranchesCached(
   token: string,
   params: Record<string, unknown> = {},
 ): Promise<BranchResponse> {
-  "use cache: private";
+  "use cache: remote";
   cacheTag("branches-list");
   const urlParams = new URLSearchParams();
 
@@ -192,11 +179,14 @@ export async function getBranches(
     if (!cachedResult) throw new Error("Failed to fetch data from cache.");
 
     return cachedResult;
-  } catch (error) {
-    console.error("Error in get branches:", error);
-    throw new Error(
-      error instanceof Error ? error.message : "Failed to get branches",
-    );
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error(`Error in get branches: ${error.message}`);
+      throw new Error(`Failed to get branches: ${error.message}`);
+    } else {
+      console.error("Error in get branches:", error);
+      throw new Error("Failed to get branches");
+    }
   }
 }
 
@@ -220,11 +210,26 @@ export async function getBranchById(id: string): Promise<SingleBranchResponse> {
     if (!res.ok) {
       throw new Error(`Failed to fetch branch: ${res.statusText}`);
     }
+    if (res.status === 404) {
+      console.warn("Courses not found (404). Returning null.");
+      throw new Error(`${res.status} ${res.statusText}`);
+    }
+    if (res.status === 401 || res.status === 403) {
+      console.warn(
+        "Unauthorized or forbidden access (401/403). Returning null.",
+      );
+      throw new Error(`${res.status} ${res.statusText}`);
+    }
 
     return await res.json();
   } catch (error: unknown) {
-    console.error("Error in getBranchById:", error);
-    throw new Error(error instanceof Error ? error.message : "Failed to fetch branch");
+    if (error instanceof Error) {
+      console.error(`Error in get branch by ID: ${error.message}`);
+      throw new Error(`Failed to get branch by ID: ${error.message}`);
+    } else {
+      console.error("Error in get branch by ID:", error);
+      throw new Error("Failed to get branch by ID");
+    }
   }
 }
 
@@ -236,11 +241,13 @@ export async function updateBranch(
   id: string,
   formData: FormData,
 ): Promise<SingleBranchResponse> {
-  try {
-    const session = await getServerSession(authOptions);
-    const token = session?.accessToken;
 
-    if (!token) throw new Error("No valid session/token");
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+
+  if (!token) throw new Error("No valid session/token");
+  
+  try {
 
     // We use POST with _method=PUT (in FormData) for Laravel updates involving multipart form data
     const res = await fetch(`${API_BASE}/branches/${id}`, {
@@ -251,14 +258,19 @@ export async function updateBranch(
       body: formData,
     });
 
-    
+
 
     const result = await res.json();
     updateTag("branches-list");
     return result;
   } catch (error: unknown) {
-    console.error("Error in updateBranch:", error);
-    throw new Error(error instanceof Error ? error.message : "Failed to update branch");
+    if (error instanceof Error) {
+      console.error(`Error in update branch: ${error.message}`);
+      throw new Error(`Failed to update branch: ${error.message}`);
+    } else {
+      console.error("Error in update branch:", error);
+      throw new Error("Failed to update branch");
+    }
   }
 }
 
@@ -269,11 +281,13 @@ export async function updateBranch(
 export async function deleteBranch(
   id: number,
 ): Promise<SingleBranchResponse> {
-  try {
-    const session = await getServerSession(authOptions);
-    const token = session?.accessToken;
 
-    if (!token) throw new Error("No valid session/token");
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+
+  if (!token) throw new Error("No valid session/token");
+
+  try {
 
     const res = await fetch(`${API_BASE}/branches/${id}`, {
       method: "DELETE",
@@ -287,8 +301,13 @@ export async function deleteBranch(
     updateTag("branches-list");
     return result;
   } catch (error: unknown) {
-    console.error("Error in deleteBranch:", error);
-    throw new Error(error instanceof Error ? error.message : "Failed to delete branch");
+    if (error instanceof Error) {
+      console.error(`Error in delete branch: ${error.message}`);
+      throw new Error(`Failed to delete branch: ${error.message}`);
+    } else {
+      console.error("Error in delete branch:", error);
+      throw new Error("Failed to delete branch");
+    }
   }
 }
 
@@ -339,12 +358,14 @@ export async function getPublicWebBranches(
     );
 
     if (res.status === 404) {
-      console.warn("No branches found.");
-      return null;
+      console.warn("Courses not found (404). Returning null.");
+      throw new Error(`${res.status} ${res.statusText}`);
     }
-    if (res.status === 403) {
-      console.warn("Forbidden");
-      return null;
+    if (res.status === 401 || res.status === 403) {
+      console.warn(
+        "Unauthorized or forbidden access (401/403). Returning null.",
+      );
+      throw new Error(`${res.status} ${res.statusText}`);
     }
 
     if (!res.ok) {
@@ -383,6 +404,17 @@ export interface PublicDivisionApiResponse {
 export async function getPublicDivisionList(): Promise<PublicDivisionApiResponse> {
   try {
     const res = await fetch(`${API_BASE}/public/division-list`);
+
+    if (res.status === 404) {
+      console.warn("Courses not found (404). Returning null.");
+      throw new Error(`${res.status} ${res.statusText}`);
+    }
+    if (res.status === 401 || res.status === 403) {
+      console.warn(
+        "Unauthorized or forbidden access (401/403). Returning null.",
+      );
+      throw new Error(`${res.status} ${res.statusText}`);
+    }
 
     if (!res.ok) {
       throw new Error(
@@ -424,6 +456,17 @@ export async function getPublicBranchListAll(): Promise<PublicBranchListApiRespo
     // Adding no-cache or revalidate if needed, but fetch defaults should be fine
     const res = await fetch(`${API_BASE}/public/branch-list`);
 
+    if (res.status === 404) {
+      console.warn("Courses not found (404). Returning null.");
+      throw new Error(`${res.status} ${res.statusText}`);
+    }
+    if (res.status === 401 || res.status === 403) {
+      console.warn(
+        "Unauthorized or forbidden access (401/403). Returning null.",
+      );
+      throw new Error(`${res.status} ${res.statusText}`);
+    }
+
     if (!res.ok) {
       throw new Error(
         `getPublicBranchListAll API error: ${res.status} ${res.statusText}`,
@@ -458,6 +501,17 @@ export interface BranchStatisticsResponse {
 export async function getPublicBranchStatistics(): Promise<BranchStatisticsResponse> {
   try {
     const res = await fetch(`${API_BASE}/public/geo-statistics`);
+
+    if (res.status === 404) {
+      console.warn("Courses not found (404). Returning null.");
+      throw new Error(`${res.status} ${res.statusText}`);
+    }
+    if (res.status === 401 || res.status === 403) {
+      console.warn(
+        "Unauthorized or forbidden access (401/403). Returning null.",
+      );
+      throw new Error(`${res.status} ${res.statusText}`);
+    }
 
     if (!res.ok) {
       throw new Error(
