@@ -21,15 +21,11 @@ import {
   RolesPowerStep,
   getRolesPower,
 } from "@/apiServices/inventoryRolesPowerService";
+import { getRequisitionFlows } from "@/apiServices/inventoryRequisitionFlowsService";
 import Pagination from "@/components/common/Pagination";
 import PermissionGuard from "@/components/auth/PermissionGuard";
 import DeleteRolesPowerButton from "./DeleteRolesPowerButton";
 import RolesPowerClientTable from "./RolesPowerClientTable";
-
-const WORKFLOW_TYPE_LABELS: Record<number, string> = {
-  1: "Head Office",
-  2: "Branch",
-};
 
 const RolesPowerData = async ({
   searchParams,
@@ -49,9 +45,9 @@ const RolesPowerData = async ({
   const params = {
     page,
     per_page,
-    workflow_type:
-      typeof resolvedSearchParams.workflow_type === "string"
-        ? resolvedSearchParams.workflow_type
+    requisition_flow_id:
+      typeof resolvedSearchParams.requisition_flow_id === "string"
+        ? resolvedSearchParams.requisition_flow_id
         : undefined,
     status:
       typeof resolvedSearchParams.status === "string"
@@ -60,8 +56,11 @@ const RolesPowerData = async ({
   };
 
   let results;
+  let flows = [];
   try {
     results = await getRolesPower(params);
+    const flowsRes = await getRequisitionFlows({ per_page: 100 });
+    flows = flowsRes?.data?.flows || [];
   } catch (error: unknown) {
     if (error instanceof Error) {
       return <ErrorComponent message={error.message} />;
@@ -77,17 +76,15 @@ const RolesPowerData = async ({
   const steps = results?.data?.steps || [];
   const paginationData = results?.data?.pagination;
 
-  if (!steps.length) {
-    return (
-      <NotFoundComponent
-        message={results?.message || "No roles power steps found."}
-      />
-    );
-  }
 
   return (
     <>
-      <RolesPowerClientTable initialSteps={steps} page={page} per_page={per_page} />
+      <RolesPowerClientTable
+        initialSteps={steps}
+        flows={flows}
+        page={page}
+        per_page={per_page}
+      />
 
       {paginationData && paginationData.last_page > 1 && (
         <div className="mt-4 pb-6">
