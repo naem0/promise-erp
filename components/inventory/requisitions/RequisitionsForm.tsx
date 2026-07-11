@@ -1,14 +1,22 @@
 "use client";
 
-import { Controller, useFieldArray, useForm } from "react-hook-form";
+import { Controller, useFieldArray, useForm, Path } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useEffect, useState } from "react";
 import {
   createRequisition,
   updateRequisition,
   Requisition,
+  RequisitionInput,
 } from "@/apiServices/requisitionsService";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -31,10 +39,12 @@ import {
   Sparkles,
   X,
   Image as ImageIcon,
+  ChevronDown,
 } from "lucide-react";
 import BranchSearchSelect from "@/components/common/BranchSearchSelect";
 import { ProductItem } from "@/apiServices/inventoryItemsService";
 import { UserProfile } from "@/apiServices/auth/profileService";
+import { Room } from "@/apiServices/inventoryRoomsService";
 
 // =======================
 // Types
@@ -78,6 +88,7 @@ interface RequisitionsFormProps {
   requisition?: Requisition;
   products?: ProductItem[];
   currentUser?: UserProfile;
+  rooms?: Room[];
 }
 
 // =======================
@@ -120,6 +131,7 @@ export default function RequisitionsForm({
   requisition,
   products = [],
   currentUser,
+  rooms = [],
 }: RequisitionsFormProps) {
   const router = useRouter();
   const [activeType, setActiveType] = useState<"1" | "2">(
@@ -177,11 +189,11 @@ export default function RequisitionsForm({
       if (requisition.type === 2) {
         const amtItems = requisition.amount_items || requisition.amount;
         if (amtItems && Array.isArray(amtItems) && amtItems.length > 0) {
-          initialAmountItems = amtItems.map((item: any) => ({
+          initialAmountItems = amtItems.map((item) => ({
             amount_requested: String(item.amount_requested || ""),
             amount_reason: String(item.amount_reason || ""),
             amount_expected_date: item.amount_expected_date ? String(item.amount_expected_date).split("T")[0] : "",
-            docs: Array.isArray(item.docs) ? item.docs : [],
+            docs: Array.isArray(item.docs) ? (item.docs as unknown as AmountFile[]) : [],
           }));
         } else if (requisition.amount_requested) {
           initialAmountItems = [{
@@ -208,7 +220,7 @@ export default function RequisitionsForm({
                 quantity: String(item.quantity),
                 reason_for_requirement: item.reason_for_requirement || "",
                 expected_date: item.expected_date || "",
-                room_id: "",
+                room_id: item.room_id ? String(item.room_id) : (item.room?.id ? String(item.room.id) : "none"),
               }))
             : [],
         amount: initialAmountItems,
@@ -237,15 +249,10 @@ export default function RequisitionsForm({
             p.name.toLowerCase().includes(productSearch.toLowerCase()) ||
             (p.barcode || "").toLowerCase().includes(productSearch.toLowerCase())
         )
-      : products;
-
-  const submitHandler = async (values: FormValues) => {
+      : products;  const submitHandler = async (values: FormValues) => {
     const type = parseInt(values.type);
-    const isBranchActive = type === 1 && values.requisition_condition === "4";
-    const branchId = isBranchActive && values.branch_from ? parseInt(values.branch_from) : undefined;
     
-   
-    const payload: Record<string, unknown> = { 
+    const payload: RequisitionInput = { 
       type,
       description: values.description || "",
       user_id: currentUser?.id,
@@ -258,14 +265,21 @@ export default function RequisitionsForm({
       payload.items = values.items
         .filter((item) => item.product_id)
         .map((item) => {
-          const mappedItem: Record<string, unknown> = {
+          const mappedItem: {
+            product_id: number;
+            price: number;
+            quantity: number;
+            reason_for_requirement?: string;
+            expected_date?: string;
+            room_id?: number | string;
+          } = {
             product_id: parseInt(item.product_id),
             price: parseFloat(item.price) || 0,
             quantity: parseInt(item.quantity) || 1,
           };
           if (item.reason_for_requirement) mappedItem.reason_for_requirement = item.reason_for_requirement;
           if (item.expected_date) mappedItem.expected_date = item.expected_date;
-          if (item.room_id) mappedItem.room_id = item.room_id;
+          mappedItem.room_id = item.room_id && item.room_id !== "none" ? parseInt(item.room_id) : "";
           return mappedItem;
         });
     } else {
@@ -273,7 +287,12 @@ export default function RequisitionsForm({
       payload.amount = values.amount
         .filter((item) => item.amount_requested && parseFloat(item.amount_requested) > 0)
         .map((item) => {
-          const mappedAmount: Record<string, unknown> = {
+          const mappedAmount: {
+            amount_requested: number;
+            docs: AmountFile[];
+            amount_reason?: string;
+            amount_expected_date?: string;
+          } = {
             amount_requested: parseFloat(item.amount_requested),
             docs: item.docs || [],
           };
@@ -321,7 +340,7 @@ export default function RequisitionsForm({
               targetField = `${field}.root`;
             }
             
-            setError(targetField as any, {
+            setError(targetField as Path<FormValues>, {
               type: "server",
               message: String(errorMessage),
             });
@@ -566,10 +585,11 @@ export default function RequisitionsForm({
                         <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                         <input
                           type="text"
+                          autoComplete="off"
                           value={productSearch}
                           onChange={(e) => setProductSearch(e.target.value)}
                           placeholder="Search Expense Item By Name or Barcode"
-                          className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-400 transition-colors"
+                          className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-400 transition-colors [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden [&::-webkit-search-results-button]:hidden [&::-webkit-search-results-decoration]:hidden"
                         />
                       </div>
 
@@ -593,7 +613,7 @@ export default function RequisitionsForm({
                                           quantity: "1",
                                           reason_for_requirement: "",
                                           expected_date: "",
-                                          room_id: "",
+                                          room_id: "none",
                                         });
                                         // Clear items array error when user adds an item
                                         clearErrors("items");
@@ -622,9 +642,11 @@ export default function RequisitionsForm({
                     </div>
 
                     {/* Root-level items error from server */}
-                    {(errors as any).items?.root?.message && (
+                    {errors.items && "root" in errors.items && (errors.items as { root?: { message?: string } }).root?.message && (
                       <div className="flex items-center gap-2 px-3 py-2 bg-red-50 border border-red-200 rounded-lg mb-2">
-                        <span className="text-red-500 text-sm">{(errors as any).items.root.message}</span>
+                        <span className="text-red-500 text-sm">
+                          {(errors.items as { root?: { message?: string } }).root?.message}
+                        </span>
                       </div>
                     )}
 
@@ -641,10 +663,10 @@ export default function RequisitionsForm({
                         return (
                           <div
                             key={field.id}
-                            className="border border-gray-200 rounded-xl overflow-hidden bg-white"
+                            className="border border-slate-200/80 rounded-2xl overflow-hidden bg-white shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)] hover:shadow-[0_4px_12px_-3px_rgba(0,0,0,0.08)] transition-all duration-300"
                           >
                             {/* ── Product Header Row ── */}
-                            <div className="flex items-center gap-3 px-4 py-2.5 bg-gray-50/80 border-b border-gray-100">
+                            <div className="flex items-center gap-3 px-5 py-3 bg-slate-50/70 border-b border-slate-100">
                               {/* Product icon */}
                               <div className="w-8 h-8 shrink-0 bg-green-50 border border-green-100 rounded-lg flex items-center justify-center">
                                 <PackageSearch className="h-3.5 w-3.5 text-green-600" />
@@ -657,7 +679,7 @@ export default function RequisitionsForm({
                                   {selectedProduct ? selectedProduct.name : "Unknown Product"}
                                 </h3>
                                 {selectedProduct && (
-                                  <p className="text-[11px] text-slate-400 mt-0 leading-tight">
+                                  <p className="text-[11px] text-slate-400 mt-0.5 leading-tight font-medium">
                                     {[
                                       selectedProduct.barcode && `Barcode: ${selectedProduct.barcode}`,
                                       selectedProduct.unit_name && `Unit: ${selectedProduct.unit_name}`,
@@ -678,22 +700,22 @@ export default function RequisitionsForm({
                               <button
                                 type="button"
                                 onClick={() => removeItem(index)}
-                                className="ml-1 p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors shrink-0"
+                                className="ml-1 p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all duration-200 shrink-0 cursor-pointer"
                               >
                                 <Trash2 className="h-4 w-4" />
                               </button>
                             </div>
 
                             {/* ── Fields Row ── */}
-                            <div className="px-4 py-3 grid grid-cols-12 gap-x-3 gap-y-2 items-end">
+                            <div className="p-5 grid grid-cols-12 gap-x-4 gap-y-4 items-end">
                               {/* REASON FOR REQUIREMENT */}
-                              <div className="col-span-4">
-                                <label className="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-1">
+                              <div className="col-span-6">
+                                <label className="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
                                   Reason for Requirement
                                 </label>
                                 <Input
                                   placeholder="e.g. For Lab 3 Student"
-                                  className={`h-9 border-gray-200 text-xs bg-gray-50 rounded-lg ${
+                                  className={`h-9 border-slate-200 text-xs bg-slate-50/50 hover:bg-slate-50 focus:bg-white rounded-lg focus:border-green-400 focus:ring-green-400/20 transition-all ${
                                     errors.items?.[index]?.reason_for_requirement ? "border-red-400 focus:ring-red-300" : ""
                                   }`}
                                   {...register(`items.${index}.reason_for_requirement`)}
@@ -704,30 +726,62 @@ export default function RequisitionsForm({
                                   </p>
                                 )}
                               </div>
+                              
 
-                              {/* UNIT PRICE */}
-                              <div className="col-span-2">
-                                <label className="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-1">
-                                  Unit Price
+                              {/* ROOM / LOCATION */}
+                              <div className="col-span-6">
+                                <label className="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
+                                  Room / Location
                                 </label>
-                                <Input
-                                  type="number"
-                                  step="0.01"
-                                  placeholder="0.00"
-                                  readOnly
-                                  className="h-9 border-gray-200 text-xs bg-gray-100 rounded-lg cursor-not-allowed text-slate-500 font-medium"
-                                  {...register(`items.${index}.price`)}
+                                <Controller
+                                  name={`items.${index}.room_id`}
+                                  control={control}
+                                  render={({ field }) => (
+                                    <Select
+                                      onValueChange={field.onChange}
+                                      value={field.value || "none"}
+                                    >
+                                      <SelectTrigger
+                                        className={`h-9 border-slate-200 text-xs bg-slate-50/50 hover:bg-slate-100/50 transition-colors rounded-lg text-slate-700 w-full focus:ring-1 focus:ring-green-400 ${
+                                          errors.items?.[index]?.room_id ? "border-red-400 focus:ring-red-300" : ""
+                                        }`}
+                                      >
+                                        <SelectValue placeholder="Select Room" />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        {rooms && rooms.length > 0 ? (
+                                          <>
+                                            <SelectItem value="none">Select Room</SelectItem>
+                                            {rooms.map((room) => (
+                                              <SelectItem key={room.id} value={String(room.id)}>
+                                                {room.name} {room.room_no ? `(${room.room_no})` : ""}
+                                              </SelectItem>
+                                            ))}
+                                          </>
+                                        ) : (
+                                          <SelectItem value="none" disabled>
+                                            No room found
+                                          </SelectItem>
+                                        )}
+                                      </SelectContent>
+                                    </Select>
+                                  )}
                                 />
+                                {errors.items?.[index]?.room_id && (
+                                  <p className="text-[10px] text-red-500 mt-1">
+                                    {errors.items[index]?.room_id?.message}
+                                  </p>
+                                )}
                               </div>
 
                               {/* EXPECTATION DATE */}
-                              <div className="col-span-3">
-                                <label className="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-1">
+                              <div className="col-span-4">
+                                <label className="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
                                   Expectation Date
                                 </label>
                                 <Input
                                   type="date"
-                                  className={`h-9 border-gray-200 text-xs bg-gray-50 rounded-lg ${
+                                  className={`h-9 border-slate-200 text-xs bg-slate-50/50 hover:bg-slate-50 focus:bg-white rounded-lg focus:border-green-400 focus:ring-green-400/20 transition-all ${
                                     errors.items?.[index]?.expected_date ? "border-red-400 focus:ring-red-300" : ""
                                   }`}
                                   {...register(`items.${index}.expected_date`)}
@@ -739,28 +793,41 @@ export default function RequisitionsForm({
                                 )}
                               </div>
 
+                              {/* UNIT PRICE */}
+                              <div className="col-span-3">
+                                <label className="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
+                                  Unit Price
+                                </label>
+                                <Input
+                                  type="number"
+                                  step="0.01"
+                                  placeholder="0.00"
+                                  readOnly
+                                  className="h-9 border-slate-200 text-xs bg-slate-100/50 rounded-lg cursor-not-allowed text-slate-400 font-medium"
+                                  {...register(`items.${index}.price`)}
+                                />
+                              </div>
+
                               {/* QUANTITY */}
-                              <div className="col-span-2">
-                                <label className="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-1">
+                              <div className="col-span-3">
+                                <label className="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
                                   Quantity
                                 </label>
-                                <div className="flex items-center gap-0.5 h-9">
+                                <div className="flex items-center bg-slate-50/50 border border-slate-200 rounded-lg h-9 px-1 w-full justify-between">
                                   <button
                                     type="button"
                                     onClick={() => {
                                       const cur = parseInt(watchedItems[index]?.quantity || "1") || 1;
                                       if (cur > 1) setValue(`items.${index}.quantity`, String(cur - 1));
                                     }}
-                                    className="w-7 h-7 flex items-center justify-center border border-gray-200 rounded-md bg-white text-slate-600 hover:bg-gray-50 shrink-0"
+                                    className="w-7 h-7 flex items-center justify-center rounded-md text-slate-500 hover:bg-white hover:text-slate-800 hover:shadow-sm border border-transparent hover:border-slate-100 transition-all duration-150 shrink-0 cursor-pointer"
                                   >
                                     <Minus className="h-3 w-3" />
                                   </button>
                                   <input
                                     type="number"
                                     min="1"
-                                    className={`w-8 text-center text-xs border rounded-md bg-white h-7 focus:outline-none focus:ring-1 focus:ring-green-400 ${
-                                      errors.items?.[index]?.quantity ? "border-red-400 focus:ring-red-300" : "border-gray-200"
-                                    }`}
+                                    className="w-12 text-center text-xs bg-transparent border-0 font-semibold text-slate-800 focus:outline-none focus:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                     {...register(`items.${index}.quantity`)}
                                   />
                                   <button
@@ -769,7 +836,7 @@ export default function RequisitionsForm({
                                       const cur = parseInt(watchedItems[index]?.quantity || "1") || 1;
                                       setValue(`items.${index}.quantity`, String(cur + 1));
                                     }}
-                                    className="w-7 h-7 flex items-center justify-center border border-gray-200 rounded-md bg-white text-slate-600 hover:bg-gray-50 shrink-0"
+                                    className="w-7 h-7 flex items-center justify-center rounded-md text-slate-500 hover:bg-white hover:text-slate-800 hover:shadow-sm border border-transparent hover:border-slate-100 transition-all duration-150 shrink-0 cursor-pointer"
                                   >
                                     <Plus className="h-3 w-3" />
                                   </button>
@@ -782,11 +849,11 @@ export default function RequisitionsForm({
                               </div>
 
                               {/* SUB TOTAL */}
-                              <div className="col-span-1">
-                                <label className="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-1">
+                              <div className="col-span-2">
+                                <label className="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-1.5 text-center">
                                   Sub Total
                                 </label>
-                                <div className="h-9 flex items-center px-2 rounded-lg bg-green-50 border border-green-100 text-green-700 font-semibold text-xs whitespace-nowrap">
+                                <div className="h-9 flex items-center justify-center px-3 rounded-lg bg-emerald-50/60 border border-emerald-100/80 text-emerald-700 font-bold text-xs shadow-sm">
                                   ৳{subTotal.toLocaleString()}
                                 </div>
                               </div>
@@ -802,9 +869,11 @@ export default function RequisitionsForm({
                 {activeType === "2" && (
                   <div className="space-y-4">
                     {/* Root-level amount error from server */}
-                    {(errors as any).amount?.root?.message && (
+                    {errors.amount && "root" in errors.amount && (errors.amount as { root?: { message?: string } }).root?.message && (
                       <div className="flex items-center gap-2 px-3 py-2 bg-red-50 border border-red-200 rounded-lg">
-                        <span className="text-red-500 text-sm">{(errors as any).amount.root.message}</span>
+                        <span className="text-red-500 text-sm">
+                          {(errors.amount as { root?: { message?: string } }).root?.message}
+                        </span>
                       </div>
                     )}
                     {amountFields.map((field, index) => (

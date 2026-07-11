@@ -46,14 +46,18 @@ const AssignBranchesButton: React.FC<AssignBranchesButtonProps> = ({
     setLoading(true);
     setError(null);
     try {
-      const response = await getBranches({ per_page: 9999 });
-      if (response.success) {
-        setBranches(response.data.branches);
+      const response = await getBranches({ per_page: 200 });
+      if (response?.success) {
+        setBranches(response?.data?.branches);
       } else {
-        setError(response.message || "Failed to fetch branches.");
+        setError(response?.message || "Failed to fetch branches.");
       }
-    } catch (err: any) {
-      setError(err.message || "An error occurred.");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("An unexpected error occurred.");
+      }
     } finally {
       setLoading(false);
     }
@@ -76,8 +80,12 @@ const AssignBranchesButton: React.FC<AssignBranchesButtonProps> = ({
       } else {
         toast.error(response.message || "Failed to assign branches.");
       }
-    } catch (err: any) {
-      toast.error(err.message || "An unexpected error occurred.");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        toast.error(err.message);
+      } else {
+        toast.error("An unexpected error occurred.");
+      }
     } finally {
       setLoading(false);
     }

@@ -34,6 +34,7 @@ interface FormValues {
     approved_qty: number;
     after_delivery_qty: number;
     reason_for_requirement: string;
+    room_name: string;
   }>;
   amount_items: Array<{
     selected: boolean;
@@ -73,6 +74,7 @@ export default function RequisitionDetail({
           approved_qty: item?.approved_qty || item?.quantity || 0,
           after_delivery_qty: item?.after_delivery_qty || 0,
           reason_for_requirement: item?.reason_for_requirement || "",
+          room_name: item?.room?.name || (item?.room_id ? String(item.room_id) : ""),
         })) || [],
       amount_items:
         requisition?.amount_items?.map((item) => ({
@@ -249,6 +251,9 @@ export default function RequisitionDetail({
                             After Delivery Qty
                           </TableHead>
                           <TableHead className="text-center font-semibold text-secondary">
+                            Room
+                          </TableHead>
+                          <TableHead className="text-center font-semibold text-secondary">
                             Reason
                           </TableHead>
                         </TableRow>
@@ -331,6 +336,9 @@ export default function RequisitionDetail({
                               </TableCell>
                               <TableCell className="text-center font-medium text-secondary py-3.5">
                                 {calculatedAfterDelivery}
+                              </TableCell>
+                              <TableCell className="text-center font-medium text-secondary py-3.5">
+                                {item?.room_name || "—"}
                               </TableCell>
                               <TableCell className="text-center py-3.5">
                                 {item?.reason_for_requirement ?? "---"}

@@ -42,6 +42,12 @@ export default function RolesPowerFilter() {
                 }
             });
 
+            // Clear page=1 from the URL automatically
+            const currentPage = params.get("page");
+            if (currentPage === "1") {
+                isChanged = true;
+            }
+
             if (isChanged) {
                 params.delete("page");
                 Object.entries(watchedValues).forEach(([key, value]) => {
@@ -52,7 +58,8 @@ export default function RolesPowerFilter() {
                     }
                 });
 
-                const newUrl = `${pathname}?${params.toString()}`;
+                const query = params.toString();
+                const newUrl = query ? `${pathname}?${query}` : pathname;
                 router.replace(newUrl, { scroll: false });
             }
         }, 300);
@@ -64,7 +71,7 @@ export default function RolesPowerFilter() {
 
     const handleReset = () => {
         reset({ per_page: "" });
-        // Keep workflow_type in URL (tabs manage it), only remove per_page
+        // Keep requisition_flow_id in URL (tabs manage it), only remove per_page
         const params = new URLSearchParams(searchParams.toString());
         params.delete("per_page");
         params.delete("page");
