@@ -71,7 +71,7 @@ export async function getCategoriesCached(
   token: string,
   params: Record<string, unknown> = {},
 ): Promise<CategoriesResponse | null> {
-  "use cache";
+  "use cache: private";
   cacheTag("categories-list");
 
   try {

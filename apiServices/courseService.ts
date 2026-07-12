@@ -250,10 +250,10 @@ async function getCoursesCached(
     console.error("Error in getCoursesCached:", error);
     if (error instanceof Error) {
       console.error("Cache error:", error.message);
-      return null;
+      throw new Error("Failed to fetch courses");
     } else {
       console.error("Cache error:", "Failed to fetch courses");
-      return null;
+      throw new Error("Failed to fetch courses");
     }
   }
 }
