@@ -118,7 +118,7 @@ export async function getBranchesCached(
   token: string,
   params: Record<string, unknown> = {},
 ): Promise<BranchResponse> {
-  "use cache: remote";
+  "use cache: private";
   cacheTag("branches-list");
   const urlParams = new URLSearchParams();
 
@@ -148,6 +148,10 @@ export async function getBranchesCached(
         "Unauthorized or forbidden access (401/403). Returning null.",
       );
       throw new Error(`${res.status} ${res.statusText}`);
+    }
+
+    if (!res.ok) {
+      throw new Error(`Failed to fetch branch: ${res.statusText}`);
     }
 
     const result = await res.json();
