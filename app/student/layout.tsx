@@ -7,7 +7,6 @@ import {
 } from "@/components/ui/sidebar";
 import { Separator } from "@radix-ui/react-separator";
 import { Suspense } from "react";
-import PaymentStatusPrompt from "@/components/student-dashboard/PaymentStatusPrompt";
 
 export default async function StudentDashboardLayout({
   children,
@@ -31,9 +30,6 @@ export default async function StudentDashboardLayout({
           </header>
           <div className="w-full h-screen-16 overflow-y-auto min-w-0">
             {children}
-            <Suspense fallback={null}>
-              <PaymentStatusPrompt />
-            </Suspense>
           </div>
         </SidebarInset>
       </SidebarProvider>
