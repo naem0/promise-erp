@@ -69,6 +69,7 @@ export default async function CoursesData({
   try {
     data = await getCourses(params);
   } catch (error: unknown) {
+    if (typeof error === 'object' && error !== null && 'digest' in error) throw error;
     if (error instanceof Error) {
       return <ErrorComponent message={error.message} />;
     } else {

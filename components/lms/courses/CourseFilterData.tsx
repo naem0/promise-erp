@@ -10,6 +10,7 @@ export default async function CourseFilterData() {
   try {
     branchesRes = await getBranches({ per_page: 100 });
   } catch (error: unknown) {
+    if (typeof error === 'object' && error !== null && 'digest' in error) throw error;
     if (error instanceof Error) {
       return <ErrorComponent message={error.message} />;
     } else {
@@ -20,6 +21,7 @@ export default async function CourseFilterData() {
   try {
     categoriesRes = await getCategories({ per_page: 100 });
   } catch (error: unknown) {
+    if (typeof error === 'object' && error !== null && 'digest' in error) throw error;
     if (error instanceof Error) {
       return <ErrorComponent message={error.message} />;
     } else {
