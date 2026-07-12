@@ -2,14 +2,14 @@
 
 import { loginUser } from "@/apiServices/auth/RegisterUser";
 import CredentialsProvider from "next-auth/providers/credentials";
-import type { NextAuthOptions, SessionStrategy  } from "next-auth";
+import type { NextAuthOptions, SessionStrategy } from "next-auth";
 
-export const authOptions:NextAuthOptions = {
+export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        email_or_phone : { label: "Email", type: "text" },
+        email_or_phone: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
       },
       authorize: async (credentials) => {
@@ -21,7 +21,7 @@ export const authOptions:NextAuthOptions = {
           email_or_phone: credentials.email_or_phone,
           password: credentials.password,
         });
-        
+
         if (!data?.user || !data?.access_token) return null;
 
         return {
@@ -55,11 +55,18 @@ export const authOptions:NextAuthOptions = {
         token.image = session.image;
       }
 
-      const now = new Date();
-      
-      if (token.expiresAt && new Date(token.expiresAt) < now) {
+      const expiresAt = token.expiresAt
+        ? new Date(token.expiresAt).getTime()
+        : null;
+
+      if (expiresAt && Date.now() >= expiresAt) {
         console.warn("Access token expired");
-        return { ...token, accessToken: null, error: "AccessTokenExpired" };
+
+        return {
+          ...token,
+          accessToken: undefined,
+          error: "AccessTokenExpired",
+        };
       }
 
       return token;
@@ -81,13 +88,12 @@ export const authOptions:NextAuthOptions = {
     },
   },
 
-
-   // cookies: {
+  // cookies: {
   //   sessionToken: {
   //     name: `__Secure-next-auth.session-token`,
   //     options: {
-  //       httpOnly: true, 
-  //       sameSite: "lax", 
+  //       httpOnly: true,
+  //       sameSite: "lax",
   //       path: "/",
   //       secure: process.env.NODE_ENV === "production",
   //     },
@@ -100,5 +106,5 @@ export const authOptions:NextAuthOptions = {
   },
 
   secret: process.env.NEXTAUTH_SECRET,
-  session: { strategy: "jwt" as SessionStrategy,},
+  session: { strategy: "jwt" as SessionStrategy },
 };

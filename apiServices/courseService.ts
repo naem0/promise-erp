@@ -213,7 +213,7 @@ async function getCoursesCached(
   token: string,
   params: Record<string, unknown> = {},
 ): Promise<CourseResponse | null> {
-  "use cache";
+  "use cache: private";
   cacheTag("courses-list");
   try {
     const urlParams = new URLSearchParams();
