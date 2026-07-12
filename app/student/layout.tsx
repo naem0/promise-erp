@@ -28,7 +28,9 @@ export default async function StudentDashboardLayout({
             />
             <StudentDashboardHeader />
           </header>
-          <div className="w-full h-screen-16 overflow-y-auto min-w-0">{children}</div>
+          <div className="w-full h-screen-16 overflow-y-auto min-w-0">
+            {children}
+          </div>
         </SidebarInset>
       </SidebarProvider>
     </div>
