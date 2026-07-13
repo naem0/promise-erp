@@ -78,7 +78,7 @@ export default function RootLayout({
         suppressHydrationWarning={true}
       >
         <SessionProviderWrapper>
-          <SessionWatcher />
+          {/* <SessionWatcher /> */}
           <PermissionProvider>
             <TooltipProvider>
               {children}
