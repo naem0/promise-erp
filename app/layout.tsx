@@ -6,7 +6,7 @@ import { Toaster } from "@/components/ui/sonner";
 
 import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import SessionWatcher from "@/components/auth/SessionWatcher";
+// import SessionWatcher from "@/components/auth/SessionWatcher";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -78,7 +78,7 @@ export default function RootLayout({
         suppressHydrationWarning={true}
       >
         <SessionProviderWrapper>
-          <SessionWatcher />
+          {/* <SessionWatcher /> */}
           <PermissionProvider>
             <TooltipProvider>
               {children}
