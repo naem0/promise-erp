@@ -36,7 +36,7 @@ export function PermissionProvider({
         return;
       }
       if (response?.success && response?.data) {
-        setPermissions(response?.data?.permissions ?? []);
+        setPermissions(response.data.permissions ?? []);
       } else {
         setPermissions([]);
       }
@@ -47,12 +47,12 @@ export function PermissionProvider({
   };
 
   useEffect(() => {
-    if (status === "authenticated" && session?.user?.permissions) {
-      setPermissions(session?.user?.permissions);
+    if (status === "authenticated" && token) {
+      fetchPermissions();
     } else if (status === "unauthenticated") {
       setPermissions([]);
     }
-  }, [status, session?.user?.permissions]);
+  }, [status, token]);
 
   const loading = status === "loading";
 
