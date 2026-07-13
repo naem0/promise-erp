@@ -1,7 +1,6 @@
 // src/lib/auth.ts
 
 import { loginUser } from "@/apiServices/auth/RegisterUser";
-import { fetchMyPermissions } from "@/apiServices/auth/permissionService";
 import CredentialsProvider from "next-auth/providers/credentials";
 import type { NextAuthOptions, SessionStrategy } from "next-auth";
 
@@ -25,23 +24,13 @@ export const authOptions: NextAuthOptions = {
 
         if (!data?.user || !data?.access_token) return null;
 
-        let permissions: string[] = [];
-        try {
-          const permissionsResponse = await fetchMyPermissions(data.access_token);
-          if (permissionsResponse?.success && permissionsResponse?.data?.permissions) {
-            permissions = permissionsResponse?.data?.permissions;
-          }
-        } catch (error) {
-          console.error("Error fetching permissions during sign-in authorize:", error);
-        }
-
         return {
           id: data.user.id.toString(),
           name: data.user.name,
           email: data.user.email,
           image: data.user.profile_image,
           roles: data.user.roles || [],
-          permissions: permissions,
+          // permissions: Array.isArray(data.permissions) ? data.permissions : [],
           accessToken: data.access_token,
           expiresAt: data.expires_at,
         };
@@ -58,7 +47,6 @@ export const authOptions: NextAuthOptions = {
         token.email = user.email;
         token.image = user.image;
         token.roles = user.roles;
-        token.permissions = user.permissions || [];
         token.accessToken = user.accessToken;
         token.expiresAt = user.expiresAt;
       }
@@ -91,7 +79,6 @@ export const authOptions: NextAuthOptions = {
         session.user.email = token.email;
         session.user.image = token.image;
         session.user.roles = token.roles;
-        session.user.permissions = token.permissions || [];
       }
       session.accessToken = token.accessToken;
       session.expiresAt = token.expiresAt;
