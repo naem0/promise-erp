@@ -1,7 +1,6 @@
 import { NextResponse, NextRequest } from 'next/server'
 import { getToken } from 'next-auth/jwt'
 import permissionsConfig from '@/config/permissions.json'
-import { fetchMyPermissions } from '@/apiServices/auth/permissionService'
 
 const routePermissions: { path: string; permissions: string[]; isDynamic?: boolean }[] = permissionsConfig.routes;
 
@@ -48,19 +47,7 @@ export async function proxy(request: NextRequest) {
 
   // 3. Very explicitly check permissions for authenticated users
   if (isAuth) {
-    let userPermissions = (token?.permissions as string[]) || [];
-    try {
-      const accessToken = token?.accessToken as string;
-      if (accessToken) {
-        const data = await fetchMyPermissions(accessToken);
-        if (data?.success && data?.data?.permissions) {
-          userPermissions = data.data.permissions;
-        }
-      }
-    } catch (error) {
-      console.error('Error fetching permissions from API, falling back to JWT cache:', error);
-    }
-
+    const userPermissions = (token?.permissions as string[]) || [];
 
     const sortedRoutes = [...routePermissions].sort((a, b) => b.path.length - a.path.length);
 
