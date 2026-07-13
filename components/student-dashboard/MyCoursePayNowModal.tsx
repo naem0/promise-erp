@@ -62,7 +62,7 @@ const MyCoursePayNowModal = ({ course, isUpdatedCourse, setIsUpdatedCourse }: My
     const selectedPaymentMethodId = watch("payment_method");
     const selectedPaymentMethod = paymentMethods.find((pm) => String(pm.id) === selectedPaymentMethodId);
     const hideNumberFields = selectedPaymentMethod
-        ? ["cash", "pay later", "bkash"].some((k) => selectedPaymentMethod.name.toLowerCase().includes(k))
+        ? ["cash", "pay later", "bkash"].some((k) => selectedPaymentMethod.name?.toLowerCase().includes(k))
         : false;
 
     useEffect(() => {
@@ -208,7 +208,7 @@ const MyCoursePayNowModal = ({ course, isUpdatedCourse, setIsUpdatedCourse }: My
                                             <SelectContent>
                                                 {!loading && paymentMethods?.length > 0 ? (
                                                     paymentMethods
-                                                        ?.filter((pm) => !pm.name.toLowerCase().includes("pay later"))
+                                                        ?.filter((pm) => !pm.name?.toLowerCase().includes("pay later"))
                                                         .map((pm) => (
                                                             <SelectItem key={pm.id} value={String(pm.id)}>
                                                                 {pm.name}
