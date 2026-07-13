@@ -6,7 +6,7 @@ import { Toaster } from "@/components/ui/sonner";
 
 import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import SessionWatcher from "@/components/auth/SessionWatcher";
+// import SessionWatcher from "@/components/auth/SessionWatcher";
 
 const inter = Inter({
   subsets: ["latin"],
