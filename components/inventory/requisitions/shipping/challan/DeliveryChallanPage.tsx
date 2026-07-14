@@ -124,6 +124,7 @@ export default function DeliveryChallanPage({
     challanNo: invoiceData.challan_no,
     challanDate: invoiceData.challan_date,
     deliveryDate: invoiceData.delivery_date,
+    deliveryStatusText: invoiceData.delivery_status_text,
   };
 
   const address: ChallanAddressData = {
@@ -169,6 +170,8 @@ export default function DeliveryChallanPage({
         <div className="border-t border-slate-200" />
         <ChallanItemsTable
           items={items}
+          groupedItems={invoiceData.grouped_items}
+          isMultiple={invoiceData.req_id === "Multiple"}
           totalQuantity={totalQuantity}
           deliveryCost={deliveryCost}
           qrValue={qrValue}

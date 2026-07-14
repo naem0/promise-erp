@@ -1,9 +1,9 @@
 import CommonSectionForm from "@/components/web-content/common-sections/CommonSectionsForm";
 
-const CommonSectionAddPage = () => {
+export default function CommonSectionAddPage() {
   return (
-    <CommonSectionForm title="Add Common Section" />
+    <div className="space-y-6 mx-auto">
+      <CommonSectionForm title="Add Common Section" />
+    </div>
   );
-};
-
-export default CommonSectionAddPage;
+}

@@ -8,7 +8,8 @@ import { Facility } from "./facilitiesService";
 import { JoinType } from "./joinService";
 import { Faq } from "./faqsService";
 import { PaginationType } from "@/types/pagination";
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
+const API_BASE =
+  process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
 
 export interface Batch {
   id: number;
@@ -21,8 +22,14 @@ export interface Batch {
   is_offline: boolean;
 }
 
-export interface Category { id: number; name: string };
-export interface Branch { id: number; name: string };
+export interface Category {
+  id: number;
+  name: string;
+}
+export interface Branch {
+  id: number;
+  name: string;
+}
 
 export interface Course {
   id: number;
@@ -143,7 +150,6 @@ export interface AssignedFaqsResponse {
   errors?: Record<string, string[] | string>;
 }
 
-
 export interface AssignedFacilitiesResponse {
   success: boolean;
   message: string;
@@ -205,9 +211,9 @@ export interface ChapterLessonResponse {
 
 async function getCoursesCached(
   token: string,
-  params: Record<string, unknown> = {}
+  params: Record<string, unknown> = {},
 ): Promise<CourseResponse | null> {
-  "use cache";
+  "use cache: private";
   cacheTag("courses-list");
   try {
     const urlParams = new URLSearchParams();
@@ -223,6 +229,18 @@ async function getCoursesCached(
         Authorization: `Bearer ${token}`,
       },
     });
+
+    if (res.status === 404) {
+      console.warn("Courses not found (404). Returning null.");
+      throw new Error(`${res.status} ${res.statusText}`);
+    }
+    if (res.status === 401 || res.status === 403) {
+      console.warn(
+        "Unauthorized or forbidden access (401/403). Returning null.",
+      );
+      throw new Error(`${res.status} ${res.statusText}`);
+    }
+
     if (!res.ok) {
       throw new Error(`Failed to fetch courses: ${res.statusText}`);
     }
@@ -232,37 +250,48 @@ async function getCoursesCached(
     console.error("Error in getCoursesCached:", error);
     if (error instanceof Error) {
       console.error("Cache error:", error.message);
-
-      return null;
+      throw new Error("Failed to fetch courses");
     } else {
       console.error("Cache error:", "Failed to fetch courses");
-
-      return null;
+      throw new Error("Failed to fetch courses");
     }
   }
 }
 
-// =======================
-// Get Courses (Paginated)
-// =======================
-export async function getCourses(params: Record<string, unknown> = {}): Promise<CourseResponse> {
+export async function getCourses(
+  params: Record<string, unknown> = {},
+): Promise<CourseResponse> {
   const session = await getServerSession(authOptions);
   const token = session?.accessToken;
-  if (!token) throw new Error("No valid session or access token found.");
 
-  const _cachedResult = await getCoursesCached(token, params);
+  if (!token) {
+    throw new Error("No valid session or access token found.");
+  }
+  try {
+    const cachedResult = await getCoursesCached(token, params);
 
+    if (!cachedResult) {
+      throw new Error("Failed to fetch data from cache.");
+    }
 
-  if (!_cachedResult) throw new Error("Failed to fetch data from cache.");
+    return cachedResult;
+  } catch (error: unknown) {
+    console.error("Error in getCourses:", error);
 
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
 
-  return _cachedResult;
+    throw new Error("Something went wrong while fetching courses.");
+  }
 }
 
 // =======================
 //  Create Course
 // =======================
-export async function createCourse(formData: FormData): Promise<CourseSingleResponse> {
+export async function createCourse(
+  formData: FormData,
+): Promise<CourseSingleResponse> {
   try {
     const session = await getServerSession(authOptions);
     const token = session?.accessToken;
@@ -328,14 +357,16 @@ export async function getCourseById(id: string): Promise<CourseSingleResponse> {
     } else {
       throw new Error("Failed to get course.");
     }
-
   }
 }
 
 // =======================
 // Update Course
 // =======================
-export async function updateCourse(id: number, formData: FormData): Promise<CourseSingleResponse> {
+export async function updateCourse(
+  id: number,
+  formData: FormData,
+): Promise<CourseSingleResponse> {
   try {
     const session = await getServerSession(authOptions);
     const token = session?.accessToken;
@@ -412,7 +443,7 @@ export async function DeleteCourse(id: number): Promise<CourseSingleResponse> {
 // =======================
 export async function assignBranchesToCourse(
   courseId: string,
-  branchIds: number[]
+  branchIds: number[],
 ): Promise<CourseSingleResponse> {
   try {
     const session = await getServerSession(authOptions);
@@ -452,7 +483,7 @@ export async function assignBranchesToCourse(
 //  Create Chapters with Lessons
 // =======================
 export async function createChaptersWithLessons(
-  chaptersData: FormValues
+  chaptersData: FormValues,
 ): Promise<ChapterLessonResponse> {
   try {
     const session = await getServerSession(authOptions);
@@ -486,7 +517,7 @@ export async function createChaptersWithLessons(
 //  Update Chapters with Lessons
 // =======================
 export async function updateChaptersWithLessons(
-  chaptersData: FormValues
+  chaptersData: FormValues,
 ): Promise<ChapterLessonResponse> {
   try {
     const session = await getServerSession(authOptions);
@@ -517,13 +548,12 @@ export async function updateChaptersWithLessons(
   }
 }
 
-
 // =======================
 //  Assign FAQs to Course
 // =======================
 export async function assignFaqsToCourse(
   courseId: string | number,
-  faqIds: number[]
+  faqIds: number[],
 ): Promise<CourseSingleResponse> {
   try {
     const session = await getServerSession(authOptions);
@@ -559,13 +589,12 @@ export async function assignFaqsToCourse(
   }
 }
 
-
 // =======================
 // Assign Facilities to Course
 // =======================
 export async function assignFacilitiesToCourse(
   courseId: string | number,
-  facilityIds: number[]
+  facilityIds: number[],
 ): Promise<CourseSingleResponse> {
   try {
     const session = await getServerSession(authOptions);
@@ -575,17 +604,14 @@ export async function assignFacilitiesToCourse(
       throw new Error("No valid session or access token found.");
     }
 
-    const response = await fetch(
-      `${API_BASE}/courses/${courseId}/facilities`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ facility_ids: facilityIds }),
-      }
-    );
+    const response = await fetch(`${API_BASE}/courses/${courseId}/facilities`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ facility_ids: facilityIds }),
+    });
 
     const result = await response.json();
 
@@ -605,9 +631,6 @@ export async function assignFacilitiesToCourse(
   }
 }
 
-
-
-
 // =======================
 // Create Course Learnings
 // =======================
@@ -619,7 +642,7 @@ export interface CourseLearningInput {
 
 export async function createCourseLearningsFormData(
   courseId: number,
-  learnings: CourseLearningInput[]
+  learnings: CourseLearningInput[],
 ): Promise<CourseLearningResponse> {
   try {
     const session = await getServerSession(authOptions);
@@ -665,7 +688,7 @@ export async function createCourseLearningsFormData(
 //  GET Course Learnings (for edit mode)
 // =======================
 export async function getCourseLearnings(
-  courseId: number
+  courseId: number,
 ): Promise<CourseLearningResponse> {
   try {
     const session = await getServerSession(authOptions);
@@ -675,12 +698,15 @@ export async function getCourseLearnings(
       throw new Error("No valid session or access token found.");
     }
 
-    const res = await fetch(`${API_BASE}/course-learnings?course_id=${courseId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
+    const res = await fetch(
+      `${API_BASE}/course-learnings?course_id=${courseId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
       },
-    });
+    );
 
     const result = await res.json();
 
@@ -704,7 +730,7 @@ export async function getCourseLearnings(
 // =======================
 export async function editCourseLearnings(
   courseId: number,
-  learnings: CourseLearningInput[]
+  learnings: CourseLearningInput[],
 ): Promise<CourseLearningResponse> {
   try {
     const session = await getServerSession(authOptions);
@@ -719,7 +745,10 @@ export async function editCourseLearnings(
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ course_id: courseId, course_learnings: learnings }),
+      body: JSON.stringify({
+        course_id: courseId,
+        course_learnings: learnings,
+      }),
     });
 
     const result = await res.json();
@@ -742,7 +771,7 @@ export async function editCourseLearnings(
 //  GET Chapters by Course ID (for edit mode)
 // =======================
 export async function getChaptersByCourseId(
-  courseId: number
+  courseId: number,
 ): Promise<ChapterLessonResponse> {
   try {
     const session = await getServerSession(authOptions);
@@ -779,7 +808,7 @@ export async function getChaptersByCourseId(
 //  GET Course FAQs (for edit mode)
 // =======================
 export async function getCourseFaqs(
-  courseId: number
+  courseId: number,
 ): Promise<AssignedFaqsResponse> {
   try {
     const session = await getServerSession(authOptions);
@@ -816,7 +845,7 @@ export async function getCourseFaqs(
 // GET Course Facilities (for edit mode)
 // =======================
 export async function getCourseFacilities(
-  courseId: number
+  courseId: number,
 ): Promise<AssignedFacilitiesResponse> {
   try {
     const session = await getServerSession(authOptions);
@@ -854,7 +883,7 @@ export async function getCourseFacilities(
 // =======================
 export async function assignJoinsToCourse(
   courseId: string | number,
-  joinIds: number[]
+  joinIds: number[],
 ): Promise<CourseSingleResponse> {
   try {
     const session = await getServerSession(authOptions);
@@ -864,17 +893,14 @@ export async function assignJoinsToCourse(
       throw new Error("No valid session or access token found.");
     }
 
-    const response = await fetch(
-      `${API_BASE}/courses/${courseId}/joins`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ join_ids: joinIds }),
-      }
-    );
+    const response = await fetch(`${API_BASE}/courses/${courseId}/joins`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ join_ids: joinIds }),
+    });
 
     const result = await response.json();
 
@@ -898,7 +924,7 @@ export async function assignJoinsToCourse(
 // GET Course Joins (for edit mode)
 // =======================
 export async function getCourseJoins(
-  courseId: number
+  courseId: number,
 ): Promise<AssignedJoinsResponse> {
   try {
     const session = await getServerSession(authOptions);
@@ -937,7 +963,7 @@ export async function getCourseJoins(
 // =======================
 export async function assignToolsToCourse(
   courseId: number,
-  toolIds: number[]
+  toolIds: number[],
 ): Promise<CourseSingleResponse> {
   try {
     const session = await getServerSession(authOptions);
@@ -947,19 +973,14 @@ export async function assignToolsToCourse(
       throw new Error("No valid session or access token found.");
     }
 
-    const response = await fetch(
-      `${API_BASE}/courses/${courseId}/tools/sync`,
-      {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ tool_ids: toolIds }),
-      }
-    );
-
-
+    const response = await fetch(`${API_BASE}/courses/${courseId}/tools/sync`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ tool_ids: toolIds }),
+    });
 
     const result = await response.json();
 
@@ -983,7 +1004,7 @@ export async function assignToolsToCourse(
 // GET Course Assigned Tools (for edit mode)
 // =======================
 export async function getCourseAssignedTools(
-  courseId: number
+  courseId: number,
 ): Promise<AssignedToolsResponse> {
   try {
     const session = await getServerSession(authOptions);

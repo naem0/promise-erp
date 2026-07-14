@@ -5,7 +5,8 @@ import { getServerSession } from "next-auth";
 import { cacheTag, updateTag, revalidatePath } from "next/cache";
 import { PaginationType } from "@/types/pagination";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
+const API_BASE =
+  process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
 
 export interface Category {
   id: number;
@@ -19,8 +20,6 @@ export interface Category {
   schema?: string;
   total_course?: number;
 }
-
-
 
 export interface CategoriesResponse {
   success: boolean;
@@ -64,16 +63,15 @@ export interface UpdateCategoryRequest {
   schema?: string;
 }
 
-
 // =======================
 //  Get Categories (Paginated)
 // =======================
 
 export async function getCategoriesCached(
   token: string,
-  params: Record<string, unknown> = {}
+  params: Record<string, unknown> = {},
 ): Promise<CategoriesResponse | null> {
-  "use cache";
+  "use cache: private";
   cacheTag("categories-list");
 
   try {
@@ -88,46 +86,57 @@ export async function getCategoriesCached(
       }
     }
 
-    const res = await fetch(`${API_BASE}/course-categories?${urlParams.toString()}`, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+    const res = await fetch(
+      `${API_BASE}/course-categories?${urlParams.toString()}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       },
-    });
+    );
+
+    if (!res.ok) {
+      throw new Error(`Failed to fetch categories: ${res.statusText}`);
+    }
+
+    if (res.status === 404) {
+      console.warn("Courses not found (404). Returning null.");
+      throw new Error(`${res.status} ${res.statusText}`);
+    }
+    if (res.status === 401 || res.status === 403) {
+      console.warn(
+        "Unauthorized or forbidden access (401/403). Returning null.",
+      );
+      throw new Error(`${res.status} ${res.statusText}`);
+    }
+
     const data: CategoriesResponse = await res.json();
     return data;
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error("Error in getCategoriesCached:", error.message);
-      console.error("Cache error:", "Error fetching categories");
-
-      return null;
+      throw new Error("Error fetching categories");
     } else {
       console.error("Cache error:", "Error fetching categories");
-
-      return null;
+      throw new Error("Error fetching categories");
     }
   }
 }
 
 export async function getCategories(
-  params: Record<string, unknown> = {}
+  params: Record<string, unknown> = {},
 ): Promise<CategoriesResponse> {
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+  if (!token) {
+    throw new Error("No valid session or access token found.");
+  }
+
   try {
-    const session = await getServerSession(authOptions);
-    const token = session?.accessToken;
-
-    if (!token) {
-      throw new Error("No valid session or access token found.");
-    }
-
-    const _cachedResult = await getCategoriesCached(token, params);
-
-
-    if (!_cachedResult) throw new Error("Failed to fetch data from cache.");
-
-
-    return _cachedResult;
+    const cachedResult = await getCategoriesCached(token, params);
+    if (!cachedResult) throw new Error("Failed to fetch data from cache.");
+    return cachedResult;
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error("Categories API Error:", error.message);
@@ -142,7 +151,7 @@ export async function getCategories(
 //  Get Category By ID
 // =======================
 export async function getCategoryById(
-  id: number
+  id: number,
 ): Promise<SingleCategoryResponse> {
   try {
     const session = await getServerSession(authOptions);
@@ -158,7 +167,6 @@ export async function getCategoryById(
 
     const data: SingleCategoryResponse = await res.json();
     return data;
-
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error("Error in getCategoryById:", error.message);
@@ -172,21 +180,27 @@ export async function getCategoryById(
 // =======================
 //  Create Category
 // =======================
-export async function createCategory(categoryData: FormData): Promise<SingleCategoryResponse> {
+export async function createCategory(
+  categoryData: FormData,
+): Promise<SingleCategoryResponse> {
   try {
     const session = await getServerSession(authOptions);
     const token = session?.accessToken;
     if (!token) {
-      return { success: false, message: "No valid session or access token found.", code: 401 };
+      return {
+        success: false,
+        message: "No valid session or access token found.",
+        code: 401,
+      };
     }
 
     const url = `${API_BASE}/course-categories`;
     const response = await fetch(url, {
-      method: 'POST',
+      method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
       },
-      body: categoryData
+      body: categoryData,
     });
 
     const result = await response.json();
@@ -203,16 +217,22 @@ export async function createCategory(categoryData: FormData): Promise<SingleCate
   }
 }
 
-
 // =======================
 //  PUT update category
 // =======================
-export async function updateCategory(id: number, formData: FormData): Promise<SingleCategoryResponse> {
+export async function updateCategory(
+  id: number,
+  formData: FormData,
+): Promise<SingleCategoryResponse> {
   try {
     const session = await getServerSession(authOptions);
     const token = session?.accessToken;
     if (!token) {
-      return { success: false, message: "No valid session or access token found.", code: 401 };
+      return {
+        success: false,
+        message: "No valid session or access token found.",
+        code: 401,
+      };
     }
 
     const url = `${API_BASE}/course-categories/${id}`;
@@ -222,7 +242,7 @@ export async function updateCategory(id: number, formData: FormData): Promise<Si
       headers: {
         Authorization: `Bearer ${token}`,
       },
-      body: formData
+      body: formData,
     });
 
     const result = await response.json();
@@ -242,17 +262,23 @@ export async function updateCategory(id: number, formData: FormData): Promise<Si
 // =======================
 //  DELETE category
 // =======================
-export async function deleteCategory(id: number): Promise<SingleCategoryResponse> {
+export async function deleteCategory(
+  id: number,
+): Promise<SingleCategoryResponse> {
   try {
     const session = await getServerSession(authOptions);
     const token = session?.accessToken;
     if (!token) {
-      return { success: false, message: "No valid session or access token found.", code: 401 };
+      return {
+        success: false,
+        message: "No valid session or access token found.",
+        code: 401,
+      };
     }
 
     const url = `${API_BASE}/course-categories/${id}`;
     const response = await fetch(url, {
-      method: 'DELETE',
+      method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -273,7 +299,6 @@ export async function deleteCategory(id: number): Promise<SingleCategoryResponse
   }
 }
 
-
 // functions for home page getHomeCourseCategories ---
 
 export async function getHomeCourseCategories(): Promise<CategoriesResponse | null> {
@@ -281,18 +306,27 @@ export async function getHomeCourseCategories(): Promise<CategoriesResponse | nu
   cacheTag("categories-list");
 
   try {
-    const res = await fetch(
-      `${API_BASE}/public/course-categories/with-count`
-    );
+    const res = await fetch(`${API_BASE}/public/course-categories/with-count`);
 
     if (res.status === 404) {
       console.warn("Home Course Categories API returned 404 Not Found");
       return null;
     }
 
+    if (res.status === 401) {
+      console.warn("Home Course Categories API returned 401 Unauthorized");
+      return null;
+    }
+
+    if (res.status === 403) {
+      console.warn("Home Course Categories API returned 403 Forbidden");
+      return null;
+    }
+    
+
     if (!res.ok) {
       throw new Error(
-        `Home Course Categories API failed: ${res.status} ${res.statusText}`
+        `Home Course Categories API failed: ${res.status} ${res.statusText}`,
       );
     }
 
@@ -307,4 +341,3 @@ export async function getHomeCourseCategories(): Promise<CategoriesResponse | nu
     return null;
   }
 }
-

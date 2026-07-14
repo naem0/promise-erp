@@ -292,7 +292,7 @@ export async function deleteProductItem(
 }
 
 // =======================
-//Start of Inventory Dashboard
+//Start of Inventory All Dashboard Summary Stats
 // =======================
 
 export interface InventoryDashboardMetrics {
@@ -361,18 +361,13 @@ export async function getInventoryItemDashboardStats(): Promise<InventoryMiniSta
   }
 }
 
-// =======================
-//End of Inventory Dashboard
-// =======================
-
-
-export async function getInventoryDeliveryDashboardStats(): Promise<InventoryMiniStatsResponse | null> {
+export async function getInventoryProductItemStats(): Promise<InventoryMiniStatsResponse | null> {
   const session = await getServerSession(authOptions);
   const token = session?.accessToken;
   if (!token) throw new Error("No valid session/token");
 
   try {
-    const res = await fetch(`${API_BASE}/inventory/deliveries/summary`, {
+    const res = await fetch(`${API_BASE}/inventory/products/summary`, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -397,12 +392,426 @@ export async function getInventoryDeliveryDashboardStats(): Promise<InventoryMin
 
     return result;
   } catch (error: unknown) {
-    console.error("getInventoryDashboardStats error:", error);
+    console.error("getInventoryProductItemStats error:", error);
 
     if (error instanceof Error) {
       throw error;
     }
 
-    throw new Error("Failed to fetch inventory dashboard stats");
+    throw new Error("Failed to fetch inventory product item stats");
   }
 }
+
+export async function getInventoryGroupItemsStats(): Promise<InventoryMiniStatsResponse | null> {
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+  if (!token) throw new Error("No valid session/token");
+
+  try {
+    const res = await fetch(`${API_BASE}/inventory/group-items/summary`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (res.status === 404) {
+      console.warn("Group items stats not found (404).");
+      return null;
+    }
+
+    if (res.status === 401 || res.status === 403) {
+      console.warn("Unauthorized: Access token not found.");
+      return null;
+    }
+
+    if (!res.ok) {
+      throw new Error(`Status: ${res.status} ${res.statusText}`);
+    }
+
+    const result: InventoryMiniStatsResponse = await res.json();
+
+    return result;
+  } catch (error: unknown) {
+    console.error("getInventoryGroupItemsStats error:", error);
+
+    if (error instanceof Error) {
+      throw error;
+    }
+
+    throw new Error("Failed to fetch inventory group items stats");
+  }
+}
+
+export async function getInventoryCategoryStats(): Promise<InventoryMiniStatsResponse | null> {
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+  if (!token) throw new Error("No valid session/token");
+
+  try {
+    const res = await fetch(`${API_BASE}/inventory/product-categories/summary`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (res.status === 404) {
+      console.warn("Product categories stats not found (404).");
+      return null;
+    }
+
+    if (res.status === 401 || res.status === 403) {
+      console.warn("Unauthorized: Access token not found.");
+      return null;
+    }
+
+    if (!res.ok) {
+      throw new Error(`Status: ${res.status} ${res.statusText}`);
+    }
+
+    const result: InventoryMiniStatsResponse = await res.json();
+
+    return result;
+  } catch (error: unknown) {
+    console.error("getInventoryCategoryStats error:", error);
+
+    if (error instanceof Error) {
+      throw error;
+    }
+
+    throw new Error("Failed to fetch inventory category stats");
+  }
+}
+
+export async function getInventoryBrandStats(): Promise<InventoryMiniStatsResponse | null> {
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+  if (!token) throw new Error("No valid session/token");
+
+  try {
+    const res = await fetch(`${API_BASE}/inventory/brands/summary`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (res.status === 404) {
+      console.warn("Product brands stats not found (404).");
+      return null;
+    }
+
+    if (res.status === 401 || res.status === 403) {
+      console.warn("Unauthorized: Access token not found.");
+      return null;
+    }
+
+    if (!res.ok) {
+      throw new Error(`Status: ${res.status} ${res.statusText}`);
+    }
+
+    const result: InventoryMiniStatsResponse = await res.json();
+
+    return result;
+  } catch (error: unknown) {
+    console.error("getInventoryBrandStats error:", error);
+
+    if (error instanceof Error) {
+      throw error;
+    }
+
+    throw new Error("Failed to fetch inventory brand stats");
+  }
+}
+
+export async function getInventoryUnitsStats(): Promise<InventoryMiniStatsResponse | null> {
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+  if (!token) throw new Error("No valid session/token");
+
+  try {
+    const res = await fetch(`${API_BASE}/inventory/units/summary`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (res.status === 404) {
+      console.warn("Product units stats not found (404).");
+      return null;
+    }
+
+    if (res.status === 401 || res.status === 403) {
+      console.warn("Unauthorized: Access token not found.");
+      return null;
+    }
+
+    if (!res.ok) {
+      throw new Error(`Status: ${res.status} ${res.statusText}`);
+    }
+
+    const result: InventoryMiniStatsResponse = await res.json();
+
+    return result;
+  } catch (error: unknown) {
+    console.error("getInventoryUnitsStats error:", error);
+
+    if (error instanceof Error) {
+      throw error;
+    }
+
+    throw new Error("Failed to fetch inventory units stats");
+  }
+}
+
+export async function getInventoryRoomsStats(): Promise<InventoryMiniStatsResponse | null> {
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+  if (!token) throw new Error("No valid session/token");
+
+  try {
+    const res = await fetch(`${API_BASE}/inventory/rooms/summary`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (res.status === 404) {
+      console.warn("Product rooms stats not found (404).");
+      return null;
+    }
+
+    if (res.status === 401 || res.status === 403) {
+      console.warn("Unauthorized: Access token not found.");
+      return null;
+    }
+
+    if (!res.ok) {
+      throw new Error(`Status: ${res.status} ${res.statusText}`);
+    }
+
+    const result: InventoryMiniStatsResponse = await res.json();
+
+    return result;
+  } catch (error: unknown) {
+    console.error("getInventoryRoomsStats error:", error);
+
+    if (error instanceof Error) {
+      throw error;
+    }
+
+    throw new Error("Failed to fetch inventory rooms stats");
+  }
+}
+
+export async function getInventoryDeliveryPartnerStats(): Promise<InventoryMiniStatsResponse | null> {
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+  if (!token) throw new Error("No valid session/token");
+
+  try {
+    const res = await fetch(`${API_BASE}/inventory/delivery-partners/summary`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (res.status === 404) {
+      console.warn("Product delivery partner stats not found (404).");
+      return null;
+    }
+
+    if (res.status === 401 || res.status === 403) {
+      console.warn("Unauthorized: Access token not found.");
+      return null;
+    }
+
+    if (!res.ok) {
+      throw new Error(`Status: ${res.status} ${res.statusText}`);
+    }
+
+    const result: InventoryMiniStatsResponse = await res.json();
+
+    return result;
+  } catch (error: unknown) {
+    console.error("getInventoryDeliveryPartnerStats error:", error);
+
+    if (error instanceof Error) {
+      throw error;
+    }
+
+    throw new Error("Failed to fetch inventory delivery partner stats");
+  }
+}
+
+export async function getInventoryDeliveryTypeStats(): Promise<InventoryMiniStatsResponse | null> {
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+  if (!token) throw new Error("No valid session/token");
+
+  try {
+    const res = await fetch(`${API_BASE}/inventory/delivery-types/summary`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (res.status === 404) {
+      console.warn("Product delivery types stats not found (404).");
+      return null;
+    }
+
+    if (res.status === 401 || res.status === 403) {
+      console.warn("Unauthorized: Access token not found.");
+      return null;
+    }
+
+    if (!res.ok) {
+      throw new Error(`Status: ${res.status} ${res.statusText}`);
+    }
+
+    const result: InventoryMiniStatsResponse = await res.json();
+
+    return result;
+  } catch (error: unknown) {
+    console.error("getInventoryDeliveryTypeStats error:", error);
+
+    if (error instanceof Error) {
+      throw error;
+    }
+
+    throw new Error("Failed to fetch inventory delivery types stats");
+  }
+}
+
+export async function getInventoryDeliveriesStats(): Promise<InventoryMiniStatsResponse | null> {
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+  if (!token) throw new Error("No valid session/token");
+
+  try {
+    const res = await fetch(`${API_BASE}/inventory/deliveries/summary`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (res.status === 404) {
+      console.warn("Product deliveries stats not found (404).");
+      return null;
+    }
+
+    if (res.status === 401 || res.status === 403) {
+      console.warn("Unauthorized: Access token not found.");
+      return null;
+    }
+
+    if (!res.ok) {
+      throw new Error(`Status: ${res.status} ${res.statusText}`);
+    }
+
+    const result: InventoryMiniStatsResponse = await res.json();
+
+    return result;
+  } catch (error: unknown) {
+    console.error("getInventoryDeliveriesStats error:", error);
+
+    if (error instanceof Error) {
+      throw error;
+    }
+
+    throw new Error("Failed to fetch inventory deliveries stats");
+  }
+}
+
+export async function getInventoryRequisitionStats(): Promise<InventoryMiniStatsResponse | null> {
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+  if (!token) throw new Error("No valid session/token");
+
+  try {
+    const res = await fetch(`${API_BASE}/requisitions/summary`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (res.status === 404) {
+      console.warn("Product requisitions stats not found (404).");
+      return null;
+    }
+
+    if (res.status === 401 || res.status === 403) {
+      console.warn("Unauthorized: Access token not found.");
+      return null;
+    }
+
+    if (!res.ok) {
+      throw new Error(`Status: ${res.status} ${res.statusText}`);
+    }
+
+    const result: InventoryMiniStatsResponse = await res.json();
+
+    return result;
+  } catch (error: unknown) {
+    console.error("getInventoryRequisitionStats error:", error);
+
+    if (error instanceof Error) {
+      throw error;
+    }
+
+    throw new Error("Failed to fetch inventory requisitions stats");
+  }
+}
+// =======================
+//End of Inventory All Dashboard Summary Stats
+// =======================
+
+
+// export async function getInventoryDeliveryDashboardStats(): Promise<InventoryMiniStatsResponse | null> {
+//   const session = await getServerSession(authOptions);
+//   const token = session?.accessToken;
+//   if (!token) throw new Error("No valid session/token");
+
+//   try {
+//     const res = await fetch(`${API_BASE}/inventory/deliveries/summary`, {
+//       headers: {
+//         Authorization: `Bearer ${token}`,
+//         "Content-Type": "application/json",
+//       },
+//     });
+
+//     if (res.status === 404) {
+//       console.warn("Delivery dashboard stats not found (404).");
+//       return null;
+//     }
+
+//     if (res.status === 401 || res.status === 403) {
+//       console.warn("Unauthorized: Access token not found.");
+//       return null;
+//     }
+
+//     if (!res.ok) {
+//       throw new Error(`Status: ${res.status} ${res.statusText}`);
+//     }
+
+//     const result: InventoryMiniStatsResponse = await res.json();
+
+//     return result;
+//   } catch (error: unknown) {
+//     console.error("getInventoryDeliveryDashboardStats error:", error);
+
+//     if (error instanceof Error) {
+//       throw error;
+//     }
+
+//     throw new Error("Failed to fetch inventory delivery dashboard stats");
+//   }
+// }

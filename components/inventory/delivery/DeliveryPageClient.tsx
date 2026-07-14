@@ -8,6 +8,7 @@ import DeliveryFilter from "./DeliveryFilter";
 import DeliveryTable from "./DeliveryTable";
 import { DeliveriesResponse } from "@/apiServices/inventoryBrandsService";
 import NotFoundComponent from "@/components/common/NotFoundComponent";
+import PermissionGuard from "@/components/auth/PermissionGuard";
 
 interface DeliveryPageClientProps {
   deliveriesList: DeliveriesResponse | null;
@@ -39,53 +40,57 @@ export default function DeliveryPageClient({ deliveriesList }: DeliveryPageClien
   }
 
   return (
-    <div className="mx-auto space-y-6">
-      {/* Top Header Card */}
-      <div className="flex justify-between items-center bg-card p-4 border border-slate-100 dark:border-slate-800 rounded-xl shadow-sm">
-        <div className="flex items-center gap-3">
-          <h1 className="text-xl font-bold text-slate-800 dark:text-slate-100">
-            Delivery
-          </h1>
-        </div>
-
-        {hasSelection ? (
-          <Button
-            className="cursor-pointer bg-[#16a34a] hover:bg-[#15803d] text-white flex items-center gap-2"
-            asChild
-          >
-            <Link href={deliveryUrl}>
-              <Truck className="w-4 h-4" />
+    <PermissionGuard requiredPermission="view-deliveries">
+      <div className="mx-auto space-y-6">
+        {/* Top Header Card */}
+        <div className="flex justify-between items-center bg-card p-4 border border-slate-100 dark:border-slate-800 rounded-xl shadow-sm">
+          <div className="flex items-center gap-3">
+            <h1 className="text-xl font-bold text-slate-800 dark:text-slate-100">
               Delivery
-            </Link>
-          </Button>
-        ) : (
-          <Button
-            className="cursor-not-allowed bg-slate-100 text-slate-400 hover:bg-slate-100 dark:bg-slate-800 dark:text-slate-600 dark:hover:bg-slate-800 flex items-center gap-2"
-            disabled
-          >
-            <Truck className="w-4 h-4" />
-            Delivery
-          </Button>
-        )}
-      </div>
+            </h1>
+          </div>
 
-      {/* Filter Section */}
-      <DeliveryFilter />
-
-      {/* Table Section */}
-      {deliveries.length === 0 ? (
-        <div className="mx-auto">
-          <NotFoundComponent message="No deliveries found." />
+          <PermissionGuard requiredPermission="create-deliveries">
+            {hasSelection ? (
+              <Button
+                className="cursor-pointer bg-[#16a34a] hover:bg-[#15803d] text-white flex items-center gap-2"
+                asChild
+              >
+                <Link href={deliveryUrl}>
+                  <Truck className="w-4 h-4" />
+                  Delivery
+                </Link>
+              </Button>
+            ) : (
+              <Button
+                className="cursor-not-allowed bg-slate-100 text-slate-400 hover:bg-slate-100 dark:bg-slate-800 dark:text-slate-600 dark:hover:bg-slate-800 flex items-center gap-2"
+                disabled
+              >
+                <Truck className="w-4 h-4" />
+                Delivery
+              </Button>
+            )}
+          </PermissionGuard>
         </div>
-      ) : (
-        <DeliveryTable 
-          deliveries={deliveries} 
-          paginationData={paginationData}
-          selectedIds={selectedIds}
-          setSelectedIds={setSelectedIds}
-        />
-      )}
 
-    </div>
+        {/* Filter Section */}
+        <DeliveryFilter />
+
+        {/* Table Section */}
+        {deliveries.length === 0 ? (
+          <div className="mx-auto">
+            <NotFoundComponent message="No deliveries found." />
+          </div>
+        ) : (
+          <DeliveryTable 
+            deliveries={deliveries} 
+            paginationData={paginationData}
+            selectedIds={selectedIds}
+            setSelectedIds={setSelectedIds}
+          />
+        )}
+
+      </div>
+    </PermissionGuard>
   );
 }

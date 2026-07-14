@@ -2,7 +2,6 @@
 
 import React from "react";
 import { Requisition, requisitionRequestApproval } from "@/apiServices/requisitionsService";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -12,7 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Printer, Download } from "lucide-react";
+import { Printer, Download, Minus, Plus } from "lucide-react";
 import PermissionGuard from "@/components/auth/PermissionGuard";
 import RequisitionDetailSummary from "./RequisitionDetailSummary";
 import ApprovalHierarchyList from "./ApprovalHierarchyList";
@@ -35,6 +34,7 @@ interface FormValues {
     approved_qty: number;
     after_delivery_qty: number;
     reason_for_requirement: string;
+    room_name: string;
   }>;
   amount_items: Array<{
     selected: boolean;
@@ -71,9 +71,10 @@ export default function RequisitionDetail({
           price: item?.price || 0,
           quantity: item?.quantity || 0,
           stock_qty: item?.stock_qty || 0,
-          approved_qty: item?.approved_qty || 0,
+          approved_qty: item?.approved_qty || item?.quantity || 0,
           after_delivery_qty: item?.after_delivery_qty || 0,
           reason_for_requirement: item?.reason_for_requirement || "",
+          room_name: item?.room?.name || (item?.room_id ? String(item.room_id) : ""),
         })) || [],
       amount_items:
         requisition?.amount_items?.map((item) => ({
@@ -138,6 +139,15 @@ export default function RequisitionDetail({
       return;
     }
 
+    // Check if any selected item has approved quantity > requested quantity
+    const hasExceededQty = data.items
+      .filter((item) => item.selected)
+      .some((item) => item.approved_qty > item.quantity);
+    if (hasExceededQty) {
+      toast.error("Approved Quantity cannot exceed Request Quantity.");
+      return;
+    }
+
     // Check if any selected item has approved quantity/amount < 1
     const hasInvalidQty = selectedItems.some(
       (item) =>
@@ -158,6 +168,7 @@ export default function RequisitionDetail({
       if (res?.success) {
         toast.success(res.message || `Requisition successfully ${action.toLowerCase()}d.`);
         router.refresh();
+        router.push("/inventory/requisitions");
       } else {
         toast.error(res?.message || "Operation failed.");
       }
@@ -185,7 +196,6 @@ export default function RequisitionDetail({
                 <div className="flex items-center gap-3">
                   <Button
                     variant="outline"
-                    // onClick={() => window.print()}
                     className="border-indigo-600 text-indigo-700 hover:bg-indigo-50 font-medium px-4 py-2 h-9 rounded-lg gap-2 flex items-center"
                   >
                     <Printer className="h-4 w-4" />
@@ -241,6 +251,9 @@ export default function RequisitionDetail({
                             After Delivery Qty
                           </TableHead>
                           <TableHead className="text-center font-semibold text-secondary">
+                            Room
+                          </TableHead>
+                          <TableHead className="text-center font-semibold text-secondary">
                             Reason
                           </TableHead>
                         </TableRow>
@@ -277,17 +290,55 @@ export default function RequisitionDetail({
                                 {item?.stock_qty}
                               </TableCell>
                               <TableCell className="text-center font-medium text-secondary py-3.5">
-                                <input
-                                  type="number"
-                                  min={1}
-                                  {...register(`items.${index}.approved_qty`, {
-                                    valueAsNumber: true,
-                                  })}
-                                  className="w-16 text-center border border-slate-200 rounded px-1.5 py-0.5 text-sm font-medium focus:outline-none focus:ring-1 focus:ring-slate-300 mx-auto block"
-                                />
+                                <div className="flex items-center justify-center gap-1.5 mx-auto w-fit">
+                                  <Button
+                                   
+                                    onClick={() => {
+                                      const currentVal = Number(item.approved_qty) || 1;
+                                      if (currentVal > 1) {
+                                        setValue(`items.${index}.approved_qty`, currentVal - 1);
+                                      }
+                                    }}
+                                    className="cursor-pointer"
+                                  >
+                                    <Minus className="h-3.5 w-3.5 text-white" />
+                                  </Button>
+                                  <input
+                                    type="number"
+                                    min={1}
+                                    max={item.quantity}
+                                    {...register(`items.${index}.approved_qty`, {
+                                      valueAsNumber: true,
+                                      onChange: (e) => {
+                                        const val = Number(e.target.value);
+                                        if (val > item.quantity) {
+                                          toast.error(`Approved Quantity cannot exceed Request Quantity (${item.quantity})`);
+                                          setValue(`items.${index}.approved_qty`, item.quantity);
+                                        }
+                                      }
+                                    })}
+                                    className="w-12 h-9 text-center border border-primary/30 rounded-lg py-0.5 text-sm font-semibold focus:outline-none focus:ring-1 focus:ring-primary/50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                  />
+                                  <Button
+                                    onClick={() => {
+                                      const currentVal = Number(item.approved_qty) || 1;
+                                      if (currentVal < item.quantity) {
+                                        setValue(`items.${index}.approved_qty`, currentVal + 1);
+                                      } else {
+                                        toast.error(`Approved Quantity cannot exceed Request Quantity (${item.quantity})`);
+                                      }
+                                    }}
+                                    className="cursor-pointer"
+                                  >
+                                    <Plus className="h-3.5 w-3.5 text-white" />
+                                  </Button>
+                                </div>
                               </TableCell>
                               <TableCell className="text-center font-medium text-secondary py-3.5">
                                 {calculatedAfterDelivery}
+                              </TableCell>
+                              <TableCell className="text-center font-medium text-secondary py-3.5">
+                                {item?.room_name || "—"}
                               </TableCell>
                               <TableCell className="text-center py-3.5">
                                 {item?.reason_for_requirement ?? "---"}
@@ -388,19 +439,17 @@ export default function RequisitionDetail({
                   </div>
                   <div className="flex justify-end gap-3">
                     <Button
-                      type="button"
                       disabled={!isAnySelected || isSubmitting}
                       onClick={handleSubmit((data) => onSubmit(data, "Reject"))}
                       variant="outline"
-                      className="border-red-300 text-red-600 hover:bg-red-50 font-medium px-6 py-2 h-9 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="border-red-300 text-red-600 cursor-pointer"
                     >
                       {isSubmitting ? "Submitting..." : "Reject"}
                     </Button>
                     <Button
-                      type="button"
                       disabled={!isAnySelected || isSubmitting}
                       onClick={handleSubmit((data) => onSubmit(data, "Approve"))}
-                      className="bg-green-700 hover:bg-green-800 text-white font-medium px-6 py-2 h-9 rounded-lg gap-2 flex items-center shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="cursor-pointer"
                     >
                       {isSubmitting ? "Submitting..." : "Approve"}
                     </Button>

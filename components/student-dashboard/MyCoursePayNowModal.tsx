@@ -62,7 +62,7 @@ const MyCoursePayNowModal = ({ course, isUpdatedCourse, setIsUpdatedCourse }: My
     const selectedPaymentMethodId = watch("payment_method");
     const selectedPaymentMethod = paymentMethods.find((pm) => String(pm.id) === selectedPaymentMethodId);
     const hideNumberFields = selectedPaymentMethod
-        ? ["cash", "pay later"].some((k) => selectedPaymentMethod.name.toLowerCase().includes(k))
+        ? ["cash", "pay later", "bkash"].some((k) => selectedPaymentMethod.name?.toLowerCase().includes(k))
         : false;
 
     useEffect(() => {
@@ -128,6 +128,11 @@ const MyCoursePayNowModal = ({ course, isUpdatedCourse, setIsUpdatedCourse }: My
         try {
             const res = await CourseDuePaymentRequests(payload, token as string);
             if (res.success) {
+                const bkashUrl = (res.data as any)?.bkash_url;
+                if (bkashUrl) {
+                    window.location.href = bkashUrl;
+                    return;
+                }
                 setIsUpdatedCourse(!isUpdatedCourse);
                 setOpen(false);
                 reset();
@@ -203,7 +208,7 @@ const MyCoursePayNowModal = ({ course, isUpdatedCourse, setIsUpdatedCourse }: My
                                             <SelectContent>
                                                 {!loading && paymentMethods?.length > 0 ? (
                                                     paymentMethods
-                                                        ?.filter((pm) => !pm.name.toLowerCase().includes("pay later"))
+                                                        ?.filter((pm) => !pm.name?.toLowerCase().includes("pay later"))
                                                         .map((pm) => (
                                                             <SelectItem key={pm.id} value={String(pm.id)}>
                                                                 {pm.name}
@@ -229,7 +234,7 @@ const MyCoursePayNowModal = ({ course, isUpdatedCourse, setIsUpdatedCourse }: My
                                             id="payment_number"
                                             type="text"
                                             placeholder="Enter payment number"
-                                            {...register("payment_number", { required: "Payment number is required" })}
+                                            {...register("payment_number", { required: !hideNumberFields && "Payment number is required" })}
                                         />
                                         {errors.payment_number && <span className="text-xs text-red-500">{errors.payment_number.message}</span>}
                                         {apiErrors?.payment_number && <span className="text-xs text-red-500">{apiErrors.payment_number[0]}</span>}
@@ -240,7 +245,7 @@ const MyCoursePayNowModal = ({ course, isUpdatedCourse, setIsUpdatedCourse }: My
                                             id="transaction_id"
                                             type="text"
                                             placeholder="Enter transaction number"
-                                            {...register("transaction_id", { required: "Transaction number is required" })}
+                                            {...register("transaction_id", { required: !hideNumberFields && "Transaction number is required" })}
                                         />
                                         {errors.transaction_id && <span className="text-xs text-red-500">{errors.transaction_id.message}</span>}
                                         {apiErrors?.transaction_id && <span className="text-xs text-red-500">{apiErrors.transaction_id[0]}</span>}

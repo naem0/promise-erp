@@ -69,6 +69,7 @@ export default async function CoursesData({
   try {
     data = await getCourses(params);
   } catch (error: unknown) {
+    if (typeof error === 'object' && error !== null && 'digest' in error) throw error;
     if (error instanceof Error) {
       return <ErrorComponent message={error.message} />;
     } else {
@@ -77,7 +78,7 @@ export default async function CoursesData({
   }
 
   if (!data?.success || !data?.data ) {
-    return null;
+    return <ErrorComponent message={data?.message || "Failed to fetch courses."} />;
   }
 
   const courses = data?.data?.courses || [];
@@ -111,7 +112,7 @@ export default async function CoursesData({
             {courses.map((course, index) => (
               <TableRow key={course.id}>
                 <TableCell className="text-center">
-                  {(page - 1) * 15 + (index + 1)}
+                  {(page - 1) * per_page + (index + 1)}
                 </TableCell>
 
                 {/* Action Dropdown */}

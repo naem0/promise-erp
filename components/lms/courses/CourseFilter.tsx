@@ -1,42 +1,42 @@
-'use client'
+"use client";
 
-import { useEffect } from "react"
-import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { useForm, Controller } from "react-hook-form"
-import { Input } from "@/components/ui/input"
+import { useEffect } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useForm, Controller } from "react-hook-form";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { Button } from "@/components/ui/button"
-import { Branch } from "@/apiServices/branchService"
-import { Division } from "@/apiServices/divisionService"
-import { Category } from "@/apiServices/categoryService"
-import { Search, FilterX } from "lucide-react"
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Branch } from "@/apiServices/branchService";
+import { Category } from "@/apiServices/categoryService";
+import { Search, FilterX } from "lucide-react";
+import PerPageSelect from "@/components/common/PerPageSelect";
 
 interface FilterFormValues {
-  search?: string
-  sort_order?: string
-  level?: string
-  branch_id?: string
-  category_id?: string
+  search?: string;
+  sort_order?: string;
+  level?: string;
+  branch_id?: string;
+  category_id?: string;
 }
 
 interface CourseFilterProps {
-  branches: Branch[]
-  categories: Category[]
+  branches: Branch[];
+  categories: Category[];
 }
 
 export default function CourseFilter({
   branches,
   categories,
 }: CourseFilterProps) {
-  const router = useRouter()
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { register, control, reset, watch } = useForm<FilterFormValues>({
     defaultValues: {
       search: searchParams.get("search") || "",
@@ -45,26 +45,42 @@ export default function CourseFilter({
       branch_id: searchParams.get("branch_id") || "",
       category_id: searchParams.get("category_id") || "",
     },
-  })
+  });
 
-  const watchedValues = watch()
+  const watchedValues = watch();
 
   useEffect(() => {
-    const params = new URLSearchParams(searchParams)
-    Object.entries(watchedValues).forEach(([key, value]) => {
-      if (value) {
-        params.set(key, String(value))
-      } else {
-        params.delete(key)
-      }
-    })
-    params.set("page", "1")
-    const timer = setTimeout(() => {
-      router.replace(`${pathname}?${params.toString()}`)
-    }, 500)
+    const handler = setTimeout(() => {
+      const params = new URLSearchParams(searchParams.toString());
+      let isChanged = false;
 
-    return () => clearTimeout(timer)
-  }, [JSON.stringify(watchedValues), router, pathname])
+      Object.entries(watchedValues).forEach(([key, value]) => {
+        const urlValue = params.get(key) || "";
+        const formValue = String(value || "");
+        if (urlValue !== formValue) {
+          isChanged = true;
+        }
+      });
+
+      if (isChanged) {
+        params.delete("page");
+        Object.entries(watchedValues).forEach(([key, value]) => {
+          if (value && value !== "") {
+            params.set(key, String(value));
+          } else {
+            params.delete(key);
+          }
+        });
+
+        const newUrl = `${pathname}?${params.toString()}`;
+        router.replace(newUrl, { scroll: false });
+      }
+    }, 500);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [JSON.stringify(watchedValues), router, pathname, searchParams]);
 
   const handleReset = () => {
     reset({
@@ -73,13 +89,24 @@ export default function CourseFilter({
       level: "",
       branch_id: "",
       category_id: "",
-    })
-    router.replace(pathname)
-  }
+    });
+    router.replace(pathname, { scroll: false });
+  };
 
-  const hasActiveFilters = Object.values(watchedValues).some(
-    (value) => value && value !== ""
-  )
+  const currentSearch = searchParams.get("search") || "";
+  const currentSortOrder = searchParams.get("sort_order") || "";
+  const currentLevel = searchParams.get("level") || "";
+  const currentBranchId = searchParams.get("branch_id") || "";
+  const currentCategoryId = searchParams.get("category_id") || "";
+  const currentPerPage = searchParams.get("per_page") || "";
+
+  const hasActiveFilters =
+    currentSearch !== "" ||
+    currentSortOrder !== "" ||
+    currentLevel !== "" ||
+    currentBranchId !== "" ||
+    currentCategoryId !== "" ||
+    currentPerPage !== "";
 
   return (
     <div className="p-6 mb-6 border rounded-xl bg-card shadow-sm">
@@ -99,7 +126,7 @@ export default function CourseFilter({
         )}
       </div>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-6">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7">
         {/* Search Input */}
         <div className="relative col-span-1 lg:col-span-2">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -155,11 +182,15 @@ export default function CourseFilter({
                 <SelectValue placeholder="Branch" />
               </SelectTrigger>
               <SelectContent>
-                {branches?.map((branch) => (
-                  <SelectItem key={branch.id} value={String(branch.id)}>
-                    {branch.name}
-                  </SelectItem>
-                ))}
+                {branches?.length === 0 ? (
+                  <SelectItem value="">No Branches</SelectItem>
+                ) : (
+                  branches?.map((branch) => (
+                    <SelectItem key={branch.id} value={String(branch.id)}>
+                      {branch.name}
+                    </SelectItem>
+                  ))
+                )}
               </SelectContent>
             </Select>
           )}
@@ -175,16 +206,25 @@ export default function CourseFilter({
                 <SelectValue placeholder="Category" />
               </SelectTrigger>
               <SelectContent>
-                {categories?.map((category) => (
-                  <SelectItem key={category.id} value={String(category.id)}>
-                    {category.name}
-                  </SelectItem>
-                ))}
+                {categories?.length === 0 ? (
+                  <SelectItem value="">No Categories</SelectItem>
+                ) : (
+                  categories?.map((category) => (
+                    <SelectItem key={category.id} value={String(category.id)}>
+                      {category.name}
+                    </SelectItem>
+                  ))
+                )}
               </SelectContent>
             </Select>
           )}
         />
+
+        {/* Per Page Select */}
+        <div className="flex items-center justify-start md:col-span-1">
+          <PerPageSelect className="w-full" />
+        </div>
       </div>
-    </div >
-  )
+    </div>
+  );
 }

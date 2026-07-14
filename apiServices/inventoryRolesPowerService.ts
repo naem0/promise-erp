@@ -21,7 +21,8 @@ export interface RoleInfo {
 export interface RolesPowerStep {
   id: number;
   role_id: number;
-  workflow_type: number;
+  requisition_flow_id: number;
+  requisition_flow_name: string;
   power: number;
   min_amount: number;
   status: number;
@@ -193,12 +194,12 @@ export async function getRolesPowerStepByIdCached(
 export async function getRolesPowerStepById(
   id: number,
 ): Promise<SingleRolesPowerResponse | null> {
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+
+  if (!token) throw new Error("No valid session/token");
+
   try {
-    const session = await getServerSession(authOptions);
-    const token = session?.accessToken;
-
-    if (!token) throw new Error("No valid session/token");
-
     return await getRolesPowerStepByIdCached(token, id);
   } catch (error: unknown) {
     console.error("Error in getRolesPowerStepById:", error);
@@ -217,12 +218,11 @@ export async function getRolesPowerStepById(
 export async function createRolesPowerStep(
   payload: Record<string, unknown>,
 ): Promise<SingleRolesPowerResponse> {
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+
+  if (!token) throw new Error("No valid session/token");
   try {
-    const session = await getServerSession(authOptions);
-    const token = session?.accessToken;
-
-    if (!token) throw new Error("No valid session/token");
-
     const res = await fetch(`${API_BASE}/inventory/roles-power`, {
       method: "POST",
       headers: {

@@ -20,6 +20,7 @@ import { Delivery } from "@/apiServices/inventoryBrandsService";
 import Pagination from "@/components/common/Pagination";
 import { Checkbox } from "@/components/ui/checkbox";
 import { PaginationType } from "@/types/pagination";
+import PermissionGuard from "@/components/auth/PermissionGuard";
 
 interface DeliveryTableProps {
   deliveries: Delivery[];
@@ -68,6 +69,8 @@ export default function DeliveryTable({
         return "bg-amber-50 dark:bg-amber-950/20 text-amber-500 dark:text-amber-400 border border-amber-100 dark:border-amber-900/30";
       case "shipped":
       case "3":
+      case "delivered - partial":
+      case "delivered - full":
         return "bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30";
       case "return":
       case "4":
@@ -84,13 +87,15 @@ export default function DeliveryTable({
         <Table>
           <TableHeader className="bg-slate-50/75 dark:bg-slate-900/50">
             <TableRow className="border-slate-100 dark:border-slate-800 hover:bg-transparent">
-              <TableHead className="w-12 py-2 px-6 text-center">
-                <Checkbox
-                  checked={allSelected}
-                  onCheckedChange={toggleAll}
-                  aria-label="Select all deliveries"
-                />
-              </TableHead>
+              <PermissionGuard requiredPermission="create-deliveries">
+                <TableHead className="w-12 py-2 px-6 text-center">
+                  <Checkbox
+                    checked={allSelected}
+                    onCheckedChange={toggleAll}
+                    aria-label="Select all deliveries"
+                  />
+                </TableHead>
+              </PermissionGuard>
               <TableHead className="font-semibold text-slate-600 dark:text-slate-300 py-2 px-6 text-left">
                 Requisition
               </TableHead>
@@ -101,7 +106,10 @@ export default function DeliveryTable({
                 Delivery Branch
               </TableHead>
               <TableHead className="font-semibold text-slate-600 dark:text-slate-300 py-2 px-6 text-center">
-                Aspect Delivery
+                Expected Date
+              </TableHead>
+              <TableHead className="font-semibold text-slate-600 dark:text-slate-300 py-2 px-6 text-center">
+                Delivery Date
               </TableHead>
               <TableHead className="font-semibold text-slate-600 dark:text-slate-300 py-2 px-6 text-center">
                 Challan
@@ -122,13 +130,15 @@ export default function DeliveryTable({
                   key={item.id || idx}
                   className="border-slate-100 dark:border-slate-900 hover:bg-slate-50/25 dark:hover:bg-slate-900/25 transition-colors"
                 >
-                  <TableCell className="w-12 py-2 px-6 text-center">
-                    <Checkbox
-                      checked={isChecked}
-                      onCheckedChange={() => toggleOne(item?.requisition)}
-                      aria-label={`Select delivery requisition ${item.requisition}`}
-                    />
-                  </TableCell>
+                  <PermissionGuard requiredPermission="create-deliveries">
+                    <TableCell className="w-12 py-2 px-6 text-center">
+                      <Checkbox
+                        checked={isChecked}
+                        onCheckedChange={() => toggleOne(item?.requisition)}
+                        aria-label={`Select delivery requisition ${item.requisition}`}
+                      />
+                    </TableCell>
+                  </PermissionGuard>
                   <TableCell className="py-2 px-6 font-medium text-left">
                     <Link
                       href={`/inventory/delivery/${item.requisition}/details`}
@@ -150,13 +160,15 @@ export default function DeliveryTable({
                         </Badge>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="center">
-                        <DropdownMenuItem className="cursor-pointer" asChild>
-                          <Link
-                            href={`/inventory/delivery/${item.requisition}/shipping`}
-                          >
-                            Delivery
-                          </Link>
-                        </DropdownMenuItem>
+                        <PermissionGuard requiredPermission="create-deliveries">
+                          <DropdownMenuItem className="cursor-pointer" asChild>
+                            <Link
+                              href={`/inventory/delivery/${item.requisition}/shipping`}
+                            >
+                              Delivery
+                            </Link>
+                          </DropdownMenuItem>
+                        </PermissionGuard>
                         <DropdownMenuItem className="cursor-pointer" asChild>
                           <Link
                             href={`/inventory/delivery/${item.challan}/challan`}
@@ -179,6 +191,9 @@ export default function DeliveryTable({
                   </TableCell>
                   <TableCell className="py-2 px-6 text-center text-slate-600 dark:text-slate-400">
                     {item?.aspect_delivery || "---"}
+                  </TableCell>
+                  <TableCell className="py-2 px-6 text-center text-slate-600 dark:text-slate-400">
+                    {item?.delivery_date || "---"}
                   </TableCell>
                   <TableCell className="py-2 px-6 text-center font-medium">
                     {item?.challan && item?.challan !== "---" ? (

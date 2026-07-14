@@ -1,22 +1,41 @@
+"use client";
+
+import React from "react";
+
 export interface ChallanItem {
   name: string;
   quantity: number;
-  unit?: string; // e.g. "Pcs", "Kg"
+  unit?: string;
+}
+
+export interface GroupedChallanRequisition {
+  requisition_no: string;
+  user_name: string;
+  items: {
+    product_name: string;
+    quantity: number;
+  }[];
 }
 
 interface ChallanItemsTableProps {
   items: ChallanItem[];
-  totalQuantity: string;  // e.g. "200Pcs"
-  deliveryCost: string;   // e.g. "2000TK"
-  qrValue?: string;       // URL or text for QR code
+  groupedItems?: GroupedChallanRequisition[];
+  isMultiple: boolean;
+  totalQuantity: string;
+  deliveryCost: string;
+  qrValue?: string;
 }
 
 export default function ChallanItemsTable({
   items,
+  groupedItems,
+  isMultiple,
   totalQuantity,
   deliveryCost,
   qrValue,
 }: ChallanItemsTableProps) {
+  const hasGrouped = isMultiple && groupedItems && groupedItems.length > 0;
+
   return (
     <div className="space-y-6">
       {/* Table */}
@@ -24,14 +43,14 @@ export default function ChallanItemsTable({
         <table className="w-full text-sm border-collapse border border-slate-200">
           {/* Head */}
           <thead>
-            <tr className="bg-slate-100/80">
-              <th className="border border-slate-200 w-12 sm:w-16 px-3 sm:px-4 py-3 text-center text-xs font-semibold text-slate-600 uppercase tracking-wider">
-                Sl
+            <tr className="bg-[#f8fafc]">
+              <th className="border border-slate-200 w-12 sm:w-16 px-4 py-3 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">
+                SI
               </th>
-              <th className="border border-slate-200 px-3 sm:px-4 py-3 text-center text-xs font-semibold text-slate-600 uppercase tracking-wider">
+              <th className="border border-slate-200 px-4 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">
                 Product Name
               </th>
-              <th className="border border-slate-200 w-24 sm:w-36 px-3 sm:px-4 py-3 text-center text-xs font-semibold text-slate-600 uppercase tracking-wider">
+              <th className="border border-slate-200 w-24 sm:w-36 px-4 py-3 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">
                 Quantity
               </th>
             </tr>
@@ -39,19 +58,53 @@ export default function ChallanItemsTable({
 
           {/* Body */}
           <tbody>
-            {items.map((item, i) => (
-              <tr key={i} className="bg-white">
-                <td className="border border-slate-200 px-3 sm:px-4 py-2.5 text-slate-500 font-medium text-center tabular-nums">
-                  {String(i + 1).padStart(2, "0")}
-                </td>
-                <td className="border border-slate-200 px-4 py-2.5 text-slate-700 font-medium text-left">
-                  {item.name}
-                </td>
-                <td className="border border-slate-200 px-3 sm:px-4 py-2.5 text-slate-700 font-medium text-center tabular-nums">
-                  {String(item.quantity).padStart(2, "0")}
-                </td>
-              </tr>
-            ))}
+            {hasGrouped ? (
+              // Grouped table layout for multiple invoices
+              groupedItems.map((group, groupIdx) => (
+                <React.Fragment key={group.requisition_no}>
+                  {/* Group Header Row */}
+                  <tr className="bg-slate-50">
+                    <td
+                      colSpan={3}
+                      className="border border-slate-200 px-4 py-2.5 font-bold text-slate-700 text-left text-xs sm:text-sm"
+                    >
+                      {String(groupIdx + 1).padStart(2, "0")}. REQ ID: {group.requisition_no}
+                      {group.user_name ? ` | User: ${group.user_name}` : ""}
+                    </td>
+                  </tr>
+
+                  {/* Group Items */}
+                  {group.items.map((item, itemIdx) => (
+                    <tr key={`${group.requisition_no}-${itemIdx}`} className="bg-white hover:bg-slate-50/30 transition-colors">
+                      <td className="border border-slate-200 px-4 py-2.5 text-slate-400 font-medium text-center tabular-nums">
+                        {String(itemIdx + 1).padStart(2, "0")}
+                      </td>
+                      <td className="border border-slate-200 px-4 py-2.5 text-slate-700 font-medium text-left">
+                        {item.product_name}
+                      </td>
+                      <td className="border border-slate-200 px-4 py-2.5 text-slate-700 font-medium text-center tabular-nums">
+                        {String(item.quantity).padStart(2, "0")}
+                      </td>
+                    </tr>
+                  ))}
+                </React.Fragment>
+              ))
+            ) : (
+              // Flat table layout for a single invoice
+              items.map((item, idx) => (
+                <tr key={idx} className="bg-white hover:bg-slate-50/30 transition-colors">
+                  <td className="border border-slate-200 px-4 py-2.5 text-slate-400 font-medium text-center tabular-nums">
+                    {String(idx + 1).padStart(2, "0")}
+                  </td>
+                  <td className="border border-slate-200 px-4 py-2.5 text-slate-700 font-medium text-left">
+                    {item.name}
+                  </td>
+                  <td className="border border-slate-200 px-4 py-2.5 text-slate-700 font-medium text-center tabular-nums">
+                    {String(item.quantity).padStart(2, "0")}
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
@@ -74,7 +127,7 @@ export default function ChallanItemsTable({
               QR
             </div>
           )}
-          <p className="text-[10px] text-slate-400 font-medium tracking-wide">
+          <p className="text-[10px] text-slate-400 font-bold tracking-wide uppercase">
             Scan For Details
           </p>
         </div>
@@ -84,18 +137,18 @@ export default function ChallanItemsTable({
           <table className="w-full text-sm border-collapse border border-slate-200">
             <tbody>
               <tr>
-                <td className="border border-slate-200 px-4 py-2 text-slate-500 font-medium text-left bg-slate-50/50">
+                <td className="border border-slate-200 px-4 py-2.5 text-slate-500 font-bold text-left bg-slate-50/50">
                   Total Quantity
                 </td>
-                <td className="border border-slate-200 px-4 py-2 text-slate-700 font-medium text-center min-w-[80px] sm:min-w-[100px] tabular-nums">
-                  {totalQuantity}
+                <td className="border border-slate-200 px-4 py-2.5 text-slate-700 font-semibold text-center min-w-[80px] sm:min-w-[100px] tabular-nums">
+                  {totalQuantity}Pcs
                 </td>
               </tr>
               <tr>
-                <td className="border border-slate-200 px-4 py-2 text-slate-500 font-medium text-left bg-slate-50/50">
+                <td className="border border-slate-200 px-4 py-2.5 text-slate-500 font-bold text-left bg-slate-50/50">
                   Delivery Cost
                 </td>
-                <td className="border border-slate-200 px-4 py-2 text-slate-700 font-medium text-center min-w-[80px] sm:min-w-[100px] tabular-nums">
+                <td className="border border-slate-200 px-4 py-2.5 text-slate-700 font-semibold text-center min-w-[80px] sm:min-w-[100px] tabular-nums">
                   {deliveryCost}
                 </td>
               </tr>

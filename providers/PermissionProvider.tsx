@@ -25,7 +25,10 @@ export function PermissionProvider({
   const [permissions, setPermissions] = useState<string[]>([]);
 
   const fetchPermissions = async () => {
-    if (!token) return;
+    if (!token) {
+      setPermissions([]);
+      return;
+    }
     try {
       const response = await fetchMyPermissions(token);
       if (!response || !response?.success || !response?.data) {
@@ -45,10 +48,10 @@ export function PermissionProvider({
 
   useEffect(() => {
     if (status === "authenticated" && token) {
-    fetchPermissions();
-  } else if (status === "unauthenticated") {
-    setPermissions([]);
-  }
+      fetchPermissions();
+    } else if (status === "unauthenticated") {
+      setPermissions([]);
+    }
   }, [status, token]);
 
   const loading = status === "loading";

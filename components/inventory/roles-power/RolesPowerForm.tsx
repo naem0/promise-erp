@@ -1,4 +1,5 @@
 "use client";
+
 import { Controller, useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -11,6 +12,7 @@ import {
 } from "@/components/ui/select";
 import { useEffect } from "react";
 import { createRolesPowerStep, updateRolesPowerStep, RolesPowerStep } from "@/apiServices/inventoryRolesPowerService";
+import { RequisitionFlow } from "@/apiServices/inventoryRequisitionFlowsService";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Role } from "@/apiServices/rolePermissionService";
@@ -19,24 +21,21 @@ interface RolesPowerFormProps {
     title: string;
     step?: RolesPowerStep | null;
     roles?: Role[];
+    flows?: RequisitionFlow[];
 }
 
 interface FormValues {
     role_id: string;
-    workflow_type: string;
+    requisition_flow_id: string;
     min_amount: string;
     status: string;
 }
-
-const WORKFLOW_TYPE_OPTIONS = [
-    { value: "1", label: "Head Office" },
-    { value: "2", label: "Branch" },
-];
 
 export default function RolesPowerForm({
     title,
     step,
     roles = [],
+    flows = [],
 }: RolesPowerFormProps) {
     const router = useRouter();
 
@@ -50,7 +49,7 @@ export default function RolesPowerForm({
     } = useForm<FormValues>({
         defaultValues: {
             role_id: "",
-            workflow_type: "1",
+            requisition_flow_id: "",
             min_amount: "0",
             status: "1",
         },
@@ -60,7 +59,7 @@ export default function RolesPowerForm({
         if (step) {
             reset({
                 role_id: step.role_id?.toString() || "",
-                workflow_type: step.workflow_type?.toString() || "1",
+                requisition_flow_id: step.requisition_flow_id?.toString() || "",
                 min_amount: step.min_amount?.toString() || "0",
                 status: step.status?.toString() || "1",
             });
@@ -70,7 +69,7 @@ export default function RolesPowerForm({
     const submitHandler = async (values: FormValues) => {
         const payload = {
             role_id: Number(values.role_id),
-            workflow_type: Number(values.workflow_type),
+            requisition_flow_id: Number(values.requisition_flow_id),
             min_amount: Number(values.min_amount),
             status: Number(values.status),
         };
@@ -156,28 +155,34 @@ export default function RolesPowerForm({
                         {errors.role_id && <p className="text-sm text-red-500 mt-1">{errors.role_id.message}</p>}
                     </div>
 
-                    {/* Workflow Type */}
+                    {/* Requisition Flow */}
                     <div>
-                        <label className="block text-sm font-medium mb-1">Workflow Type<span className="text-red-500">*</span></label>
+                        <label className="block text-sm font-medium mb-1">Requisition Flow<span className="text-red-500">*</span></label>
                         <Controller
-                            name="workflow_type"
+                            name="requisition_flow_id"
                             control={control}
                             render={({ field }) => (
                                 <Select key={field.value} value={field.value} onValueChange={field.onChange}>
                                     <SelectTrigger className="w-full">
-                                        <SelectValue placeholder="Select Workflow Type" />
+                                        <SelectValue placeholder="Select Requisition Flow" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        {WORKFLOW_TYPE_OPTIONS.map((opt) => (
-                                            <SelectItem key={opt.value} value={opt.value}>
-                                                {opt.label}
+                                        {flows?.length ? (
+                                            flows.map((flow) => (
+                                                <SelectItem key={flow.id} value={flow.id.toString()}>
+                                                    {flow.name}
+                                                </SelectItem>
+                                            ))
+                                        ) : (
+                                            <SelectItem value="no-flows" disabled>
+                                                No flows available
                                             </SelectItem>
-                                        ))}
+                                        )}
                                     </SelectContent>
                                 </Select>
                             )}
                         />
-                        {errors.workflow_type && <p className="text-sm text-red-500 mt-1">{errors.workflow_type.message}</p>}
+                        {errors.requisition_flow_id && <p className="text-sm text-red-500 mt-1">{errors.requisition_flow_id.message}</p>}
                     </div>
 
                     {/* Min Amount */}
