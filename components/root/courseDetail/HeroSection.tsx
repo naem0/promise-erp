@@ -12,6 +12,7 @@ import {
 import { CourseDetail } from "@/apiServices/courseDetailPublicService";
 import Image from "next/image";
 import RatingStars from "@/components/common/RatingStars";
+import { sanitizeHtml } from "@/lib/sanitizeHtml";
 import dynamic from "next/dynamic";
 const EnrollButton = dynamic(() => import("./EnrollButton"));
 
@@ -145,7 +146,11 @@ export const HeroSection = ({ course }: HeroSectionProps) => {
         <Card className="py-0">
           <CardContent className="p-4 lg:p-6">
             <h2 className="text-2xl font-bold mb-4">About this Course</h2>
-            <div dangerouslySetInnerHTML={{ __html: course.description }} />
+            <div
+              dangerouslySetInnerHTML={{
+                __html: sanitizeHtml(course.description),
+              }}
+            />
           </CardContent>
         </Card>
       </div>

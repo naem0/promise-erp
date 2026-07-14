@@ -1,5 +1,6 @@
 import { FreeSeminarRegistrationForm } from "@/components/root/free-seminars/FreeSeminarRegistrationForm";
 import { PublicFreeSeminar } from "@/apiServices/studentDashboardService";
+import { sanitizeHtml } from "@/lib/sanitizeHtml";
 interface FreeSeminarContentSectionProps {
   seminar: PublicFreeSeminar;
 }
@@ -20,7 +21,7 @@ const FreeSeminarContentSection = ({
             {seminar.class_topic ? (
               <div
                 className="text-black/70 text-base"
-                dangerouslySetInnerHTML={{ __html: seminar.class_topic }}
+                dangerouslySetInnerHTML={{ __html: sanitizeHtml(seminar.class_topic) }}
               />
             ) : (
               <p>not found class topic</p>
@@ -37,7 +38,7 @@ const FreeSeminarContentSection = ({
             {seminar.description ? (
               <div
                 className="text-black/70 text-base"
-                dangerouslySetInnerHTML={{ __html: seminar.description }}
+                dangerouslySetInnerHTML={{ __html: sanitizeHtml(seminar.description) }}
               />
             ) :  (
               <p>not found description</p>

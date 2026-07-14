@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { JobCircularDetails } from "@/apiServices/jobCircularPublicService";
+import { sanitizeHtml } from "@/lib/sanitizeHtml";
 interface JobCircularParams {
   jobCirculars: JobCircularDetails;
 }
@@ -15,7 +16,7 @@ const JobInfoRoleOverview = ({jobCirculars}:JobCircularParams) => {
       <CardContent className="pb-4">
         <div
           className="prose prose-sm sm:prose-base lg:prose-lg max-w-none"
-          dangerouslySetInnerHTML={{ __html: jobCirculars?.short_description || "" }}
+          dangerouslySetInnerHTML={{ __html: sanitizeHtml(jobCirculars?.short_description) }}
         />
       </CardContent>
     </Card>

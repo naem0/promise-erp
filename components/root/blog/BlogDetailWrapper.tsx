@@ -15,6 +15,7 @@ import BlogShareButton from "./BlogShareButton";
 import LikeToggleButton from "./LikeToggleButton";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { sanitizeHtml } from "@/lib/sanitizeHtml";
 
 interface BlogDetailWrapperProps {
   slug: string;
@@ -135,7 +136,7 @@ const BlogDetailWrapper = async ({ slug }: BlogDetailWrapperProps) => {
           />
         </div>
         <div className="">
-          <div dangerouslySetInnerHTML={{ __html: blogData.description }} />
+          <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(blogData.description) }} />
         </div>
         <div className="pt-4">
           <h4 className="text-secondary text-lg md:text-2xl font-bold flex items-center gap-2">
