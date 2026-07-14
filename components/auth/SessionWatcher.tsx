@@ -1,30 +1,69 @@
+// "use client";
+
+// import { useSession, signOut } from "next-auth/react";
+// import { useEffect, useRef } from "react";
+
+// export default function SessionWatcher() {
+//   const { data: session, status } = useSession();
+//   const isSigningOutRef = useRef(false);
+
+//   useEffect(() => {
+//     if (status !== "authenticated" || isSigningOutRef.current) {
+//       return;
+//     }
+
+//     const isAuthPage =
+//       typeof window !== "undefined" &&
+//       ["/login", "/register"].includes(window.location.pathname);
+
+//     if (isAuthPage) {
+//       return;
+//     }
+
+//     if (session?.error === "AccessTokenExpired") {
+//       console.warn("Session expired. Logging out...");
+//       isSigningOutRef.current = true;
+//       signOut({ callbackUrl: "/login" });
+//       return;
+//     }
+
+//     if (session?.user && !session?.accessToken) {
+//       console.warn("No access token found. Logging out...");
+//       isSigningOutRef.current = true;
+//       signOut({ callbackUrl: "/login" });
+//     }
+//   }, [status, session?.error, session?.accessToken, session?.user]);
+
+//   return null;
+// }
+
 "use client";
 
-import { useSession, signOut } from "next-auth/react";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+import { signOut, useSession } from "next-auth/react";
 
-/**
- * SessionWatcher handles automatic logout when the session expires
- * or when the access token becomes invalid.
- */
 export default function SessionWatcher() {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
+  const signingOutRef = useRef(false);
 
   useEffect(() => {
-    // 1. Handle explicit session error (from JWT callback)
-    if (session?.error === "AccessTokenExpired") {
-      console.warn("Session expired. Logging out...");
-      signOut({ callbackUrl: "/login" });
+    if (signingOutRef.current) return;
+
+    if (
+      typeof window !== "undefined" &&
+      ["/login", "/register"].includes(window.location.pathname)
+    ) {
       return;
     }
 
-    // 2. Handle missing access token when authenticated
-    if (status === "authenticated" && !session?.accessToken) {
-        console.warn("No access token found. Logging out...");
-        signOut({ callbackUrl: "/login" });
+    if (session?.error === "AccessTokenExpired") {
+      signingOutRef.current = true;
+
+      signOut({
+        callbackUrl: "/login",
+      });
     }
-    
-  }, [session, status]);
+  }, [session?.error]);
 
   return null;
 }

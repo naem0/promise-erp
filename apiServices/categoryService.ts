@@ -313,6 +313,17 @@ export async function getHomeCourseCategories(): Promise<CategoriesResponse | nu
       return null;
     }
 
+    if (res.status === 401) {
+      console.warn("Home Course Categories API returned 401 Unauthorized");
+      return null;
+    }
+
+    if (res.status === 403) {
+      console.warn("Home Course Categories API returned 403 Forbidden");
+      return null;
+    }
+    
+
     if (!res.ok) {
       throw new Error(
         `Home Course Categories API failed: ${res.status} ${res.statusText}`,

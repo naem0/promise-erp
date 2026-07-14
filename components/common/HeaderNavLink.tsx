@@ -34,7 +34,6 @@ const HeaderNavLink = async ({
   isStudentDashboard = false,
 }: HeaderNavLinkProps) => {
   const session = await getServerSession(authOptions);
-  const status = session ? "authenticated" : "unauthenticated";
 
   // Fetch categories for dropdown
   let categories: Category[] = [];
@@ -118,7 +117,7 @@ const HeaderNavLink = async ({
           <AuthButtons role={session?.user?.roles} />
         </div>
       ) : (
-        <div className="flex items-center justify-end gap-2 text-sm w-1/6">
+        <div className="flex items-center shrink-0 justify-end gap-2 text-sm w-1/6">
           <Phone className="h-4 w-4 text-secondary" />
           <span className="font-semibold text-secondary text-base">
             01550-666900

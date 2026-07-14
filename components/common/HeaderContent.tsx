@@ -288,21 +288,8 @@ const HeaderContent = ({ navLinks }: HeaderContentProps) => {
 
   return (
     <>
-      <div className="flex items-center justify-between gap-4">
-        {/* Logo */}
-        <div className="flex items-center gap-2">
-          <Link href="/">
-            <Image
-              src="/images/logo.svg"
-              alt="Logo"
-              width={213}
-              height={36}
-            />
-          </Link>
-        </div>
-
-        {/* Search & Branch Filter */}
-        <div className="hidden lg:flex items-center flex-1 max-w-3xl mx-2 border border-secondary rounded-md">
+      {/* Search & Branch Filter */}
+      <div className="hidden lg:flex items-center flex-1 max-w-3xl mx-2 border border-secondary rounded-md">
           <Suspense fallback={<div>Loading...</div>}>
             <HeaderBranchDropdown />
           </Suspense>
@@ -500,7 +487,6 @@ const HeaderContent = ({ navLinks }: HeaderContentProps) => {
             </div>
           </SheetContent>
         </Sheet>
-      </div>
 
       {/* Search Result Modal */}
       <Dialog
@@ -511,7 +497,7 @@ const HeaderContent = ({ navLinks }: HeaderContentProps) => {
         <DialogContent
           hideOverlay
           onInteractOutside={() => setOpenModal(false)}
-          className="max-w-lg z-[100] max-h-[80vh] overflow-y-auto shadow-2xl border-primary/10"
+          className="max-w-lg z-50 max-h-[80vh] overflow-y-auto shadow-2xl border-primary/10"
         >
           <DialogHeader>
             <DialogTitle>
