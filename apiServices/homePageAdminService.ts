@@ -2,7 +2,7 @@
 
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { cacheTag, updateTag } from "next/cache";
+import { cacheTag, updateTag, revalidatePath } from "next/cache";
 import { PaginationType } from "@/types/pagination";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
@@ -676,6 +676,9 @@ export async function createCommonSection(
     updateTag("affiliates-clients");
     updateTag("public-branches");
 
+    revalidatePath("/web-content/common-sections");
+    revalidatePath("/about");
+
     return result
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -725,6 +728,10 @@ export async function updateCommonSection(
     updateTag("affiliates-clients");
     updateTag("public-branches");
 
+    revalidatePath("/web-content/common-sections");
+    revalidatePath("/web-content/common-sections/[id]/edit", "page");
+    revalidatePath("/about");
+
     return result
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -759,6 +766,7 @@ export async function deleteCommonSection(
     const result = await res.json();
 
 
+    updateTag("common-sections-list");
     updateTag("categories-list");
     updateTag("public-services");
     updateTag("public-govt-course");
@@ -770,6 +778,9 @@ export async function deleteCommonSection(
     updateTag("public-news-feeds");
     updateTag("affiliates-clients");
     updateTag("public-branches");
+
+    revalidatePath("/web-content/common-sections");
+    revalidatePath("/about");
 
     return result
   } catch (error: unknown) {
