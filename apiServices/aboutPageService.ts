@@ -1,5 +1,7 @@
 "use server";
 
+import { PaginationType } from "@/types/pagination";
+
 const API_BASE =
   process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
 
@@ -30,6 +32,10 @@ export async function getPublicWhyChooseUs(): Promise<WhyChooseUsApiResponse | n
 
     if (res.status === 404) {
       console.warn("No why choose us found.");
+      return null;
+    }
+    if (res.status === 401 || res.status === 403) {
+      console.warn("Unauthorized: Access token not found.");
       return null;
     }
 
@@ -77,6 +83,10 @@ export async function getPublicLicensesCertificate(): Promise<LicenseApiResponse
 
     if (res.status === 404) {
       console.warn("No certificates found.");
+      return null;
+    }
+    if (res.status === 401 || res.status === 403) {
+      console.warn("Unauthorized: Access token not found.");
       return null;
     }
 
@@ -131,6 +141,10 @@ export async function getPublicAchievements(): Promise<PublicAchievementApiRespo
       console.warn("No achievements found.");
       return null;
     }
+    if (res.status === 401 || res.status === 403) {
+      console.warn("Unauthorized: Access token not found.");
+      return null;
+    }
 
     if (!res.ok) {
       throw new Error(
@@ -181,6 +195,10 @@ export async function getPublicCompanyMissionSection(): Promise<CompanyMissionAp
       console.warn("No company mission found.");
       return null;
     }
+    if (res.status === 401 || res.status === 403) {
+      console.warn("Unauthorized: Access token not found.");
+      return null;
+    }
 
     if (!res.ok) {
       throw new Error(
@@ -199,3 +217,102 @@ export async function getPublicCompanyMissionSection(): Promise<CompanyMissionAp
   }
 }
 //   ******* End getPublicCompanyMissionSection API *******
+
+//   ******* Start getPublicAboutBanner API *******
+export interface AboutBannerItem {
+  id: number;
+  title: string;
+  sub_title: string;
+  type: string;
+  description: string;
+  image?: string | null;
+  video_link?: string;
+  button_text_one?: string;
+  button_link_one?: string;
+  button_text_two?: string;
+  button_link_two?: string;
+  status: number;
+}
+
+export interface AboutBannerData {
+  total_sections: number;
+  sections: AboutBannerItem[];
+  pagination: PaginationType;
+}
+
+export interface AboutBannerApiResponse {
+  success: boolean;
+  message: string;
+  code: number;
+  data: AboutBannerData;
+  errors?: Record<string, string[]>;
+}
+
+export async function getPublicAboutBanner(): Promise<AboutBannerApiResponse | null> {
+  try {
+    const res = await fetch(
+      `${API_BASE}/public/sections?type=about_banner&per_page=15&page=1`,
+    );
+
+    if (res.status === 404) {
+      console.warn("No about banner found.");
+      return null;
+    }
+    if (res.status === 401 || res.status === 403) {
+      console.warn("Unauthorized: Access token not found.");
+      return null;
+    }
+
+    if (!res.ok) {
+      throw new Error(
+        `getPublicAboutBanner API error: ${res.status} ${res.statusText}`,
+      );
+    }
+
+    const data: AboutBannerApiResponse = await res.json();
+    return data;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error fetching About Banner:", error.message);
+      throw new Error(error.message);
+    }
+    throw new Error("Unknown error occurred while fetching About Banner");
+  }
+}
+//   ******* End getPublicAboutBanner API *******
+
+//   ******* Start getPublicWhyChooseUsSection API *******
+export async function getPublicWhyChooseUsSection(): Promise<AboutBannerApiResponse | null> {
+  try {
+    const res = await fetch(
+      `${API_BASE}/public/sections?type=why_choose_us&per_page=15&page=1`,
+    );
+
+    if (res.status === 404) {
+      console.warn("No why choose us section found.");
+      return null;
+    }
+    if (res.status === 401 || res.status === 403) {
+      console.warn("Unauthorized: Access token not found.");
+      return null;
+    }
+
+    if (!res.ok) {
+      throw new Error(
+        `getPublicWhyChooseUsSection API error: ${res.status} ${res.statusText}`,
+      );
+    }
+
+    const data: AboutBannerApiResponse = await res.json();
+    return data;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error fetching Why Choose Us section:", error.message);
+      throw new Error(error.message);
+    }
+    throw new Error(
+      "Unknown error occurred while fetching Why Choose Us section",
+    );
+  }
+}
+//   ******* End getPublicWhyChooseUsSection API *******

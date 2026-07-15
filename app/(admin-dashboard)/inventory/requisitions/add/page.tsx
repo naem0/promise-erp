@@ -37,10 +37,12 @@ export default async function RequisitionsAddPage() {
     const mainBranchId = currentUser?.main_branch?.id;
     const [productRes, roomRes] = await Promise.all([
       getProductItems({ per_page: 500 }),
-      getRooms({ branch_id: mainBranchId, per_page: 500 }).catch((err) => {
-        console.error("Error loading rooms in add page:", err);
-        return null;
-      }),
+      mainBranchId
+        ? getRooms({ branch_id: mainBranchId, per_page: 500 }).catch((err) => {
+            console.error("Error loading rooms in add page:", err);
+            return null;
+          })
+        : Promise.resolve(null),
     ]);
     products = productRes?.data?.products || [];
     rooms = roomRes?.data?.rooms || [];
