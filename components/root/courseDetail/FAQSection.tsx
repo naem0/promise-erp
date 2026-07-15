@@ -2,7 +2,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { CourseDetail } from "@/apiServices/courseDetailPublicService";
-import DOMPurify from "dompurify";
+import { sanitizeHtml } from "@/lib/sanitizeHtml";
 
 interface FAQSectionProps {
   course: CourseDetail;
@@ -30,7 +30,7 @@ export const FAQSection = ({ course }: FAQSectionProps) => {
               <AccordionContent className="pb-4">
                 <div
                   dangerouslySetInnerHTML={{
-                    __html: DOMPurify.sanitize(faq.answer || ""),
+                    __html: sanitizeHtml(faq.answer),
                   }}
                 />
               </AccordionContent>

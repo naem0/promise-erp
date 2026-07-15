@@ -165,6 +165,17 @@ function Sidebar({
 }) {
   const { isMobile, state, openMobile, setOpenMobile } = useSidebar()
 
+  // Only honor `isMobile` after the component has mounted. `isMobile` is a
+  // client-only value (matchMedia) that starts false on the server and can flip
+  // after hydration. If this boundary hydrates late (e.g. streamed under Cache
+  // Components/PPR), reading the already-flipped value would render the mobile
+  // Sheet while the server rendered the desktop <div>, causing a hydration
+  // mismatch (React #418) that crashes the streamed reveal. Gating on `mounted`
+  // guarantees the first client render matches the server (desktop), then
+  // switches to mobile after commit.
+  const [mounted, setMounted] = React.useState(false)
+  React.useEffect(() => setMounted(true), [])
+
   if (collapsible === "none") {
     return (
       <div
@@ -180,7 +191,7 @@ function Sidebar({
     )
   }
 
-  if (isMobile) {
+  if (isMobile && mounted) {
     return (
       <Sheet open={openMobile} onOpenChange={setOpenMobile} {...props}>
         <SheetContent
