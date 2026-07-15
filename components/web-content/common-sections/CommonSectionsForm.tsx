@@ -147,24 +147,12 @@ export default function CommonSectionForm({
     formData.append("type",    values.type);
     formData.append("status",  values.status);
 
-    if (values.description) {
-      formData.append("description", values.description);
-    }
-    if (values.video_link) {
-      formData.append("video_link", values.video_link.trim());
-    }
-    if (values.button_text_one) {
-      formData.append("button_text_one", values.button_text_one.trim());
-    }
-    if (values.button_link_one) {
-      formData.append("button_link_one", values.button_link_one.trim());
-    }
-    if (values.button_text_two) {
-      formData.append("button_text_two", values.button_text_two.trim());
-    }
-    if (values.button_link_two) {
-      formData.append("button_link_two", values.button_link_two.trim());
-    }
+    formData.append("description", values.description || "");
+    formData.append("video_link", (values.video_link || "").trim());
+    formData.append("button_text_one", (values.button_text_one || "").trim());
+    formData.append("button_link_one", (values.button_link_one || "").trim());
+    formData.append("button_text_two", (values.button_text_two || "").trim());
+    formData.append("button_link_two", (values.button_link_two || "").trim());
 
     if (values.image && values.image.length > 0) {
       formData.append("image", values.image[0]);
@@ -184,9 +172,11 @@ export default function CommonSectionForm({
 
       if (res.success) {
         toast.success(res.message || "Common section saved successfully!");
-        reset();
-        setPreviewImage(null);
-        setImageRemoved(false);
+        if (!commonSection) {
+          reset();
+          setPreviewImage(null);
+          setImageRemoved(false);
+        }
         router.push("/web-content/common-sections");
       } else {
         if (res.errors) {

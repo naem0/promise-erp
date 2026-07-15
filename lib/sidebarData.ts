@@ -335,7 +335,7 @@ export const sidebarData = {
               permissions: ["view-achievements"],
             },
             {
-              title: "Licenses",
+              title: "Certifications",
               url: "/web-content/about-page/licenses",
               permissions: ["view-licenses"],
             },

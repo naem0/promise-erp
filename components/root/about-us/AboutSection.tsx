@@ -1,8 +1,51 @@
 import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { getPublicAboutBanner } from "@/apiServices/aboutPageService";
+import ErrorComponent from "@/components/common/ErrorComponent";
+import Link from "next/link";
 
-const AboutSection = () => {
+const AboutSection = async () => {
+  let aboutBannerData;
+
+  try {
+    aboutBannerData = await getPublicAboutBanner();
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      return (
+        <div className="py-8 md:py-12">
+          <ErrorComponent
+            message={
+              aboutBannerData?.message ||
+              "Failed to fetch about banner data"
+            }
+          />
+        </div>
+      );
+    } else {
+      return (
+        <div className="py-8 md:py-12">
+          <ErrorComponent message="An unexpected error occurred." />
+        </div>
+      );
+    }
+  }
+
+  if (
+    !aboutBannerData ||
+    !aboutBannerData?.success ||
+    !aboutBannerData?.data
+  ) {
+    return null;
+  }
+
+  const sections = aboutBannerData?.data?.sections || [];
+  if (sections?.length === 0) {
+    return null;
+  }
+
+  const banner = sections[0];
+
   return (
     <section className="md:py-10 py-16  bg-[url('/images/about-sec-bg.png')] bg-cover bg-center">
       <div className="container mx-auto px-4">
@@ -10,8 +53,7 @@ const AboutSection = () => {
           <p className="text-lg font-bold mb-2">About Us</p>
 
           <h2 className="text-3xl md:text-4xl font-semibold leading-tight">
-            E-Learning & Earning Ltd <br />
-            Where Skills Meet Success
+            {banner.title}
           </h2>
         </div>
 
@@ -22,8 +64,8 @@ const AboutSection = () => {
             <div className="border-primary/40 border p-2 rounded-xl">
               <div className="relative w-full h-[300px] md:h-[500px] rounded-xl overflow-hidden border ">
                 <Image
-                  src="/images/web-developers011.jpeg"
-                  alt="about"
+                  src={banner.image || "/images/placeholder_img.jpg"}
+                  alt={banner.title || "about"}
                   fill
                   className="object-cover rounded-2xl"
                 />
@@ -33,23 +75,33 @@ const AboutSection = () => {
             {/* right content */}
             <div>
               <h3 className="text-2xl md:text-3xl font-semibold text-primary mb-4 leading-tight">
-                Empowering the next generation of IT leaders with industry-ready
-                expertise.
+                {banner.sub_title}
               </h3>
 
-              <p className="text-black/60 text-lg mb-6">
-                As a premier sister concern of the Promise Group, E-Learning &
-                Earning Ltd is at the forefront of the IT education revolution
-                in Bangladesh. We are more than just a training institute; we
-                are a career launchpad. Having already trained over 2,300
-                professionals and facilitated 38,000+ successful job placements,
-                our mission is to equip the youth with future-ready skills. We
-                bridge the gap between classroom learning and global market
-                demands, ensuring our students become competitive leaders in the
-                digital landscape.
-              </p>
+              <div
+                className="text-black/60 text-lg mb-6"
+                dangerouslySetInnerHTML={{ __html: banner.description || "" }}
+              />
 
-              <Button>Contact Us</Button>
+              <div className="flex flex-wrap gap-4 items-center">
+                {banner?.button_text_one ? (
+                  <Button asChild>
+                    <Link href={banner?.button_link_one || "#"} prefetch={true}>
+                      {banner?.button_text_one}
+                    </Link>
+                  </Button>
+                ) : (
+                  <Button>Contact Us</Button>
+                )}
+
+                {banner?.button_text_two && (
+                  <Button asChild variant="outline">
+                    <Link href={banner?.button_link_two || "#"} prefetch={true}>
+                      {banner?.button_text_two}
+                    </Link>
+                  </Button>
+                )}
+              </div>
             </div>
           </CardContent>
         </Card>

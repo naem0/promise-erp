@@ -56,10 +56,12 @@ export default async function RequisitionEditPage({
       getRequisitionById(Number(id)),
       getBranches({ per_page: 500 }),
       getProductItems({ per_page: 500 }),
-      getRooms({ branch_id: mainBranchId, per_page: 500 }).catch((err) => {
-        console.error("Error loading rooms in edit page:", err);
-        return null;
-      }),
+      mainBranchId
+        ? getRooms({ branch_id: mainBranchId, per_page: 500 }).catch((err) => {
+            console.error("Error loading rooms in edit page:", err);
+            return null;
+          })
+        : Promise.resolve(null),
     ]);
     requisition = requisitionRes?.data || null;
     branches = branchRes?.data?.branches || [];

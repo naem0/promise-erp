@@ -139,6 +139,8 @@ export default function RequisitionsForm({
   );
   const [productSearch, setProductSearch] = useState("");
 
+  console.log("RequisitionsForm props:", { currentUser });
+
   const {
     register,
     handleSubmit,
@@ -749,7 +751,7 @@ export default function RequisitionsForm({
                                         <SelectValue placeholder="Select Room" />
                                       </SelectTrigger>
                                       <SelectContent>
-                                        {rooms && rooms.length > 0 ? (
+                                        {currentUser?.main_branch && rooms && rooms.length > 0 ? (
                                           <>
                                             <SelectItem value="none">Select Room</SelectItem>
                                             {rooms.map((room) => (
