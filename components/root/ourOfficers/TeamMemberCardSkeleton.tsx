@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 const TeamMemberCardSkeleton = () => {
   const count = 2;
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 max-w-full lg:max-w-6xl mx-auto py-8 lg:py-14">
       {Array.from({ length: count }).map((_, index) => (
         <div
           key={index}

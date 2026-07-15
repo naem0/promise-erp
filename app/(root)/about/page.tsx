@@ -15,13 +15,9 @@ import ChairmanMessage from "@/components/root/about-us/ChairmanMessages";
 const AboutPage = () => {
   return (
     <>
-      <section className="py-8 lg:py-12 bg-[url('/images/Message-From-Chairman-bg.png')] bg-cover bg-center bg-no-repeat ">
-        <div className="max-w-full lg:max-w-6xl mx-auto">
-          <Suspense fallback={<TeamMemberCardSkeleton />}>
-            <ChairmanMessage />
-          </Suspense>
-        </div>
-      </section>
+      <Suspense fallback={<TeamMemberCardSkeleton />}>
+        <ChairmanMessage />
+      </Suspense>
       <div className="container mx-auto px-4">
         <OurAchievementsWrapper />
         <Suspense fallback={<WhyChooseUsSkeleton />}>
