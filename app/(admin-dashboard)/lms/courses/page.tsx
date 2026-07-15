@@ -27,12 +27,25 @@ export default function CoursesPage({
           </PermissionGuard>
         </div>
 
-        <Suspense fallback={<div>Loading filters...</div>}>
+        {/*
+          Filter + table share ONE Suspense boundary on purpose. This page is
+          the only admin route that adds its own boundaries on top of the
+          layout's; with two of them, React assigns a boundary the "S:2"
+          segment id — the same id it gives the first streamed <table>
+          cell-segment ($RS) — and the duplicate id corrupts the tree in the
+          $RV reveal (HierarchyRequestError / React #418). Collapsing to a
+          single boundary keeps the page's boundary ids at S:0/S:1, below
+          where the table segments start (S:2), so there is no collision.
+        */}
+        <Suspense
+          fallback={
+            <>
+              <div>Loading filters...</div>
+              <TableSkeleton rows={10} columns={8} />
+            </>
+          }
+        >
           <CourseFilterData />
-        </Suspense>
-
-        {/* Table */}
-        <Suspense fallback={<TableSkeleton rows={10} columns={8} />}>
           <CoursesData searchParams={searchParams} />
         </Suspense>
       </div>
