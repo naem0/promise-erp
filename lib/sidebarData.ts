@@ -201,16 +201,16 @@ export const sidebarData = {
             //   url: "#",
             //   permissions: ["view-coupons"],
             // },
-            {
-              title: "Certificates",
-              url: "#",
-              permissions: ["view-certificates"],
-            },
-            {
-              title: "Subscription Plans",
-              url: "#",
-              permissions: ["view-subscriptions"],
-            },
+            // {
+            //   title: "Certificates",
+            //   url: "#",
+            //   permissions: ["view-certificates"],
+            // },
+            // {
+            //   title: "Subscription Plans",
+            //   url: "#",
+            //   permissions: ["view-subscriptions"],
+            // },
             {
               title: "Enrollment Reports",
               url: "/lms/enrollment-reports",
@@ -221,33 +221,33 @@ export const sidebarData = {
             },
           ],
         },
-        {
-          title: "Assessments",
-          url: "#",
-          icon: BookOpen,
-          items: [
-            {
-              title: "Quizs",
-              url: "#",
-              permissions: ["view-quizzes"],
-            },
-            {
-              title: "Questions",
-              url: "#",
-              permissions: ["view-questions"],
-            },
-            {
-              title: "Assignment",
-              url: "#",
-              permissions: ["view-assignments"],
-            },
-            {
-              title: "Results",
-              url: "#",
-              permissions: ["view-results"],
-            },
-          ],
-        },
+        // {
+        //   title: "Assessments",
+        //   url: "#",
+        //   icon: BookOpen,
+        //   items: [
+        //     {
+        //       title: "Quizs",
+        //       url: "#",
+        //       permissions: ["view-quizzes"],
+        //     },
+        //     {
+        //       title: "Questions",
+        //       url: "#",
+        //       permissions: ["view-questions"],
+        //     },
+        //     {
+        //       title: "Assignment",
+        //       url: "#",
+        //       permissions: ["view-assignments"],
+        //     },
+        //     {
+        //       title: "Results",
+        //       url: "#",
+        //       permissions: ["view-results"],
+        //     },
+        //   ],
+        // },
         {
           title: "Contents Management",
           url: "#",
@@ -339,6 +339,11 @@ export const sidebarData = {
               url: "/web-content/about-page/licenses",
               permissions: ["view-licenses"],
             },
+            {
+              title: "Why Choose Us",
+              url: "/web-content/about-page/why-choose-us",
+              permissions: ["view-why-choose-us"],
+            },
 
             {
               title: "Branches",
@@ -347,55 +352,55 @@ export const sidebarData = {
             },
           ],
         },
-        {
-          title: "Communications",
-          url: "#",
-          icon: MessageSquare,
-          items: [
-            {
-              title: "Notifications",
-              url: "#",
-              permissions: ["view-notifications"],
-            },
-            {
-              title: "Reviews",
-              url: "#",
-              permissions: ["view-reviews-communications"],
-            },
-            {
-              title: "Free Consultations",
-              url: "#",
-              permissions: ["view-contact-queries"],
-            },
-            {
-              title: "Newsletter Subscriptions",
-              url: "#",
-              permissions: ["view-newsletters"],
-            },
-          ],
-        },
-        {
-          title: "Progress Reports",
-          url: "#",
-          icon: ChartLine,
-          items: [
-            {
-              title: "Completed Lessons",
-              url: "#",
-              permissions: ["view-progress-reports"],
-            },
-            {
-              title: "Wishlists",
-              url: "#",
-              permissions: ["view-wishlists"],
-            },
-            {
-              title: "Tags",
-              url: "#",
-              permissions: ["view-tags"],
-            },
-          ],
-        },
+        // {
+        //   title: "Communications",
+        //   url: "#",
+        //   icon: MessageSquare,
+        //   items: [
+        //     {
+        //       title: "Notifications",
+        //       url: "#",
+        //       permissions: ["view-notifications"],
+        //     },
+        //     {
+        //       title: "Reviews",
+        //       url: "#",
+        //       permissions: ["view-reviews-communications"],
+        //     },
+        //     {
+        //       title: "Free Consultations",
+        //       url: "#",
+        //       permissions: ["view-contact-queries"],
+        //     },
+        //     {
+        //       title: "Newsletter Subscriptions",
+        //       url: "#",
+        //       permissions: ["view-newsletters"],
+        //     },
+        //   ],
+        // },
+        // {
+        //   title: "Progress Reports",
+        //   url: "#",
+        //   icon: ChartLine,
+        //   items: [
+        //     {
+        //       title: "Completed Lessons",
+        //       url: "#",
+        //       permissions: ["view-progress-reports"],
+        //     },
+        //     {
+        //       title: "Wishlists",
+        //       url: "#",
+        //       permissions: ["view-wishlists"],
+        //     },
+        //     {
+        //       title: "Tags",
+        //       url: "#",
+        //       permissions: ["view-tags"],
+        //     },
+        //   ],
+        // },
         {
           title: "Careers Management",
           url: "#",

@@ -70,7 +70,7 @@ const OurAchievementCart = ({ achievements }: OurAchievementCartProps) => {
                           src={item.image || "/images/placeholder_img.jpg"}
                           alt={item.title || "image"}
                           fill
-                          className="object-cover rounded-xl"
+                          className="object-cover rounded-xl object-top"
                         />
                       </div>
                     </div>
@@ -88,7 +88,7 @@ const OurAchievementCart = ({ achievements }: OurAchievementCartProps) => {
                         <p className="font-bold text-primary text-lg">
                           {item.name || "Dummy Name"}
                         </p>
-                        <p className="text-gray-500">{item.designation || "Dummy Designation"}</p>
+                        <p className="text-gray-500 pe-2 ">{item.designation || "Dummy Designation"}</p>
                       </div>
                     </div>
                   </div>

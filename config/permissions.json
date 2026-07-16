@@ -141,6 +141,10 @@
     { "path": "/web-content/about-page/chairman-messages/add", "permissions": ["create-chairman-messages"] },
     { "path": "/web-content/about-page/chairman-messages/edit", "permissions": ["edit-chairman-messages"], "isDynamic": true },
     
+    { "path": "/web-content/about-page/why-choose-us", "permissions": ["view-why-choose-us"] },
+    { "path": "/web-content/about-page/why-choose-us/add", "permissions": ["create-why-choose-us"] },
+    { "path": "/web-content/about-page/why-choose-us/edit", "permissions": ["edit-why-choose-us"], "isDynamic": true },
+    
     { "path": "/web-content/about-page/achievements", "permissions": ["view-achievements"] },
     { "path": "/web-content/about-page/achievements/add", "permissions": ["create-achievements"] },
     { "path": "/web-content/about-page/achievements/edit", "permissions": ["edit-achievements"], "isDynamic": true },
