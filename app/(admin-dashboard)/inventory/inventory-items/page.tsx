@@ -2,7 +2,7 @@ import ItemsData from "@/components/inventory/inventory-items/ItemsData";
 import ItemsFilterData from "@/components/inventory/inventory-items/ItemsFilterData";
 import TableSkeleton from "@/components/TableSkeleton";
 import { Button } from "@/components/ui/button";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, PackagePlus } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
 import PermissionGuard from "@/components/auth/PermissionGuard";
@@ -15,17 +15,27 @@ export default function InventoryItemsPage({
 }) {
   return (
     <div className="mx-auto space-y-6">
-      <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center">
         <h1 className="text-2xl font-semibold tracking-tight text-slate-800">Items
         </h1>
 
-        <PermissionGuard requiredPermission="create-products">
-          <Button asChild className="">
-            <Link href="/inventory/inventory-items/add">
-              <PlusCircle className="w-4 h-4 mr-2" />Add Item
-            </Link>
-          </Button>
-        </PermissionGuard>
+        <div className="flex items-center gap-2">
+          <PermissionGuard requiredPermission="stock-update">
+            <Button asChild variant="outline">
+              <Link href="/inventory/inventory-items/stock-update">
+                <PackagePlus className="w-4 h-4 mr-2" />Stock Update
+              </Link>
+            </Button>
+          </PermissionGuard>
+
+          <PermissionGuard requiredPermission="create-products">
+            <Button asChild>
+              <Link href="/inventory/inventory-items/add">
+                <PlusCircle className="w-4 h-4 mr-2" />Add Item
+              </Link>
+            </Button>
+          </PermissionGuard>
+        </div>
       </div>
       
       <Suspense

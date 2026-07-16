@@ -3,12 +3,16 @@ import { BriefcaseBusiness } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import AboutStats from "./AboutStats";
+import { cacheTag } from "next/cache";
+import { getLatestCountDown } from "@/apiServices/homePageService";
+import ErrorComponent from "@/components/common/ErrorComponent";
+import NotFoundComponent from "@/components/common/NotFoundComponent";
 
 const imageUrls = {
-  img1: "/images/about-opportunities1.png",
+  img1: "/images/oppurtunity__0001.jpeg",
   img2: "/images/about-opportunities2.png",
   img3: "/images/about-opportunities3.png",
-  img4: "/images/about-opportunities4.png",
+  img4: "/images/oppurtunity__0002.jpeg",
 };
 export interface InfoItem {
   id: number;
@@ -16,24 +20,37 @@ export interface InfoItem {
   title: string;
 }
 
-export const infoData: InfoItem[] = [
-  {
-    id: 1,
-    value: "85%",
-    title: "Placement Rate",
-  },
-  {
-    id: 2,
-    value: "500+",
-    title: "Partner Companies",
-  },
-  {
-    id: 3,
-    value: "2500+",
-    title: "Students Placed",
-  },
-];
-const AboutOpportunities = () => {
+const AboutOpportunities = async () => {
+  "use cache";
+  cacheTag("stats-list");
+  let stats;
+  let countDownData;
+  try {
+    const params = {
+      limit: 3,
+      type: "opportunity_stat",
+    };
+    countDownData = await getLatestCountDown(params);
+    stats = countDownData?.data?.stats || [];
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error fetching stats:", error.message);
+      return <ErrorComponent message={error.message} />;
+    }
+    throw new Error("Unknown error occurred while fetching stats");
+  }
+
+  if (!countDownData || !countDownData?.data) {
+    return null;
+  }
+
+  if (!stats || stats.length === 0) {
+    return (
+      <div className="py-8 md:py-14">
+        <NotFoundComponent message="No stats found" />
+      </div>
+    );
+  }
   return (
     <section className="py-8 md:py-12">
       <div className="max-w-full md:max-w-2xl pb-6 md:pb-8">
@@ -41,21 +58,22 @@ const AboutOpportunities = () => {
           Getting You Connected to Opportunities
         </h2>
         <p>
-          Our comprehensive job placement guidance and industry connections{" "}
-          <br></br> help you transition from skill development to your dream
-          career.<br></br> Connect with mentors and discover opportunities
-          tailored to your expertise.
+          Our support doesn{"'"}t end with a certificate. We provide a complete
+          path from the classroom to the professional world through dedicated
+          job placement guidance and deep industry connections. By bridging the
+          gap between learning and employment, we help you turn your technical
+          skills into a stable, long-term career.
         </p>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 rounded-2xl h-full">
         {/* Top Left - Group Discussion Image */}
-        <div className="py-3 px-2 bg-white shadow rounded-2xl lg:col-span-2">
+        <div className="py-3 px-2 bg-white shadow rounded-2xl lg:col-span-2 ">
           <div className="relative h-[260px] lg:h-[360px] w-full rounded-2xl ">
             <Image
               src={imageUrls.img1 || "/images/placeholder_img.jpg"}
               fill
               alt="Group of professionals in a collaborative discussion"
-              className="rounded-2xl object-cover"
+              className="rounded-2xl object-cover h-full object-center"
             />
           </div>
         </div>
@@ -110,7 +128,7 @@ const AboutOpportunities = () => {
           </div>
         </div>
       </div>
-      <AboutStats gridCols={3} infoData={infoData} />
+      <AboutStats gridCols={3} infoData={stats} />
     </section>
   );
 };

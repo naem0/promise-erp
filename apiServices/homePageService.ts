@@ -421,12 +421,31 @@ export async function getLatestHeroSection(): Promise<HeroSectionResponse | null
 
 // Home page CountDown get API
 
-export async function getLatestCountDown(): Promise<CountDownResponse | null> {
+export async function getLatestCountDown(
+  params: Record<string, unknown> = {},
+): Promise<CountDownResponse | null> {
   try {
-    const res = await fetch(`${API_BASE}/public/stats/latest`);
+    const urlParams = new URLSearchParams();
+
+    for (const key in params) {
+      if (params[key] !== undefined && params[key] !== null) {
+        urlParams.append(key, String(params[key]));
+      }
+    }
+    const res = await fetch(
+      `${API_BASE}/public/stats/latest?${urlParams.toString()}`,
+    );
 
     if (res.status === 404) {
       console.warn("No countdown found.");
+      return null;
+    }
+    if (res.status === 401) {
+      console.warn("Unauthorized access to countdown (401)");
+      return null;
+    }
+    if (res.status === 403) {
+      console.warn("Forbidden access to countdown (403)");
       return null;
     }
 
@@ -920,7 +939,7 @@ export interface MemberItem {
   image?: string;
   title: string;
   status?: number;
-  partner_type: number
+  partner_type: number;
 }
 export interface PartnerData {
   partner_type: number;
@@ -935,11 +954,11 @@ export interface MemberApiResponse {
   errors?: Record<string, string[]>;
 }
 
-export async function getMembersByType(typeId: number): Promise<MemberApiResponse | null> {
+export async function getMembersByType(
+  typeId: number,
+): Promise<MemberApiResponse | null> {
   try {
-    const res = await fetch(
-      `${API_BASE}/public/partners/type/${typeId}`
-    );
+    const res = await fetch(`${API_BASE}/public/partners/type/${typeId}`);
 
     if (res.status === 404) {
       console.warn("No partners found.");
@@ -948,7 +967,7 @@ export async function getMembersByType(typeId: number): Promise<MemberApiRespons
 
     if (!res.ok) {
       throw new Error(
-        `getMembersByType API error: ${res.status} ${res.statusText}`
+        `getMembersByType API error: ${res.status} ${res.statusText}`,
       );
     }
 
