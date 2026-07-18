@@ -66,7 +66,7 @@ function Combobox({
     >
       <ComboboxInput
         placeholder={searchPlaceholder || placeholder}
-        showClear={showClear}
+        showClear={showClear && (!!value || !!inputValue)}
         showTrigger={true}
         className={className}
       />
