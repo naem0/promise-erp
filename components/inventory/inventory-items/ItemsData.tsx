@@ -118,6 +118,10 @@ const ItemsData = async ({
       typeof resolvedSearchParams.room_id === "string"
         ? resolvedSearchParams.room_id
         : undefined,
+    branch_id:
+      typeof resolvedSearchParams.branch_id === "string"
+        ? resolvedSearchParams.branch_id
+        : undefined,
   };
 
   let results;

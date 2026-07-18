@@ -1311,6 +1311,7 @@ export interface NewsFeed {
   title: string;
   news_link: string;
   image?: string | null;
+  published_at?: string;
   created_at: string;
   status: number;
 }

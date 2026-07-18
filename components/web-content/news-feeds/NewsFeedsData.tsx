@@ -71,6 +71,7 @@ const NewsFeedsData = async ({
             <TableHead className="text-center">Image</TableHead>
             <TableHead className="text-center">Title</TableHead>
             <TableHead className="text-center">News Link</TableHead>
+            <TableHead className="text-center">Published At</TableHead>
             <TableHead className="text-center">Created At</TableHead>
             <TableHead className="text-center">Status</TableHead>
           </TableRow>
@@ -136,6 +137,9 @@ const NewsFeedsData = async ({
                   >
                     {item.news_link}
                   </a>
+                </TableCell>
+                <TableCell className="text-center">
+                  {item.published_at ? new Date(item.published_at).toLocaleDateString() : "-"}
                 </TableCell>
                 <TableCell className="text-center">
                   {new Date(item.created_at).toLocaleDateString()}

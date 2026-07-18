@@ -25,6 +25,7 @@ interface NewsFeedFormProps {
 interface FormValues {
   title: string;
   news_link: string;
+  published_at?: string;
   status: string;
   image?: FileList;
 }
@@ -45,6 +46,7 @@ export default function NewsFeedForm({ title, newsFeed }: NewsFeedFormProps) {
     defaultValues: {
       title: newsFeed?.title || "",
       news_link: newsFeed?.news_link || "",
+      published_at: newsFeed?.published_at || "",
       status: newsFeed?.status.toString() || "1",
       image: undefined,
     },
@@ -81,6 +83,12 @@ export default function NewsFeedForm({ title, newsFeed }: NewsFeedFormProps) {
     formData.append("title", values.title.trim());
     formData.append("news_link", values.news_link.trim());
     formData.append("status", values.status);
+    
+    if (values.published_at) {
+      formData.append("published_at", values.published_at);
+    } else {
+      formData.append("published_at", "");
+    }
 
     if (values.image && values.image.length > 0) {
       formData.append("image", values.image[0]);
@@ -160,6 +168,16 @@ export default function NewsFeedForm({ title, newsFeed }: NewsFeedFormProps) {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Published At */}
+          <div>
+            <Label className="block text-sm font-medium mb-1">Published At</Label>
+            <Input
+              type="date"
+              {...register("published_at")}
+            />
+            {errors.published_at && <p className="text-sm text-red-500 mt-1">{errors.published_at.message}</p>}
+          </div>
+
           {/* Status */}
           <div>
             <Label className="block text-sm font-medium mb-1">Status <span className="text-red-500">*</span></Label>

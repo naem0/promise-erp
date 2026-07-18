@@ -272,40 +272,7 @@ const LeadActivityForm = ({ leadId, lastLeadActivityStatus }: LeadActivityFormPr
             )}
           </div>
 
-          <div className="space-y-2">
-            <Label
-              htmlFor="call_result"
-              className="text-sm font-medium text-slate-700"
-            >
-              Status
-            </Label>
-            <Controller
-              name="status_id"
-              control={control}
-              render={({ field }) => (
-                <Select value={field.value} onValueChange={field.onChange} disabled={isFormDisabled}>
-                  <SelectTrigger className="w-full border-slate-200">
-                    <SelectValue placeholder="Select Result" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {/* <SelectItem value="1">New</SelectItem> */}
-                    <SelectItem value="2">Busy</SelectItem>
-                    <SelectItem value="3">Interested</SelectItem>
-                    <SelectItem value="4">Follow Up</SelectItem>
-                    <SelectItem value="5">Enrolled</SelectItem>
-                    <SelectItem value="6">Cancelled</SelectItem>
-                    <SelectItem value="7">Not Received</SelectItem>
-                    <SelectItem value="8">Call Rejected</SelectItem>
-                  </SelectContent>
-                </Select>
-              )}
-            />
-            {errors.status_id && (
-              <p className="text-sm text-red-500 mt-1">
-                {errors.status_id.message}
-              </p>
-            )}
-          </div>
+          
           <div className="space-y-3 p-4 bg-slate-50 border border-slate-100 rounded-xl relative overflow-hidden transition-all duration-300 hover:shadow-sm">
             <Label
               htmlFor="time"
@@ -360,6 +327,40 @@ const LeadActivityForm = ({ leadId, lastLeadActivityStatus }: LeadActivityFormPr
             </div>
             {errors.time && (
               <p className="text-sm text-red-500 mt-1">{errors.time.message}</p>
+            )}
+          </div>
+          <div className="space-y-2">
+            <Label
+              htmlFor="call_result"
+              className="text-sm font-medium text-slate-700"
+            >
+              Status
+            </Label>
+            <Controller
+              name="status_id"
+              control={control}
+              render={({ field }) => (
+                <Select value={field.value} onValueChange={field.onChange} disabled={isFormDisabled}>
+                  <SelectTrigger className="w-full border-slate-200">
+                    <SelectValue placeholder="Select Result" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {/* <SelectItem value="1">New</SelectItem> */}
+                    <SelectItem value="2">Busy</SelectItem>
+                    <SelectItem value="3">Interested</SelectItem>
+                    <SelectItem value="4">Follow Up</SelectItem>
+                    <SelectItem value="5">Enrolled</SelectItem>
+                    <SelectItem value="6">Cancelled</SelectItem>
+                    <SelectItem value="7">Not Received</SelectItem>
+                    <SelectItem value="8">Call Rejected</SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            {errors.status_id && (
+              <p className="text-sm text-red-500 mt-1">
+                {errors.status_id.message}
+              </p>
             )}
           </div>
 
