@@ -1,18 +1,56 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Building2, User, CalendarDays, FileText, Check, ExternalLink } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ArrowLeft, Building2, User, CalendarDays, FileText, Check, ExternalLink, CheckCircle2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { DeliveryDetailData } from "@/apiServices/inventoryBrandsService";
+import { receiveDelivery } from "@/apiServices/inventoryDeliveriesService";
+import PermissionGuard from "@/components/auth/PermissionGuard";
+import { toast } from "sonner";
 
 interface DeliveryDetailsPageProps {
   data: DeliveryDetailData;
 }
 
 export default function DeliveryDetailsPage({ data }: DeliveryDetailsPageProps) {
+  const router = useRouter();
+  const [isReceiving, setIsReceiving] = useState(false);
+
+  const statusNum = Number(data.invoice?.status ?? data.delivery_status);
+  const statusText = String(data.invoice?.status_text || data.delivery_status_text || "").toLowerCase();
+
+  const isReceiveEligible =
+    !statusText.includes("received") &&
+    !statusText.includes("completed") &&
+    (statusNum === 2 || statusNum === 3 || statusText.includes("delivering") || statusText.includes("shipped"));
+
+  const handleReceive = async () => {
+    const challanNo = data.invoice?.invoice_no;
+    if (!challanNo) {
+      toast.error("Challan number not found");
+      return;
+    }
+    try {
+      setIsReceiving(true);
+      const res = await receiveDelivery(challanNo);
+      if (res.success) {
+        toast.success(res.message || "Delivery marked as received successfully");
+        router.refresh();
+      } else {
+        toast.error(res.message || "Failed to mark delivery as received");
+      }
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : "An error occurred";
+      toast.error(msg);
+    } finally {
+      setIsReceiving(false);
+    }
+  };
+
   // Status text styling for the invoice info section
   const getStatusBadgeStyle = (statusText?: string) => {
     const status = String(statusText).toLowerCase();
@@ -270,10 +308,32 @@ export default function DeliveryDetailsPage({ data }: DeliveryDetailsPageProps) 
               </div>
             </div>
 
-            {/* Bottom Final Overall Status Banner */}
-            <div className="w-full bg-[#15803d] text-white font-bold text-center py-3 rounded-lg text-sm shadow-sm select-none uppercase tracking-wider mt-6">
-              {data.invoice?.status_text || "Completed"}
-            </div>
+            {/* Bottom Final Overall Status Banner / Action Button */}
+            {isReceiveEligible ? (
+              <PermissionGuard requiredPermission={["delivery-status-update"]}>
+                <Button
+                  onClick={handleReceive}
+                  disabled={isReceiving}
+                  className="w-full bg-[#15803d] hover:bg-[#166534] text-white font-bold text-center py-3 h-auto rounded-lg text-sm shadow-sm uppercase tracking-wider mt-6 cursor-pointer flex items-center justify-center gap-2 border-none transition-colors"
+                >
+                  {isReceiving ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <span>Processing...</span>
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle2 className="h-4 w-4" />
+                      <span>Mark as Received</span>
+                    </>
+                  )}
+                </Button>
+              </PermissionGuard>
+            ) : (
+              <div className="w-full bg-[#15803d] text-white font-bold text-center py-3 rounded-lg text-sm shadow-sm select-none uppercase tracking-wider mt-6">
+                {data.invoice?.status_text || "Completed"}
+              </div>
+            )}
           </div>
         </div>
       </div>

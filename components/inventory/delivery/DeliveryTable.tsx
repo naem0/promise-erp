@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   Table,
   TableBody,
@@ -17,10 +19,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Delivery } from "@/apiServices/inventoryBrandsService";
+import { receiveDelivery } from "@/apiServices/inventoryDeliveriesService";
 import Pagination from "@/components/common/Pagination";
 import { Checkbox } from "@/components/ui/checkbox";
 import { PaginationType } from "@/types/pagination";
 import PermissionGuard from "@/components/auth/PermissionGuard";
+import { toast } from "sonner";
 
 interface DeliveryTableProps {
   deliveries: Delivery[];
@@ -35,6 +39,39 @@ export default function DeliveryTable({
   selectedIds,
   setSelectedIds,
 }: DeliveryTableProps) {
+  const router = useRouter();
+  const [receivingChallan, setReceivingChallan] = useState<string | null>(null);
+
+  const isReceiveEligible = (status?: number | string, statusText?: string) => {
+    const statusNum = Number(status);
+    const text = String(statusText || "").toLowerCase();
+    if (text.includes("received") || text.includes("completed")) {
+      return false;
+    }
+    return statusNum === 2 || statusNum === 3 || text.includes("delivering") || text.includes("shipped");
+  };
+
+  const handleReceive = async (challanNo: string) => {
+    if (!challanNo || challanNo === "---") {
+      toast.error("Challan number not available");
+      return;
+    }
+    try {
+      setReceivingChallan(challanNo);
+      const res = await receiveDelivery(challanNo);
+      if (res.success) {
+        toast.success(res.message || "Delivery marked as received successfully");
+        router.refresh();
+      } else {
+        toast.error(res.message || "Failed to mark delivery as received");
+      }
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : "An error occurred";
+      toast.error(msg);
+    } finally {
+      setReceivingChallan(null);
+    }
+  };
   const allSelected =
     deliveries.length > 0 &&
     deliveries.every((item) => selectedIds.has(item.requisition));
@@ -183,6 +220,17 @@ export default function DeliveryTable({
                             View Details
                           </Link>
                         </DropdownMenuItem>
+                        {isReceiveEligible(item.status, item.status_text) && item.challan && item.challan !== "---" && (
+                          <PermissionGuard requiredPermission={["delivery-status-update"]}>
+                            <DropdownMenuItem
+                              className="cursor-pointer text-emerald-600 font-semibold focus:text-emerald-700 focus:bg-emerald-50"
+                              onClick={() => handleReceive(item.challan)}
+                              disabled={receivingChallan === item.challan}
+                            >
+                              {receivingChallan === item.challan ? "Receiving..." : "Mark as Received"}
+                            </DropdownMenuItem>
+                          </PermissionGuard>
+                        )}
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
