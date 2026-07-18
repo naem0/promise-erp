@@ -11,8 +11,9 @@ export interface Stats {
   id: number;
   title: string;
   count: number;
-  image?: string;
+  image?: string | null;
   status: number;
+  type: "achievement_stat" | "hero_stat" | "opportunity_stat";
 }
 
 

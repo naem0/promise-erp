@@ -89,16 +89,34 @@ export default function StatsFilter() {
         )}
       </div>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
         {/* Search Input */}
         <div className="relative col-span-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search statistics..."
-            className="pl-10"
+            className="pl-10 focus-visible:ring-emerald-500"
             {...register("search")}
           />
         </div>
+
+        {/* Type */}
+        <Controller
+          name="type"
+          control={control}
+          render={({ field }) => (
+            <Select onValueChange={field.onChange} value={field.value}>
+              <SelectTrigger className="w-full focus:ring-emerald-500">
+                <SelectValue placeholder="All Types" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="achievement_stat">Achievement Stat</SelectItem>
+                <SelectItem value="hero_stat">Hero Stat</SelectItem>
+                <SelectItem value="opportunity_stat">Opportunity Stat</SelectItem>
+              </SelectContent>
+            </Select>
+          )}
+        />
 
         {/* Sort By */}
         <Controller
@@ -106,7 +124,7 @@ export default function StatsFilter() {
           control={control}
           render={({ field }) => (
             <Select onValueChange={field.onChange} value={field.value}>
-              <SelectTrigger className="w-full">
+              <SelectTrigger className="w-full focus:ring-emerald-500">
                 <SelectValue placeholder="Sort Order" />
               </SelectTrigger>
               <SelectContent>
@@ -122,7 +140,7 @@ export default function StatsFilter() {
           control={control}
           render={({ field }) => (
             <Select onValueChange={field.onChange} value={field.value}>
-              <SelectTrigger className="w-full">
+              <SelectTrigger className="w-full focus:ring-emerald-500">
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>

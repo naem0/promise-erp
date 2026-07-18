@@ -114,6 +114,10 @@ const ItemsData = async ({
       typeof resolvedSearchParams.brand_id === "string"
         ? resolvedSearchParams.brand_id
         : undefined,
+    room_id:
+      typeof resolvedSearchParams.room_id === "string"
+        ? resolvedSearchParams.room_id
+        : undefined,
   };
 
   let results;

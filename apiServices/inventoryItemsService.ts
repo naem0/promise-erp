@@ -114,14 +114,13 @@ export async function getProductItemsCached(
 export async function getProductItems(
   params: Record<string, unknown> = {},
 ): Promise<ProductItemsResponse> {
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+
+  if (!token) {
+    throw new Error("No valid session/token");
+  }
   try {
-    const session = await getServerSession(authOptions);
-    const token = session?.accessToken;
-
-    if (!token) {
-      throw new Error("No valid session/token");
-    }
-
     const cachedResult = await getProductItemsCached(token, params);
     if (!cachedResult) {
       throw new Error("Failed to fetch product items");
@@ -143,12 +142,11 @@ export async function getProductItems(
 export async function getProductItemById(
   id: number,
 ): Promise<SingleProductItemResponse | null> {
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+
+  if (!token) throw new Error("No valid session/token");
   try {
-    const session = await getServerSession(authOptions);
-    const token = session?.accessToken;
-
-    if (!token) throw new Error("No valid session/token");
-
     const res = await fetch(`${API_BASE}/inventory/products/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -188,12 +186,11 @@ export async function getProductItemById(
 export async function createProductItem(
   formData: FormData,
 ): Promise<SingleProductItemResponse> {
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+
+  if (!token) throw new Error("No valid session/token");
   try {
-    const session = await getServerSession(authOptions);
-    const token = session?.accessToken;
-
-    if (!token) throw new Error("No valid session/token");
-
     const res = await fetch(`${API_BASE}/inventory/products`, {
       method: "POST",
       headers: {
@@ -226,12 +223,11 @@ export async function updateProductItem(
   id: number,
   formData: FormData,
 ): Promise<SingleProductItemResponse> {
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+
+  if (!token) throw new Error("No valid session/token");
   try {
-    const session = await getServerSession(authOptions);
-    const token = session?.accessToken;
-
-    if (!token) throw new Error("No valid session/token");
-
     const res = await fetch(`${API_BASE}/inventory/products/${id}`, {
       method: "POST",
       headers: {
@@ -263,12 +259,11 @@ export async function updateProductItem(
 export async function deleteProductItem(
   id: number,
 ): Promise<SingleProductItemResponse> {
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+
+  if (!token) throw new Error("No valid session/token");
   try {
-    const session = await getServerSession(authOptions);
-    const token = session?.accessToken;
-
-    if (!token) throw new Error("No valid session/token");
-
     const res = await fetch(`${API_BASE}/inventory/products/${id}`, {
       method: "DELETE",
       headers: {
@@ -292,6 +287,64 @@ export async function deleteProductItem(
 }
 
 // =======================
+// STOCK UPDATE
+// =======================
+
+export interface StockUpdateProduct {
+  product_id: number;
+  stock_qty: number;
+}
+
+export interface StockUpdatePayload {
+  branch_id: number;
+  room_id: number;
+  is_store: number;
+  products: StockUpdateProduct[];
+}
+
+export interface StockUpdateResponse {
+  success: boolean;
+  message: string;
+  code: number;
+  data: ProductItem[];
+  errors?: Record<string, string[] | string>;
+}
+
+export async function updateProductStock(
+  payload: StockUpdatePayload,
+): Promise<StockUpdateResponse> {
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+
+  if (!token) throw new Error("No valid session/token");
+  try {
+    const res = await fetch(`${API_BASE}/inventory/stock-update`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const result = await res.json();
+
+    if (result.success) {
+      updateTag("product-items-list");
+    }
+
+    return result;
+  } catch (error: unknown) {
+    console.error("Error in updateProductStock:", error);
+    if (error instanceof Error) {
+      throw error;
+    } else {
+      throw new Error("Failed to update product stock");
+    }
+  }
+}
+
+// =======================
 //Start of Inventory All Dashboard Summary Stats
 // =======================
 
@@ -307,9 +360,7 @@ export interface InventoryStockStatusMetrics {
 
 export interface InventoryDashboardStat {
   card_name: string;
-  metrics:
-    | InventoryDashboardMetrics
-    | InventoryStockStatusMetrics;
+  metrics: InventoryDashboardMetrics | InventoryStockStatusMetrics;
 }
 
 export interface InventoryMiniStatsResponse {
@@ -449,12 +500,15 @@ export async function getInventoryCategoryStats(): Promise<InventoryMiniStatsRes
   if (!token) throw new Error("No valid session/token");
 
   try {
-    const res = await fetch(`${API_BASE}/inventory/product-categories/summary`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
+    const res = await fetch(
+      `${API_BASE}/inventory/product-categories/summary`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
       },
-    });
+    );
 
     if (res.status === 404) {
       console.warn("Product categories stats not found (404).");
@@ -773,7 +827,6 @@ export async function getInventoryRequisitionStats(): Promise<InventoryMiniStats
 // =======================
 //End of Inventory All Dashboard Summary Stats
 // =======================
-
 
 // export async function getInventoryDeliveryDashboardStats(): Promise<InventoryMiniStatsResponse | null> {
 //   const session = await getServerSession(authOptions);

@@ -37,7 +37,6 @@ interface FormValues {
     model: string;
     purchase_price: string;
     mrp_price: string;
-    stock: string;
     description: string;
     specification: string;
     status: string;
@@ -74,7 +73,6 @@ export default function ItemsForm({
             model: "",
             purchase_price: "",
             mrp_price: "",
-            stock: "",
             description: "",
             specification: "",
             status: "",
@@ -93,7 +91,6 @@ export default function ItemsForm({
                 model: item.model || "",
                 purchase_price: item.purchase_price?.toString() || "",
                 mrp_price: item.mrp_price?.toString() || "",
-                stock: item.stock?.toString() || "",
                 description: item.description || "",
                 specification: item.specification || "",
                 status: item.status?.toString() || "",
@@ -135,13 +132,11 @@ export default function ItemsForm({
             formData.append("image", "");
         }
 
-        // For method spoofing on update
         if (item) {
             formData.append("_method", "PUT");
         }
 
         try {
-            // Note: API expects POST for both create and update (with method spoofing) as implemented in the service
             const res = item
                 ? await updateProductItem(Number(item.id), formData)
                 : await createProductItem(formData);
@@ -356,13 +351,6 @@ export default function ItemsForm({
                         <label className="block text-sm font-medium mb-1">MRP Price</label>
                         <Input type="number" step="0.01" placeholder="0.00" {...register("mrp_price")} />
                         {errors.mrp_price && <p className="text-sm text-red-500 mt-1">{errors.mrp_price.message}</p>}
-                    </div>
-
-                    {/* Stock */}
-                    <div>
-                        <label className="block text-sm font-medium mb-1">Stock</label>
-                        <Input type="number" placeholder="0" {...register("stock")} />
-                        {errors.stock && <p className="text-sm text-red-500 mt-1">{errors.stock.message}</p>}
                     </div>
 
                     {/* Status */}

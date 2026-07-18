@@ -54,7 +54,7 @@ const TeacherListSection = ({ teacherData }: TeacherListSectionProps) => {
                     }
                     alt={instructor?.name || "teacher image"}
                     fill
-                    className="object-contain rounded-2xl transition-transform duration-300 group-hover:scale-102"
+                    className="object-contain object-top rounded-2xl transition-transform duration-300 group-hover:scale-102"
                   />
                 </div>
 
