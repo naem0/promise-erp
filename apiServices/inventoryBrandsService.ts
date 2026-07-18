@@ -520,6 +520,8 @@ export interface DeliveryDetailData {
   delivery_branch_id: number;
   applicant: DeliveryApplicant;
   expected_date?: string;
+  delivery_status?: number;
+  delivery_status_text?: string;
   requested_items: RequestedItem[];
   invoice?: DeliveryInvoice;
   approval_dashboard: ApprovalDashboardItem[];

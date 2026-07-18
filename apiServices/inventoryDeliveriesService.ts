@@ -150,3 +150,35 @@ export async function createDelivery(formData: FormData): Promise<CreateDelivery
     throw error;
   }
 }
+
+// =======================
+// RECEIVE DELIVERY
+// =======================
+
+export async function receiveDelivery(
+  challanNo: string,
+): Promise<CreateDeliveryResponse> {
+  try {
+    const session = await getServerSession(authOptions);
+    const token = session?.accessToken;
+
+    if (!token) throw new Error("No valid session/token");
+
+    const res = await fetch(`${API_BASE}/inventory/deliveries/${challanNo}/receive`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    const result = await res.json();
+    if (res.ok) {
+      updateTag("deliveries");
+    }
+    return result;
+  } catch (error: unknown) {
+    console.error("Error in receiveDelivery:", error);
+    throw error;
+  }
+}
