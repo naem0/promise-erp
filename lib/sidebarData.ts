@@ -196,6 +196,11 @@ export const sidebarData = {
               url: "/lms/invoices",
               permissions: ["view-invoices"],
             },
+            {
+              title: "Class Schedules",
+              url: "/lms/class-schedules",
+              permissions: ["view-class-schedules"],
+            },
             // {
             //   title: "Coupons",
             //   url: "#",
