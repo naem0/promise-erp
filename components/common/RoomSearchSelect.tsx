@@ -29,31 +29,44 @@ interface MultiSelectProps {
 }
 
 type RoomSearchSelectProps = (SingleSelectProps | MultiSelectProps) & {
+  rooms?: Room[]
   placeholder?: string
   disabled?: boolean
   className?: string
   defaultValue?: string
+  branchId?: string
 }
 
 export default function RoomSearchSelect({
   multiple = false,
   value,
   onValueChange,
+  rooms: initialRooms,
   placeholder,
   disabled = false,
   className,
+  branchId,
 }: RoomSearchSelectProps) {
-  const [rooms, setRooms] = useState<Room[]>([])
+  const [rooms, setRooms] = useState<Room[]>(initialRooms || [])
   const [isPending, startTransition] = useTransition()
   const [inputValue, setInputValue] = useState("")
   const anchor = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
+    if (initialRooms && initialRooms.length > 0 && !branchId) {
+      setRooms(initialRooms)
+      return
+    }
+
     startTransition(async () => {
       try {
-        const res = await getRooms({ per_page: 500 })
-        if (res.success) {
-          setRooms(res.data.rooms || [])
+        const params: Record<string, unknown> = { per_page: 500 }
+        if (branchId) {
+          params.branch_id = branchId
+        }
+        const res = await getRooms(params)
+        if (res?.success) {
+          setRooms(res?.data?.rooms || [])
         }
       } catch (error: unknown) {
         if (error instanceof Error) {
@@ -63,12 +76,17 @@ export default function RoomSearchSelect({
         }
       }
     })
-  }, [])
+  }, [initialRooms, branchId])
 
-  const options = useMemo(() => (rooms || []).map(room => ({
+  const filteredRooms = useMemo(() => {
+    if (!branchId) return rooms
+    return rooms.filter((r) => r.branch?.id?.toString() === branchId)
+  }, [rooms, branchId])
+
+  const options = useMemo(() => (filteredRooms || []).map(room => ({
     value: String(room.id),
-    label: room.name
-  })), [rooms])
+    label: `${room.name}${room.room_no ? ` (${room.room_no})` : ''}`
+  })), [filteredRooms])
 
   const filteredOptions = useMemo(() => {
     if (!inputValue) return options
@@ -82,6 +100,7 @@ export default function RoomSearchSelect({
 
     return (
       <ComboboxRoot
+        key={`${branchId || ''}-${options.length}`}
         multiple={true}
         value={multiValue}
         onValueChange={(val) => multiOnValueChange(val as string[])}
@@ -138,6 +157,7 @@ export default function RoomSearchSelect({
 
   return (
     <Combobox
+      key={`${branchId || ''}-${options.length}`}
       options={options}
       value={singleValue}
       onValueChange={singleOnValueChange}
