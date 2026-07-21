@@ -41,6 +41,20 @@ export interface SingleBrandResponse {
   errors?: Record<string, string[] | string>;
 }
 
+export interface SimpleBrand {
+  id: number;
+  name: string;
+  status: number;
+}
+
+export interface SimpleBrandsResponse {
+  success: boolean;
+  message: string;
+  code: number;
+  data: SimpleBrand[];
+  errors?: Record<string, string[]>;
+}
+
 // =======================
 // GET BRANDS (CACHED)
 // =======================
@@ -116,6 +130,66 @@ export async function getBrands(
   const _cachedResult = await getBrandsCached(token, params);
 
   if (!_cachedResult) throw new Error("Failed to fetch data from cache.");
+
+  return _cachedResult;
+}
+
+// =======================
+// GET BRANDS SIMPLE LIST (CACHED)
+// =======================
+
+export async function getBrandsSimpleListCached(
+  token: string,
+): Promise<SimpleBrandsResponse | null> {
+  "use cache";
+  cacheTag("brands-simple-list");
+
+  try {
+    const res = await fetch(`${API_BASE}/inventory/brands/simple-list`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (res.status === 404) {
+      console.warn("No brands found (404). Returning empty list.");
+      return null;
+    }
+
+    if (res.status === 401 || res.status === 403) {
+      console.warn("Unauthorized/Forbidden access to simple brands list");
+      return null;
+    }
+
+    if (!res.ok) {
+      throw new Error(`Status: ${res.status} ${res.statusText}`);
+    }
+    const result = await res.json();
+    return result;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Service error in getBrandsSimpleListCached:", error.message);
+    } else {
+      console.error("Service error in getBrandsSimpleListCached");
+    }
+    return null;
+  }
+}
+
+// =======================
+// GET BRANDS SIMPLE LIST
+// =======================
+
+export async function getBrandsSimpleList(): Promise<SimpleBrandsResponse> {
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+
+  if (!token) throw new Error("No valid session/token");
+
+  const _cachedResult = await getBrandsSimpleListCached(token);
+
+  if (!_cachedResult) throw new Error("Failed to fetch simple brands list from cache.");
 
   return _cachedResult;
 }

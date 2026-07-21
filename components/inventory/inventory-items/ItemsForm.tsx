@@ -19,6 +19,8 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Camera, X } from "lucide-react";
 import Image from "next/image";
+import InventoryCategorySearchSelect from "@/components/common/InventoryCategorySearchSelect";
+import BrandSearchSelect from "@/components/common/BrandSearchSelect";
 
 interface ItemsFormProps {
     title: string;
@@ -255,16 +257,11 @@ export default function ItemsForm({
                             name="category_id"
                             control={control}
                             render={({ field }) => (
-                                <Select key={field.value} value={field.value} onValueChange={field.onChange}>
-                                    <SelectTrigger className="w-full">
-                                        <SelectValue placeholder="Select Category" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {categories?.map(c => (
-                                            <SelectItem key={c.id} value={c.id.toString()}>{c.name}</SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
+                                <InventoryCategorySearchSelect
+                                    value={field.value || ""}
+                                    onValueChange={field.onChange}
+                                    className="w-full"
+                                />
                             )}
                         />
                         {errors.category_id && <p className="text-sm text-red-500 mt-1">{errors.category_id.message}</p>}
@@ -277,24 +274,11 @@ export default function ItemsForm({
                             name="brand_id"
                             control={control}
                             render={({ field }) => (
-                                <Select key={field.value} value={field.value} onValueChange={field.onChange}>
-                                    <SelectTrigger className="w-full">
-                                        <SelectValue placeholder="Select Brand" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {brands?.length > 0 ? (
-                                            brands?.map((b) => (
-                                                <SelectItem key={b.id} value={b.id.toString()}>
-                                                    {b.name}
-                                                </SelectItem>
-                                            ))
-                                        ) : (
-                                            <SelectItem value="none" disabled>
-                                                No Brands Found
-                                            </SelectItem>
-                                        )}
-                                    </SelectContent>
-                                </Select>
+                                <BrandSearchSelect
+                                    value={field.value || ""}
+                                    onValueChange={field.onChange}
+                                    className="w-full"
+                                />
                             )}
                         />
                         {errors.brand_id && <p className="text-sm text-red-500 mt-1">{errors.brand_id.message}</p>}

@@ -214,8 +214,12 @@ export async function updateRoom(
 
     if (!token) throw new Error("No valid session/token");
 
+    if (!formData.has("_method")) {
+      formData.append("_method", "PUT");
+    }
+
     const res = await fetch(`${API_BASE}/inventory/rooms/${id}`, {
-      method: "PUT",
+      method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
       },

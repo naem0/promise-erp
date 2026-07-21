@@ -44,6 +44,20 @@ export interface SingleProductCategoryResponse {
   errors?: Record<string, string[] | string>;
 }
 
+export interface SimpleCategory {
+  id: number;
+  name: string;
+  status: number;
+}
+
+export interface SimpleCategoriesResponse {
+  success: boolean;
+  message: string;
+  code: number;
+  data: SimpleCategory[];
+  errors?: Record<string, string[]>;
+}
+
 // =======================
 // GET CATEGORIES (CACHED)
 // =======================
@@ -120,6 +134,66 @@ export async function getProductCategories(
   const _cachedResult = await getProductCategoriesCached(token, params);
 
   if (!_cachedResult) throw new Error("Failed to fetch data from cache.");
+
+  return _cachedResult;
+}
+
+// =======================
+// GET PRODUCT CATEGORIES SIMPLE LIST (CACHED)
+// =======================
+
+export async function getProductCategoriesSimpleListCached(
+  token: string,
+): Promise<SimpleCategoriesResponse | null> {
+  "use cache";
+  cacheTag("product-categories-simple-list");
+
+  try {
+    const res = await fetch(`${API_BASE}/inventory/product-categories/simple-list`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (res.status === 404) {
+      console.warn("No categories found (404). Returning empty list.");
+      return null;
+    }
+
+    if (res.status === 401 || res.status === 403) {
+      console.warn("Unauthorized/Forbidden access to simple categories list");
+      return null;
+    }
+
+    if (!res.ok) {
+      throw new Error(`Status: ${res.status} ${res.statusText}`);
+    }
+    const result = await res.json();
+    return result;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Service error in getProductCategoriesSimpleListCached:", error.message);
+    } else {
+      console.error("Service error in getProductCategoriesSimpleListCached");
+    }
+    return null;
+  }
+}
+
+// =======================
+// GET PRODUCT CATEGORIES SIMPLE LIST
+// =======================
+
+export async function getProductCategoriesSimpleList(): Promise<SimpleCategoriesResponse> {
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+
+  if (!token) throw new Error("No valid session/token");
+
+  const _cachedResult = await getProductCategoriesSimpleListCached(token);
+
+  if (!_cachedResult) throw new Error("Failed to fetch simple categories list from cache.");
 
   return _cachedResult;
 }
