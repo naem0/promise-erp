@@ -414,39 +414,3 @@ export async function deleteBatch(id: number): Promise<ApiResponse> {
     }
   }
 }
-
-// ==========================
-// Duplicate Batch
-// ==========================
-
-export async function duplicateBatch(id: number): Promise<BatchResponseType> {
-  const session = await getServerSession(authOptions);
-  const token = session?.accessToken;
-
-  if (!token) {
-    throw new Error("No valid session or access token found.");
-  }
-  
-  try {
-    const res = await fetch(`${API_BASE}/batches/${id}/duplicate`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    const result = await res.json();
-
-    // Revalidate cache
-    updateTag("batches-list");
-
-    return result;
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      throw new Error(error.message);
-    } else {
-      throw new Error("Failed to duplicate batch.");
-    }
-  }
-}

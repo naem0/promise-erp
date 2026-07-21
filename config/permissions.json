@@ -76,10 +76,6 @@
     { "path": "/lms/enrollments/edit", "permissions": ["edit-enrollments"], "isDynamic": true },
    
     { "path": "/lms/invoices", "permissions": ["view-invoices"] },
-    
-    { "path": "/lms/class-schedules", "permissions": ["view-class-schedules"] },
-    { "path": "/lms/class-schedules/add", "permissions": ["create-class-schedules"] },
-    { "path": "/lms/class-schedules/edit", "permissions": ["edit-class-schedules"], "isDynamic": true },
       
    
     { "path": "/lms/enrollment-reports", "permissions": ["view-course-sales-summary","view-course-sales-report"] },

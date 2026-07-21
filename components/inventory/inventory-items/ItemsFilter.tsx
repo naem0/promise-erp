@@ -12,9 +12,12 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Search, FilterX } from "lucide-react";
+import { Combobox } from "@/components/ui/combobox";
 import { ProductCategory } from "@/apiServices/inventoryCategoriesService";
 import { Brand } from "@/apiServices/inventoryBrandsService";
+import { Room } from "@/apiServices/inventoryRoomsService";
 import PerPageSelect from "@/components/common/PerPageSelect";
+import BranchSearchSelect from "@/components/common/BranchSearchSelect";
 
 interface FilterFormValues {
     search?: string;
@@ -22,14 +25,17 @@ interface FilterFormValues {
     sort_order?: string;
     category_id?: string;
     brand_id?: string;
+    room_id?: string;
+    branch_id?: string;
 }
 
 interface ItemsFilterProps {
     categories?: ProductCategory[];
     brands?: Brand[];
+    rooms?: Room[];
 }
 
-export default function ItemsFilter({ categories = [], brands = [] }: ItemsFilterProps) {
+export default function ItemsFilter({ categories = [], brands = [], rooms = [] }: ItemsFilterProps) {
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
@@ -42,6 +48,8 @@ export default function ItemsFilter({ categories = [], brands = [] }: ItemsFilte
                 sort_order: searchParams.get("sort_order") || "",
                 category_id: searchParams.get("category_id") || "",
                 brand_id: searchParams.get("brand_id") || "",
+                room_id: searchParams.get("room_id") || "",
+                branch_id: searchParams.get("branch_id") || "",
             },
         });
 
@@ -92,6 +100,8 @@ export default function ItemsFilter({ categories = [], brands = [] }: ItemsFilte
             sort_order: "",
             category_id: "",
             brand_id: "",
+            room_id: "",
+            branch_id: "",
         });
         router.replace(pathname, { scroll: false });
     };
@@ -101,6 +111,8 @@ export default function ItemsFilter({ categories = [], brands = [] }: ItemsFilte
     const currentSortOrder = searchParams.get("sort_order") || "";
     const currentCategoryId = searchParams.get("category_id") || "";
     const currentBrandId = searchParams.get("brand_id") || "";
+    const currentRoomId = searchParams.get("room_id") || "";
+    const currentBranchId = searchParams.get("branch_id") || "";
     const currentPerPage = searchParams.get("per_page") || "";
 
     const hasActiveFilters =
@@ -109,6 +121,8 @@ export default function ItemsFilter({ categories = [], brands = [] }: ItemsFilte
         currentSortOrder !== "" ||
         currentCategoryId !== "" ||
         currentBrandId !== "" ||
+        currentRoomId !== "" ||
+        currentBranchId !== "" ||
         currentPerPage !== "";
 
     return (
@@ -130,7 +144,7 @@ export default function ItemsFilter({ categories = [], brands = [] }: ItemsFilte
                 )}
             </div>
 
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7">
                 {/* Search */}
                 <div className="relative md:col-span-2">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -140,6 +154,22 @@ export default function ItemsFilter({ categories = [], brands = [] }: ItemsFilte
                         {...register("search")}
                     />
                 </div>
+
+                {/* Branch */}
+                <Controller
+                    name="branch_id"
+                    control={control}
+                    render={({ field }) => (
+                        <BranchSearchSelect
+                            value={field.value || ""}
+                            onValueChange={(value) => {
+                                field.onChange(value);
+                                handleSelectChange("branch_id")(value || "");
+                            }}
+                            className="w-full"
+                        />
+                    )}
+                />
 
                 {/* Category */}
                 <Controller
@@ -212,6 +242,26 @@ export default function ItemsFilter({ categories = [], brands = [] }: ItemsFilte
                                 }
                             </SelectContent>
                         </Select>
+                    )}
+                />
+
+                {/* Room */}
+                <Controller
+                    name="room_id"
+                    control={control}
+                    render={({ field }) => (
+                        <Combobox
+                            options={rooms?.map(room => ({ value: room.id.toString(), label: room.name })) || []}
+                            value={field.value || ""}
+                            onValueChange={(value) => {
+                                field.onChange(value);
+                                handleSelectChange("room_id")(value || "");
+                            }}
+                            placeholder="Select Room"
+                            searchPlaceholder="Search room..."
+                            emptyMessage="No rooms found"
+                            className="w-full"
+                        />
                     )}
                 />
 
