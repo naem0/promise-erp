@@ -198,9 +198,9 @@ const ItemsData = async ({
                         </DropdownMenuItem>
                       </PermissionGuard>
                       <PermissionGuard requiredPermission="delete-products">
-                        <DropdownMenuItem asChild>
+                        
                           <DeleteItemButton id={item?.id} />
-                        </DropdownMenuItem>
+                        
                       </PermissionGuard>
                     </DropdownMenuContent>
                   </DropdownMenu>

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useTransition, useMemo, useRef } from 'react'
+import { useEffect, useState, useTransition, useMemo, useRef, useCallback } from 'react'
 import {
   Combobox,
   ComboboxRoot,
@@ -47,52 +47,145 @@ export default function RoomSearchSelect({
   className,
   branchId,
 }: RoomSearchSelectProps) {
-  const [rooms, setRooms] = useState<Room[]>(initialRooms || [])
+  const [roomsMap, setRoomsMap] = useState<Record<string, Room>>({})
+  const [roomsList, setRoomsList] = useState<Room[]>(initialRooms || [])
   const [isPending, startTransition] = useTransition()
   const [inputValue, setInputValue] = useState("")
+  const [page, setPage] = useState(1)
+  const [hasMore, setHasMore] = useState(false)
+  const [isLoadingMore, setIsLoadingMore] = useState(false)
   const anchor = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
-    if (initialRooms && initialRooms.length > 0 && !branchId) {
-      setRooms(initialRooms)
-      return
+    if (initialRooms && initialRooms.length > 0) {
+      setRoomsList(initialRooms)
+      setRoomsMap(prev => {
+        const newMap = { ...prev }
+        initialRooms.forEach(room => {
+          if (room?.id != null) {
+            newMap[String(room.id)] = room
+          }
+        })
+        return newMap
+      })
     }
+  }, [initialRooms])
 
-    startTransition(async () => {
-      try {
-        const params: Record<string, unknown> = { per_page: 500 }
-        if (branchId) {
-          params.branch_id = branchId
+  // Fetch page 1 when search input or branchId changes
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      startTransition(async () => {
+        try {
+          const params: Record<string, unknown> = { page: 1 }
+          if (branchId) {
+            params.branch_id = branchId
+          }
+          if (inputValue.trim()) {
+            params.search = inputValue.trim()
+          }
+          const res = await getRooms(params)
+          if (res?.success) {
+            const fetched = res?.data?.rooms || []
+            const pagination = res?.data?.pagination
+            setRoomsList(fetched)
+            setRoomsMap(prev => {
+              const newMap = { ...prev }
+              fetched.forEach(room => {
+                if (room?.id != null) {
+                  newMap[String(room.id)] = room
+                }
+              })
+              return newMap
+            })
+            setPage(1)
+            const morePages = Boolean(
+              pagination?.has_more_pages ||
+              (pagination?.current_page && pagination?.last_page && pagination.current_page < pagination.last_page)
+            )
+            setHasMore(morePages)
+          }
+        } catch (error: unknown) {
+          if (error instanceof Error) {
+            console.error("Failed to fetch rooms:", error.message)
+          } else {
+            console.error("An unknown error occurred while fetching rooms.")
+          }
         }
-        const res = await getRooms(params)
-        if (res?.success) {
-          setRooms(res?.data?.rooms || [])
-        }
-      } catch (error: unknown) {
-        if (error instanceof Error) {
-          console.error("Failed to fetch rooms:", error.message)
-        } else {
-          console.error("An unknown error occurred while fetching rooms.")
-        }
+      })
+    }, 300)
+
+    return () => clearTimeout(timer)
+  }, [branchId, inputValue])
+
+  // Load next page on scroll
+  const handleLoadMore = useCallback(async () => {
+    if (!hasMore || isPending || isLoadingMore) return
+    setIsLoadingMore(true)
+    try {
+      const nextPage = page + 1
+      const params: Record<string, unknown> = { page: nextPage }
+      if (branchId) params.branch_id = branchId
+      if (inputValue.trim()) params.search = inputValue.trim()
+
+      const res = await getRooms(params)
+      if (res?.success) {
+        const fetched = res?.data?.rooms || []
+        const pagination = res?.data?.pagination
+        setRoomsList(prev => {
+          const existingIds = new Set(prev.map(r => r.id))
+          const uniqueNew = fetched.filter(r => !existingIds.has(r.id))
+          return [...prev, ...uniqueNew]
+        })
+        setRoomsMap(prev => {
+          const newMap = { ...prev }
+          fetched.forEach(room => {
+            if (room?.id != null) {
+              newMap[String(room.id)] = room
+            }
+          })
+          return newMap
+        })
+        setPage(nextPage)
+        const morePages = Boolean(
+          pagination?.has_more_pages ||
+          (pagination?.current_page && pagination?.last_page && pagination.current_page < pagination.last_page)
+        )
+        setHasMore(morePages)
       }
-    })
-  }, [initialRooms, branchId])
+    } catch (error) {
+      console.error("Failed to load more rooms:", error)
+    } finally {
+      setIsLoadingMore(false)
+    }
+  }, [hasMore, isPending, isLoadingMore, page, branchId, inputValue])
+
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const { scrollTop, clientHeight, scrollHeight } = e.currentTarget
+    if (scrollHeight - scrollTop - clientHeight < 40) {
+      handleLoadMore()
+    }
+  }
 
   const filteredRooms = useMemo(() => {
-    if (!branchId) return rooms
-    return rooms.filter((r) => r.branch?.id?.toString() === branchId)
-  }, [rooms, branchId])
+    const list = Array.isArray(roomsList) ? roomsList : []
+    if (!branchId) return list
+    return list.filter((r) => !r.branch?.id || r.branch?.id?.toString() === branchId)
+  }, [roomsList, branchId])
 
-  const options = useMemo(() => (filteredRooms || []).map(room => ({
+  const options = useMemo(() => (Array.isArray(filteredRooms) ? filteredRooms : []).map(room => ({
     value: String(room.id),
     label: `${room.name}${room.room_no ? ` (${room.room_no})` : ''}`
   })), [filteredRooms])
 
-  const filteredOptions = useMemo(() => {
-    if (!inputValue) return options
-    const lower = inputValue.toLowerCase()
-    return options.filter(o => o.label.toLowerCase().includes(lower))
-  }, [options, inputValue])
+  const allOptionsMap = useMemo(() => {
+    const map: Record<string, string> = {}
+    Object.values(roomsMap).forEach(room => {
+      if (room?.id != null) {
+        map[String(room.id)] = `${room.name}${room.room_no ? ` (${room.room_no})` : ''}`
+      }
+    })
+    return map
+  }, [roomsMap])
 
   if (multiple) {
     const multiValue = (value as string[]) || []
@@ -100,13 +193,12 @@ export default function RoomSearchSelect({
 
     return (
       <ComboboxRoot
-        key={`${branchId || ''}-${options.length}`}
         multiple={true}
         value={multiValue}
         onValueChange={(val) => multiOnValueChange(val as string[])}
         onInputValueChange={setInputValue}
-        disabled={disabled || isPending}
-        itemToStringLabel={(val) => options.find(o => o.value === val)?.label || ""}
+        disabled={disabled}
+        itemToStringLabel={(val) => allOptionsMap[val] || val}
       >
         <div ref={anchor} className="relative">
           <ComboboxChips
@@ -116,7 +208,7 @@ export default function RoomSearchSelect({
             )}
           >
             {multiValue.map((v) => {
-              const label = options.find(o => o.value === v)?.label || v
+              const label = allOptionsMap[v] || v
               return (
                 <ComboboxChip key={v}>
                   {label}
@@ -126,7 +218,7 @@ export default function RoomSearchSelect({
             <ComboboxChipsInput
               placeholder={
                 multiValue.length === 0
-                  ? isPending ? "Loading rooms..." : (placeholder || "Select room(s)")
+                  ? isPending ? "Loading..." : (placeholder || "Select room(s)")
                   : ""
               }
               className="min-w-[100px] text-sm outline-none bg-transparent"
@@ -136,15 +228,20 @@ export default function RoomSearchSelect({
         </div>
 
         <ComboboxContent anchor={anchor} className="w-[--anchor-width] min-w-[280px]">
-          <ComboboxList className="max-h-[280px] overflow-y-auto p-1">
-            {filteredOptions.map((option) => (
+          <ComboboxList className="max-h-[280px] overflow-y-auto p-1" onScroll={handleScroll}>
+            {options.map((option) => (
               <ComboboxItem key={option.value} value={option.value}>
                 {option.label}
               </ComboboxItem>
             ))}
-            <ComboboxEmpty>
-              {isPending ? "Loading..." : "No rooms found"}
-            </ComboboxEmpty>
+            {isLoadingMore && (
+              <div className="py-2 text-center text-xs text-slate-400">Loading more...</div>
+            )}
+            {options.length === 0 && (
+              <ComboboxEmpty>
+                {isPending ? "Loading..." : "No rooms found"}
+              </ComboboxEmpty>
+            )}
           </ComboboxList>
         </ComboboxContent>
       </ComboboxRoot>
@@ -157,15 +254,17 @@ export default function RoomSearchSelect({
 
   return (
     <Combobox
-      key={`${branchId || ''}-${options.length}`}
       options={options}
       value={singleValue}
       onValueChange={singleOnValueChange}
-      placeholder={isPending ? "Loading rooms..." : (placeholder || "Select room")}
+      onInputValueChange={setInputValue}
+      onListScroll={handleScroll}
+      placeholder={isPending && !options.length ? "Loading rooms..." : (placeholder || "Select room")}
       searchPlaceholder="Search room..."
       emptyMessage={isPending ? "Loading..." : "No rooms found"}
-      disabled={disabled || isPending}
+      disabled={disabled}
       className={className}
     />
   )
 }
+

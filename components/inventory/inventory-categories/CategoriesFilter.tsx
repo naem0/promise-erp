@@ -15,6 +15,8 @@ import { Search, FilterX } from "lucide-react";
 import { ProductCategory } from "@/apiServices/inventoryCategoriesService";
 import PerPageSelect from "@/components/common/PerPageSelect";
 
+import InventoryParentCategorySearchSelect from "@/components/common/InventoryParentCategorySearchSelect";
+
 interface FilterFormValues {
     search?: string;
     status?: string;
@@ -139,35 +141,14 @@ export default function CategoriesFilter({ categories = [] }: CategoriesFilterPr
                     name="parent_id"
                     control={control}
                     render={({ field }) => (
-                        <Select
-                            value={field.value}
+                        <InventoryParentCategorySearchSelect
+                            value={field.value || null}
                             onValueChange={(value) => {
-                                field.onChange(value);
-                                handleSelectChange("parent_id")(value);
+                                field.onChange(value || "");
+                                handleSelectChange("parent_id")(value || "");
                             }}
-                        >
-                            <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Parent Category" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {
-                                    categories?.length > 0 ? (
-                                        categories?.map((category) => (
-                                            <SelectItem
-                                                key={category.id}
-                                                value={category.id.toString()}
-                                            >
-                                                {category.name}
-                                            </SelectItem>
-                                        ))
-                                    ) : (
-                                        <SelectItem value="no-category" disabled>
-                                            No categories available
-                                        </SelectItem>
-                                    )
-                                }
-                            </SelectContent>
-                        </Select>
+                            placeholder="Parent Category"
+                        />
                     )}
                 />
 

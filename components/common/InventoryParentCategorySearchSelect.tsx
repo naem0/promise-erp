@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useTransition, useMemo, useRef } from 'react'
+import { useEffect, useState, useTransition, useMemo, useRef, useCallback } from 'react'
 import {
   Combobox,
   ComboboxRoot,
@@ -12,7 +12,7 @@ import {
   ComboboxChip,
   ComboboxChipsInput,
 } from '@/components/ui/combobox'
-import { getProductCategoriesSimpleList, SimpleCategory } from '@/apiServices/inventoryCategoriesService'
+import { getProductCategoriesParentList, SimpleCategory } from '@/apiServices/inventoryCategoriesService'
 import { cn } from '@/lib/utils'
 import { ChevronDownIcon } from 'lucide-react'
 
@@ -28,28 +28,28 @@ interface MultiSelectProps {
   onValueChange: (value: string[]) => void
 }
 
-type InventoryCategorySearchSelectProps = (SingleSelectProps | MultiSelectProps) & {
+type InventoryParentCategorySearchSelectProps = (SingleSelectProps | MultiSelectProps) & {
   placeholder?: string
   disabled?: boolean
   className?: string
   defaultValue?: string
 }
 
-export default function InventoryCategorySearchSelect({
+export default function InventoryParentCategorySearchSelect({
   multiple = false,
   value,
   onValueChange,
   placeholder,
   disabled = false,
   className,
-}: InventoryCategorySearchSelectProps) {
+}: InventoryParentCategorySearchSelectProps) {
   const [categoriesMap, setCategoriesMap] = useState<Record<string, SimpleCategory>>({})
   const [categoriesList, setCategoriesList] = useState<SimpleCategory[]>([])
   const [isPending, startTransition] = useTransition()
   const [inputValue, setInputValue] = useState("")
   const anchor = useRef<HTMLDivElement | null>(null)
 
-  // Dynamic API search with 300ms debounce
+  // Fetch parent categories when search input changes (with 300ms debounce)
   useEffect(() => {
     const timer = setTimeout(() => {
       startTransition(async () => {
@@ -57,7 +57,7 @@ export default function InventoryCategorySearchSelect({
           search: inputValue.trim() ? inputValue.trim() : undefined,
         }
         try {
-          const res = await getProductCategoriesSimpleList(params)
+          const res = await getProductCategoriesParentList(params)
           if (res?.success) {
             const rawData = res?.data
             const fetchedList: SimpleCategory[] = Array.isArray(rawData)
@@ -79,9 +79,9 @@ export default function InventoryCategorySearchSelect({
           }
         } catch (error: unknown) {
           if (error instanceof Error) {
-            console.error("Failed to fetch categories:", error.message)
+            console.error("Failed to fetch parent categories:", error.message)
           } else {
-            console.error("An unknown error occurred while fetching categories.")
+            console.error("An unknown error occurred while fetching parent categories.")
           }
         }
       })
@@ -136,7 +136,7 @@ export default function InventoryCategorySearchSelect({
             <ComboboxChipsInput
               placeholder={
                 multiValue?.length === 0
-                  ? isPending ? "Loading..." : (placeholder || "Select category(s)")
+                  ? isPending ? "Loading..." : (placeholder || "Select parent category(s)")
                   : ""
               }
               className="min-w-[100px] text-sm outline-none bg-transparent"
@@ -154,7 +154,7 @@ export default function InventoryCategorySearchSelect({
             ))}
             {options.length === 0 && (
               <ComboboxEmpty>
-                {isPending ? "Loading..." : "No categories found"}
+                {isPending ? "Loading..." : "No parent categories found"}
               </ComboboxEmpty>
             )}
           </ComboboxList>
@@ -173,13 +173,11 @@ export default function InventoryCategorySearchSelect({
       value={singleValue}
       onValueChange={singleOnValueChange}
       onInputValueChange={setInputValue}
-      placeholder={isPending && !options.length ? "Loading categories..." : (placeholder || "Select category")}
-      searchPlaceholder="Search category..."
-      emptyMessage={isPending ? "Loading..." : "No categories found"}
+      placeholder={isPending && !options.length ? "Loading parent categories..." : (placeholder || "Select parent category")}
+      searchPlaceholder="Search parent category..."
+      emptyMessage={isPending ? "Loading..." : "No parent categories found"}
       disabled={disabled}
       className={className}
     />
   )
 }
-
-

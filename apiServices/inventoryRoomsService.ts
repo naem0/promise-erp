@@ -213,7 +213,6 @@ export async function updateRoom(
     const token = session?.accessToken;
 
     if (!token) throw new Error("No valid session/token");
-
     if (!formData.has("_method")) {
       formData.append("_method", "PUT");
     }
@@ -244,9 +243,7 @@ export async function updateRoom(
 // DELETE ROOM
 // =======================
 
-export async function deleteRoom(
-  id: number,
-): Promise<SingleRoomResponse> {
+export async function deleteRoom(id: number): Promise<SingleRoomResponse> {
   try {
     const session = await getServerSession(authOptions);
     const token = session?.accessToken;
