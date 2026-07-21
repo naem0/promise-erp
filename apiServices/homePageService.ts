@@ -34,8 +34,9 @@ export interface HeroSectionResponse {
 export interface SingleCountDown {
   id: number;
   title: string;
-  count: number;
+  count: string | number;
   image: string | null;
+  type?: string;
   status: number;
 }
 
@@ -458,7 +459,7 @@ export async function getLatestCountDown(
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error("Latest Countdown Fetch Error:", error.message);
-      throw new Error("Error fetching countdown");
+      throw new Error(`Error fetching countdown: ${error.message}`);
     }
     throw new Error("Unknown error occurred while fetching countdown");
   }

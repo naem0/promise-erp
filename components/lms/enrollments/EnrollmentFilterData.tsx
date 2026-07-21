@@ -1,13 +1,9 @@
-import { getBranches } from "@/apiServices/branchService"
 import { getBatches, Batch } from "@/apiServices/batchService"
 import EnrollmentFilter from "./EnrollmentFilter"
 
 export default async function EnrollmentFilterData() {
     try {
-        const [branchesRes, batchesRes] = await Promise.all([
-            getBranches({ per_page: 999 }),
-            getBatches({ per_page: 999 }),
-        ])
+        const batchesRes = await getBatches({ per_page: 999 })
 
         // Map batches to include only id, name, and course_id for the filter
         const batches = batchesRes.data?.batches?.map((batch: Batch) => ({
@@ -18,7 +14,6 @@ export default async function EnrollmentFilterData() {
 
         return (
             <EnrollmentFilter
-                branches={branchesRes.data?.branches || []}
                 batches={batches}
             />
         )
@@ -26,7 +21,6 @@ export default async function EnrollmentFilterData() {
         console.error("Error loading enrollment filters:", error)
         return (
             <EnrollmentFilter
-                branches={[]}
                 batches={[]}
             />
         )

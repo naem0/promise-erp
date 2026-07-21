@@ -1,4 +1,4 @@
-"use server"
+"use server";
 
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
@@ -6,8 +6,8 @@ import { cacheTag, updateTag } from "next/cache";
 import { ApiResponse } from "@/lib/apiErrorHandler";
 import { PaginationType } from "@/types/pagination";
 
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
+const API_BASE =
+  process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
 
 // ==========================
 // Interfaces
@@ -51,8 +51,6 @@ export interface Batch {
   whatsapp_group_link?: string; // optional WhatsApp group link
 }
 
-
-
 export interface BatchResponse {
   success: boolean;
   message: string;
@@ -73,7 +71,8 @@ export interface BatchSingleResponse {
 export interface BatchResponseType {
   success: boolean;
   message: string;
-  errors?: { [key: string]: string[] | string }; data: Batch;
+  errors?: { [key: string]: string[] | string };
+  data: Batch;
   code: number;
 }
 
@@ -98,7 +97,9 @@ export interface CreateBatchRequest {
 // Add Batch
 // ==========================
 
-export async function addBatch(batchData: CreateBatchRequest): Promise<BatchResponseType> {
+export async function addBatch(
+  batchData: CreateBatchRequest,
+): Promise<BatchResponseType> {
   try {
     const session = await getServerSession(authOptions);
     const token = session?.accessToken;
@@ -118,16 +119,13 @@ export async function addBatch(batchData: CreateBatchRequest): Promise<BatchResp
 
     const result = await res.json();
 
-
-
     updateTag("batches-list");
 
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
       throw new Error(error.message);
-    }
-    else {
+    } else {
       throw new Error("Failed to add batch.");
     }
   }
@@ -138,7 +136,7 @@ export async function addBatch(batchData: CreateBatchRequest): Promise<BatchResp
 // ==========================
 
 export async function getBatches(
-  params: Record<string, unknown> = {}
+  params: Record<string, unknown> = {},
 ): Promise<BatchResponse> {
   "use cache: private";
   cacheTag("batches-list");
@@ -162,7 +160,7 @@ export async function getBatches(
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
-      }
+      },
     });
 
     if (!res.ok) {
@@ -181,14 +179,11 @@ export async function getBatches(
   }
 }
 
-
 // ==========================
 // Get Batch by ID
 // ==========================
 
-export async function getBatchById(
-  id: string
-): Promise<BatchSingleResponse> {
+export async function getBatchById(id: string): Promise<BatchSingleResponse> {
   try {
     const session = await getServerSession(authOptions);
     const token = session?.accessToken;
@@ -201,7 +196,7 @@ export async function getBatchById(
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
-      }
+      },
     });
 
     return res.json();
@@ -220,7 +215,7 @@ export async function getBatchById(
 
 export async function updateBatch(
   id: number,
-  batchData: CreateBatchRequest
+  batchData: CreateBatchRequest,
 ): Promise<BatchResponseType> {
   try {
     const session = await getServerSession(authOptions);
@@ -244,8 +239,6 @@ export async function updateBatch(
 
     const result = await res.json();
 
-
-
     updateTag("batches-list");
     updateTag(`batch-${id}`);
 
@@ -262,7 +255,6 @@ export async function updateBatch(
 // ==========================
 // Delete Batch
 // ==========================
-
 
 // ==========================
 // Batch Chapter-Lesson Types
@@ -310,7 +302,7 @@ export interface BatchChapterLessonResponse {
 // ==========================
 
 export async function getChaptersByBatchId(
-  batchId: number
+  batchId: number,
 ): Promise<BatchChapterLessonResponse> {
   try {
     const session = await getServerSession(authOptions);
@@ -329,8 +321,6 @@ export async function getChaptersByBatchId(
 
     const result = await res.json();
 
-
-
     return result;
   } catch (error) {
     console.error("Error in getChaptersByBatchId:", error);
@@ -347,7 +337,7 @@ export async function getChaptersByBatchId(
 // ==========================
 
 export async function bulkUpdateBatchChapterLessons(
-  data: BatchChapterLessonFormValues
+  data: BatchChapterLessonFormValues,
 ): Promise<BatchChapterLessonResponse> {
   try {
     const session = await getServerSession(authOptions);
@@ -372,8 +362,7 @@ export async function bulkUpdateBatchChapterLessons(
     console.error("Error in bulkUpdateBatchChapterLessons:", error);
     if (error instanceof Error) {
       throw new Error(error.message);
-    }
-    else {
+    } else {
       throw new Error("Failed to update batch chapters and lessons.");
     }
   }
@@ -412,5 +401,109 @@ export async function deleteBatch(id: number): Promise<ApiResponse> {
     } else {
       throw new Error("Failed to delete batch.");
     }
+  }
+}
+
+// ==========================
+// Duplicate Batch
+// ==========================
+
+export async function duplicateBatch(id: number): Promise<BatchResponseType> {
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+
+  if (!token) {
+    throw new Error("No valid session or access token found.");
+  }
+  
+  try {
+    const res = await fetch(`${API_BASE}/batches/${id}/duplicate`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const result = await res.json();
+
+    // Revalidate cache
+    updateTag("batches-list");
+
+    return result;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    } else {
+      throw new Error("Failed to duplicate batch.");
+    }
+
+  }
+}
+// Get Public Batches List
+// ==========================
+
+export interface PublicBatchItem {
+  batch_id: number;
+  batch_name: string;
+  course_id: number;
+  course_name: string;
+  branch_id: number;
+  branch_name: string;
+  status: number;
+}
+
+export interface PublicBatchesResponse {
+  success: boolean;
+  message: string;
+  code: number;
+  data: PublicBatchItem[];
+}
+
+export async function getPublicBatches(
+  search?: string,
+): Promise<PublicBatchesResponse> {
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+
+  const url = new URL(`${API_BASE}/batches/public-list`);
+  if (search) {
+    url.searchParams.set("search", search);
+  }
+
+  try {
+    const res = await fetch(url.toString(), {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error(`Status: ${res.status} ${res.statusText}`);
+    }
+
+    if (res.status === 404) {
+      console.warn("No delivery partners found (404). Returning empty list.");
+      throw new Error("No public batches found (404).");
+    }
+
+    if (res.status === 401 || res.status === 403) {
+      console.warn("Unauthorized: Access token not found or invalid.");
+      throw new Error("Unauthorized: Access token not found or invalid.");
+    }
+
+    const result = await res.json();
+    return result;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Service error:", error.message);
+      throw new Error(error.message);
+    } else {
+      console.error("Service error:", "Error fetching public batches");
+      throw new Error("Error fetching public batches");
+    }
+
   }
 }

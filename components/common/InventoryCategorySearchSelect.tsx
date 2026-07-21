@@ -12,7 +12,7 @@ import {
   ComboboxChip,
   ComboboxChipsInput,
 } from '@/components/ui/combobox'
-import { getRooms, Room } from '@/apiServices/inventoryRoomsService'
+import { getProductCategoriesSimpleList, SimpleCategory } from '@/apiServices/inventoryCategoriesService'
 import { cn } from '@/lib/utils'
 import { ChevronDownIcon } from 'lucide-react'
 
@@ -28,65 +28,47 @@ interface MultiSelectProps {
   onValueChange: (value: string[]) => void
 }
 
-type RoomSearchSelectProps = (SingleSelectProps | MultiSelectProps) & {
-  rooms?: Room[]
+type InventoryCategorySearchSelectProps = (SingleSelectProps | MultiSelectProps) & {
   placeholder?: string
   disabled?: boolean
   className?: string
   defaultValue?: string
-  branchId?: string
 }
 
-export default function RoomSearchSelect({
+export default function InventoryCategorySearchSelect({
   multiple = false,
   value,
   onValueChange,
-  rooms: initialRooms,
   placeholder,
   disabled = false,
   className,
-  branchId,
-}: RoomSearchSelectProps) {
-  const [rooms, setRooms] = useState<Room[]>(initialRooms || [])
+}: InventoryCategorySearchSelectProps) {
+  const [categories, setCategories] = useState<SimpleCategory[]>([])
   const [isPending, startTransition] = useTransition()
   const [inputValue, setInputValue] = useState("")
   const anchor = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
-    if (initialRooms && initialRooms.length > 0 && !branchId) {
-      setRooms(initialRooms)
-      return
-    }
-
     startTransition(async () => {
       try {
-        const params: Record<string, unknown> = { per_page: 500 }
-        if (branchId) {
-          params.branch_id = branchId
-        }
-        const res = await getRooms(params)
+        const res = await getProductCategoriesSimpleList()
         if (res?.success) {
-          setRooms(res?.data?.rooms || [])
+          setCategories(res?.data || [])
         }
       } catch (error: unknown) {
         if (error instanceof Error) {
-          console.error("Failed to fetch rooms:", error.message)
+          console.error("Failed to fetch categories:", error.message)
         } else {
-          console.error("An unknown error occurred while fetching rooms.")
+          console.error("An unknown error occurred while fetching categories.")
         }
       }
     })
-  }, [initialRooms, branchId])
+  }, [])
 
-  const filteredRooms = useMemo(() => {
-    if (!branchId) return rooms
-    return rooms.filter((r) => r.branch?.id?.toString() === branchId)
-  }, [rooms, branchId])
-
-  const options = useMemo(() => (filteredRooms || []).map(room => ({
-    value: String(room.id),
-    label: `${room.name}${room.room_no ? ` (${room.room_no})` : ''}`
-  })), [filteredRooms])
+  const options = useMemo(() => (categories || []).map(category => ({
+    value: String(category?.id),
+    label: category?.name
+  })), [categories])
 
   const filteredOptions = useMemo(() => {
     if (!inputValue) return options
@@ -100,7 +82,7 @@ export default function RoomSearchSelect({
 
     return (
       <ComboboxRoot
-        key={`${branchId || ''}-${options.length}`}
+        key={options?.length}
         multiple={true}
         value={multiValue}
         onValueChange={(val) => multiOnValueChange(val as string[])}
@@ -115,7 +97,7 @@ export default function RoomSearchSelect({
               className
             )}
           >
-            {multiValue.map((v) => {
+            {multiValue?.map((v) => {
               const label = options.find(o => o.value === v)?.label || v
               return (
                 <ComboboxChip key={v}>
@@ -125,8 +107,8 @@ export default function RoomSearchSelect({
             })}
             <ComboboxChipsInput
               placeholder={
-                multiValue.length === 0
-                  ? isPending ? "Loading rooms..." : (placeholder || "Select room(s)")
+                multiValue?.length === 0
+                  ? isPending ? "Loading categories..." : (placeholder || "Select category(s)")
                   : ""
               }
               className="min-w-[100px] text-sm outline-none bg-transparent"
@@ -137,13 +119,13 @@ export default function RoomSearchSelect({
 
         <ComboboxContent anchor={anchor} className="w-[--anchor-width] min-w-[280px]">
           <ComboboxList className="max-h-[280px] overflow-y-auto p-1">
-            {filteredOptions.map((option) => (
+            {filteredOptions?.map((option) => (
               <ComboboxItem key={option.value} value={option.value}>
                 {option.label}
               </ComboboxItem>
             ))}
             <ComboboxEmpty>
-              {isPending ? "Loading..." : "No rooms found"}
+              {isPending ? "Loading..." : "No categories found"}
             </ComboboxEmpty>
           </ComboboxList>
         </ComboboxContent>
@@ -157,13 +139,13 @@ export default function RoomSearchSelect({
 
   return (
     <Combobox
-      key={`${branchId || ''}-${options.length}`}
+      key={options?.length}
       options={options}
       value={singleValue}
       onValueChange={singleOnValueChange}
-      placeholder={isPending ? "Loading rooms..." : (placeholder || "Select room")}
-      searchPlaceholder="Search room..."
-      emptyMessage={isPending ? "Loading..." : "No rooms found"}
+      placeholder={isPending ? "Loading categories..." : (placeholder || "Select category")}
+      searchPlaceholder="Search category..."
+      emptyMessage={isPending ? "Loading..." : "No categories found"}
       disabled={disabled || isPending}
       className={className}
     />

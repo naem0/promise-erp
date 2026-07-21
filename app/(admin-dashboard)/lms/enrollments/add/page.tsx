@@ -2,11 +2,13 @@ import { Suspense } from "react";
 import CreateEnrollmentForm from "@/components/lms/enrollments/CreateEnrollmentForm";
 import { getStudents } from "@/apiServices/studentService";
 import { getBatches } from "@/apiServices/batchService";
+import { getActiveClassSchedules, ClassSchedule } from "@/apiServices/classSchedulesService";
 import ErrorComponent from "@/components/common/ErrorComponent";
 
 export default async function AddEnrollmentPage() {
   let students = [];
   let batches = [];
+  let classSchedules: ClassSchedule[] = [];
 
   try {
     const studentsRes = await getStudents({ per_page: 100 });
@@ -40,12 +42,24 @@ export default async function AddEnrollmentPage() {
     );
   }
 
+  try {
+    const schedulesRes = await getActiveClassSchedules();
+    classSchedules = schedulesRes?.data || [];
+  } catch (error : unknown) {
+    if (error instanceof Error) {
+      console.error("Failed to load class schedules:", error.message);
+    }
+    console.error("Failed to load class schedules:", error);
+    classSchedules = [];
+  }
+
   return (
     <div className="mx-auto space-y-6">
       <Suspense fallback={<div>Loading form...</div>}>
         <CreateEnrollmentForm
           students={students}
           batches={batches}
+          classSchedules={classSchedules}
         />
       </Suspense>
     </div>
