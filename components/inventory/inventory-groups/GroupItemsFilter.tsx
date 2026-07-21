@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Search, FilterX } from "lucide-react";
 import { ProductCategory } from "@/apiServices/inventoryCategoriesService";
 import PerPageSelect from "@/components/common/PerPageSelect";
+import InventoryCategorySearchSelect from "@/components/common/InventoryCategorySearchSelect";
 
 interface FilterFormValues {
     search?: string;
@@ -140,33 +141,14 @@ export default function GroupItemsFilter({ categories = [] }: GroupItemsFilterPr
                     name="category_id"
                     control={control}
                     render={({ field }) => (
-                        <Select
-                            value={field.value}
+                        <InventoryCategorySearchSelect
+                            value={field.value || ""}
                             onValueChange={(value) => {
                                 field.onChange(value);
-                                handleSelectChange("category_id")(value);
+                                handleSelectChange("category_id")(value || "");
                             }}
-                        >
-                            <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Category" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {categories?.length > 0 ? (
-                                    categories.map((category) => (
-                                        <SelectItem
-                                            key={category.id}
-                                            value={category.id.toString()}
-                                        >
-                                            {category.name}
-                                        </SelectItem>
-                                    ))
-                                ) : (
-                                    <SelectItem value="no-category" disabled>
-                                        No categories available
-                                    </SelectItem>
-                                )}
-                            </SelectContent>
-                        </Select>
+                            className="w-full"
+                        />
                     )}
                 />
 

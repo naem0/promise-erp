@@ -23,6 +23,7 @@ import {
 } from "@/apiServices/inventoryItemsService";
 import { Room } from "@/apiServices/inventoryRoomsService";
 import BranchSearchSelect from "@/components/common/BranchSearchSelect";
+import ProductSearchSelect from "@/components/common/ProductSearchSelect";
 
 // =========================================
 // Types
@@ -291,50 +292,15 @@ export default function StockUpdateForm({
                     name={`products.${index}.product_id`}
                     control={control}
                     render={({ field: f }) => (
-                      <Select value={f.value} onValueChange={f.onChange}>
-                        <SelectTrigger className="w-full bg-white">
-                          <SelectValue placeholder="Select product" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {products.length > 0 ? (
-                            products.map((product) => {
-                              const isSelectedElsewhere =
-                                selectedProductIds.includes(product.id.toString()) &&
-                                product.id.toString() !== currentProductId;
-                              return (
-                                <SelectItem
-                                  key={product.id}
-                                  value={product.id.toString()}
-                                  disabled={isSelectedElsewhere}
-                                >
-                                  <div className="flex items-center gap-2">
-                                    <div className="relative w-6 h-6 rounded overflow-hidden shrink-0 border">
-                                      <Image
-                                        src={product.image || "/images/placeholder.png"}
-                                        alt={product.name}
-                                        fill
-                                        className="object-cover"
-                                      />
-                                    </div>
-                                    <div className="flex flex-col text-left">
-                                      <span className="leading-tight">{product.name}</span>
-                                      {product.barcode && (
-                                        <span className="text-[10px] text-slate-400 leading-tight">
-                                          {product.barcode}
-                                        </span>
-                                      )}
-                                    </div>
-                                  </div>
-                                </SelectItem>
-                              );
-                            })
-                          ) : (
-                            <SelectItem value="no-product" disabled>
-                              No products available
-                            </SelectItem>
-                          )}
-                        </SelectContent>
-                      </Select>
+                      <ProductSearchSelect
+                        products={products}
+                        value={f.value}
+                        onValueChange={f.onChange}
+                        placeholder="Select product"
+                        disabledProductIds={selectedProductIds.filter(
+                          (id) => id !== currentProductId
+                        )}
+                      />
                     )}
                   />
                   {/* Current stock hint */}

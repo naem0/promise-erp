@@ -18,6 +18,8 @@ import { Brand } from "@/apiServices/inventoryBrandsService";
 import { Room } from "@/apiServices/inventoryRoomsService";
 import PerPageSelect from "@/components/common/PerPageSelect";
 import BranchSearchSelect from "@/components/common/BranchSearchSelect";
+import BrandSearchSelect from "@/components/common/BrandSearchSelect";
+import InventoryCategorySearchSelect from "@/components/common/InventoryCategorySearchSelect";
 
 interface FilterFormValues {
     search?: string;
@@ -176,35 +178,14 @@ export default function ItemsFilter({ categories = [], brands = [], rooms = [] }
                     name="category_id"
                     control={control}
                     render={({ field }) => (
-                        <Select
-                            value={field.value}
+                        <InventoryCategorySearchSelect
+                            value={field.value || ""}
                             onValueChange={(value) => {
                                 field.onChange(value);
-                                handleSelectChange("category_id")(value);
+                                handleSelectChange("category_id")(value || "");
                             }}
-                        >
-                            <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Category" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {
-                                    categories?.length > 0 ? (
-                                        categories?.map((category) => (
-                                            <SelectItem
-                                                key={category.id}
-                                                value={category.id.toString()}
-                                            >
-                                                {category.name}
-                                            </SelectItem>
-                                        ))
-                                    ) : (
-                                        <SelectItem value="no-category" disabled>
-                                            No categories available
-                                        </SelectItem>
-                                    )
-                                }
-                            </SelectContent>
-                        </Select>
+                            className="w-full"
+                        />
                     )}
                 />
 
@@ -213,35 +194,14 @@ export default function ItemsFilter({ categories = [], brands = [], rooms = [] }
                     name="brand_id"
                     control={control}
                     render={({ field }) => (
-                        <Select
-                            value={field.value}
+                        <BrandSearchSelect
+                            value={field.value || ""}
                             onValueChange={(value) => {
                                 field.onChange(value);
-                                handleSelectChange("brand_id")(value);
+                                handleSelectChange("brand_id")(value || "");
                             }}
-                        >
-                            <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Brand" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {
-                                    brands?.length > 0 ? (
-                                        brands?.map((brand) => (
-                                            <SelectItem
-                                                key={brand.id}
-                                                value={brand.id.toString()}
-                                            >
-                                                {brand.name}
-                                            </SelectItem>
-                                        ))
-                                    ) : (
-                                        <SelectItem value="no-brand" disabled>
-                                            No brands available
-                                        </SelectItem>
-                                    )
-                                }
-                            </SelectContent>
-                        </Select>
+                            className="w-full"
+                        />
                     )}
                 />
 
