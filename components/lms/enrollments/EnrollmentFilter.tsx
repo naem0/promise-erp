@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from "react"
+import { useEffect, useRef } from "react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useForm, Controller } from "react-hook-form"
 import { Input } from "@/components/ui/input"
@@ -12,9 +12,10 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
-import { Branch } from "@/apiServices/branchService"
 import CourseSearchSelect from "@/components/common/CourseSearchSelect"
+import BranchSearchSelect from "@/components/common/BranchSearchSelect"
 import { Search, FilterX } from "lucide-react"
+import PerPageSelect from "@/components/common/PerPageSelect"
 
 interface FilterFormValues {
     search?: string
@@ -25,17 +26,17 @@ interface FilterFormValues {
 }
 
 interface EnrollmentFilterProps {
-    branches: Branch[]
     batches: Array<{ id: number; name: string; course_id: number }>
 }
 
 export default function EnrollmentFilter({
-    branches,
     batches,
 }: EnrollmentFilterProps) {
     const router = useRouter()
     const pathname = usePathname()
     const searchParams = useSearchParams()
+    const isFirstRender = useRef(true)
+
     const { register, control, reset, watch, setValue } = useForm<FilterFormValues>({
         defaultValues: {
             search: searchParams.get("search") || "",
@@ -54,16 +55,19 @@ export default function EnrollmentFilter({
         ? batches.filter((batch) => batch.course_id === Number(selectedCourseId))
         : batches
 
-    // Reset batch_id when course_id changes
+    // Reset batch_id when course_id changes (skip on initial mount)
     useEffect(() => {
-        // Only set value if it's currently something
+        if (isFirstRender.current) {
+            isFirstRender.current = false
+            return
+        }
         if (watchedValues.batch_id) {
             setValue("batch_id", "")
         }
     }, [selectedCourseId, setValue])
 
     useEffect(() => {
-        const params = new URLSearchParams(searchParams)
+        const params = new URLSearchParams(searchParams.toString())
         Object.entries(watchedValues).forEach(([key, value]) => {
             if (value) {
                 params.set(key, String(value))
@@ -90,9 +94,11 @@ export default function EnrollmentFilter({
         router.replace(pathname)
     }
 
-    const hasActiveFilters = Object.values(watchedValues).some(
-        (value) => value && value !== "" && value !== false
-    )
+    const currentPerPage = searchParams.get("per_page") || ""
+    const hasActiveFilters =
+        Object.values(watchedValues).some(
+            (value) => value && value !== "" && value !== false
+        ) || Boolean(currentPerPage)
 
     return (
         <div className="p-6 mb-6 border rounded-xl bg-card shadow-sm">
@@ -104,7 +110,7 @@ export default function EnrollmentFilter({
                         variant="outline"
                         size="sm"
                         onClick={handleReset}
-                        className="flex items-center gap-2"
+                        className="flex items-center gap-2 cursor-pointer"
                     >
                         <FilterX className="h-4 w-4" />
                         Clear Filters
@@ -112,9 +118,9 @@ export default function EnrollmentFilter({
                 )}
             </div>
 
-            <div className="grid grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-6">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-7">
                 {/* Search Input */}
-                <div className="relative col-span-1 lg:col-span-2">
+                <div className="relative sm:col-span-2 md:col-span-2 lg:col-span-2">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                         placeholder="Search enrollments..."
@@ -145,18 +151,12 @@ export default function EnrollmentFilter({
                     name="branch_id"
                     control={control}
                     render={({ field }) => (
-                        <Select onValueChange={field.onChange} value={field.value || ""}>
-                            <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Branch" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {branches?.map((branch) => (
-                                    <SelectItem key={branch.id} value={String(branch.id)}>
-                                        {branch.name}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                        <BranchSearchSelect
+                            value={field.value || ""}
+                            onValueChange={(val) => field.onChange(val || "")}
+                            placeholder="Select Branch"
+                            className="w-full"
+                        />
                     )}
                 />
 
@@ -178,7 +178,7 @@ export default function EnrollmentFilter({
                     name="batch_id"
                     control={control}
                     render={({ field }) => (
-                        <Select onValueChange={field.onChange} value={field.value || ""} disabled={!selectedCourseId}>
+                        <Select onValueChange={field.onChange} value={field.value || ""}>
                             <SelectTrigger className="w-full">
                                 <SelectValue placeholder="Batch" />
                             </SelectTrigger>
@@ -192,7 +192,13 @@ export default function EnrollmentFilter({
                         </Select>
                     )}
                 />
+
+                {/* Show Per Page */}
+                <div className="w-full">
+                    <PerPageSelect className="w-full" />
+                </div>
             </div>
         </div>
     )
 }
+
