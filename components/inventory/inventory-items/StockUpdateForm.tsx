@@ -24,6 +24,7 @@ import {
 import { Room } from "@/apiServices/inventoryRoomsService";
 import BranchSearchSelect from "@/components/common/BranchSearchSelect";
 import ProductSearchSelect from "@/components/common/ProductSearchSelect";
+import RoomSearchSelect from "@/components/common/RoomSearchSelect";
 
 // =========================================
 // Types
@@ -192,40 +193,17 @@ export default function StockUpdateForm({
               name="room_id"
               control={control}
               render={({ field }) => (
-                <Select
-                  key={selectedBranchId}
+                <RoomSearchSelect
+                  rooms={rooms}
+                  branchId={selectedBranchId}
                   value={field.value}
                   onValueChange={field.onChange}
                   disabled={!selectedBranchId}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue
-                      placeholder={
-                        selectedBranchId ? "Select room" : "Select branch first"
-                      }
-                    />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {filteredRooms.length > 0 ? (
-                      filteredRooms.map((room) => (
-                        <SelectItem key={room.id} value={room.id.toString()}>
-                          {room.name}
-                          {room.room_no && (
-                            <span className="text-slate-400 ml-1">
-                              ({room.room_no})
-                            </span>
-                          )}
-                        </SelectItem>
-                      ))
-                    ) : (
-                      <SelectItem value="no-room" disabled>
-                        {selectedBranchId
-                          ? "No rooms for this branch"
-                          : "Select a branch first"}
-                      </SelectItem>
-                    )}
-                  </SelectContent>
-                </Select>
+                  placeholder={
+                    selectedBranchId ? "Select room" : "Select branch first"
+                  }
+                  className="w-full"
+                />
               )}
             />
             {errors.room_id && (
