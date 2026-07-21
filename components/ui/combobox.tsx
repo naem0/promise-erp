@@ -29,11 +29,14 @@ export interface ComboboxProps extends Omit<ComboboxPrimitive.Root.Props<string,
   className?: string
   disabled?: boolean
   showClear?: boolean
+  onListScroll?: (e: React.UIEvent<HTMLDivElement>) => void
 }
 
 function Combobox({
   options,
   onValueChange,
+  onInputValueChange,
+  onListScroll,
   placeholder,
   searchPlaceholder,
   emptyMessage = "No results found.",
@@ -60,7 +63,10 @@ function Combobox({
       multiple={false} 
       value={value || ""}
       onValueChange={(val) => onValueChange?.(val)} 
-      onInputValueChange={setInputValue}
+      onInputValueChange={(val, event) => {
+        setInputValue(val)
+        onInputValueChange?.(val, event)
+      }}
       itemToStringLabel={(val) => options.find(o => o.value === val)?.label || ""}
       {...props}
     >
@@ -71,13 +77,15 @@ function Combobox({
         className={className}
       />
       <ComboboxContent>
-        <ComboboxList>
+        <ComboboxList onScroll={onListScroll}>
           {filteredOptions.map((option) => (
             <ComboboxItem key={option.value} value={option.value}>
               {option.label}
             </ComboboxItem>
           ))}
-          <ComboboxEmpty>{emptyMessage}</ComboboxEmpty>
+          {filteredOptions.length === 0 && (
+            <ComboboxEmpty>{emptyMessage}</ComboboxEmpty>
+          )}
         </ComboboxList>
       </ComboboxContent>
     </ComboboxRoot>

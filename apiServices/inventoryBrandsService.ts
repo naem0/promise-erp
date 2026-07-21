@@ -51,7 +51,10 @@ export interface SimpleBrandsResponse {
   success: boolean;
   message: string;
   code: number;
-  data: SimpleBrand[];
+  data?: {
+    brands: SimpleBrand[];
+    pagination?: PaginationType;
+  };
   errors?: Record<string, string[]>;
 }
 
@@ -140,17 +143,30 @@ export async function getBrands(
 
 export async function getBrandsSimpleListCached(
   token: string,
+  params: Record<string, unknown> = {},
 ): Promise<SimpleBrandsResponse | null> {
   "use cache";
   cacheTag("brands-simple-list");
 
   try {
-    const res = await fetch(`${API_BASE}/inventory/brands/simple-list`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
+    const urlParams = new URLSearchParams();
+    for (const key in params) {
+      if (params[key] !== undefined && params[key] !== null) {
+        urlParams.append(key, params[key].toString());
+      }
+    }
+
+    const queryString = urlParams.toString();
+
+    const res = await fetch(
+      `${API_BASE}/inventory/brands/simple-list${queryString}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
       },
-    });
+    );
 
     if (res.status === 404) {
       console.warn("No brands found (404). Returning empty list.");
@@ -169,7 +185,10 @@ export async function getBrandsSimpleListCached(
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error("Service error in getBrandsSimpleListCached:", error.message);
+      console.error(
+        "Service error in getBrandsSimpleListCached:",
+        error.message,
+      );
     } else {
       console.error("Service error in getBrandsSimpleListCached");
     }
@@ -181,15 +200,18 @@ export async function getBrandsSimpleListCached(
 // GET BRANDS SIMPLE LIST
 // =======================
 
-export async function getBrandsSimpleList(): Promise<SimpleBrandsResponse> {
+export async function getBrandsSimpleList(
+  params: Record<string, unknown> = {},
+): Promise<SimpleBrandsResponse> {
   const session = await getServerSession(authOptions);
   const token = session?.accessToken;
 
   if (!token) throw new Error("No valid session/token");
 
-  const _cachedResult = await getBrandsSimpleListCached(token);
+  const _cachedResult = await getBrandsSimpleListCached(token, params);
 
-  if (!_cachedResult) throw new Error("Failed to fetch simple brands list from cache.");
+  if (!_cachedResult)
+    throw new Error("Failed to fetch simple brands list from cache.");
 
   return _cachedResult;
 }
@@ -656,10 +678,8 @@ export async function getDeliveryById(
     } else {
       console.error("Error fetching delivery details:", error);
       throw new Error("Failed to fetch delivery details");
-
     }
   }
 }
 
 // =======================End GET Delivery By ID =============================
-
