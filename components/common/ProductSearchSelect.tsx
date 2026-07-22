@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useRef } from 'react'
+import { useState, useMemo, useRef, useEffect, useTransition, useCallback } from 'react'
 import Image from 'next/image'
 import {
   ComboboxRoot,
@@ -10,12 +10,12 @@ import {
   ComboboxEmpty,
   ComboboxChipsInput,
 } from '@/components/ui/combobox'
-import { ProductItem } from '@/apiServices/inventoryItemsService'
+import { ProductItem, getProductItems } from '@/apiServices/inventoryItemsService'
 import { cn } from '@/lib/utils'
 import { ChevronDownIcon } from 'lucide-react'
 
 interface ProductSearchSelectProps {
-  products: ProductItem[]
+  products?: ProductItem[]
   value?: string | null
   onValueChange?: (value: string | null) => void
   placeholder?: string
@@ -33,28 +33,135 @@ export default function ProductSearchSelect({
   className,
   disabledProductIds = [],
 }: ProductSearchSelectProps) {
+  const [productsList, setProductsList] = useState<ProductItem[]>(products || [])
+  const [productsMap, setProductsMap] = useState<Record<string, ProductItem>>(() => {
+    const map: Record<string, ProductItem> = {}
+    products?.forEach((p) => {
+      map[String(p.id)] = p
+    })
+    return map
+  })
+  const [isPending, startTransition] = useTransition()
   const [inputValue, setInputValue] = useState("")
+  const [page, setPage] = useState(1)
+  const [hasMore, setHasMore] = useState(false)
+  const [isLoadingMore, setIsLoadingMore] = useState(false)
   const anchor = useRef<HTMLDivElement | null>(null)
+
+  // Initialize with prop values
+  useEffect(() => {
+    if (products && products.length > 0) {
+      setProductsList(products)
+      setProductsMap(prev => {
+        const newMap = { ...prev }
+        products.forEach(p => {
+          if (p?.id != null) {
+            newMap[String(p.id)] = p
+          }
+        })
+        return newMap
+      })
+    }
+  }, [products])
+
+  // Dynamic API search with 300ms debounce
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      startTransition(async () => {
+        try {
+          const params: Record<string, unknown> = { page: 1, status: "1" }
+          if (inputValue.trim()) {
+            params.search = inputValue.trim()
+          }
+          const res = await getProductItems(params)
+          if (res?.success) {
+            const fetched = res?.data?.products || []
+            const pagination = res?.data?.pagination
+            setProductsList(fetched)
+            setProductsMap(prev => {
+              const newMap = { ...prev }
+              fetched.forEach(p => {
+                if (p?.id != null) {
+                  newMap[String(p.id)] = p
+                }
+              })
+              return newMap
+            })
+            setPage(1)
+            const morePages = Boolean(
+              pagination?.has_more_pages ||
+              (pagination?.current_page && pagination?.last_page && pagination.current_page < pagination.last_page)
+            )
+            setHasMore(morePages)
+          }
+        } catch (error: unknown) {
+          if (error instanceof Error) {
+            console.error("Failed to fetch products:", error.message)
+          } else {
+            console.error("An unknown error occurred while fetching products.")
+          }
+        }
+      })
+    }, 300)
+
+    return () => clearTimeout(timer)
+  }, [inputValue])
+
+  // Load next page on scroll
+  const handleLoadMore = useCallback(async () => {
+    if (!hasMore || isPending || isLoadingMore) return
+    setIsLoadingMore(true)
+    try {
+      const nextPage = page + 1
+      const params: Record<string, unknown> = { page: nextPage, status: "1" }
+      if (inputValue.trim()) params.search = inputValue.trim()
+
+      const res = await getProductItems(params)
+      if (res?.success) {
+        const fetched = res?.data?.products || []
+        const pagination = res?.data?.pagination
+        setProductsList(prev => {
+          const existingIds = new Set(prev.map(p => p.id))
+          const uniqueNew = fetched.filter(p => !existingIds.has(p.id))
+          return [...prev, ...uniqueNew]
+        })
+        setProductsMap(prev => {
+          const newMap = { ...prev }
+          fetched.forEach(p => {
+            if (p?.id != null) {
+              newMap[String(p.id)] = p
+            }
+          })
+          return newMap
+        })
+        setPage(nextPage)
+        const morePages = Boolean(
+          pagination?.has_more_pages ||
+          (pagination?.current_page && pagination?.last_page && pagination.current_page < pagination.last_page)
+        )
+        setHasMore(morePages)
+      }
+    } catch (error) {
+      console.error("Failed to load more products:", error)
+    } finally {
+      setIsLoadingMore(false)
+    }
+  }, [hasMore, isPending, isLoadingMore, page, inputValue])
+
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const { scrollTop, clientHeight, scrollHeight } = e.currentTarget
+    if (scrollHeight - scrollTop - clientHeight < 40) {
+      handleLoadMore()
+    }
+  }
 
   const selectedProduct = useMemo(() => {
     if (!value) return null
-    return products.find((p) => String(p.id) === String(value)) || null
-  }, [products, value])
-
-  const filteredProducts = useMemo(() => {
-    if (!inputValue) return products
-    const lower = inputValue.toLowerCase()
-    return (products || []).filter(
-      (p) =>
-        p.name.toLowerCase().includes(lower) ||
-        (p.barcode && p.barcode.toLowerCase().includes(lower)) ||
-        (p.model && p.model.toLowerCase().includes(lower))
-    )
-  }, [products, inputValue])
+    return productsMap[String(value)] || null
+  }, [productsMap, value])
 
   return (
     <ComboboxRoot
-      key={products.length}
       multiple={false}
       value={value || ""}
       onValueChange={(val) => {
@@ -64,7 +171,7 @@ export default function ProductSearchSelect({
       onInputValueChange={setInputValue}
       disabled={disabled}
       itemToStringLabel={(val) => {
-        const prod = products.find((p) => String(p.id) === String(val))
+        const prod = productsMap[String(val)]
         return prod ? prod.name : ""
       }}
     >
@@ -104,8 +211,8 @@ export default function ProductSearchSelect({
       </div>
 
       <ComboboxContent anchor={anchor} className="w-[--anchor-width] min-w-[300px]">
-        <ComboboxList className="max-h-[280px] overflow-y-auto p-1">
-          {filteredProducts.map((product) => {
+        <ComboboxList className="max-h-[280px] overflow-y-auto p-1" onScroll={handleScroll}>
+          {productsList.map((product) => {
             const isDisabled = disabledProductIds.includes(String(product.id))
             return (
               <ComboboxItem
@@ -137,7 +244,14 @@ export default function ProductSearchSelect({
               </ComboboxItem>
             )
           })}
-          <ComboboxEmpty>No products found</ComboboxEmpty>
+          {isLoadingMore && (
+            <div className="py-2 text-center text-xs text-slate-400">Loading more...</div>
+          )}
+          {productsList.length === 0 && (
+            <ComboboxEmpty>
+              {isPending ? "Loading..." : "No products found"}
+            </ComboboxEmpty>
+          )}
         </ComboboxList>
       </ComboboxContent>
     </ComboboxRoot>
