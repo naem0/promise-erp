@@ -79,7 +79,7 @@ export default function StockUpdateForm({
     reset();
   }, [reset]);
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields, prepend, remove } = useFieldArray({
     control,
     name: "products",
   });
@@ -243,7 +243,7 @@ export default function StockUpdateForm({
             <Button
               type="button"
               size="sm"
-              onClick={() => append({ product_id: "", stock_qty: 0 })}
+              onClick={() => prepend({ product_id: "", stock_qty: 0 })}
               className="cursor-pointer"
             >
               <PlusCircle className="h-4 w-4 mr-1" />

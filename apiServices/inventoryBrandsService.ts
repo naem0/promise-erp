@@ -314,9 +314,12 @@ export async function updateBrand(
 
     if (!token) throw new Error("No valid session/token");
 
-    // The user specified POST/inventory/brands/{id} for update
+    if (!formData.has("_method")) {
+      formData.append("_method", "PUT");
+    }
+
     const res = await fetch(`${API_BASE}/inventory/brands/${id}`, {
-      method: "PUT",
+      method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
       },

@@ -167,7 +167,7 @@ export default function RequisitionsForm({
 
   const {
     fields: itemFields,
-    append: appendItem,
+    prepend: prependItem,
     remove: removeItem,
   } = useFieldArray({ control, name: "items" });
 
@@ -609,7 +609,7 @@ export default function RequisitionsForm({
                                       if (watchedItems.some((item) => item.product_id === String(p.id))) {
                                         toast.info(`${p.name} is already added`);
                                       } else {
-                                        appendItem({
+                                        prependItem({
                                           product_id: String(p.id),
                                           price: String(p.mrp_price || 0),
                                           quantity: "1",
@@ -681,14 +681,22 @@ export default function RequisitionsForm({
                                   {selectedProduct ? selectedProduct.name : "Unknown Product"}
                                 </h3>
                                 {selectedProduct && (
-                                  <p className="text-[11px] text-slate-400 mt-0.5 leading-tight font-medium">
-                                    {[
-                                      selectedProduct.barcode && `Barcode: ${selectedProduct.barcode}`,
-                                      selectedProduct.unit_name && `Unit: ${selectedProduct.unit_name}`,
-                                      unitPrice > 0 && `Price: ৳${unitPrice.toLocaleString()}`,
-                                    ]
-                                      .filter(Boolean)
-                                      .join(" | ")}
+                                  <p className="text-[11px] text-slate-400 mt-0.5 leading-tight font-medium flex flex-wrap items-center gap-x-1.5 gap-y-0.5">
+                                    {selectedProduct.barcode && (
+                                      <>
+                                        <span>Barcode: {selectedProduct.barcode}</span>
+                                        <span>|</span>
+                                      </>
+                                    )}
+                                    {selectedProduct.unit_name && (
+                                      <>
+                                        <span>Unit: {selectedProduct.unit_name}</span>
+                                        <span>|</span>
+                                      </>
+                                    )}
+                                    <span className="text-slate-800 font-semibold">
+                                      Price: ৳{(unitPrice || 0).toLocaleString()}
+                                    </span>
                                   </p>
                                 )}
                                 {errors.items?.[index]?.product_id && (
@@ -709,9 +717,9 @@ export default function RequisitionsForm({
                             </div>
 
                             {/* ── Fields Row ── */}
-                            <div className="p-5 grid grid-cols-12 gap-x-4 gap-y-4 items-end">
+                            <div className="p-5 grid grid-cols-1 gap-4 md:grid-cols-[4fr_2.5fr_2.5fr_2fr_1.5fr] items-end">
                               {/* REASON FOR REQUIREMENT */}
-                              <div className="col-span-6">
+                              <div className="w-full">
                                 <label className="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
                                   Reason for Requirement
                                 </label>
@@ -731,7 +739,7 @@ export default function RequisitionsForm({
                               
 
                               {/* ROOM / LOCATION */}
-                              <div className="col-span-6">
+                              <div className="w-full">
                                 <label className="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
                                   Room / Location
                                 </label>
@@ -777,7 +785,7 @@ export default function RequisitionsForm({
                               </div>
 
                               {/* EXPECTATION DATE */}
-                              <div className="col-span-4">
+                              <div className="w-full">
                                 <label className="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
                                   Expectation Date
                                 </label>
@@ -795,23 +803,11 @@ export default function RequisitionsForm({
                                 )}
                               </div>
 
-                              {/* UNIT PRICE */}
-                              <div className="col-span-3">
-                                <label className="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
-                                  Unit Price
-                                </label>
-                                <Input
-                                  type="number"
-                                  step="0.01"
-                                  placeholder="0.00"
-                                  readOnly
-                                  className="h-9 border-slate-200 text-xs bg-slate-100/50 rounded-lg cursor-not-allowed text-slate-400 font-medium"
-                                  {...register(`items.${index}.price`)}
-                                />
-                              </div>
+                              {/* Hidden price input for form submission */}
+                              <input type="hidden" {...register(`items.${index}.price`)} />
 
                               {/* QUANTITY */}
-                              <div className="col-span-3">
+                              <div className="w-full">
                                 <label className="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
                                   Quantity
                                 </label>
@@ -851,11 +847,11 @@ export default function RequisitionsForm({
                               </div>
 
                               {/* SUB TOTAL */}
-                              <div className="col-span-2">
+                              <div className="w-full">
                                 <label className="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-1.5 text-center">
                                   Sub Total
                                 </label>
-                                <div className="h-9 flex items-center justify-center px-3 rounded-lg bg-emerald-50/60 border border-emerald-100/80 text-emerald-700 font-bold text-xs shadow-sm">
+                                <div className="h-9 flex items-center justify-center px-3 rounded-lg bg-emerald-50/60 border border-emerald-100/80 text-emerald-700 font-bold text-xs shadow-sm w-full">
                                   ৳{subTotal.toLocaleString()}
                                 </div>
                               </div>
