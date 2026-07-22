@@ -150,6 +150,8 @@ export interface ApproveEnrollmentData {
 export interface CreateEnrollmentData {
   user_id: number;
   batch_id: number;
+  is_online?: number;
+  class_schedule_id?: number;
   status?: number;
   payment_method?: number;
   payment_status?: number;
@@ -348,8 +350,66 @@ export async function createEnrollment(
     }
 
     return result;
+  } catch (error: unknown) {
+    if(error instanceof Error) {
+      console.error("Error in createEnrollment:", error.message);
+      throw new Error(error.message);
+    } else {
+      console.error("Error in createEnrollment: An unexpected error occurred");
+      throw new Error("Failed to create enrollment");
+    }
+  }
+}
+
+// ==========================
+// Bulk Transfer Enrollments
+// ==========================
+
+export interface BulkTransferEnrollmentsData {
+  enrollment_ids: number[];
+  to_batch_id: number;
+  remarks?: string;
+}
+
+export interface BulkTransferEnrollmentsResponse {
+  success: boolean;
+  message: string;
+  code?: number;
+  errors?: Record<string, string[] | string>;
+  data?: {
+    transferred_count: number;
+  };
+}
+
+export async function bulkTransferEnrollments(
+  data: BulkTransferEnrollmentsData
+): Promise<BulkTransferEnrollmentsResponse> {
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+
+  if (!token) {
+    throw new Error("No valid session or access token found.");
+  }
+
+  try {
+    const res = await fetch(`${API_BASE}/enrollments/bulk-transfer`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    const result = await res.json();
+    if (!result.success && !result.errors) {
+      throw new Error(result.message || "Failed to bulk transfer enrollments.");
+    }
+
+    return result;
   } catch (error) {
-    console.error("Error in createEnrollment:", error);
+    console.error("Error in bulkTransferEnrollments:", error);
     throw error;
   }
 }
+

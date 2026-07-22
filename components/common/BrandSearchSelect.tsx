@@ -43,38 +43,67 @@ export default function BrandSearchSelect({
   disabled = false,
   className,
 }: BrandSearchSelectProps) {
-  const [brands, setBrands] = useState<SimpleBrand[]>([])
+  const [brandsMap, setBrandsMap] = useState<Record<string, SimpleBrand>>({})
+  const [brandsList, setBrandsList] = useState<SimpleBrand[]>([])
   const [isPending, startTransition] = useTransition()
   const [inputValue, setInputValue] = useState("")
   const anchor = useRef<HTMLDivElement | null>(null)
 
+  // Dynamic API search with 300ms debounce
   useEffect(() => {
-    startTransition(async () => {
-      try {
-        const res = await getBrandsSimpleList()
-        if (res?.success) {
-          setBrands(res?.data || [])
+    const timer = setTimeout(() => {
+      startTransition(async () => {
+        const params = {
+          search: inputValue.trim() ? inputValue.trim() : undefined,
         }
-      } catch (error: unknown) {
-        if (error instanceof Error) {
-          console.error("Failed to fetch brands:", error.message)
-        } else {
-          console.error("An unknown error occurred while fetching brands.")
+        try {
+          const res = await getBrandsSimpleList(params)
+          if (res?.success) {
+            const rawData = res?.data
+            const fetchedList: SimpleBrand[] = Array.isArray(rawData)
+              ? rawData
+              : Array.isArray((rawData as { brands?: SimpleBrand[] })?.brands)
+              ? (rawData as { brands: SimpleBrand[] }).brands
+              : []
+
+            setBrandsList(fetchedList)
+            setBrandsMap(prev => {
+              const newMap = { ...prev }
+              fetchedList.forEach(brand => {
+                if (brand?.id != null) {
+                  newMap[String(brand.id)] = brand
+                }
+              })
+              return newMap
+            })
+          }
+        } catch (error: unknown) {
+          if (error instanceof Error) {
+            console.error("Failed to fetch brands:", error.message)
+          } else {
+            console.error("An unknown error occurred while fetching brands.")
+          }
         }
+      })
+    }, 300)
+
+    return () => clearTimeout(timer)
+  }, [inputValue])
+
+  const options = useMemo(() => (Array.isArray(brandsList) ? brandsList : []).map(brand => ({
+    value: String(brand?.id),
+    label: brand?.name
+  })), [brandsList])
+
+  const allOptionsMap = useMemo(() => {
+    const map: Record<string, string> = {}
+    Object.values(brandsMap).forEach(brand => {
+      if (brand?.id != null) {
+        map[String(brand.id)] = brand.name
       }
     })
-  }, [])
-
-  const options = useMemo(() => (brands || []).map(brand => ({
-    value: String(brand.id),
-    label: brand.name
-  })), [brands])
-
-  const filteredOptions = useMemo(() => {
-    if (!inputValue) return options
-    const lower = inputValue.toLowerCase()
-    return options.filter(o => o.label.toLowerCase().includes(lower))
-  }, [options, inputValue])
+    return map
+  }, [brandsMap])
 
   if (multiple) {
     const multiValue = (value as string[]) || []
@@ -82,13 +111,12 @@ export default function BrandSearchSelect({
 
     return (
       <ComboboxRoot
-        key={options?.length}
         multiple={true}
         value={multiValue}
         onValueChange={(val) => multiOnValueChange(val as string[])}
         onInputValueChange={setInputValue}
-        disabled={disabled || isPending}
-        itemToStringLabel={(val) => options.find(o => o.value === val)?.label || ""}
+        disabled={disabled}
+        itemToStringLabel={(val) => allOptionsMap[val] || val}
       >
         <div ref={anchor} className="relative">
           <ComboboxChips
@@ -98,7 +126,7 @@ export default function BrandSearchSelect({
             )}
           >
             {multiValue?.map((v) => {
-              const label = options?.find(o => o.value === v)?.label || v
+              const label = allOptionsMap[v] || v
               return (
                 <ComboboxChip key={v}>
                   {label}
@@ -108,7 +136,7 @@ export default function BrandSearchSelect({
             <ComboboxChipsInput
               placeholder={
                 multiValue?.length === 0
-                  ? isPending ? "Loading brands..." : (placeholder || "Select brand(s)")
+                  ? isPending ? "Loading..." : (placeholder || "Select brand(s)")
                   : ""
               }
               className="min-w-[100px] text-sm outline-none bg-transparent"
@@ -119,14 +147,16 @@ export default function BrandSearchSelect({
 
         <ComboboxContent anchor={anchor} className="w-[--anchor-width] min-w-[280px]">
           <ComboboxList className="max-h-[280px] overflow-y-auto p-1">
-            {filteredOptions?.map((option) => (
-              <ComboboxItem key={option?.value} value={option?.value}>
-                {option?.label}
+            {options?.map((option) => (
+              <ComboboxItem key={option.value} value={option.value}>
+                {option.label}
               </ComboboxItem>
             ))}
-            <ComboboxEmpty>
-              {isPending ? "Loading..." : "No brands found"}
-            </ComboboxEmpty>
+            {options.length === 0 && (
+              <ComboboxEmpty>
+                {isPending ? "Loading..." : "No brands found"}
+              </ComboboxEmpty>
+            )}
           </ComboboxList>
         </ComboboxContent>
       </ComboboxRoot>
@@ -139,15 +169,16 @@ export default function BrandSearchSelect({
 
   return (
     <Combobox
-      key={options?.length}
       options={options}
       value={singleValue}
       onValueChange={singleOnValueChange}
-      placeholder={isPending ? "Loading brands..." : (placeholder || "Select brand")}
+      onInputValueChange={setInputValue}
+      placeholder={isPending && !options.length ? "Loading brands..." : (placeholder || "Select brand")}
       searchPlaceholder="Search brand..."
       emptyMessage={isPending ? "Loading..." : "No brands found"}
-      disabled={disabled || isPending}
+      disabled={disabled}
       className={className}
     />
   )
 }
+

@@ -41,11 +41,11 @@ const HighlightsSection = async () => {
     <section className="py-8 md:py-14 ">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {stats?.map((stat) => (
+          {stats?.map((stat, index) => (
             <Card
               key={stat?.id}
               className=" py-0 relative overflow-hidden bg-linear-to-r to-[#009F41] from-0% via-[#1C833E] via-40% from-[#0B5B28] to-100% transition-all duration-300 border-0 shadow-lg hover:shadow-xl hover:-translate-y-2 group animate-scale-in"
-              style={{ animationDelay: `${stat?.id * 0.1}s` }}
+              style={{ animationDelay: `${index * 0.1}s` }}
             >
               <div className="px-4 py-4 text-center relative z-10">
                 <div className="mb-4 inline-flex items-center justify-center shadow-2xl w-20 h-20 rounded-full bg-white">

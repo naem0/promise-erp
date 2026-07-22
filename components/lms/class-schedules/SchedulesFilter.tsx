@@ -1,4 +1,5 @@
 "use client";
+
 import { useEffect } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
@@ -12,23 +13,15 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Search, FilterX } from "lucide-react";
-import { ProductCategory } from "@/apiServices/inventoryCategoriesService";
 import PerPageSelect from "@/components/common/PerPageSelect";
-
-import InventoryParentCategorySearchSelect from "@/components/common/InventoryParentCategorySearchSelect";
 
 interface FilterFormValues {
     search?: string;
     status?: string;
     sort_order?: string;
-    parent_id?: string;
 }
 
-interface CategoriesFilterProps {
-    categories?: ProductCategory[];
-}
-
-export default function CategoriesFilter({ categories = [] }: CategoriesFilterProps) {
+export default function SchedulesFilter() {
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
@@ -39,7 +32,6 @@ export default function CategoriesFilter({ categories = [] }: CategoriesFilterPr
                 search: searchParams.get("search") || "",
                 status: searchParams.get("status") || "",
                 sort_order: searchParams.get("sort_order") || "",
-                parent_id: searchParams.get("parent_id") || "",
             },
         });
 
@@ -88,7 +80,6 @@ export default function CategoriesFilter({ categories = [] }: CategoriesFilterPr
             search: "",
             status: "",
             sort_order: "",
-            parent_id: "",
         });
         router.replace(pathname, { scroll: false });
     };
@@ -96,14 +87,12 @@ export default function CategoriesFilter({ categories = [] }: CategoriesFilterPr
     const currentSearch = searchParams.get("search") || "";
     const currentStatus = searchParams.get("status") || "";
     const currentSortOrder = searchParams.get("sort_order") || "";
-    const currentParentId = searchParams.get("parent_id") || "";
     const currentPerPage = searchParams.get("per_page") || "";
 
     const hasActiveFilters =
         currentSearch !== "" ||
         currentStatus !== "" ||
         currentSortOrder !== "" ||
-        currentParentId !== "" ||
         currentPerPage !== "";
 
     return (
@@ -117,7 +106,7 @@ export default function CategoriesFilter({ categories = [] }: CategoriesFilterPr
                         variant="outline"
                         size="sm"
                         onClick={handleReset}
-                        className="flex items-center gap-2"
+                        className="flex items-center gap-2 cursor-pointer"
                     >
                         <FilterX className="h-4 w-4" />
                         Clear Filters
@@ -125,33 +114,16 @@ export default function CategoriesFilter({ categories = [] }: CategoriesFilterPr
                 )}
             </div>
 
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
-                {/* Search - Spans 2 columns on medium and larger screens */}
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+                {/* Search */}
                 <div className="relative md:col-span-2">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
-                        placeholder="Search by name or description..."
+                        placeholder="Search by schedule title..."
                         className="pl-10"
                         {...register("search")}
                     />
                 </div>
-
-                {/* Parent Category */}
-                <Controller
-                    name="parent_id"
-                    control={control}
-                    render={({ field }) => (
-                        <InventoryParentCategorySearchSelect
-                            value={field.value || null}
-                            onValueChange={(value) => {
-                                field.onChange(value || "");
-                                handleSelectChange("parent_id")(value || "");
-                            }}
-                            placeholder="Parent Category"
-                        />
-                    )}
-                />
-
 
                 {/* Status */}
                 <Controller

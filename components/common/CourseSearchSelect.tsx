@@ -123,9 +123,11 @@ export default function CourseSearchSelect({
                 {option.label}
               </ComboboxItem>
             ))}
-            <ComboboxEmpty>
-              {isPending ? "Loading..." : "No courses found"}
-            </ComboboxEmpty>
+            {filteredOptions.length === 0 && (
+              <ComboboxEmpty>
+                {isPending ? "Loading..." : "No courses found"}
+              </ComboboxEmpty>
+            )}
           </ComboboxList>
         </ComboboxContent>
       </ComboboxRoot>

@@ -53,7 +53,7 @@ export function NavUser({
             >
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage 
-                  src={user.avatar} 
+                  src={user?.avatar} 
                    alt={session?.user?.name || 'User Avatar'} 
                   />
                 <AvatarFallback className="rounded-lg">CN</AvatarFallback>
@@ -87,7 +87,7 @@ export function NavUser({
             <DropdownMenuSeparator />
             <DropdownMenuItem 
               className="cursor-pointer"
-              onClick={() => signOut({ callbackUrl: "/login" })}
+              onClick={() => signOut({ callbackUrl: "/" })}
             >
               <LogOut />
               Log out

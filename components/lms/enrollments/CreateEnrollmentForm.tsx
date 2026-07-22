@@ -17,6 +17,7 @@ import {
 import { Combobox } from "@/components/ui/combobox";
 import CourseSearchSelect from "@/components/common/CourseSearchSelect";
 import { createEnrollment } from "@/apiServices/enrollmentService";
+import { ClassSchedule } from "@/apiServices/classSchedulesService";
 import { getLeadEnrollmentInfo } from "@/apiServices/crmLeadActivitiesService";
 import { getElPaymentMethods, PaymentMethod } from "@/apiServices/studentDashboardService";
 import {
@@ -68,12 +69,15 @@ interface Course {
 interface CreateEnrollmentFormProps {
   students: Student[];
   batches: Batch[];
+  classSchedules?: ClassSchedule[];
 }
 
 interface FormValues {
   user_id: string;
   batch_id: string;
   course_id: string;
+  is_online: string;
+  class_schedule_id: string;
   status: string;
   payment_method: string;
   payment_status: string;
@@ -85,6 +89,7 @@ interface FormValues {
 export default function CreateEnrollmentForm({
   students: initialStudents,
   batches: initialBatches,
+  classSchedules = [],
 }: CreateEnrollmentFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -109,6 +114,8 @@ export default function CreateEnrollmentForm({
       user_id: "",
       batch_id: "",
       course_id: "",
+      is_online: "1",
+      class_schedule_id: "",
       status: ENROLLMENT_STATUS_ACTIVE.toString(),
       payment_method: "",
       payment_status: PAYMENT_STATUS_PENDING.toString(),
@@ -234,6 +241,9 @@ export default function CreateEnrollmentForm({
       const batch = initialBatches.find((b) => b.id.toString() === batchId);
       if (batch) {
         setSelectedBatch(batch);
+        if (batch.is_online !== undefined) {
+          setValue("is_online", batch.is_online.toString());
+        }
         // Auto-fill payment_amount with after_discount or price
         const baseAmount = batch.after_discount ? Number(batch.after_discount) : (batch.price || 0);
         if (baseAmount > 0) {
@@ -286,6 +296,8 @@ export default function CreateEnrollmentForm({
       const res = await createEnrollment({
         user_id: Number(values.user_id),
         batch_id: Number(values.batch_id),
+        is_online: values.is_online !== "" ? Number(values.is_online) : undefined,
+        class_schedule_id: values.class_schedule_id ? Number(values.class_schedule_id) : undefined,
         status: Number(values.status),
         payment_method: Number(values.payment_method),
         payment_status: Number(values.payment_status),
@@ -429,6 +441,65 @@ export default function CreateEnrollmentForm({
                 </Select>
                 {errors.status && (
                   <p className="text-sm text-red-500">{errors.status.message}</p>
+                )}
+              </div>
+
+              {/* Enrollment Mode */}
+              <div className="space-y-2">
+                <Label htmlFor="is_online">
+                  Enrollment Mode <span className="text-red-500">*</span>
+                </Label>
+                <Select
+                  value={watch("is_online")}
+                  onValueChange={(value) => {
+                    setValue("is_online", value);
+                    clearErrors("is_online");
+                  }}
+                  disabled={isSubmitting}
+                >
+                  <SelectTrigger id="is_online" className="w-full">
+                    <SelectValue placeholder="Select mode..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="1">Online</SelectItem>
+                    <SelectItem value="0">Offline</SelectItem>
+                  </SelectContent>
+                </Select>
+                {errors.is_online && (
+                  <p className="text-sm text-red-500">{errors.is_online.message}</p>
+                )}
+              </div>
+
+              {/* Class Schedule (Timing) */}
+              <div className="space-y-2">
+                <Label htmlFor="class_schedule_id">Class Schedule (Timing)</Label>
+                <Select
+                  value={watch("class_schedule_id")}
+                  onValueChange={(value) => {
+                    setValue("class_schedule_id", value);
+                    clearErrors("class_schedule_id");
+                  }}
+                  disabled={isSubmitting || classSchedules.length === 0}
+                >
+                  <SelectTrigger id="class_schedule_id" className="w-full">
+                    <SelectValue placeholder="Select class schedule..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {classSchedules.length > 0 ? (
+                      classSchedules.map((schedule) => (
+                        <SelectItem key={schedule.id} value={schedule.id.toString()}>
+                          {schedule.title} ({schedule.start_time} - {schedule.end_time})
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <SelectItem value="none" disabled>
+                        No active schedules available
+                      </SelectItem>
+                    )}
+                  </SelectContent>
+                </Select>
+                {errors.class_schedule_id && (
+                  <p className="text-sm text-red-500">{errors.class_schedule_id.message}</p>
                 )}
               </div>
 

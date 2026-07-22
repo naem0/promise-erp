@@ -20,6 +20,7 @@ import {
 import { BookOpen, Eye, Pencil } from "lucide-react";
 import Link from "next/link";
 import DeleteButton from "./DeleteBatchButton";
+import DuplicateBatchButton from "./DuplicateBatchButton";
 import Pagination from "@/components/common/Pagination";
 import PermissionGuard from "@/components/auth/PermissionGuard";
 import { truncate } from "@/lib/utils";
@@ -149,6 +150,12 @@ export default async function BatchesData({
                             <Pencil className="mr-2 h-4 w-4" />
                             Manage
                           </Link>
+                        </DropdownMenuItem>
+                      </PermissionGuard>
+
+                      <PermissionGuard requiredPermission="create-batches">
+                        <DropdownMenuItem asChild>
+                          <DuplicateBatchButton id={batch?.id} />
                         </DropdownMenuItem>
                       </PermissionGuard>
 

@@ -15,6 +15,8 @@ import { createProductCategory, updateProductCategory, ProductCategory } from "@
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
+import InventoryParentCategorySearchSelect from "@/components/common/InventoryParentCategorySearchSelect";
+
 interface CategoriesFormProps {
     title: string;
     category?: ProductCategory;
@@ -105,10 +107,6 @@ export default function CategoriesForm({
         }
     };
 
-    // Filter out the current category and its children to prevent circular reference
-    // For simplicity, we just filter out the current category here.
-    const availableParents = categories.filter(c => c.id !== category?.id);
-
     return (
         <div className="bg-card border rounded-2xl p-6 shadow-sm">
             <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
@@ -139,17 +137,11 @@ export default function CategoriesForm({
                             name="parent_id"
                             control={control}
                             render={({ field }) => (
-                                <Select key={field.value} value={field.value} onValueChange={field.onChange}>
-                                    <SelectTrigger className="w-full">
-                                        <SelectValue placeholder="Select Parent Category" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value=" ">None (Root)</SelectItem>
-                                        {availableParents.map(c => (
-                                            <SelectItem key={c.id} value={c.id.toString()}>{c.name}</SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
+                                <InventoryParentCategorySearchSelect
+                                    value={field.value || null}
+                                    onValueChange={(value) => field.onChange(value || "")}
+                                    placeholder="Select Parent Category"
+                                />
                             )}
                         />
                         {errors.parent_id && <p className="text-sm text-red-500 mt-1">{errors.parent_id.message}</p>}

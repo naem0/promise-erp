@@ -54,7 +54,10 @@ export interface SimpleCategoriesResponse {
   success: boolean;
   message: string;
   code: number;
-  data: SimpleCategory[];
+  data?: {
+    categories: SimpleCategory[];
+    pagination?: PaginationType;
+  };
   errors?: Record<string, string[]>;
 }
 
@@ -144,12 +147,19 @@ export async function getProductCategories(
 
 export async function getProductCategoriesSimpleListCached(
   token: string,
+  search?: string,
 ): Promise<SimpleCategoriesResponse | null> {
   "use cache";
   cacheTag("product-categories-simple-list");
 
   try {
-    const res = await fetch(`${API_BASE}/inventory/product-categories/simple-list`, {
+    const urlParams = new URLSearchParams();
+    if (search) {
+      urlParams.append("search", search);
+    }
+    const queryString = urlParams.toString() ? `?${urlParams.toString()}` : "";
+
+    const res = await fetch(`${API_BASE}/inventory/product-categories/simple-list${queryString}`, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -185,15 +195,88 @@ export async function getProductCategoriesSimpleListCached(
 // GET PRODUCT CATEGORIES SIMPLE LIST
 // =======================
 
-export async function getProductCategoriesSimpleList(): Promise<SimpleCategoriesResponse> {
+export async function getProductCategoriesSimpleList(
+  params: Record<string, unknown> = {},
+): Promise<SimpleCategoriesResponse> {
   const session = await getServerSession(authOptions);
   const token = session?.accessToken;
 
   if (!token) throw new Error("No valid session/token");
 
-  const _cachedResult = await getProductCategoriesSimpleListCached(token);
+  const search = typeof params.search === "string" ? params.search : undefined;
+  const _cachedResult = await getProductCategoriesSimpleListCached(token, search);
 
   if (!_cachedResult) throw new Error("Failed to fetch simple categories list from cache.");
+
+  return _cachedResult;
+}
+
+// =======================
+// GET PRODUCT CATEGORIES PARENT LIST (CACHED)
+// =======================
+
+export async function getProductCategoriesParentListCached(
+  token: string,
+  search?: string,
+): Promise<SimpleCategoriesResponse | null> {
+  "use cache";
+  cacheTag("product-categories-parent-list");
+
+  try {
+    const urlParams = new URLSearchParams();
+    if (search) {
+      urlParams.append("search", search);
+    }
+    const queryString = urlParams.toString() ? `?${urlParams.toString()}` : "";
+
+    const res = await fetch(`${API_BASE}/inventory/product-categories/parent-list${queryString}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (res.status === 404) {
+      console.warn("No parent categories found (404). Returning empty list.");
+      return null;
+    }
+
+    if (res.status === 401 || res.status === 403) {
+      console.warn("Unauthorized/Forbidden access to parent categories list");
+      return null;
+    }
+
+    if (!res.ok) {
+      throw new Error(`Status: ${res.status} ${res.statusText}`);
+    }
+    const result = await res.json();
+    return result;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Service error in getProductCategoriesParentListCached:", error.message);
+    } else {
+      console.error("Service error in getProductCategoriesParentListCached");
+    }
+    return null;
+  }
+}
+
+// =======================
+// GET PRODUCT CATEGORIES PARENT LIST
+// =======================
+
+export async function getProductCategoriesParentList(
+  params: Record<string, unknown> = {},
+): Promise<SimpleCategoriesResponse> {
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+
+  if (!token) throw new Error("No valid session/token");
+
+  const search = typeof params.search === "string" ? params.search : undefined;
+  const _cachedResult = await getProductCategoriesParentListCached(token, search);
+
+  if (!_cachedResult) throw new Error("Failed to fetch parent categories list from cache.");
 
   return _cachedResult;
 }
@@ -296,9 +379,12 @@ export async function updateProductCategory(
 
     if (!token) throw new Error("No valid session/token");
 
-    // The user specified POST/inventory/product-categories/{id} for update
+    if (!formData.has("_method")) {
+      formData.append("_method", "PUT");
+    }
+
     const res = await fetch(`${API_BASE}/inventory/product-categories/${id}`, {
-      method: "PUT",
+      method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
       },
