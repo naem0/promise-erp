@@ -22,10 +22,10 @@ export default function AppSidebar({
         <TeamSwitcher teams={sidebarData.teams} />
       </SidebarHeader>
       <SidebarContent className="gap-y-0">
-        <NavMain sections={sidebarData.navSections} />
+        <NavMain sections={sidebarData?.navSections} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={sidebarData.user} />
+        <NavUser user={sidebarData?.user} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
