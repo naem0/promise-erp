@@ -175,8 +175,9 @@ export default async function CoursesData({
                           course.featured_image || "/images/placeholder_img.jpg"
                         }
                         alt={course.title}
-                        fill
-                        className="object-scale-cover"
+                        width={40}
+                        height={40}
+                        className="object-cover w-10 h-10"
                       />
                     </div>
                     <div className="text-start">
