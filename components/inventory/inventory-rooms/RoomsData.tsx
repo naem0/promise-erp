@@ -55,6 +55,10 @@ const RoomsData = async ({
       typeof resolvedSearchParams.branch_id === "string"
         ? resolvedSearchParams.branch_id
         : undefined,
+    is_store:
+      typeof resolvedSearchParams.is_store === "string"
+        ? resolvedSearchParams.is_store
+        : undefined,
   };
 
   let results;
@@ -92,6 +96,7 @@ const RoomsData = async ({
               <TableHead className="font-semibold min-w-[150px]">Name</TableHead>
               <TableHead className="font-semibold min-w-[120px]">Room No.</TableHead>
               <TableHead className="font-semibold">Branch</TableHead>
+              <TableHead className="font-semibold">Type</TableHead>
               <TableHead className="text-center font-semibold">Status</TableHead>
             </TableRow>
           </TableHeader>
@@ -155,15 +160,21 @@ const RoomsData = async ({
                   )}
                 </TableCell>
 
+                <TableCell>
+                  <Badge variant="outline" className={room?.is_store === 1 ? "bg-amber-50 text-amber-700 border-amber-100 font-medium" : "bg-emerald-50 text-emerald-700 border-emerald-100 font-medium"}>
+                    {room?.is_store === 1 ? "Store" : "Room"}
+                  </Badge>
+                </TableCell>
+
                 <TableCell className="text-center">
                   <Badge
                     className={
-                      Number(room?.status) === 1
+                      room?.status === 1
                         ? "bg-green-50 text-green-700 border-green-100 font-medium"
                         : "bg-red-50 text-red-700 border-red-100 font-medium"
                     }
                   >
-                    {Number(room?.status) === 1 ? "Active" : "Inactive"}
+                    {room?.status === 1 ? "Active" : "Inactive"}
                   </Badge>
                 </TableCell>
               </TableRow>
