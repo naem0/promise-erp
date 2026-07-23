@@ -29,6 +29,7 @@ export interface ComboboxProps extends Omit<ComboboxPrimitive.Root.Props<string,
   className?: string
   disabled?: boolean
   showClear?: boolean
+  disableFilter?: boolean
   onListScroll?: (e: React.UIEvent<HTMLDivElement>) => void
 }
 
@@ -43,18 +44,19 @@ function Combobox({
   className,
   disabled,
   showClear = true,
+  disableFilter = false,
   value,
   ...props
 }: ComboboxProps) {
   const [inputValue, setInputValue] = React.useState("")
 
   const filteredOptions = React.useMemo(() => {
-    if (!inputValue) return options
+    if (disableFilter || !inputValue) return options
     const lowerInput = inputValue.toLowerCase()
     return options.filter((option) =>
       option.label.toLowerCase().includes(lowerInput)
     )
-  }, [options, inputValue])
+  }, [options, inputValue, disableFilter])
 
   return (
     <ComboboxRoot 
