@@ -178,7 +178,7 @@ export default function BrandSearchSelect({
       emptyMessage={isPending ? "Loading..." : "No brands found"}
       disabled={disabled}
       className={className}
+      disableFilter={true}
     />
   )
 }
-

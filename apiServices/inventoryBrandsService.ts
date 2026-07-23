@@ -143,20 +143,18 @@ export async function getBrands(
 
 export async function getBrandsSimpleListCached(
   token: string,
-  params: Record<string, unknown> = {},
+  search?: string,
 ): Promise<SimpleBrandsResponse | null> {
   "use cache";
   cacheTag("brands-simple-list");
 
   try {
     const urlParams = new URLSearchParams();
-    for (const key in params) {
-      if (params[key] !== undefined && params[key] !== null) {
-        urlParams.append(key, params[key].toString());
-      }
+    if (search) {
+      urlParams.append("search", search);
     }
 
-    const queryString = urlParams.toString();
+    const queryString = urlParams.toString() ? `?${urlParams.toString()}` : "";
 
     const res = await fetch(
       `${API_BASE}/inventory/brands/simple-list${queryString}`,
@@ -208,7 +206,8 @@ export async function getBrandsSimpleList(
 
   if (!token) throw new Error("No valid session/token");
 
-  const _cachedResult = await getBrandsSimpleListCached(token, params);
+  const search = typeof params.search === "string" ? params.search : undefined;
+  const _cachedResult = await getBrandsSimpleListCached(token, search);
 
   if (!_cachedResult)
     throw new Error("Failed to fetch simple brands list from cache.");

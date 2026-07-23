@@ -178,8 +178,7 @@ export default function InventoryCategorySearchSelect({
       emptyMessage={isPending ? "Loading..." : "No categories found"}
       disabled={disabled}
       className={className}
+      disableFilter={true}
     />
   )
 }
-
-
