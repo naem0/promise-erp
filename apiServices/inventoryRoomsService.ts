@@ -21,6 +21,8 @@ export interface Room {
   id: number;
   name: string;
   room_no: string;
+  description?: string;
+  is_store: number;
   status: number;
   status_text: string;
   branch: RoomBranch;

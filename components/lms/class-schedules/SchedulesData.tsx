@@ -148,7 +148,7 @@ const SchedulesData = async ({
 
                 <TableCell className="text-center">
                   <PermissionGuard
-                    requiredPermission="edit-class-schedules"
+                    requiredPermission="toggle-class-schedule-status"
                     fallback={
                       <Badge
                         className={

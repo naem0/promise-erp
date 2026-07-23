@@ -22,6 +22,7 @@ interface FilterFormValues {
     status?: string;
     sort_order?: string;
     branch_id?: string;
+    is_store?: string;
 }
 
 interface RoomsFilterProps {
@@ -40,6 +41,7 @@ export default function RoomsFilter({ branches = [] }: RoomsFilterProps) {
                 status: searchParams.get("status") || "",
                 sort_order: searchParams.get("sort_order") || "",
                 branch_id: searchParams.get("branch_id") || "",
+                is_store: searchParams.get("is_store") || "",
             },
         });
 
@@ -89,6 +91,7 @@ export default function RoomsFilter({ branches = [] }: RoomsFilterProps) {
             status: "",
             sort_order: "",
             branch_id: "",
+            is_store: "",
         });
         router.replace(pathname, { scroll: false });
     };
@@ -97,6 +100,7 @@ export default function RoomsFilter({ branches = [] }: RoomsFilterProps) {
     const currentStatus = searchParams.get("status") || "";
     const currentSortOrder = searchParams.get("sort_order") || "";
     const currentBranchId = searchParams.get("branch_id") || "";
+    const currentIsStore = searchParams.get("is_store") || "";
     const currentPerPage = searchParams.get("per_page") || "";
 
     const hasActiveFilters =
@@ -104,6 +108,7 @@ export default function RoomsFilter({ branches = [] }: RoomsFilterProps) {
         currentStatus !== "" ||
         currentSortOrder !== "" ||
         currentBranchId !== "" ||
+        currentIsStore !== "" ||
         currentPerPage !== "";
 
     return (
@@ -190,6 +195,29 @@ export default function RoomsFilter({ branches = [] }: RoomsFilterProps) {
                             <SelectContent>
                                 <SelectItem value="asc">ASC</SelectItem>
                                 <SelectItem value="desc">DESC</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    )}
+                />
+
+                {/* Room Type (Is Store) */}
+                <Controller
+                    name="is_store"
+                    control={control}
+                    render={({ field }) => (
+                        <Select
+                            value={field.value}
+                            onValueChange={(value) => {
+                                field.onChange(value);
+                                handleSelectChange("is_store")(value);
+                            }}
+                        >
+                            <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Room Type" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="0">Room</SelectItem>
+                                <SelectItem value="1">Store</SelectItem>
                             </SelectContent>
                         </Select>
                     )}

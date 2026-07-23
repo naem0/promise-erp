@@ -43,6 +43,7 @@ export default function BranchSearchSelect({
 
   return (
     <Combobox
+      key={`${value}-${options.length}`}
       options={options}
       value={value}
       onValueChange={onValueChange}
