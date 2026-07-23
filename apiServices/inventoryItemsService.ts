@@ -298,7 +298,6 @@ export interface StockUpdateProduct {
 export interface StockUpdatePayload {
   branch_id: number;
   room_id: number;
-  is_store: number;
   products: StockUpdateProduct[];
 }
 

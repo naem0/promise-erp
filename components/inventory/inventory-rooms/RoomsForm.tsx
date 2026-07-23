@@ -15,6 +15,8 @@ import { createRoom, updateRoom, Room } from "@/apiServices/inventoryRoomsServic
 import { Branch } from "@/apiServices/branchService";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { Textarea } from "@/components/ui/textarea";
+import BranchSearchSelect from "@/components/common/BranchSearchSelect";
 
 interface RoomsFormProps {
     title: string;
@@ -27,6 +29,8 @@ interface FormValues {
     room_no: string;
     branch_id: string;
     status: string;
+    is_store: string;
+    description: string;
 }
 
 export default function RoomsForm({
@@ -49,9 +53,12 @@ export default function RoomsForm({
             room_no: "",
             branch_id: "",
             status: "1",
+            is_store: "0",
+            description: "",
         },
     });
 
+    const roomId = room?.id;
     useEffect(() => {
         if (room) {
             reset({
@@ -59,9 +66,12 @@ export default function RoomsForm({
                 room_no: room.room_no || "",
                 branch_id: room.branch?.id?.toString() || "",
                 status: room.status?.toString() || "1",
+                is_store: room.is_store !== undefined ? room.is_store.toString() : "0",
+                description: room.description || "",
             });
         }
-    }, [room, reset]);
+        
+    }, [roomId, reset]);
 
     const submitHandler = async (values: FormValues) => {
         const formData = new FormData();
@@ -127,7 +137,7 @@ export default function RoomsForm({
                         <label className="block text-sm font-medium mb-1">Name<span className="text-red-500">*</span></label>
                         <Input 
                             placeholder="Enter room name" 
-                            {...register("name", { required: "Room name is required" })} 
+                            {...register("name")} 
                         />
                         {errors.name && <p className="text-sm text-red-500 mt-1">{errors.name.message}</p>}
                     </div>
@@ -137,7 +147,7 @@ export default function RoomsForm({
                         <label className="block text-sm font-medium mb-1">Room No.<span className="text-red-500">*</span></label>
                         <Input 
                             placeholder="Enter room number" 
-                            {...register("room_no", { required: "Room number is required" })} 
+                            {...register("room_no")} 
                         />
                         {errors.room_no && <p className="text-sm text-red-500 mt-1">{errors.room_no.message}</p>}
                     </div>
@@ -148,18 +158,12 @@ export default function RoomsForm({
                         <Controller
                             name="branch_id"
                             control={control}
-                            rules={{ required: "Branch is required" }}
                             render={({ field }) => (
-                                <Select key={field.value} value={field.value} onValueChange={field.onChange}>
-                                    <SelectTrigger className="w-full">
-                                        <SelectValue placeholder="Select Branch" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {branches.map(b => (
-                                            <SelectItem key={b.id} value={b.id.toString()}>{b.name}</SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
+                                <BranchSearchSelect
+                                    value={field.value}
+                                    onValueChange={(val) => field.onChange(val ?? "")}
+                                    placeholder="Select Branch"
+                                />
                             )}
                         />
                         {errors.branch_id && <p className="text-sm text-red-500 mt-1">{errors.branch_id.message}</p>}
@@ -167,7 +171,7 @@ export default function RoomsForm({
 
                     {/* Status */}
                     <div>
-                        <label className="block text-sm font-medium mb-1">Status</label>
+                        <label className="block text-sm font-medium mb-1" >Status<span className="text-red-500">*</span></label>
                         <Controller
                             name="status"
                             control={control}
@@ -184,6 +188,38 @@ export default function RoomsForm({
                             )}
                         />
                         {errors.status && <p className="text-sm text-red-500 mt-1">{errors.status.message}</p>}
+                    </div>
+
+                    {/* Room Type (Is Store) */}
+                    <div>
+                        <label className="block text-sm font-medium mb-1">Room Type<span className="text-red-500">*</span></label>
+                        <Controller
+                            name="is_store"
+                            control={control}
+                            render={({ field }) => (
+                                <Select key={field.value} value={field.value} onValueChange={field.onChange}>
+                                    <SelectTrigger className="w-full">
+                                        <SelectValue placeholder="Select Room Type" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="0">Not Store (Room)</SelectItem>
+                                        <SelectItem value="1">Store</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            )}
+                        />
+                        {errors.is_store && <p className="text-sm text-red-500 mt-1">{errors.is_store.message}</p>}
+                    </div>
+
+                    {/* Description */}
+                    <div>
+                        <label className="block text-sm font-medium mb-1">Description</label>
+                        <Textarea 
+                            placeholder="Enter description (optional)" 
+                            {...register("description")} 
+                            className="min-h-[100px] resize-none"
+                        />
+                        {errors.description && <p className="text-sm text-red-500 mt-1">{errors.description.message}</p>}
                     </div>
                 </div>
 

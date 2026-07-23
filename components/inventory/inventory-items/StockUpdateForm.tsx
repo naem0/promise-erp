@@ -38,7 +38,6 @@ interface ProductRow {
 interface FormValues {
   branch_id: string;
   room_id: string;
-  is_store: "0" | "1";
   products: ProductRow[];
 }
 
@@ -69,7 +68,6 @@ export default function StockUpdateForm({
     defaultValues: {
       branch_id: "",
       room_id: "",
-      is_store: "0",
       products: [{ product_id: "", stock_qty: 0 }],
     },
   });
@@ -105,7 +103,6 @@ export default function StockUpdateForm({
     const payload: StockUpdatePayload = {
       branch_id: Number(values.branch_id),
       room_id: Number(values.room_id),
-      is_store: Number(values.is_store),
       products: validProducts.map((p) => ({
         product_id: Number(p.product_id),
         stock_qty: Number(p.stock_qty),
@@ -161,8 +158,8 @@ export default function StockUpdateForm({
       </h2>
 
       <form onSubmit={handleSubmit(submitHandler)} className="space-y-6">
-        {/* ── Branch / Room / Store ── */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
+        {/* ── Branch / Room ── */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
           {/* Branch */}
           <div>
             <label className="block text-sm font-medium mb-1">
@@ -210,28 +207,6 @@ export default function StockUpdateForm({
               <p className="text-sm text-red-500 mt-1">{errors.room_id.message}</p>
             )}
           </div>
-
-          {/* Store Type */}
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              Store Type<span className="text-red-500">*</span>
-            </label>
-            <Controller
-              name="is_store"
-              control={control}
-              render={({ field }) => (
-                <Select  value={field.value} onValueChange={field.onChange}>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select store type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="0">No Store</SelectItem>
-                    <SelectItem value="1">Store</SelectItem>
-                  </SelectContent>
-                </Select>
-              )}
-            />
-          </div>
         </div>
 
         {/* ── Product Rows ── */}
@@ -240,7 +215,7 @@ export default function StockUpdateForm({
             <label className="block text-sm font-medium">
               Products<span className="text-red-500">*</span>
             </label>
-            <Button
+             <Button
               type="button"
               size="sm"
               onClick={() => prepend({ product_id: "", stock_qty: 0 })}
@@ -331,8 +306,12 @@ export default function StockUpdateForm({
                   variant="ghost"
                   size="icon"
                   onClick={() => {
-                    if (fields.length > 1) remove(index);
-                    else toast.error("At least one product row is required.");
+                    if (fields.length > 1) {
+                      remove(index);
+                      toast.success("Product row removed successfully.");
+                    } else {
+                      toast.error("At least one product row is required.");
+                    }
                   }}
                   className="h-9 w-9 text-red-500 hover:text-red-700 hover:bg-red-50 cursor-pointer"
                   title="Remove row"
