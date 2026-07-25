@@ -518,11 +518,15 @@ export interface PublicBatchesResponse {
   success: boolean;
   message: string;
   code: number;
-  data: PublicBatchItem[];
+  data: {
+    batches: PublicBatchItem[];
+    pagination?: PaginationType;
+  };
 }
 
 export async function getPublicBatches(
   search?: string,
+  courseId?: number,
 ): Promise<PublicBatchesResponse> {
   const session = await getServerSession(authOptions);
   const token = session?.accessToken;
@@ -530,6 +534,9 @@ export async function getPublicBatches(
   const url = new URL(`${API_BASE}/batches/public-list`);
   if (search) {
     url.searchParams.set("search", search);
+  }
+  if (courseId) {
+    url.searchParams.set("course_id", courseId.toString());
   }
 
   try {
@@ -541,9 +548,7 @@ export async function getPublicBatches(
       },
     });
 
-    if (!res.ok) {
-      throw new Error(`Status: ${res.status} ${res.statusText}`);
-    }
+
 
     if (res.status === 404) {
       console.warn("No delivery partners found (404). Returning empty list.");
@@ -556,7 +561,10 @@ export async function getPublicBatches(
       console.warn("Unauthorized: Access token not found or invalid.");
       throw new Error(`${res.status} ${res.statusText} - Unauthorized.`);
     }
-
+    
+    if (!res.ok) {
+      throw new Error(`Status: ${res.status} ${res.statusText}`);
+    }
     const result = await res.json();
     return result;
   } catch (error: unknown) {

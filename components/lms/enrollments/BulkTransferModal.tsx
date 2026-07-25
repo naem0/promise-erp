@@ -80,7 +80,7 @@ export default function BulkTransferModal({
       try {
         const res = await getPublicBatches(searchQuery);
         if (isMounted && res?.data) {
-          setBatches(res?.data);
+          setBatches(res?.data?.batches);
         }
       } catch (err: unknown) {
         console.error("Error fetching batches:", err);

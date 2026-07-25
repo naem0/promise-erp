@@ -16,6 +16,8 @@ import {
 } from "@/components/ui/select";
 import { Combobox } from "@/components/ui/combobox";
 import CourseSearchSelect from "@/components/common/CourseSearchSelect";
+import BatchSearchSelect from "@/components/common/BatchSearchSelect";
+import { getBatchById } from "@/apiServices/batchService";
 import { createEnrollment } from "@/apiServices/enrollmentService";
 import { ClassSchedule } from "@/apiServices/classSchedulesService";
 import { getLeadEnrollmentInfo } from "@/apiServices/crmLeadActivitiesService";
@@ -237,6 +239,7 @@ export default function CreateEnrollmentForm({
 
   // Update selected batch when batch_id changes
   useEffect(() => {
+    let active = true;
     if (batchId) {
       const batch = initialBatches.find((b) => b.id.toString() === batchId);
       if (batch) {
@@ -253,11 +256,35 @@ export default function CreateEnrollmentForm({
           setValue("payment_amount", finalAmount.toFixed(2));
         }
       } else {
-        setSelectedBatch(null);
+        // Fetch batch dynamically from API if not in initialBatches
+        const fetchBatch = async () => {
+          try {
+            const res = await getBatchById(batchId);
+            if (active && res?.success && res?.data) {
+              const batch = res?.data;
+              setSelectedBatch(batch);
+              if (batch.is_online !== undefined) {
+                setValue("is_online", batch.is_online.toString());
+              }
+              const baseAmount = batch.after_discount ? Number(batch.after_discount) : (batch.price || 0);
+              if (baseAmount > 0) {
+                const currentDiscount = additionalDiscount ? Number(additionalDiscount) : 0;
+                const finalAmount = Math.max(0, baseAmount - currentDiscount);
+                setValue("payment_amount", finalAmount.toFixed(2));
+              }
+            }
+          } catch (error) {
+            console.error("Error fetching selected batch info:", error);
+          }
+        };
+        fetchBatch();
       }
     } else {
       setSelectedBatch(null);
     }
+    return () => {
+      active = false;
+    };
   }, [batchId, initialBatches, setValue, additionalDiscount]);
 
   // Auto-update payment_amount when discount_amount changes
@@ -332,11 +359,11 @@ export default function CreateEnrollmentForm({
 
   // Calculate batch discount amount
   const calculateDiscountAmount = (batch: Batch): number => {
-    if (!batch.price || !batch.discount) return 0;
-    if (batch.discount_type === "percentage") {
-      return (batch.price * batch.discount) / 100;
+    if (!batch?.price || !batch?.discount) return 0;
+    if (batch?.discount_type === "percentage") {
+      return (batch?.price * batch?.discount) / 100;
     }
-    return batch.discount;
+    return batch?.discount;
   };
 
   const discountAmount = selectedBatch ? calculateDiscountAmount(selectedBatch) : 0;
@@ -406,14 +433,12 @@ export default function CreateEnrollmentForm({
                 <Label htmlFor="batch_id">
                   Batch <span className="text-red-500">*</span>
                 </Label>
-                <Combobox
-                  options={batchOptions}
+                <BatchSearchSelect
                   value={watch("batch_id")}
                   onValueChange={handleBatchChange}
+                  courseId={courseId}
                   placeholder={courseId ? "Select batch..." : "Select course first"}
-                  searchPlaceholder="Search batch..."
-                  emptyMessage={courseId ? "No batches found for this course" : "Please select a course first"}
-                  disabled={isSubmitting || (!courseId && filteredBatches.length === 0)}
+                  disabled={isSubmitting}
                 />
                 {errors.batch_id && (
                   <p className="text-sm text-red-500">{errors.batch_id.message}</p>

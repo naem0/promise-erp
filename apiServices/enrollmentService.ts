@@ -21,6 +21,8 @@ export interface EnrollmentUser {
 export interface EnrollmentBatch {
   id: number;
   name: string;
+  branch_id?: number;
+  branch_name?: string;
   course: {
     id: number;
     title: string;

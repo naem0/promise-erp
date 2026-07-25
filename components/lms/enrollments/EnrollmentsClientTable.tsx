@@ -98,7 +98,7 @@ export default function EnrollmentsClientTable({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[40px] text-center">
+              <TableHead className="w-10 text-center">
                 <Checkbox
                   checked={isAllSelected}
                   onCheckedChange={toggleSelectAll}
@@ -110,7 +110,7 @@ export default function EnrollmentsClientTable({
               <TableHead className="text-start min-w-[150px]">
                 Student Details
               </TableHead>
-              <TableHead className="min-w-[150px]">Course & Batch</TableHead>
+              <TableHead className="min-w-[150px]">Course Details</TableHead>
               <TableHead className="text-right">Price</TableHead>
               <TableHead className="text-center min-w-[120px]">
                 Enrollment Date
@@ -160,14 +160,21 @@ export default function EnrollmentsClientTable({
                   </TableCell>
 
                   <TableCell>
-                    <p title={enrollment?.batch?.course?.title}>
+                    <p className="font-semibold" title={enrollment?.batch?.course?.title}>
                       {enrollment?.batch?.course
                         ? truncate(enrollment?.batch?.course?.title) || "N/A"
                         : "N/A"}
                     </p>
-                    <p className="text-xs text-muted-foreground">
-                      {enrollment?.batch?.name || "N/A"}{" "}
-                    </p>
+                    {enrollment?.batch?.name && (
+                      <p className="text-xs text-muted-foreground">
+                        Batch: {enrollment.batch.name}
+                      </p>
+                    )}
+                    {enrollment?.batch?.branch_name && (
+                      <p className="text-xs text-muted-foreground">
+                        Branch: {enrollment.batch.branch_name}
+                      </p>
+                    )}
                   </TableCell>
                   <TableCell className="text-right">
                     {enrollment?.discount_amount ? (
