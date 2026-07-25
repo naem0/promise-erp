@@ -183,9 +183,9 @@ export default function EnrollmentsClientTable({
                         : "N/A"}
                     </span>
                   </TableCell>
-                  <TableCell className="whitespace-nowrap text-xs text-center">
+                  <TableCell className="whitespace-nowrap text-xs text-center" suppressHydrationWarning>
                     {enrollment?.enrollment_date
-                      ? new Date(enrollment.enrollment_date).toLocaleDateString()
+                      ? new Date(enrollment.enrollment_date).toLocaleDateString("en-GB")
                       : "N/A"}
                   </TableCell>
                   <TableCell className="text-center">

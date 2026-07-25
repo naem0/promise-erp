@@ -1,4 +1,3 @@
-// apiServices/courseCategory.ts
 "use server";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
@@ -22,7 +21,6 @@ export interface CourseCategoriesResponse {
   message: string;
   code: number;
   data: {
-    total_categories: number;
     categories: CourseCategory[];
     pagination: PaginationType;
   };
@@ -60,7 +58,7 @@ export async function getCourseCategoriesCached(
   cacheTag("course-categories-list");
 
   try {
-  // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
+    // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
     const urlParams = new URLSearchParams();
     urlParams.append("page", page.toString());
 
@@ -315,5 +313,68 @@ export async function deleteCourseCategory(id: number): Promise<SingleCategoryRe
       code: errorResult.code,
       data: null,
     };
+  }
+}
+
+export interface CourseCategoryStatsResponse {
+  success: boolean;
+  message?: string;
+  code?: number;
+  data: {
+    card_name: string;
+    metrics: {
+      value: number;
+    };
+  }[];
+  errors?: Record<string, string[]>;
+}
+
+export async function getCourseCategoryStatsCached(
+  token: string
+): Promise<CourseCategoryStatsResponse | null> {
+  "use cache";
+  cacheTag("course-categories-list");
+
+  try {
+    const res = await fetch(`${API_BASE}/course-categories/list-overview`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (res.status === 404) {
+      console.warn("Course category list-overview not found (404). Returning null.");
+      return null;
+    }
+    if (res.status === 401 || res.status === 403) {
+      console.warn("Unauthorized: Access token not found.");
+      return null;
+    }
+
+    if (!res.ok) {
+      throw new Error(`Status: ${res.status} ${res.statusText}`);
+    }
+
+    return await res.json();
+  } catch (error: unknown) {
+    console.error("getCourseCategoryStatsCached error:", error);
+    return null;
+  }
+}
+
+export async function getCourseCategoryStats(): Promise<CourseCategoryStatsResponse | null> {
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+  if (!token) throw new Error("No valid session/token");
+
+  try {
+    const cachedResult = await getCourseCategoryStatsCached(token);
+    if (!cachedResult) throw new Error("Failed to fetch course category stats from cache.");
+    return cachedResult;
+  } catch (error: unknown) {
+    console.error("getCourseCategoryStats error:", error);
+    if (error instanceof Error) throw error;
+    throw new Error("Failed to fetch course category stats");
   }
 }

@@ -1,17 +1,30 @@
-import { InventoryDashboardStat } from "@/apiServices/inventoryItemsService";
 import {
-  Package,
-  ClipboardList,
-  Clock3,
-  Truck,
-  Boxes,
-  LayoutGrid,
-  BarChart2,
-  ShoppingCart,
+  GraduationCap,
+  BookOpen,
+  Users,
+  Award,
+  Library,
+  Calendar,
+  TrendingUp,
+  Video,
+  School,
+  FileText,
 } from "lucide-react";
 
 // Icon & gradient pools — cards pick by index automatically
-const iconPool = [ClipboardList, Clock3, Truck, Package, Boxes, LayoutGrid, BarChart2, ShoppingCart];
+const iconPool = [
+  GraduationCap,
+  BookOpen,
+  Users,
+  Award,
+  Library,
+  Calendar,
+  TrendingUp,
+  Video,
+  School,
+  FileText,
+];
+
 const gradientPool = [
   "from-[#1E60F2] to-[#1242BD]",
   "from-[#8B5CF6] to-[#6D28D9]",
@@ -23,26 +36,36 @@ const gradientPool = [
   "from-[#D97706] to-[#92400E]",
 ];
 
-interface Props {
-  data: InventoryDashboardStat[];
+export interface LmsDashboardMetrics {
+  [key: string]: number | string;
 }
 
-const InventoryCommonSummary = ({ data }: Props) => {
+export interface LmsDashboardStat {
+  card_name: string;
+  metrics: LmsDashboardMetrics;
+  icon?: React.ComponentType<{ className?: string }>;
+}
+
+interface Props {
+  data: LmsDashboardStat[];
+}
+
+const LmsCommonSummary = ({ data }: Props) => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 mb-6">
       {data.map((item, index) => {
-        const Icon = iconPool[index % iconPool.length];
+        const Icon = item.icon || iconPool[index % iconPool.length];
         const gradient = gradientPool[index % gradientPool.length];
-        const metricEntries = Object.entries(item?.metrics);
+        const metricEntries = Object.entries(item?.metrics || {});
 
         return (
           <div
             key={index}
-            className={`text-white rounded-[22px] p-3 flex flex-col shadow-sm relative overflow-hidden bg-linear-to-br ${gradient} transition-all duration-300 hover:shadow-lg hover:-translate-y-1 group`}
+            className={`text-white rounded-[22px] p-3 flex flex-col shadow-sm relative overflow-hidden bg-gradient-to-br ${gradient} transition-all duration-300 hover:shadow-lg hover:-translate-y-1 group`}
           >
             {/* Header */}
             <div className="flex items-center gap-3 relative z-10">
-              <div className="w-10 h-10 bg-white/15 rounded-xl backdrop-blur-sm flex items-center justify-center shrink-0">
+              <div className="w-10 h-10 bg-white/15 rounded-xl backdrop-blur-sm flex items-center justify-center flex-shrink-0">
                 <Icon className="w-5 h-5 text-white" />
               </div>
               <h3 className="font-bold text-[16px] text-white tracking-wide">
@@ -61,7 +84,7 @@ const InventoryCommonSummary = ({ data }: Props) => {
                     {key.replace(/_/g, " ")}
                   </span>
                   <span className="text-xl font-semibold tracking-tight text-white leading-none">
-                    {value || 0}
+                    {value ?? 0}
                   </span>
                 </div>
               ))}
@@ -79,4 +102,4 @@ const InventoryCommonSummary = ({ data }: Props) => {
   );
 };
 
-export default InventoryCommonSummary;
+export default LmsCommonSummary;

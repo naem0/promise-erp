@@ -76,7 +76,6 @@ export interface EmployeesResponse {
   message: string;
   code: number;
   data: {
-    total_employees: number;
     employees: Employee[];
     pagination: PaginationType;
   };
@@ -568,3 +567,66 @@ export async function getPublicAllExecutives(): Promise<ChairmanMessageResponse 
   }
 }
 // *********End public chairman message api End Point******* //
+
+export interface EmployeeStatsResponse {
+  success: boolean;
+  message?: string;
+  code?: number;
+  data: {
+    card_name: string;
+    metrics: {
+      value: number;
+    };
+  }[];
+  errors?: Record<string, string[]>;
+}
+
+export async function getEmployeeStatsCached(
+  token: string
+): Promise<EmployeeStatsResponse | null> {
+  "use cache";
+  cacheTag("employees-list");
+
+  try {
+    const res = await fetch(`${API_BASE}/employees/list-overview`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (res.status === 404) {
+      console.warn("Employee list-overview not found (404). Returning null.");
+      return null;
+    }
+    if (res.status === 401 || res.status === 403) {
+      console.warn("Unauthorized: Access token not found.");
+      return null;
+    }
+
+    if (!res.ok) {
+      throw new Error(`Status: ${res.status} ${res.statusText}`);
+    }
+
+    return await res.json();
+  } catch (error: unknown) {
+    console.error("getEmployeeStatsCached error:", error);
+    return null;
+  }
+}
+
+export async function getEmployeeStats(): Promise<EmployeeStatsResponse | null> {
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+  if (!token) throw new Error("No valid session/token");
+
+  try {
+    const cachedResult = await getEmployeeStatsCached(token);
+    if (!cachedResult) throw new Error("Failed to fetch employee stats from cache.");
+    return cachedResult;
+  } catch (error: unknown) {
+    console.error("getEmployeeStats error:", error);
+    if (error instanceof Error) throw error;
+    throw new Error("Failed to fetch employee stats");
+  }
+}

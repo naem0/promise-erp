@@ -52,10 +52,6 @@ export interface StudentResponse {
   message: string;
   code: number;
   data: {
-    total_students: number;
-    total_running_students?: number;
-    total_govt_students?: number;
-    total_paid_students?: number;
     students: Student[];
     pagination?: PaginationType;
   };
@@ -311,5 +307,68 @@ export async function deleteStudent(
     } else {
       throw new Error("Failed to delete student");
     }
+  }
+}
+
+export interface StudentStatsResponse {
+  success: boolean;
+  message?: string;
+  code?: number;
+   data: {
+    card_name: string;
+    metrics: {
+      value: number;
+    };
+  }[];
+  errors?: Record<string, string[]>;
+}
+
+export async function getStudentStatsCached(
+  token: string
+): Promise<StudentStatsResponse | null> {
+  "use cache";
+  cacheTag("students-list");
+
+  try {
+    const res = await fetch(`${API_BASE}/students/list-overview`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (res.status === 404) {
+      console.warn("Student list-overview not found (404). Returning null.");
+      return null;
+    }
+    if (res.status === 401 || res.status === 403) {
+      console.warn("Unauthorized: Access token not found.");
+      return null;
+    }
+
+    if (!res.ok) {
+      throw new Error(`Status: ${res.status} ${res.statusText}`);
+    }
+
+    return await res.json();
+  } catch (error: unknown) {
+    console.error("getStudentStatsCached error:", error);
+    return null;
+  }
+}
+
+export async function getStudentStats(): Promise<StudentStatsResponse | null> {
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+  if (!token) throw new Error("No valid session/token");
+
+  try {
+    const cachedResult = await getStudentStatsCached(token);
+    if (!cachedResult) throw new Error("Failed to fetch student stats from cache.");
+    return cachedResult;
+  } catch (error: unknown) {
+    console.error("getStudentStats error:", error);
+    if (error instanceof Error) throw error;
+    throw new Error("Failed to fetch student stats");
   }
 }

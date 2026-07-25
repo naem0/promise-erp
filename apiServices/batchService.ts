@@ -404,6 +404,68 @@ export async function deleteBatch(id: number): Promise<ApiResponse> {
   }
 }
 
+export interface BatchStatsResponse {
+  success: boolean;
+  message?: string;
+  code?: number;
+  data: {
+    card_name: string;
+    metrics: {
+      value: number;
+    };
+  }[];
+  errors?: Record<string, string[]>;
+}
+
+export async function getBatchStatsCached(
+  token: string
+): Promise<BatchStatsResponse | null> {
+  "use cache";
+  cacheTag("batches-list");
+
+  try {
+    const res = await fetch(`${API_BASE}/batches/list-overview`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (res.status === 404) {
+      console.warn("Batch list-overview not found (404). Returning null.");
+      return null;
+    }
+    if (res.status === 401 || res.status === 403) {
+      console.warn("Unauthorized: Access token not found.");
+      return null;
+    }
+
+    if (!res.ok) {
+      throw new Error(`Status: ${res.status} ${res.statusText}`);
+    }
+
+    return await res.json();
+  } catch (error: unknown) {
+    console.error("getBatchStatsCached error:", error);
+    return null;
+  }
+}
+
+export async function getBatchStats(): Promise<BatchStatsResponse | null> {
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+  if (!token) throw new Error("No valid session/token");
+
+  try {
+    const cachedResult = await getBatchStatsCached(token);
+    if (!cachedResult) throw new Error("Failed to fetch batch stats from cache.");
+    return cachedResult;
+  } catch (error: unknown) {
+    console.error("getBatchStats error:", error);
+    if (error instanceof Error) throw error;
+    throw new Error("Failed to fetch batch stats");
+  }
+}
 // ==========================
 // Duplicate Batch
 // ==========================
@@ -415,7 +477,7 @@ export async function duplicateBatch(id: number): Promise<BatchResponseType> {
   if (!token) {
     throw new Error("No valid session or access token found.");
   }
-  
+
   try {
     const res = await fetch(`${API_BASE}/batches/${id}/duplicate`, {
       method: "POST",
@@ -437,7 +499,6 @@ export async function duplicateBatch(id: number): Promise<BatchResponseType> {
     } else {
       throw new Error("Failed to duplicate batch.");
     }
-
   }
 }
 // Get Public Batches List
@@ -486,12 +547,14 @@ export async function getPublicBatches(
 
     if (res.status === 404) {
       console.warn("No delivery partners found (404). Returning empty list.");
-      throw new Error("No public batches found (404).");
+      throw new Error(
+        ` Status: ${res.status} ${res.statusText} - No delivery partners found.`,
+      );
     }
 
     if (res.status === 401 || res.status === 403) {
       console.warn("Unauthorized: Access token not found or invalid.");
-      throw new Error("Unauthorized: Access token not found or invalid.");
+      throw new Error(`${res.status} ${res.statusText} - Unauthorized.`);
     }
 
     const result = await res.json();
@@ -504,6 +567,5 @@ export async function getPublicBatches(
       console.error("Service error:", "Error fetching public batches");
       throw new Error("Error fetching public batches");
     }
-
   }
 }

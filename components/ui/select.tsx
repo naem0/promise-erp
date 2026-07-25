@@ -65,7 +65,7 @@ function SelectTrigger({
     >
       {children}
       <div className="flex items-center gap-1">
-        {value && value !== "" && onValueChange && (
+        {value && value !== "" && value !== "ALL" && onValueChange && (
           <div
             onClick={handleClear}
             onPointerDown={(e) => {

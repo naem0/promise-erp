@@ -7,6 +7,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 
 import PermissionGuard from "@/components/auth/PermissionGuard";
+import EnrollmentsSummaryWrapper from "@/components/lms/enrollments/EnrollmentsSummaryWrapper";
 
 export default async function EnrollmentsPage({
   searchParams,
@@ -28,6 +29,18 @@ export default async function EnrollmentsPage({
           </Button>
         </PermissionGuard>
       </div>
+
+      <Suspense
+          fallback={
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6 mb-6">
+                  {[...Array(4)].map((_, i) => (
+                      <div key={i} className="h-32 bg-slate-400 animate-pulse rounded-xl"></div>
+                  ))}
+              </div>
+          }
+      >
+          <EnrollmentsSummaryWrapper />
+      </Suspense>
 
       <Suspense fallback={<div>Loading filters...</div>}>
         <EnrollmentFilterData />

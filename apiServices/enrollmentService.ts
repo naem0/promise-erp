@@ -2,6 +2,7 @@
 
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
+import { cacheTag, updateTag } from "next/cache";
 import { PaginationType } from "@/types/pagination";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
@@ -263,7 +264,6 @@ export async function updateEnrollmentPaymentStatus(
       method: "PATCH",
       headers: {
         Authorization: `Bearer ${token}`,
-        // Don't set Content-Type header - fetch will automatically set it with boundary for multipart/form-data
       },
       body: formData,
     });
@@ -274,6 +274,7 @@ export async function updateEnrollmentPaymentStatus(
       throw new Error(result.message || "Failed to update enrollment payment status.");
     }
 
+    updateTag("enrollments-list");
     return result;
   } catch (error) {
     console.error("Error in updateEnrollmentPaymentStatus:", error);
@@ -313,6 +314,7 @@ export async function approveEnrollment(
       throw new Error(result.message || "Failed to approve enrollment.");
     }
 
+    updateTag("enrollments-list");
     return result;
   } catch (error) {
     console.error("Error in approveEnrollment:", error);
@@ -349,6 +351,9 @@ export async function createEnrollment(
       throw new Error(result.message || "Failed to create enrollment.");
     }
 
+    if (result.success) {
+      updateTag("enrollments-list");
+    }
     return result;
   } catch (error: unknown) {
     if(error instanceof Error) {
@@ -406,6 +411,7 @@ export async function bulkTransferEnrollments(
       throw new Error(result.message || "Failed to bulk transfer enrollments.");
     }
 
+    updateTag("enrollments-list");
     return result;
   } catch (error) {
     console.error("Error in bulkTransferEnrollments:", error);
@@ -413,3 +419,65 @@ export async function bulkTransferEnrollments(
   }
 }
 
+export interface EnrollmentStatsResponse {
+  success: boolean;
+  message?: string;
+  code?: number;
+  data: {
+  card_name: string;
+  metrics: {
+      value: number;
+    };
+  }[];
+  errors?: Record<string, string[]>;
+}
+
+export async function getEnrollmentStatsCached(
+  token: string
+): Promise<EnrollmentStatsResponse | null> {
+  "use cache";
+  cacheTag("enrollments-list");
+
+  try {
+    const res = await fetch(`${API_BASE}/enrollments/list-overview`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (res.status === 404) {
+      console.warn("Enrollment list-overview not found (404). Returning null.");
+      return null;
+    }
+    if (res.status === 401 || res.status === 403) {
+      console.warn("Unauthorized: Access token not found.");
+      return null;
+    }
+
+    if (!res.ok) {
+      throw new Error(`Status: ${res.status} ${res.statusText}`);
+    }
+
+    return await res.json();
+  } catch (error: unknown) {
+    console.error("getEnrollmentStatsCached error:", error);
+    return null;
+  }
+}
+
+export async function getEnrollmentStats(): Promise<EnrollmentStatsResponse | null> {
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+  if (!token) throw new Error("No valid session/token");
+
+  try {
+    const cachedResult = await getEnrollmentStatsCached(token);
+    if (!cachedResult) throw new Error("Failed to fetch enrollment stats from cache.");
+    return cachedResult;
+  } catch (error: unknown) {
+    console.error("getEnrollmentStats error:", error);
+    if (error instanceof Error) throw error;
+    throw new Error("Failed to fetch enrollment stats");
+  }
+}

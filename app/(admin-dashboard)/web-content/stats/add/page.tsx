@@ -1,10 +1,9 @@
 import StatsForm from "@/components/web-content/stats/StatsForm";
 
-export default async function AddStatsPage() {
-
+export default function AddStatsPage() {
   return (
-    <StatsForm
-      title="Add New Statistics"
-    />
+    <div className="space-y-6 mx-auto">
+      <StatsForm title="Add New Statistics" />
+    </div>
   );
 }

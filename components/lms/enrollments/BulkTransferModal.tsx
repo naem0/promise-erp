@@ -49,7 +49,9 @@ export default function BulkTransferModal({
   const [batches, setBatches] = useState<PublicBatchItem[]>([]);
   const [loadingBatches, setLoadingBatches] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [selectedBatch, setSelectedBatch] = useState<PublicBatchItem | null>(null);
+  const [selectedBatch, setSelectedBatch] = useState<PublicBatchItem | null>(
+    null,
+  );
   const [openBatchPopover, setOpenBatchPopover] = useState<boolean>(false);
 
   const {
@@ -78,10 +80,15 @@ export default function BulkTransferModal({
       try {
         const res = await getPublicBatches(searchQuery);
         if (isMounted && res?.data) {
-          setBatches(res.data);
+          setBatches(res?.data);
         }
-      } catch (err) {
+      } catch (err: unknown) {
         console.error("Error fetching batches:", err);
+        if (err instanceof Error) {
+          toast.error(err.message);
+        } else {
+          toast.error("An unexpected error occurred while fetching batches.");
+        }
       } finally {
         if (isMounted) {
           setLoadingBatches(false);
@@ -124,7 +131,10 @@ export default function BulkTransferModal({
         });
 
         if (res.success) {
-          toast.success(res.message || `${selectedIds.length} student(s) transferred successfully`);
+          toast.success(
+            res.message ||
+              `${selectedIds.length} student(s) transferred successfully`,
+          );
           handleOpenChange(false);
           if (onSuccess) onSuccess();
           router.refresh();
@@ -133,7 +143,9 @@ export default function BulkTransferModal({
             Object.keys(res.errors).forEach((key) => {
               const fieldKey = key as keyof BulkTransferFormValues;
               const messages = res.errors![key];
-              const errorMessage = Array.isArray(messages) ? messages[0] : String(messages);
+              const errorMessage = Array.isArray(messages)
+                ? messages[0]
+                : String(messages);
               setError(fieldKey, {
                 type: "server",
                 message: errorMessage,
@@ -156,11 +168,14 @@ export default function BulkTransferModal({
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold">Bulk Transfer Students</DialogTitle>
+          <DialogTitle className="text-xl font-bold">
+            Bulk Transfer Students
+          </DialogTitle>
           <DialogDescription className="text-sm text-muted-foreground pt-1">
-            Transfer the {selectedIds.length} selected student(s) to another batch. The enrollment
-            final price, payments, and remaining due amount for all selected students will be recalculated
-            automatically according to the new batch pricing.
+            Transfer the {selectedIds.length} selected student(s) to another
+            batch. The enrollment final price, payments, and remaining due
+            amount for all selected students will be recalculated automatically
+            according to the new batch pricing.
           </DialogDescription>
         </DialogHeader>
 
@@ -177,17 +192,26 @@ export default function BulkTransferModal({
               rules={{ required: "Target batch is required." }}
               render={({ field }) => (
                 <div>
-                  <Popover open={openBatchPopover} onOpenChange={setOpenBatchPopover}>
+                  <Popover
+                    open={openBatchPopover}
+                    onOpenChange={setOpenBatchPopover}
+                  >
                     <PopoverTrigger asChild>
                       <div className="relative cursor-pointer">
                         <button
                           type="button"
                           className={cn(
                             "w-full flex items-center justify-between px-3 py-2 border rounded-md text-sm text-left bg-background hover:bg-accent/50 focus:outline-none focus:ring-2 focus:ring-primary",
-                            errors.to_batch_id && "border-red-500"
+                            errors.to_batch_id && "border-red-500",
                           )}
                         >
-                          <span className={selectedBatch ? "text-foreground font-medium" : "text-muted-foreground"}>
+                          <span
+                            className={
+                              selectedBatch
+                                ? "text-foreground font-medium"
+                                : "text-muted-foreground"
+                            }
+                          >
                             {selectedBatch
                               ? `${selectedBatch.batch_name} (${selectedBatch.course_name})`
                               : "Search batch or course..."}
@@ -228,33 +252,37 @@ export default function BulkTransferModal({
                       <div className="max-h-[220px] overflow-y-auto space-y-1">
                         {loadingBatches ? (
                           <div className="flex items-center justify-center p-4 text-sm text-muted-foreground">
-                            <Loader2 className="w-4 h-4 animate-spin mr-2" /> Loading batches...
+                            <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                            Loading batches...
                           </div>
-                        ) : batches.length === 0 ? (
-                          <div className="p-4 text-center text-sm text-muted-foreground">
-                            No batches found.
-                          </div>
-                        ) : (
-                          batches.map((batch) => (
+                        ) : batches?.length ? (
+                          batches?.map((batch) => (
                             <div
-                              key={batch.batch_id}
+                              key={batch?.batch_id}
                               onClick={() => {
                                 setSelectedBatch(batch);
-                                field.onChange(batch.batch_id);
+                                field.onChange(batch?.batch_id);
                                 clearErrors("to_batch_id");
                                 setOpenBatchPopover(false);
                               }}
                               className={cn(
                                 "px-3 py-2 text-sm rounded-md cursor-pointer transition-colors hover:bg-accent",
-                                selectedBatch?.batch_id === batch.batch_id && "bg-accent font-semibold text-primary"
+                                selectedBatch?.batch_id === batch?.batch_id &&
+                                  "bg-accent font-semibold text-primary",
                               )}
                             >
-                              <div className="font-medium">{batch.batch_name}</div>
+                              <div className="font-medium">
+                                {batch?.batch_name}
+                              </div>
                               <div className="text-xs text-muted-foreground">
-                                {batch.course_name} • {batch.branch_name}
+                                {batch?.course_name} • {batch?.branch_name}
                               </div>
                             </div>
                           ))
+                        ) : (
+                          <div className="flex items-center justify-center p-4 text-sm text-muted-foreground">
+                            No data found
+                          </div>
                         )}
                       </div>
                     </PopoverContent>
