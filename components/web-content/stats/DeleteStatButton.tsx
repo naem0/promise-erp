@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { deleteStats } from "@/apiServices/statsService";
+import { deleteStat } from "@/apiServices/statsService";
 import { toast } from "sonner";
 import { Trash2 } from "lucide-react";
 import {
@@ -23,7 +23,7 @@ export default function DeleteStatButton({ id }: { id: number }) {
   const handleDelete = async () => {
     setIsDeleting(true);
     try {
-      const res = await deleteStats(id);
+      const res = await deleteStat(id);
       if (res.success) {
         toast.success(res.message || "Stat deleted successfully.");
       } else {

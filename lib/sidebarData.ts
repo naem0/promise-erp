@@ -598,6 +598,11 @@ export const sidebarData = {
               url: "/inventory/requisition-flows",
               permissions: ["view-requisition-flows"],
             },
+            {
+              title: "Inventory Reports",
+              url: "/inventory/inventory-reports",
+              permissions: ["view-inventory-reports", "view-products"],
+            },
           ],
         },
       ],

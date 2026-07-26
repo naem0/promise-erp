@@ -235,6 +235,7 @@
     { "path": "/inventory/requisition-flows", "permissions": ["view-requisition-flows"] },
     { "path": "/inventory/requisition-flows/add", "permissions": ["create-requisition-flows"] },
     { "path": "/inventory/requisition-flows/edit", "permissions": ["edit-requisition-flows"], "isDynamic": true },
+    { "path": "/inventory/inventory-reports", "permissions": ["view-inventory-reports", "view-products"] },
 
     { "path": "/settings/users", "permissions": ["view-users"] },
     { "path": "/settings/users/add", "permissions": ["create-users"] },

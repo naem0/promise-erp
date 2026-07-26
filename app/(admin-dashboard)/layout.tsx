@@ -21,8 +21,8 @@ export default async function DashboardLayout({
         <AppSidebar />
       </Suspense>
       <Suspense fallback={<div>Loading...</div>}>
-          <SidebarInset className="h-svh overflow-hidden">
-            <header className="flex justify-between h-16 shrink-0 items-center gap-2 border-b px-4">
+          <SidebarInset className="h-svh overflow-hidden print:h-auto print:overflow-visible print:bg-white print:w-full print:max-w-none print:m-0 print:p-0">
+            <header className="flex justify-between h-16 shrink-0 items-center gap-2 border-b px-4 print:hidden">
               <SidebarTrigger className="-ml-1" />
               <Separator
                 orientation="vertical"
@@ -30,7 +30,7 @@ export default async function DashboardLayout({
               />
               <DashboardNotification />
             </header>
-            <div className="h-[calc(100svh-64px)] bg-gray-50 p-4 py-8 min-w-0 overflow-y-auto">
+            <div className="h-[calc(100svh-64px)] bg-gray-50 p-4 py-8 min-w-0 overflow-y-auto print:h-auto print:overflow-visible print:p-0 print:m-0 print:bg-white print:w-full print:max-w-none">
               {children}
             </div>
           </SidebarInset>

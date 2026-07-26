@@ -1,4 +1,3 @@
-// app/lms/stats/page.tsx
 import StatsData from "@/components/web-content/stats/StatsData";
 import StatsFilterData from "@/components/web-content/stats/StatsFilterData";
 import TableSkeleton from "@/components/TableSkeleton";
@@ -34,7 +33,7 @@ export default async function StatsPage({ searchParams }: StatsSearchParamsProps
         <StatsFilterData />
       </Suspense>
 
-      <Suspense fallback={<TableSkeleton columns={8} rows={10} />}>
+      <Suspense fallback={<TableSkeleton columns={6} rows={5} />}>
         <StatsData searchParams={searchParams} />
       </Suspense>
     </div>
