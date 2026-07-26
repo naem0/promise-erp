@@ -5,6 +5,11 @@ const path = require('path');
 console.log('🚀 Starting Zero-Downtime Next.js Build...');
 
 // 1. Run build in a new directory (.next-new)
+const newDir = path.join(__dirname, '.next-new');
+if (fs.existsSync(newDir)) {
+  fs.rmSync(newDir, { recursive: true, force: true });
+}
+
 try {
   console.log('📦 Compiling Next.js application...');
   execSync('npm run build', {
