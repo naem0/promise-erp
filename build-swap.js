@@ -4,8 +4,11 @@ const path = require('path');
 
 console.log('🚀 Starting Zero-Downtime Next.js Build...');
 
-// 1. Run build in a new directory (.next-new)
+const targetDir = path.join(__dirname, '.next');
 const newDir = path.join(__dirname, '.next-new');
+const oldDir = path.join(__dirname, '.next-old');
+
+// 1. Run build in a new directory (.next-new)
 if (fs.existsSync(newDir)) {
   fs.rmSync(newDir, { recursive: true, force: true });
 }
@@ -20,10 +23,6 @@ try {
   console.error('❌ Build failed! Keeping the current site online.');
   process.exit(1);
 }
-
-const targetDir = path.join(__dirname, '.next');
-const newDir = path.join(__dirname, '.next-new');
-const oldDir = path.join(__dirname, '.next-old');
 
 console.log('🔄 Swapping build directories...');
 
