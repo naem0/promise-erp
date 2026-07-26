@@ -8,7 +8,7 @@
     "build": "next build",
     "build:turbo": "next build --turbopack",
     "build:prod": "node build-swap.js",
-    "start": "next start -p 3002",
+    "start": "next start -p 3000",
     "lint": "eslint",
     "analyze": "ANALYZE=true npm run build"
   },
