@@ -280,3 +280,83 @@ export async function deleteDesignation(
     }
   }
 }
+
+// =======================
+// DESIGNATIONS SIMPLE LIST
+// =======================
+
+export interface SimpleDesignation {
+  id: number;
+  name: string;
+  status_text: string;
+}
+
+export interface DesignationsSimpleListApiResponse {
+  success: boolean;
+  message: string;
+  code: number;
+  data: {
+    total_designations: number;
+    designations: SimpleDesignation[];
+    pagination?: PaginationType;
+  };
+  errors?: Record<string, string[]>;
+}
+
+export async function getDesignationsSimpleList(
+  search?: string,
+): Promise<DesignationsSimpleListApiResponse | null> {
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+
+  if (!token) {
+    throw new Error("Unauthorized: Access token not found");
+  }
+
+  try {
+    const urlParams = new URLSearchParams();
+    if (search) {
+      urlParams.append("search", search);
+    }
+
+    const queryString = urlParams.toString();
+    const url = queryString
+      ? `${API_BASE}/designations/simple-list?${queryString}`
+      : `${API_BASE}/designations/simple-list`;
+
+    const res = await fetch(url, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (res.status === 404) {
+      console.warn("Designations not found (404).");
+      return null;
+    }
+
+    if (res.status === 401 || res.status === 403) {
+      console.warn("Unauthorized: Access token not found.");
+      return null;
+    }
+
+    if (!res.ok) {
+      throw new Error(
+        `getDesignationsSimpleList API Error: ${res.status} ${res.statusText}`,
+      );
+    }
+
+    const data: DesignationsSimpleListApiResponse = await res.json();
+    return data;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("getDesignationsSimpleList Error:", error.message);
+      throw error;
+    }
+    throw new Error(
+      "Unknown error occurred while fetching designations simple list",
+    );
+  }
+}

@@ -11,21 +11,20 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useEffect, useState } from "react";
-import { createEmployee, updateEmployee, Employee, EmployeeBranch, EmployeeDepartment, EmployeeDesignation, EmployeeSalaryScale } from "@/apiServices/employeeService";
+import { createEmployee, updateEmployee, Employee, EmployeeBranch, EmployeeSalaryScale } from "@/apiServices/employeeService";
 import { Tool } from "@/apiServices/toolsService";
 import { Camera, X } from "lucide-react";
 import Image from "next/image";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { Role } from "@/apiServices/rolePermissionService";
+import RoleSearchSelect from "@/components/common/RoleSearchSelect";
+import DesignationSearchSelect from "@/components/common/DesignationSearchSelect";
+import DepartmentSearchSelect from "@/components/common/DepartmentSearchSelect";
 
 interface EmployeeFormProps {
     title: string;
     employee?: Employee;
-    roles?: Role[];
     branches?: EmployeeBranch[];
-    departments?: EmployeeDepartment[];
-    designations?: EmployeeDesignation[];
     salaryScales?: EmployeeSalaryScale[];
     allTools?: Tool[];
 }
@@ -42,6 +41,7 @@ interface FormValues {
     designation_id: string;
     department_id: string;
     branch_ids: string[];
+    main_branch_id: string;
     join_date: string;
     experience: string;
     display_order: number;
@@ -57,10 +57,7 @@ interface FormValues {
 export default function EmployeesForm({
     title,
     employee,
-    roles = [],
     branches = [],
-    departments = [],
-    designations = [],
     salaryScales = [],
     allTools = []
 }: EmployeeFormProps) {
@@ -68,6 +65,7 @@ export default function EmployeesForm({
         employee?.profile_image || null
     );
     const [isImageRemoved, setIsImageRemoved] = useState(false);
+    const [branchSearch, setBranchSearch] = useState("");
     const router = useRouter();
 
     const {
@@ -92,6 +90,7 @@ export default function EmployeesForm({
             designation_id: "",
             department_id: "",
             branch_ids: [],
+            main_branch_id: "",
             join_date: "",
             experience: "",
             display_order: 1,
@@ -119,6 +118,7 @@ export default function EmployeesForm({
                 designation_id: employee.designation?.id?.toString() || "",
                 department_id: employee.department?.id?.toString() || "",
                 branch_ids: employee.branches?.map((b) => b.id.toString()) || [],
+                main_branch_id: employee.main_branch_id?.toString() || "",
                 join_date: employee.joining_date || "",
                 experience: employee.experience || "",
                 display_order: employee.display_order ?? 1,
@@ -132,13 +132,27 @@ export default function EmployeesForm({
             });
             setPreviewImage(employee.profile_image || null);
         }
-    }, [employee, reset, setPreviewImage, roles, branches, departments, designations, salaryScales, allTools]);
+    }, [employee, reset, setPreviewImage, branches, salaryScales, allTools]);
 
     const imageFile = watch("profile_image");
     const selectedRoleId = watch("role");
     const isTeacherRole =
         selectedRoleId?.toLowerCase().includes("teacher") ||
         selectedRoleId?.toLowerCase().includes("trainer");
+
+    const branchIds = watch("branch_ids") || [];
+    const branchIdsStr = branchIds.join(",");
+    const mainBranchId = watch("main_branch_id");
+
+    useEffect(() => {
+        if (branchIds.length > 0) {
+            if (!mainBranchId || !branchIds.includes(mainBranchId)) {
+                setValue("main_branch_id", branchIds[0]);
+            }
+        } else {
+            setValue("main_branch_id", "");
+        }
+    }, [branchIdsStr, mainBranchId, setValue]);
 
     useEffect(() => {
         if (imageFile && imageFile.length > 0) {
@@ -210,8 +224,13 @@ export default function EmployeesForm({
     return (
         <div className="bg-card border rounded-2xl p-6 shadow-sm">
             <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
-                <Button variant="ghost" size="sm" onClick={() => router.back()} className="p-0 h-auto">
-                    <span className="text-xl">{"<"}</span>
+                <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => router.back()}
+                    className="cursor-pointer"
+                >
+                    Go Back
                 </Button>
                 {title}
             </h2>
@@ -319,16 +338,12 @@ export default function EmployeesForm({
                             name="role"
                             control={control}
                             render={({ field }) => (
-                                <Select key={field.value} value={field.value} onValueChange={field.onChange}>
-                                    <SelectTrigger className="w-full">
-                                        <SelectValue placeholder="Select Role" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {roles.map(role => (
-                                            <SelectItem key={role.id} value={role.name}>{role.name}</SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
+                                <RoleSearchSelect
+                                    value={field.value || ""}
+                                    onValueChange={(value) => field.onChange(value ?? "")}
+                                    placeholder="Select Role"
+                                    useNameAsValue={true}
+                                />
                             )}
                         />
                         {errors.role && <p className="text-sm text-red-500 mt-1">{errors.role.message}</p>}
@@ -361,16 +376,11 @@ export default function EmployeesForm({
                             name="designation_id"
                             control={control}
                             render={({ field }) => (
-                                <Select key={field.value} value={field.value} onValueChange={field.onChange}>
-                                    <SelectTrigger className="w-full">
-                                        <SelectValue placeholder="Select Designation" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {designations.map(d => (
-                                            <SelectItem key={d.id} value={d.id.toString()}>{d.name}</SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
+                                <DesignationSearchSelect
+                                    value={field.value || ""}
+                                    onValueChange={(value) => field.onChange(value ?? "")}
+                                    placeholder="Select Designation"
+                                />
                             )}
                         />
                         {errors.designation_id && <p className="text-sm text-red-500 mt-1">{errors.designation_id.message}</p>}
@@ -381,16 +391,11 @@ export default function EmployeesForm({
                             name="department_id"
                             control={control}
                             render={({ field }) => (
-                                <Select key={field.value} value={field.value} onValueChange={field.onChange}>
-                                    <SelectTrigger className="w-full">
-                                        <SelectValue placeholder="Select a Department" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {departments.map(d => (
-                                            <SelectItem key={d.id} value={d.id.toString()}>{d.name}</SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
+                                <DepartmentSearchSelect
+                                    value={field.value || ""}
+                                    onValueChange={(value) => field.onChange(value ?? "")}
+                                    placeholder="Select Department"
+                                />
                             )}
                         />
                         {errors.department_id && <p className="text-sm text-red-500 mt-1">{errors.department_id.message}</p>}
@@ -398,7 +403,7 @@ export default function EmployeesForm({
 
                     {/* Branch & Joining Date */}
                     <div className="md:col-span-2">
-                        <div className="flex items-center justify-between mb-2">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
                             <label className="block text-sm font-medium">
                                 Branches <span className="text-red-500">*</span>
                                 {(watch("branch_ids") || []).length > 0 && (
@@ -407,27 +412,40 @@ export default function EmployeesForm({
                                     </span>
                                 )}
                             </label>
-                            {branches.length > 0 && (
-                                <Button
-                                    type="button"
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={() => {
-                                        const currentIds = watch("branch_ids") || [];
-                                        if (currentIds.length === branches.length) {
-                                            setValue("branch_ids", []);
-                                        } else {
-                                            setValue("branch_ids", branches.map(b => b.id.toString()));
-                                        }
-                                    }}
-                                    className="h-7 text-xs text-green-600 hover:text-green-700 hover:bg-green-50 cursor-pointer"
-                                >
-                                    {(watch("branch_ids") || []).length === branches.length ? "Deselect All" : "Select All"}
-                                </Button>
-                            )}
+                            <div className="flex items-center gap-2">
+                                <Input
+                                    type="text"
+                                    placeholder="Search branch..."
+                                    value={branchSearch}
+                                    onChange={(e) => setBranchSearch(e.target.value)}
+                                    className="h-8 text-xs w-44"
+                                />
+                                {branches.length > 0 && (
+                                    <Button
+                                        type="button"
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => {
+                                            const currentIds = watch("branch_ids") || [];
+                                            if (currentIds.length === branches.length) {
+                                                setValue("branch_ids", []);
+                                            } else {
+                                                setValue("branch_ids", branches.map(b => b.id.toString()));
+                                            }
+                                        }}
+                                        className="h-8 text-xs text-green-600 hover:text-green-700 hover:bg-green-50 cursor-pointer"
+                                    >
+                                        {(watch("branch_ids") || []).length === branches.length ? "Deselect All" : "Select All"}
+                                    </Button>
+                                )}
+                            </div>
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-2 max-h-60 overflow-y-auto pr-2">
-                            {branches?.map((branch) => (
+                            {branches
+                                ?.filter((branch) =>
+                                    branch.name.toLowerCase().includes(branchSearch.toLowerCase())
+                                )
+                                .map((branch) => (
                                 <Controller
                                     key={branch.id}
                                     name="branch_ids"
@@ -472,6 +490,34 @@ export default function EmployeesForm({
                         </div>
                         {errors.branch_ids && <p className="text-sm text-red-500 mt-1">{errors.branch_ids.message}</p>}
                     </div>
+
+                    {/* Main Branch */}
+                    <div>
+                        <label className="block text-sm font-medium mb-1">
+                            Main Branch {branchIds.length > 1 && <span className="text-red-500">*</span>}
+                        </label>
+                        <Controller
+                            name="main_branch_id"
+                            control={control}
+                            render={({ field }) => {
+                                const selectedBranches = branches.filter(b => branchIds.includes(b.id.toString()));
+                                return (
+                                    <Select key={field.value} value={field.value} onValueChange={field.onChange} disabled={branchIds.length === 0}>
+                                        <SelectTrigger className="w-full">
+                                            <SelectValue placeholder={branchIds.length === 0 ? "Select branches first" : "Select Main Branch"} />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {selectedBranches.map(branch => (
+                                                <SelectItem key={branch.id} value={branch.id.toString()}>{branch.name}</SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                );
+                            }}
+                        />
+                        {errors.main_branch_id && <p className="text-sm text-red-500 mt-1">{errors.main_branch_id.message}</p>}
+                    </div>
+
                     <div>
                         <label className="block text-sm font-medium mb-1">Joining Date</label>
                         <div className="relative">
@@ -529,8 +575,8 @@ export default function EmployeesForm({
                                         <SelectValue placeholder="Select Salary Scale" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        {salaryScales.map(s => (
-                                            <SelectItem key={s.id} value={s.id.toString()}>{s.name}</SelectItem>
+                                        {salaryScales?.map(s => (
+                                            <SelectItem key={s.id} value={s.id.toString()}>{s?.name}</SelectItem>
                                         ))}
                                     </SelectContent>
                                 </Select>
@@ -558,28 +604,28 @@ export default function EmployeesForm({
                                         </span>
                                     )}
                                 </h3>
-                                {allTools.length > 0 && (
+                                {allTools?.length > 0 && (
                                     <Button
                                         type="button"
                                         variant="ghost"
                                         size="sm"
                                         onClick={() => {
                                             const currentIds = watch("tool_ids") || [];
-                                            if (currentIds.length === allTools.length) {
+                                            if (currentIds?.length === allTools?.length) {
                                                 setValue("tool_ids", []);
                                             } else {
-                                                setValue("tool_ids", allTools.map(t => t.id.toString()));
+                                                setValue("tool_ids", allTools?.map(t => t.id.toString()));
                                             }
                                         }}
                                         className="h-7 text-xs text-green-600 hover:text-green-700 hover:bg-green-50 coursor-pointer"
                                     >
-                                        {(watch("tool_ids") || []).length === allTools.length ? "Deselect All" : "Select All"}
+                                        {(watch("tool_ids") || [])?.length === allTools?.length ? "Deselect All" : "Select All"}
                                     </Button>
                                 )}
                             </div>
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 max-h-60 overflow-y-auto pr-2">
-                                {allTools.map((tool) => (
+                                {allTools?.map((tool) => (
                                     <Controller
                                         key={tool.id}
                                         name="tool_ids"

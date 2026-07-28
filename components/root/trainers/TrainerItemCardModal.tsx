@@ -33,7 +33,7 @@ const TrainerItemCardModal = ({ member, open, onOpenChange }: Props) => {
                   src={member.profile_image || "/images/placeholder_img.jpg"}
                   alt={member.name || "Trainer"}
                   fill
-                  className="object-cover"
+                  className="object-cover object-top"
                 />
               </div>
               <div className="flex-1 text-center md:text-left pb-2">

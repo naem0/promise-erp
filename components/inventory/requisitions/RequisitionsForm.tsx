@@ -39,7 +39,6 @@ import {
   Sparkles,
   X,
   Image as ImageIcon,
-  ChevronDown,
 } from "lucide-react";
 import BranchSearchSelect from "@/components/common/BranchSearchSelect";
 import { ProductItem } from "@/apiServices/inventoryItemsService";
@@ -97,9 +96,9 @@ interface RequisitionsFormProps {
 
 // All 4 conditions — shown for both type 1 and type 2
 const ALL_CONDITION_OPTIONS = [
-  { value: "1", label: "New",      Icon: Sparkles      },
-  { value: "2", label: "Repair",   Icon: Wrench        },
-  { value: "3", label: "Damage",   Icon: AlertTriangle },
+  { value: "1", label: "New", Icon: Sparkles },
+  { value: "2", label: "Repair", Icon: Wrench },
+  { value: "3", label: "Damage", Icon: AlertTriangle },
   { value: "4", label: "Transfer", Icon: ArrowLeftRight },
 ];
 
@@ -138,8 +137,6 @@ export default function RequisitionsForm({
     requisition ? (String(requisition.type) as "1" | "2") : "1"
   );
   const [productSearch, setProductSearch] = useState("");
-
-  console.log("RequisitionsForm props:", { currentUser });
 
   const {
     register,
@@ -217,13 +214,13 @@ export default function RequisitionsForm({
         items:
           requisition.items && requisition.items.length > 0
             ? requisition.items.map((item) => ({
-                product_id: String(item.product_id),
-                price: String(item.price),
-                quantity: String(item.quantity),
-                reason_for_requirement: item.reason_for_requirement || "",
-                expected_date: item.expected_date || "",
-                room_id: item.room_id ? String(item.room_id) : (item.room?.id ? String(item.room.id) : "none"),
-              }))
+              product_id: String(item.product_id),
+              price: String(item.price),
+              quantity: String(item.quantity),
+              reason_for_requirement: item.reason_for_requirement || "",
+              expected_date: item.expected_date || "",
+              room_id: item.room_id ? String(item.room_id) : (item.room?.id ? String(item.room.id) : "none"),
+            }))
             : [],
         amount: initialAmountItems,
       });
@@ -237,125 +234,125 @@ export default function RequisitionsForm({
   const estimatedCost =
     activeType === "1"
       ? watchedItems.reduce((acc, item) => {
-          return acc + (parseFloat(item.price) || 0) * (parseInt(item.quantity) || 0);
-        }, 0)
+        return acc + (parseFloat(item.price) || 0) * (parseInt(item.quantity) || 0);
+      }, 0)
       : watchedAmountItems.reduce((acc, item) => {
-          return acc + (parseFloat(item.amount_requested) || 0);
-        }, 0);
+        return acc + (parseFloat(item.amount_requested) || 0);
+      }, 0);
 
   // Filtered products
   const filteredProducts =
     productSearch.trim()
       ? products.filter(
-          (p) =>
-            p.name.toLowerCase().includes(productSearch.toLowerCase()) ||
-            (p.barcode || "").toLowerCase().includes(productSearch.toLowerCase())
-        )
-      : products;  const submitHandler = async (values: FormValues) => {
-    const type = parseInt(values.type);
-    
-    const payload: RequisitionInput = { 
-      type,
-      description: values.description || "",
-      user_id: currentUser?.id,
-      branch_from: values.branch_from ? parseInt(values.branch_from) : undefined,
-      branch_to: values.branch_to ? parseInt(values.branch_to) : undefined,
-    };
+        (p) =>
+          p.name.toLowerCase().includes(productSearch.toLowerCase()) ||
+          (p.barcode || "").toLowerCase().includes(productSearch.toLowerCase())
+      )
+      : products; const submitHandler = async (values: FormValues) => {
+        const type = parseInt(values.type);
 
-    if (type === 1) {
-      payload.requisition_condition = parseInt(values.requisition_condition as string);
-      payload.items = values.items
-        .filter((item) => item.product_id)
-        .map((item) => {
-          const mappedItem: {
-            product_id: number;
-            price: number;
-            quantity: number;
-            reason_for_requirement?: string;
-            expected_date?: string;
-            room_id?: number | string;
-          } = {
-            product_id: parseInt(item.product_id),
-            price: parseFloat(item.price) || 0,
-            quantity: parseInt(item.quantity) || 1,
-          };
-          if (item.reason_for_requirement) mappedItem.reason_for_requirement = item.reason_for_requirement;
-          if (item.expected_date) mappedItem.expected_date = item.expected_date;
-          mappedItem.room_id = item.room_id && item.room_id !== "none" ? parseInt(item.room_id) : "";
-          return mappedItem;
-        });
-    } else {
-      payload.requisition_condition = null;
-      payload.amount = values.amount
-        .filter((item) => item.amount_requested && parseFloat(item.amount_requested) > 0)
-        .map((item) => {
-          const mappedAmount: {
-            amount_requested: number;
-            docs: AmountFile[];
-            amount_reason?: string;
-            amount_expected_date?: string;
-          } = {
-            amount_requested: parseFloat(item.amount_requested),
-            docs: item.docs || [],
-          };
-          if (item.amount_reason) mappedAmount.amount_reason = item.amount_reason;
-          if (item.amount_expected_date) mappedAmount.amount_expected_date = item.amount_expected_date;
-          return mappedAmount;
-        });
-    }
+        const payload: RequisitionInput = {
+          type,
+          description: values.description || "",
+          user_id: currentUser?.id,
+          branch_from: values.branch_from ? parseInt(values.branch_from) : undefined,
+          branch_to: values.branch_to ? parseInt(values.branch_to) : undefined,
+        };
 
-    try {
-      const res = requisition
-        ? await updateRequisition(Number(requisition.id), payload)
-        : await createRequisition(payload);
-
-      if (res.success) {
-        toast?.success(res.message || "Requisition saved successfully!");
-        reset({
-          type: "1",
-          requisition_condition: "1",
-          branch_from: currentUser?.branches?.[0]?.id?.toString() || "",
-          branch_to: currentUser?.branches?.[1]?.id?.toString() || "",
-          description: "",
-          remarks: "",
-          items: [],
-          amount: [{ amount_requested: "", amount_reason: "", amount_expected_date: "", docs: [] }],
-        });
-        setActiveType("1");
-        setProductSearch("");
-        router.push("/inventory/requisitions");
-      } else {
-        if (res.errors) {
-          toast?.error(res.message || "Failed to save requisition");
-          Object.entries(res.errors).forEach(([field, messages]) => {
-            const errorMessage = Array.isArray(messages) ? messages[0] : messages;
-            let targetField = field;
-            
-            // Map backend validation keys to frontend form keys
-            if (field === "amount_requested") {
-              targetField = "amount.0.amount_requested";
-            } else if (field === "amount_reason") {
-              targetField = "amount.0.amount_reason";
-            } else if (field === "amount_expected_date") {
-              targetField = "amount.0.amount_expected_date";
-            } else if (field === "items" || field === "amount") {
-              targetField = `${field}.root`;
-            }
-            
-            setError(targetField as Path<FormValues>, {
-              type: "server",
-              message: String(errorMessage),
+        if (type === 1) {
+          payload.requisition_condition = parseInt(values.requisition_condition as string);
+          payload.items = values.items
+            .filter((item) => item.product_id)
+            .map((item) => {
+              const mappedItem: {
+                product_id: number;
+                price: number;
+                quantity: number;
+                reason_for_requirement?: string;
+                expected_date?: string;
+                room_id?: number | string;
+              } = {
+                product_id: parseInt(item.product_id),
+                price: parseFloat(item.price) || 0,
+                quantity: parseInt(item.quantity) || 1,
+              };
+              if (item.reason_for_requirement) mappedItem.reason_for_requirement = item.reason_for_requirement;
+              if (item.expected_date) mappedItem.expected_date = item.expected_date;
+              mappedItem.room_id = item.room_id && item.room_id !== "none" ? parseInt(item.room_id) : "";
+              return mappedItem;
             });
-          });
         } else {
-          toast?.error(res.message || "Failed to save requisition");
+          payload.requisition_condition = null;
+          payload.amount = values.amount
+            .filter((item) => item.amount_requested && parseFloat(item.amount_requested) > 0)
+            .map((item) => {
+              const mappedAmount: {
+                amount_requested: number;
+                docs: AmountFile[];
+                amount_reason?: string;
+                amount_expected_date?: string;
+              } = {
+                amount_requested: parseFloat(item.amount_requested),
+                docs: item.docs || [],
+              };
+              if (item.amount_reason) mappedAmount.amount_reason = item.amount_reason;
+              if (item.amount_expected_date) mappedAmount.amount_expected_date = item.amount_expected_date;
+              return mappedAmount;
+            });
         }
-      }
-    } catch (error: unknown) {
-      toast.error(error instanceof Error ? error.message : "An unexpected error occurred.");
-      console.error(error);
-    }
-  };
+
+        try {
+          const res = requisition
+            ? await updateRequisition(Number(requisition.id), payload)
+            : await createRequisition(payload);
+
+          if (res.success) {
+            toast?.success(res.message || "Requisition saved successfully!");
+            reset({
+              type: "1",
+              requisition_condition: "1",
+              branch_from: currentUser?.branches?.[0]?.id?.toString() || "",
+              branch_to: currentUser?.branches?.[1]?.id?.toString() || "",
+              description: "",
+              remarks: "",
+              items: [],
+              amount: [{ amount_requested: "", amount_reason: "", amount_expected_date: "", docs: [] }],
+            });
+            setActiveType("1");
+            setProductSearch("");
+            router.push("/inventory/requisitions");
+          } else {
+            if (res.errors) {
+              toast?.error(res.message || "Failed to save requisition");
+              Object.entries(res.errors).forEach(([field, messages]) => {
+                const errorMessage = Array.isArray(messages) ? messages[0] : messages;
+                let targetField = field;
+
+                // Map backend validation keys to frontend form keys
+                if (field === "amount_requested") {
+                  targetField = "amount.0.amount_requested";
+                } else if (field === "amount_reason") {
+                  targetField = "amount.0.amount_reason";
+                } else if (field === "amount_expected_date") {
+                  targetField = "amount.0.amount_expected_date";
+                } else if (field === "items" || field === "amount") {
+                  targetField = `${field}.root`;
+                }
+
+                setError(targetField as Path<FormValues>, {
+                  type: "server",
+                  message: String(errorMessage),
+                });
+              });
+            } else {
+              toast?.error(res.message || "Failed to save requisition");
+            }
+          }
+        } catch (error: unknown) {
+          toast.error(error instanceof Error ? error.message : "An unexpected error occurred.");
+          console.error(error);
+        }
+      };
 
   return (
     <div className="space-y-0">
@@ -374,11 +371,10 @@ export default function RequisitionsForm({
             <button
               type="button"
               onClick={() => { setActiveType("1"); setValue("type", "1"); setValue("requisition_condition", "1"); }}
-              className={`flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium transition-all duration-200 cursor-pointer ${
-                activeType === "1"
+              className={`flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium transition-all duration-200 cursor-pointer ${activeType === "1"
                   ? "bg-white text-slate-900 shadow-sm border border-gray-200"
                   : "text-slate-500 hover:text-slate-700"
-              }`}
+                }`}
             >
               <ShoppingCart className="h-4 w-4 text-green-600" />
               Item Requisition
@@ -386,17 +382,16 @@ export default function RequisitionsForm({
             <button
               type="button"
               onClick={() => { setActiveType("2"); setValue("type", "2"); }}
-              className={`flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium transition-all duration-200 cursor-pointer ${
-                activeType === "2"
+              className={`flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium transition-all duration-200 cursor-pointer ${activeType === "2"
                   ? "bg-white text-slate-900 shadow-sm border border-gray-200"
                   : "text-slate-500 hover:text-slate-700"
-              }`}
+                }`}
             >
               <CircleDollarSign className="h-4 w-4 text-green-600" />
               Amount Requisition
             </button>
           </div>
-         
+
         </div>
       </div>
 
@@ -413,41 +408,6 @@ export default function RequisitionsForm({
                 <h2 className="text-base font-semibold text-slate-800">Requisition Information</h2>
               </div>
 
-              {/* Requisition Condition buttons — only for type 1 (Item) */}
-              {activeType === "1" && (
-                <div>
-                  <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2">
-                    Requisition Type
-                  </label>
-                  <div className="grid grid-cols-2 gap-2">
-                    {ALL_CONDITION_OPTIONS.map(({ value, label, Icon }) => (
-                        <Controller
-                          key={value}
-                          name="requisition_condition"
-                          control={control}
-                          render={({ field }) => (
-                            <button
-                              type="button"
-                              onClick={() => field.onChange(value)}
-                              className={`flex items-center gap-2 px-3 py-2.5 rounded-lg border text-sm font-medium transition-all ${
-                                field.value === value
-                                  ? ACTIVE_CLASS
-                                  : "bg-white border-gray-200 text-slate-600 hover:border-gray-300 hover:bg-gray-50"
-                              }`}
-                            >
-                              <Icon className="h-4 w-4 shrink-0" />
-                              {label}
-                            </button>
-                          )}
-                        />
-                      )
-                    )}
-                  </div>
-                  {errors.requisition_condition && (
-                    <p className="text-sm text-red-500 mt-1">{errors.requisition_condition.message}</p>
-                  )}
-                </div>
-              )}
 
               {/* Applicant Name — read-only from session */}
               <div>
@@ -479,7 +439,7 @@ export default function RequisitionsForm({
                     type="text"
                     readOnly
                     value={
-                      requisition?.user?.designation ||""
+                      requisition?.user?.designation || ""
                     }
                     placeholder="Designation"
                     className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm bg-gray-50 text-slate-700 focus:outline-none cursor-default"
@@ -581,6 +541,38 @@ export default function RequisitionsForm({
                 {/* ===== ITEM-BASED ===== */}
                 {activeType === "1" && (
                   <>
+                    {/* Requisition Type */}
+                    <div className="mb-4">
+                      <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                        Requisition Type
+                      </label>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        {ALL_CONDITION_OPTIONS.map(({ value, label, Icon }) => (
+                          <Controller
+                            key={value}
+                            name="requisition_condition"
+                            control={control}
+                            render={({ field }) => (
+                              <button
+                                type="button"
+                                onClick={() => field.onChange(value)}
+                                className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg border text-sm font-medium transition-all ${field.value === value
+                                    ? ACTIVE_CLASS
+                                    : "bg-white border-gray-200 text-slate-600 hover:border-gray-300 hover:bg-gray-50"
+                                  }`}
+                              >
+                                <Icon className="h-4 w-4 shrink-0" />
+                                {label}
+                              </button>
+                            )}
+                          />
+                        ))}
+                      </div>
+                      {errors.requisition_condition && (
+                        <p className="text-sm text-red-500 mt-1">{errors.requisition_condition.message}</p>
+                      )}
+                    </div>
+
                     {/* Search bar (Combobox) to add items */}
                     <div className="relative z-10 mb-4">
                       <div className="relative">
@@ -725,9 +717,8 @@ export default function RequisitionsForm({
                                 </label>
                                 <Input
                                   placeholder="e.g. For Lab 3 Student"
-                                  className={`h-9 border-slate-200 text-xs bg-slate-50/50 hover:bg-slate-50 focus:bg-white rounded-lg focus:border-green-400 focus:ring-green-400/20 transition-all ${
-                                    errors.items?.[index]?.reason_for_requirement ? "border-red-400 focus:ring-red-300" : ""
-                                  }`}
+                                  className={`h-9 border-slate-200 text-xs bg-slate-50/50 hover:bg-slate-50 focus:bg-white rounded-lg focus:border-green-400 focus:ring-green-400/20 transition-all ${errors.items?.[index]?.reason_for_requirement ? "border-red-400 focus:ring-red-300" : ""
+                                    }`}
                                   {...register(`items.${index}.reason_for_requirement`)}
                                 />
                                 {errors.items?.[index]?.reason_for_requirement && (
@@ -736,7 +727,7 @@ export default function RequisitionsForm({
                                   </p>
                                 )}
                               </div>
-                              
+
 
                               {/* ROOM / LOCATION */}
                               <div className="w-full">
@@ -752,9 +743,8 @@ export default function RequisitionsForm({
                                       value={field.value || "none"}
                                     >
                                       <SelectTrigger
-                                        className={`h-9 border-slate-200 text-xs bg-slate-50/50 hover:bg-slate-100/50 transition-colors rounded-lg text-slate-700 w-full focus:ring-1 focus:ring-green-400 ${
-                                          errors.items?.[index]?.room_id ? "border-red-400 focus:ring-red-300" : ""
-                                        }`}
+                                        className={`h-9 border-slate-200 text-xs bg-slate-50/50 hover:bg-slate-100/50 transition-colors rounded-lg text-slate-700 w-full focus:ring-1 focus:ring-green-400 ${errors.items?.[index]?.room_id ? "border-red-400 focus:ring-red-300" : ""
+                                          }`}
                                       >
                                         <SelectValue placeholder="Select Room" />
                                       </SelectTrigger>
@@ -791,9 +781,8 @@ export default function RequisitionsForm({
                                 </label>
                                 <Input
                                   type="date"
-                                  className={`h-9 border-slate-200 text-xs bg-slate-50/50 hover:bg-slate-50 focus:bg-white rounded-lg focus:border-green-400 focus:ring-green-400/20 transition-all ${
-                                    errors.items?.[index]?.expected_date ? "border-red-400 focus:ring-red-300" : ""
-                                  }`}
+                                  className={`h-9 border-slate-200 text-xs bg-slate-50/50 hover:bg-slate-50 focus:bg-white rounded-lg focus:border-green-400 focus:ring-green-400/20 transition-all ${errors.items?.[index]?.expected_date ? "border-red-400 focus:ring-red-300" : ""
+                                    }`}
                                   {...register(`items.${index}.expected_date`)}
                                 />
                                 {errors.items?.[index]?.expected_date && (
@@ -893,11 +882,10 @@ export default function RequisitionsForm({
                             type="number"
                             step="0.01"
                             placeholder="e.g. 5000"
-                            className={`h-10 text-sm bg-white rounded-lg focus:ring-1 focus:ring-green-400 ${
-                              errors.amount?.[index]?.amount_requested
+                            className={`h-10 text-sm bg-white rounded-lg focus:ring-1 focus:ring-green-400 ${errors.amount?.[index]?.amount_requested
                                 ? "border-red-400 focus:ring-red-300"
                                 : "border-gray-200"
-                            }`}
+                              }`}
                             {...register(`amount.${index}.amount_requested`)}
                           />
                           {errors.amount?.[index]?.amount_requested && (
@@ -914,9 +902,8 @@ export default function RequisitionsForm({
                           </label>
                           <Input
                             placeholder="e.g. For Lab 3 Student"
-                            className={`h-10 border-gray-200 text-sm bg-white rounded-lg focus:ring-1 focus:ring-green-400 w-full ${
-                              errors.amount?.[index]?.amount_reason ? "border-red-400 focus:ring-red-300" : ""
-                            }`}
+                            className={`h-10 border-gray-200 text-sm bg-white rounded-lg focus:ring-1 focus:ring-green-400 w-full ${errors.amount?.[index]?.amount_reason ? "border-red-400 focus:ring-red-300" : ""
+                              }`}
                             {...register(`amount.${index}.amount_reason`)}
                           />
                           {errors.amount?.[index]?.amount_reason && (
@@ -933,9 +920,8 @@ export default function RequisitionsForm({
                           </label>
                           <Input
                             type="date"
-                            className={`h-10 border-gray-200 text-sm bg-white rounded-lg focus:ring-1 focus:ring-green-400 ${
-                              errors.amount?.[index]?.amount_expected_date ? "border-red-400 focus:ring-red-300" : ""
-                            }`}
+                            className={`h-10 border-gray-200 text-sm bg-white rounded-lg focus:ring-1 focus:ring-green-400 ${errors.amount?.[index]?.amount_expected_date ? "border-red-400 focus:ring-red-300" : ""
+                              }`}
                             {...register(`amount.${index}.amount_expected_date`)}
                           />
                           {errors.amount?.[index]?.amount_expected_date && (

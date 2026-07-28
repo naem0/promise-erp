@@ -13,9 +13,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { Search, FilterX } from "lucide-react";
 
-import { Branch } from "@/apiServices/branchService";
-import { Role } from "@/apiServices/rolePermissionService";
-import { EmployeeDepartment, EmployeeDesignation } from "@/apiServices/employeeService";
+import RoleSearchSelect from "@/components/common/RoleSearchSelect";
+import DesignationSearchSelect from "@/components/common/DesignationSearchSelect";
+import BranchSearchSelect from "@/components/common/BranchSearchSelect";
+import DepartmentSearchSelect from "@/components/common/DepartmentSearchSelect";
 
 interface FilterFormValues {
     search?: string;
@@ -26,21 +27,10 @@ interface FilterFormValues {
     role_id?: string;
     designation_id?: string;
     blood_group?: string;
+    per_page?: string;
 }
 
-interface EmployeesFilterProps {
-    branches: Branch[];
-    roles: Role[];
-    departments: EmployeeDepartment[];
-    designations: EmployeeDesignation[];
-}
-
-export default function EmployeesFilter({
-    branches,
-    roles,
-    departments,
-    designations,
-}: EmployeesFilterProps) {
+export default function EmployeesFilter() {
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
@@ -56,6 +46,7 @@ export default function EmployeesFilter({
                 role_id: searchParams.get("role_id") || "",
                 designation_id: searchParams.get("designation_id") || "",
                 blood_group: searchParams.get("blood_group") || "",
+                per_page: searchParams.get("per_page") || "",
             },
         });
 
@@ -109,6 +100,7 @@ export default function EmployeesFilter({
             role_id: "",
             designation_id: "",
             blood_group: "",
+            per_page: "",
         });
         router.replace(pathname, { scroll: false });
     };
@@ -215,24 +207,14 @@ export default function EmployeesFilter({
                     name="branch_id"
                     control={control}
                     render={({ field }) => (
-                        <Select
-                            value={field.value}
+                        <BranchSearchSelect
+                            value={field.value || ""}
                             onValueChange={(value) => {
-                                field.onChange(value);
-                                handleSelectChange("branch_id")(value);
+                                field.onChange(value ?? "");
+                                handleSelectChange("branch_id")(value ?? "");
                             }}
-                        >
-                            <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Branch" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {branches?.map((branch) => (
-                                    <SelectItem key={branch.id} value={String(branch.id)}>
-                                        {branch.name}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                            placeholder="Branch"
+                        />
                     )}
                 />
 
@@ -241,24 +223,14 @@ export default function EmployeesFilter({
                     name="department_id"
                     control={control}
                     render={({ field }) => (
-                        <Select
-                            value={field.value}
+                        <DepartmentSearchSelect
+                            value={field.value || ""}
                             onValueChange={(value) => {
-                                field.onChange(value);
-                                handleSelectChange("department_id")(value);
+                                field.onChange(value ?? "");
+                                handleSelectChange("department_id")(value ?? "");
                             }}
-                        >
-                            <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Department" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {departments.map((dept) => (
-                                    <SelectItem key={dept.id} value={String(dept.id)}>
-                                        {dept.name}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                            placeholder="Department"
+                        />
                     )}
                 />
 
@@ -267,24 +239,14 @@ export default function EmployeesFilter({
                     name="role_id"
                     control={control}
                     render={({ field }) => (
-                        <Select
-                            value={field.value}
+                        <RoleSearchSelect
+                            value={field.value || ""}
                             onValueChange={(value) => {
-                                field.onChange(value);
-                                handleSelectChange("role_id")(value);
+                                field.onChange(value ?? "");
+                                handleSelectChange("role_id")(value ?? "");
                             }}
-                        >
-                            <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Role" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {roles.map((role) => (
-                                    <SelectItem key={role.id} value={String(role.id)}>
-                                        {role.name}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                            placeholder="Role"
+                        />
                     )}
                 />
 
@@ -293,24 +255,14 @@ export default function EmployeesFilter({
                     name="designation_id"
                     control={control}
                     render={({ field }) => (
-                        <Select
-                            value={field.value}
+                        <DesignationSearchSelect
+                            value={field.value || ""}
                             onValueChange={(value) => {
-                                field.onChange(value);
-                                handleSelectChange("designation_id")(value);
+                                field.onChange(value ?? "");
+                                handleSelectChange("designation_id")(value ?? "");
                             }}
-                        >
-                            <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Designation" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {designations.map((desig) => (
-                                    <SelectItem key={desig.id} value={String(desig.id)}>
-                                        {desig.name}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                            placeholder="Designation"
+                        />
                     )}
                 />
 
@@ -335,6 +287,31 @@ export default function EmployeesFilter({
                                         {bg}
                                     </SelectItem>
                                 ))}
+                            </SelectContent>
+                        </Select>
+                    )}
+                />
+
+                {/* Show Per Page */}
+                <Controller
+                    name="per_page"
+                    control={control}
+                    render={({ field }) => (
+                        <Select
+                            value={field.value}
+                            onValueChange={(value) => {
+                                field.onChange(value);
+                                handleSelectChange("per_page")(value);
+                            }}
+                        >
+                            <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Show Per Page" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="15">15 Per Page</SelectItem>
+                                <SelectItem value="30">30 Per Page</SelectItem>
+                                <SelectItem value="50">50 Per Page</SelectItem>
+                                <SelectItem value="100">100 Per Page</SelectItem>
                             </SelectContent>
                         </Select>
                     )}

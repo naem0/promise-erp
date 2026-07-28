@@ -37,8 +37,8 @@ const NewsFeedsCard = async ({ searchParams }: NewFeedsPageProps) => {
     <section className="py-8 md:py-14">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {newsItems.length > 0 ? (
-            newsItems.map((item) => (
+          {newsItems?.length > 0 ? (
+            newsItems?.map((item) => (
               <NewsFeedsCardItems key={item?.id} item={item} />
             ))
           ) : (
@@ -49,7 +49,7 @@ const NewsFeedsCard = async ({ searchParams }: NewFeedsPageProps) => {
             </div>
           )}
         </div>
-        {totalPage && totalPage.per_page > 28 && (
+        {totalPage && totalPage?.per_page > 28 && (
           <div className="flex justify-center mt-8">
             <Pagination pagination={totalPage} />
           </div>

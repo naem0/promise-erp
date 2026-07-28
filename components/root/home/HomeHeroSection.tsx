@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Play } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { Play, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
@@ -16,6 +16,8 @@ interface HeroVideoData {
 
 const HomeHeroSection = ({ heroBannerData }: HeroVideoData) => {
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isFloating, setIsFloating] = useState(false);
+  const videoContainerRef = useRef<HTMLDivElement>(null);
 
   const sliderData = heroBannerData?.data;
   const videoUrl =
@@ -23,6 +25,53 @@ const HomeHeroSection = ({ heroBannerData }: HeroVideoData) => {
 
   const featureImage =
     sliderData?.background_image || "/images/home/hero-banner.webp";
+
+  // Observe scroll to toggle floating mini player
+  useEffect(() => {
+    const element = videoContainerRef.current;
+    if (!isPlaying || !element) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsFloating(!entry.isIntersecting);
+      },
+      { threshold: 0.2 }
+    );
+
+    observer.observe(element);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [isPlaying]);
+
+  // Global video event listener to ensure single video plays at a time
+  useEffect(() => {
+    const handleGlobalPlay = (e: CustomEvent) => {
+      if (e.detail?.source !== "hero") {
+        setIsPlaying(false);
+        setIsFloating(false);
+      }
+    };
+
+    window.addEventListener("global-video-play", handleGlobalPlay as EventListener);
+    return () => {
+      window.removeEventListener("global-video-play", handleGlobalPlay as EventListener);
+    };
+  }, []);
+
+  const handlePlayHero = () => {
+    window.dispatchEvent(
+      new CustomEvent("global-video-play", { detail: { source: "hero" } })
+    );
+    setIsPlaying(true);
+    setIsFloating(false);
+  };
+
+  const handleCloseFloating = () => {
+    setIsPlaying(false);
+    setIsFloating(false);
+  };
 
   return (
     <section className="bg-secondary/5 relative">
@@ -72,6 +121,7 @@ const HomeHeroSection = ({ heroBannerData }: HeroVideoData) => {
 
           {/* RIGHT VIDEO */}
           <div
+            ref={videoContainerRef}
             className="group py-10 pt-0 md:py-18 "
             style={{
               backgroundImage: 'url("/images/home/hero-video-bg-image.webp")',
@@ -80,16 +130,20 @@ const HomeHeroSection = ({ heroBannerData }: HeroVideoData) => {
               backgroundRepeat: "no-repeat",
             }}
           >
-            <div className="rounded-2xl overflow-hidden border-6 min-h-[425px] border-white relative">
-              {isPlaying ? (
+            <div className="rounded-2xl overflow-hidden border-6 min-h-[425px] border-white relative bg-black/5">
+              {isPlaying && !isFloating ? (
                 <ReactPlayer
                   className="absolute inset-0"
                   src={videoUrl}
-                  playing={isPlaying}
+                  playing={true}
                   controls={true}
                   width="100%"
                   height="100%"
-                  onPlay={() => setIsPlaying(true)}
+                  onPlay={() => {
+                    window.dispatchEvent(
+                      new CustomEvent("global-video-play", { detail: { source: "hero" } })
+                    );
+                  }}
                   onPause={() => setIsPlaying(false)}
                 />
               ) : (
@@ -106,9 +160,9 @@ const HomeHeroSection = ({ heroBannerData }: HeroVideoData) => {
                     />
                     <div className="flex items-center justify-center h-full">
                       <button
-                        className="video-play-btn animate-pulse"
+                        className="video-play-btn animate-pulse cursor-pointer"
                         aria-label="Play video"
-                        onClick={() => setIsPlaying(true)}
+                        onClick={handlePlayHero}
                       >
                         <Play className="w-8 h-8 md:w-10 md:h-10" />
                       </button>
@@ -121,6 +175,26 @@ const HomeHeroSection = ({ heroBannerData }: HeroVideoData) => {
           </div>
         </div>
       </div>
+
+      {/* Floating Picture-in-Picture Mini Player for Hero Video */}
+      {isFloating && isPlaying && (
+        <div className="fixed bottom-6 right-6 z-50 w-72 sm:w-80 md:w-96 aspect-video bg-black rounded-2xl shadow-2xl overflow-hidden border-2 border-primary animate-in slide-in-from-bottom-5 duration-300">
+          <button
+            onClick={handleCloseFloating}
+            className="absolute top-2 right-2 z-10 bg-black/70 hover:bg-black text-white p-1.5 rounded-full transition-colors cursor-pointer"
+            aria-label="Close floating video"
+          >
+            <X className="w-4 h-4" />
+          </button>
+          <ReactPlayer
+            src={videoUrl}
+            playing={true}
+            controls
+            width="100%"
+            height="100%"
+          />
+        </div>
+      )}
     </section>
   );
 };

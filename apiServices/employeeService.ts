@@ -69,6 +69,18 @@ export interface Employee {
   note?: string;
   tools?: EmployeeTool[];
   salary_scale?: EmployeeSalaryScale;
+  main_branch_id?: number;
+  is_blocked?: number;
+}
+
+export interface ToggleEmployeeStatusResponse {
+  success: boolean;
+  message: string;
+  code: number;
+  data: {
+    is_blocked: number;
+    blocked_text: string;
+  };
 }
 
 export interface EmployeesResponse {
@@ -132,7 +144,7 @@ export async function getEmployeesCached(
   cacheTag("employees-list");
 
   try {
-  // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
+    // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
     const urlParams = new URLSearchParams();
     for (const key in params) {
       if (params[key] !== undefined && params[key] !== null) {
@@ -462,6 +474,41 @@ export async function deleteEmployee(
   }
 }
 
+// =======================
+// TOGGLE EMPLOYEE STATUS
+// =======================
+
+export async function toggleEmployeeStatus(
+  id: number,
+): Promise<ToggleEmployeeStatusResponse> {
+  try {
+    const session = await getServerSession(authOptions);
+    const token = session?.accessToken;
+
+    if (!token) throw new Error("No valid session/token");
+
+    const res = await fetch(`${API_BASE}/employees/${id}/toggle-status`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    const result = await res.json();
+
+    updateTag("employees-list");
+    return result;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error in toggleEmployeeStatus:", error);
+      throw new Error(error.message || "Failed to toggle employee status");
+    } else {
+      throw new Error("Failed to toggle employee status");
+    }
+  }
+}
+
 // *********Start public employees api End Point******* //
 
 export interface AllOfficeEmployee {
@@ -474,7 +521,6 @@ export interface AllOfficeEmployee {
   display_order: number;
   experience: string;
   note?: string;
-
 }
 export interface AllOfficeDepartment {
   department_id: number | null;
@@ -551,7 +597,7 @@ export async function getPublicAllExecutives(): Promise<ChairmanMessageResponse 
       console.warn("No Management messages found.");
       return null;
     }
-    
+
     if (!res.ok) {
       throw new Error(`Failed to fetch public employees — HTTP ${res.status}`);
     }
@@ -582,9 +628,9 @@ export interface EmployeeStatsResponse {
 }
 
 export async function getEmployeeStatsCached(
-  token: string
+  token: string,
 ): Promise<EmployeeStatsResponse | null> {
-  "use cache";
+  "use cache: private";
   cacheTag("employees-list");
 
   try {
@@ -618,15 +664,12 @@ export async function getEmployeeStatsCached(
 export async function getEmployeeStats(): Promise<EmployeeStatsResponse | null> {
   const session = await getServerSession(authOptions);
   const token = session?.accessToken;
-  if (!token) throw new Error("No valid session/token");
-
+  if (!token) return null;
   try {
     const cachedResult = await getEmployeeStatsCached(token);
-    if (!cachedResult) throw new Error("Failed to fetch employee stats from cache.");
     return cachedResult;
   } catch (error: unknown) {
     console.error("getEmployeeStats error:", error);
-    if (error instanceof Error) throw error;
-    throw new Error("Failed to fetch employee stats");
+    return null;
   }
 }

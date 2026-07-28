@@ -20,9 +20,61 @@ import Link from "next/link";
 import Image from "next/image";
 import { Employee, getEmployees } from "@/apiServices/employeeService";
 import DeleteEmployeeButton from "./DeleteEmployeeButton";
+import ToggleEmployeeStatusButton from "./ToggleEmployeeStatusButton";
 import Pagination from "@/components/common/Pagination";
 import PermissionGuard from "@/components/auth/PermissionGuard";
-import { truncate } from "@/lib/utils";
+
+const getStatusBadge = (isBlocked?: number) => {
+  if (Number(isBlocked) === 1) {
+    return (
+      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border bg-red-50 text-red-700 border-red-200">
+        <span className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" />
+        Blocked
+      </span>
+    );
+  }
+  return (
+    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border bg-green-50 text-green-700 border-green-200">
+      <span className="w-1.5 h-1.5 rounded-full bg-green-500 shrink-0" />
+      Active
+    </span>
+  );
+};
+
+const getEmploymentTypeBadge = (type: number | string | undefined) => {
+  switch (Number(type)) {
+    case 0:
+      return (
+        <Badge className="bg-blue-50 text-blue-700 border-blue-100 hover:bg-blue-50 font-medium">
+          Probation
+        </Badge>
+      );
+    case 1:
+      return (
+        <Badge className="bg-green-50 text-green-700 border-green-100 hover:bg-green-50 font-medium">
+          Full-time
+        </Badge>
+      );
+    case 2:
+      return (
+        <Badge className="bg-purple-50 text-purple-700 border-purple-100 hover:bg-purple-50 font-medium">
+          Part-time
+        </Badge>
+      );
+    case 3:
+      return (
+        <Badge className="bg-amber-50 text-amber-700 border-amber-100 hover:bg-amber-50 font-medium">
+          Contractual
+        </Badge>
+      );
+    default:
+      return (
+        <Badge className="bg-slate-50 text-slate-700 border-slate-100 hover:bg-slate-50 font-medium">
+          —
+        </Badge>
+      );
+  }
+};
 
 const EmployeesData = async ({
   searchParams,
@@ -93,7 +145,7 @@ const EmployeesData = async ({
 
   const employees = results?.data?.employees || [];
   const paginationData = results?.data?.pagination;
-  if (!employees.length) {
+  if (!employees?.length) {
     return (
       <NotFoundComponent message={results?.message || "No employees found."} />
     );
@@ -106,20 +158,19 @@ const EmployeesData = async ({
             <TableRow>
               <TableHead className="text-center">Sl</TableHead>
               <TableHead className="text-center">Action</TableHead>
-              <TableHead className="text-center">Profile</TableHead>
+              <TableHead className="text-left">Profile</TableHead>
               <TableHead className="text-center">Employee ID</TableHead>
-              <TableHead className="text-center">Designation</TableHead>
-              <TableHead className="text-center">Department</TableHead>
+              <TableHead className="text-left">Position Details</TableHead>
               <TableHead className="text-center">Branch</TableHead>
-              <TableHead className="text-center">Role</TableHead>
               <TableHead className="text-center">Display Order</TableHead>
               <TableHead className="text-center">Blood Group</TableHead>
               <TableHead className="text-center">Type</TableHead>
+              <TableHead className="text-center">Status</TableHead>
             </TableRow>
           </TableHeader>
 
           <TableBody>
-            {employees.map((employee: Employee, index: number) => (
+            {employees?.map((employee: Employee, index: number) => (
               <TableRow key={`${employee?.id}-${index}`}>
                 <TableCell className="text-center">
                   {(page - 1) * per_page + (index + 1)}
@@ -158,53 +209,58 @@ const EmployeesData = async ({
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>
-                <TableCell className="flex items-center gap-2">
-                  <div className="relative w-12 h-12">
+                <TableCell className="flex items-center gap-2.5">
+                  <div className="relative w-11 h-11 shrink-0">
                     <Image
                       src={
-                        employee.profile_image || "/images/profile_avatar.png"
+                        employee?.profile_image || "/images/profile_avatar.png"
                       }
-                      alt={employee?.name}
+                      alt={employee?.name || "Employee"}
                       fill
-                      className="object-cover object-top rounded-full"
+                      className="object-cover object-top rounded-full border border-slate-200"
                     />
                   </div>
-                  <div>
-                    <p className="">{employee?.name}</p>
-                    <p className="text-xs text-secondary">{employee?.email}</p>
-                    <p className="text-xs text-secondary">{employee?.phone}</p>
+                  <div className="text-xs space-y-0.5">
+                    <p className="font-semibold text-slate-800">{employee?.name || "—"}</p>
+                    <p className="text-slate-500">
+                      <span className="font-medium text-slate-700">Email:</span>{" "}
+                      {employee?.email || "—"}
+                    </p>
+                    <p className="text-slate-500">
+                      <span className="font-medium text-slate-700">Phone:</span>{" "}
+                      {employee?.phone || "—"}
+                    </p>
                   </div>
                 </TableCell>
 
                 <TableCell className="text-center">
                   {employee?.employee_id || "—"}
                 </TableCell>
-                <TableCell className="text-center">
-                  {employee?.designation?.name || "—"}
-                </TableCell>
-                {/* use truncate */}
-                <TableCell
-                  className="text-center"
-                  title={employee?.department?.name || "—"}
-                >
-                  {truncate(employee?.department?.name, 20) ||
-                    employee?.department?.name ||
-                    "—"}
+                <TableCell className="text-xs space-y-0.5">
+                  <p className="font-semibold text-slate-800">{employee?.designation?.name || "—"}</p>
+                  <p className="text-slate-500">
+                    <span className="font-medium text-slate-700">Dept:</span>{" "}
+                    {employee?.department?.name || "—"}
+                  </p>
+                  <p className="text-slate-500">
+                    <span className="font-medium text-slate-700">Role:</span>{" "}
+                    {employee?.role?.name || "—"}
+                  </p>
                 </TableCell>
                 <TableCell className="text-center">
                   {employee?.branches && employee?.branches?.length > 0 ? (
                     <>
-                      {employee.branches.slice(0, 2).map((b, index) => (
-                        <span key={b.id || index}>
-                          {b.name}
-                          {index < Math.min(2, employee.branches.length) - 1 &&
+                      {employee?.branches?.slice(0, 2)?.map((b, index) => (
+                        <span key={b?.id || index}>
+                          {b?.name}
+                          {index < Math.min(2, employee?.branches?.length) - 1 &&
                             ", "}
                         </span>
                       ))}
 
-                      {employee.branches.length > 2 && (
+                      {employee?.branches?.length > 2 && (
                         <span className="text-gray-500 ml-1">
-                          +{employee.branches.length - 2}
+                          +{employee?.branches?.length - 2}
                         </span>
                       )}
                     </>
@@ -213,78 +269,27 @@ const EmployeesData = async ({
                   )}
                 </TableCell>
                 <TableCell className="text-center">
-                  {employee?.role?.name || "—"}
-                </TableCell>
-                <TableCell className="text-center">
                   {employee?.display_order ?? "—"}
                 </TableCell>
                 <TableCell className="text-center">
                   {employee?.blood_group || "—"}
                 </TableCell>
-                {/* <TableCell className="text-center">
-                                    <Badge
-                                        variant={
-                                            +employee.employment_type === 0
-                                                ? "default"
-                                                : +employee.employment_type === 1
-                                                    ? "secondary"
-                                                    : +employee.employment_type === 2
-                                                        ? "outline"
-                                                        : +employee.employment_type === 3
-                                                            ? "destructive"
-                                                            : "default"
-                                        }
-                                    >
-                                        {+employee.employment_type === 0
-                                            ? "Probation"
-                                            : +employee.employment_type === 1
-                                                ? "Full-time"
-                                                : +employee.employment_type === 2
-                                                    ? "Part-time"
-                                                    : +employee.employment_type === 3
-                                                        ? "Contractual"
-                                                        : "—"}
-                                    </Badge>
-                                </TableCell> */}
+
 
                 <TableCell className="text-center">
-                  {(() => {
-                    let label = "—";
-                    let variant:
-                      | "default"
-                      | "secondary"
-                      | "outline"
-                      | "destructive" = "default";
+                  {getEmploymentTypeBadge(employee?.employment_type)}
+                </TableCell>
 
-                    if (
-                      employee?.employment_type !== null &&
-                      employee?.employment_type !== undefined
-                    ) {
-                      switch (Number(employee.employment_type)) {
-                        case 0:
-                          label = "Probation";
-                          variant = "default";
-                          break;
-
-                        case 1:
-                          label = "Full-time";
-                          variant = "secondary";
-                          break;
-
-                        case 2:
-                          label = "Part-time";
-                          variant = "outline";
-                          break;
-
-                        case 3:
-                          label = "Contractual";
-                          variant = "destructive";
-                          break;
-                      }
-                    }
-
-                    return <Badge variant={variant}>{label}</Badge>;
-                  })()}
+                <TableCell className="text-center">
+                  <PermissionGuard
+                    requiredPermission="update-employee-status"
+                    fallback={getStatusBadge(employee?.is_blocked)}
+                  >
+                    <ToggleEmployeeStatusButton
+                      id={employee?.id}
+                      isBlocked={employee?.is_blocked ?? 0}
+                    />
+                  </PermissionGuard>
                 </TableCell>
               </TableRow>
             ))}

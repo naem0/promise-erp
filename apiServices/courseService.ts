@@ -1062,3 +1062,63 @@ export async function getPublicCoursesAll(): Promise<CourseResponse> {
     }
   }
 }
+
+// =======================
+// Get Course Overview Stats
+// =======================
+
+export interface CourseOverviewMetrics {
+  value: number;
+}
+
+export interface CourseOverviewStat {
+  card_name: string;
+  metrics: CourseOverviewMetrics;
+}
+
+export interface CourseOverviewStatsResponse {
+  success: boolean;
+  message: string;
+  code: number;
+  data: CourseOverviewStat[];
+  errors?: Record<string, string[]>;
+}
+
+export async function getCourseOverviewStats(): Promise<CourseOverviewStatsResponse | null> {
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+  if (!token) throw new Error("No valid session/token");
+
+  try {
+    const res = await fetch(`${API_BASE}/courses/list-overview`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (res.status === 404) {
+      console.warn("Course overview stats not found (404). Returning null.");
+      return null;
+    }
+    if (res.status === 401 || res.status === 403){
+      console.warn("Unauthorized or forbidden access (401/403) while fetching course overview stats. Returning null.");
+      return null;
+    }
+       
+
+    if (!res.ok) {
+      throw new Error(`Status: ${res.status} ${res.statusText}`);
+    }
+
+    const result: CourseOverviewStatsResponse = await res.json();
+    return result;
+  } catch (error: unknown) {
+    console.error("getCourseOverviewStats error:", error);
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error("Failed to fetch course overview stats");
+  }
+}
+

@@ -9,22 +9,29 @@ const EmployeesSummaryWrapper = async () => {
   try {
     stats = await getEmployeeStats();
   } catch (error: unknown) {
-    if (typeof error === "object" && error !== null && "digest" in error) throw error;
-    console.error("Error fetching employees stats:", error);
-    const message = error instanceof Error ? error.message : "Failed to fetch employees stats";
+    if (
+      typeof error === "object" && error !== null && "digest" in error
+    ) {
+      throw error;
+    }
+
+    const message =error instanceof Error? error.message: "Failed to fetch employee stats";
+
     return (
-      <div className="py-10 xl:py-16">
+      <div className="py-10">
         <ErrorComponent message={message} />
       </div>
     );
   }
 
-  if (!stats) return null;
+  if (!stats) {
+    return null;
+  }
 
   const iconList = [Users, UserCheck, UserCog, CalendarDays, Briefcase, UserPlus];
-  const mappedData = stats.data.map((item, index) => ({
+  const mappedData = stats?.data?.map((item, index) => ({
     ...item,
-    icon: iconList[index % iconList.length],
+    icon: iconList[index % iconList?.length],
   }));
 
   return <LmsCommonSummary data={mappedData} />;

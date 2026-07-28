@@ -13,12 +13,12 @@ const TrainerItemCard = ({ trainer }: TrainerProps) => {
   return (
     <>
       <div onClick={() => setOpen(true)} className="flex flex-col items-center group cursor-pointer h-full">
-        <div className="z-10 relative h-40 w-[65%] bg-white rounded-2xl shadow-xl transition-transform duration-500 group-hover:scale-105">
+        <div className="z-10 relative h-44 w-[70%] bg-white rounded-2xl overflow-hidden shadow-xl transition-transform duration-500 group-hover:scale-105">
           <Image
             src={trainer?.profile_image || "/images/placeholder_img.jpg"}
             alt={trainer?.name || "teacher image"}
             fill
-            className="border border-primary/10 object-cover rounded-2xl transition-transform duration-700"
+            className="border border-primary/10 object-contain object-top rounded-2xl transition-transform duration-700"
           />
         </div>
 
