@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
 import Link from "next/link";
 import PermissionGuard from "@/components/auth/PermissionGuard";
+import CoursesSummaryWrapper from "@/components/lms/courses/CoursesSummaryWrapper";
 
 export default function CoursesPage({
   searchParams,
@@ -24,6 +25,9 @@ export default function CoursesPage({
           </Button>
         </PermissionGuard>
       </div>
+
+      {/* Summary Cards */}
+      <CoursesSummaryWrapper />
 
       {/*
         NO page-level <Suspense> here on purpose. The dynamic filter + table
