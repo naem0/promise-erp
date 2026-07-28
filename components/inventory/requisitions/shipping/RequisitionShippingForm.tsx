@@ -5,9 +5,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
-import { useForm } from "react-hook-form";
+import { useForm, Control, UseFormRegister, UseFormWatch, UseFormSetValue, FieldErrors } from "react-hook-form";
 import DeliveryInformationPanel, {
   DeliveryType,
+  DeliveryFormValues,
 } from "./DeliveryInformationPanel";
 import DeliveryDetailsPanel from "./DeliveryDetailsPanel";
 import { createDelivery, RequisitionShippingDetail, ShippingItem } from "@/apiServices/inventoryDeliveriesService";
@@ -23,14 +24,7 @@ interface RequisitionWithItems extends RequisitionShippingDetail {
   items: ShippingItemWithState[];
 }
 
-export interface FormValues {
-  deliveryType: DeliveryType | "";
-  deliveredBy: number | string;
-  deliveryPartnerId: number | string;
-  status: string;
-  deliveryCost: string;
-  description: string;
-  invoiceFile: File | null;
+export interface FormValues extends DeliveryFormValues {
   requisitions: RequisitionWithItems[];
 }
 
@@ -244,11 +238,11 @@ export default function RequisitionShippingForm({
         {/* Left — Delivery Information */}
         <div className="lg:sticky lg:top-4">
           <DeliveryInformationPanel
-            control={control}
-            register={register}
-            errors={errors}
-            watch={watch}
-            setValue={setValue}
+            control={control as unknown as Control<DeliveryFormValues>}
+            register={register as unknown as UseFormRegister<DeliveryFormValues>}
+            errors={errors as FieldErrors<DeliveryFormValues>}
+            watch={watch as unknown as UseFormWatch<DeliveryFormValues>}
+            setValue={setValue as unknown as UseFormSetValue<DeliveryFormValues>}
             isSubmitting={isSubmitting}
             deliveryPartners={deliveryPartners}
             employees={employees}

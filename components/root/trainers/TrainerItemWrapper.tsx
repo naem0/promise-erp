@@ -47,15 +47,15 @@ const TrainerItemWrapper = async ({ searchParams }: TrainersParams) => {
         Expert Trainers
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 gap-y-8">
-        {seniorTrainers.length === 0 ? (
+        {seniorTrainers?.length === 0 ? (
           <div className="col-span-full flex items-center justify-center h-full">
             <NotFoundComponent
               message={teachers?.message || "No trainers found"}
             />
           </div>
         ) : (
-          seniorTrainers.map((trainer) => (
-            <TrainerItemCard key={trainer.id} trainer={trainer} />
+          seniorTrainers?.map((trainer) => (
+            <TrainerItemCard key={trainer?.id} trainer={trainer} />
           ))
         )}
       </div>

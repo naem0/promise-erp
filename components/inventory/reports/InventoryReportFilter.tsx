@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Search, FilterX, X } from "lucide-react";
 import { ProductCategory } from "@/apiServices/inventoryCategoriesService";
 import { Room } from "@/apiServices/inventoryRoomsService";
+import PerPageSelect from "@/components/common/PerPageSelect";
 
 interface FilterFormValues {
   search?: string;
@@ -91,6 +92,7 @@ export default function InventoryReportFilter({
     params.delete("category_id");
     params.delete("room_id");
     params.delete("is_store");
+    params.delete("per_page");
     params.delete("page");
 
     router.replace(`${pathname}?${params.toString()}`, { scroll: false });
@@ -100,7 +102,8 @@ export default function InventoryReportFilter({
     !!watchedValues.search ||
     !!watchedValues.category_id ||
     !!watchedValues.room_id ||
-    !!watchedValues.is_store;
+    !!watchedValues.is_store ||
+    !!searchParams.get("per_page");
 
   return (
     <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-3.5 print:hidden">
@@ -122,7 +125,7 @@ export default function InventoryReportFilter({
         )}
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3">
         {/* Search */}
         <div className="space-y-1">
           <div className="relative">
@@ -231,7 +234,13 @@ export default function InventoryReportFilter({
             )}
           />
         </div>
+
+        {/* Per Page Select */}
+        <div className="space-y-1">
+          <PerPageSelect className="w-full" />
+        </div>
       </div>
     </div>
   );
 }
+

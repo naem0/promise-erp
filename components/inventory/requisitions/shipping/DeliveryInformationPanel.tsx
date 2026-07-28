@@ -32,11 +32,11 @@ export interface DeliveryFormValues {
 }
 
 interface DeliveryInformationPanelProps {
-  control: Control<any>;
-  register: UseFormRegister<any>;
-  errors: FieldErrors<any>;
-  watch: UseFormWatch<any>;
-  setValue: UseFormSetValue<any>;
+  control: Control<DeliveryFormValues>;
+  register: UseFormRegister<DeliveryFormValues>;
+  errors: FieldErrors<DeliveryFormValues>;
+  watch: UseFormWatch<DeliveryFormValues>;
+  setValue: UseFormSetValue<DeliveryFormValues>;
   isSubmitting: boolean;
   deliveryPartners: DeliveryPartner[];
   employees: Employee[];
@@ -63,10 +63,9 @@ function DeliveryTypeOption({
       type="button"
       onClick={onClick}
       className={`flex items-center gap-2 px-4 py-2.5 rounded-lg border text-sm font-medium transition-all duration-150 w-full cursor-pointer
-        ${
-          selected
-            ? "bg-[#eafaf1] border-[#008738] text-[#008738] shadow-sm font-semibold"
-            : "bg-white border-slate-200 text-slate-500 hover:border-slate-300 hover:text-slate-700"
+        ${selected
+          ? "bg-[#eafaf1] border-[#008738] text-[#008738] shadow-sm font-semibold"
+          : "bg-white border-slate-200 text-slate-500 hover:border-slate-300 hover:text-slate-700"
         }`}
     >
       <span
@@ -181,11 +180,11 @@ const DELIVERY_TYPES: {
   label: DeliveryType;
   icon: React.ReactNode;
 }[] = [
-  { label: "Courier", icon: <Truck className="h-4 w-4" /> },
-  { label: "Physical", icon: <Wrench className="h-4 w-4" /> },
-  { label: "Transport", icon: <AlertTriangle className="h-4 w-4" /> },
-  { label: "Air", icon: <ArrowLeftRight className="h-4 w-4" /> },
-];
+    { label: "Courier", icon: <Truck className="h-4 w-4" /> },
+    { label: "Physical", icon: <Wrench className="h-4 w-4" /> },
+    { label: "Transport", icon: <AlertTriangle className="h-4 w-4" /> },
+    { label: "Air", icon: <ArrowLeftRight className="h-4 w-4" /> },
+  ];
 
 export default function DeliveryInformationPanel({
   control,

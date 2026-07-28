@@ -11,18 +11,19 @@ const NewsFeedsCardItems = ({ item }: NewsFeedsCardItemsProps) => {
     <Card className="shadow-md rounded-lg h-full py-0 overflow-hidden">
       <CardContent className="py-4 px-4 overflow-hidden">
         <h4 className="mb-4">
-          <Link href={item.news_link || "#"} className="text-base lg:text-xl font-bold">
-            {item.title}
+          <Link target="_blank" href={item?.news_link || "#"} className="text-base lg:text-xl font-bold">
+            {item?.title}
           </Link>
         </h4>
         <Link
-          href={item.news_link || "#"}
+          href={item?.news_link || "#"}
           className="block w-full h-full relative"
+          target="_blank"
         >
           <div className="w-full h-[260px] lg:h-[330px] relative border border-primary/10 rounded-lg ">
             <Image
-              src={item.image || "/images/placeholder_img.jpg"}
-              alt={item.news_link || "News Image"}
+              src={item?.image || "/images/placeholder_img.jpg"}
+              alt={item?.news_link || "News Image"}
               fill
               className="object-cover rounded-lg"
             />

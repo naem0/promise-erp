@@ -5,15 +5,15 @@ import { Combobox } from '@/components/ui/combobox'
 import { getPublicBranchListAll, PublicBranch } from '@/apiServices/branchService'
  
 interface BranchSearchSelectProps {
-  value: string
-  onValueChange: (value: string | null) => void
+  value?: string | null
+  onValueChange?: (value: string | null) => void
   placeholder?: string
   disabled?: boolean
   className?: string
 }
 
 export default function BranchSearchSelect({
-  value,
+  value = "",
   onValueChange,
   placeholder = "Select branch",
   disabled = false,

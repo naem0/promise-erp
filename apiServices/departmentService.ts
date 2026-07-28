@@ -303,3 +303,83 @@ export async function deleteDepartment(
     }
   }
 }
+
+// =======================
+// DEPARTMENTS SIMPLE LIST
+// =======================
+
+export interface SimpleDepartment {
+  id: number;
+  name: string;
+  status: number;
+}
+
+export interface DepartmentsSimpleListApiResponse {
+  success: boolean;
+  message: string;
+  code: number;
+  data: {
+    total_departments: number;
+    departments: SimpleDepartment[];
+    pagination?: PaginationType;
+  };
+  errors?: Record<string, string[]>;
+}
+
+export async function getDepartmentsSimpleList(
+  search?: string,
+): Promise<DepartmentsSimpleListApiResponse | null> {
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+
+  if (!token) {
+    throw new Error("Unauthorized: Access token not found");
+  }
+
+  try {
+    const urlParams = new URLSearchParams();
+    if (search) {
+      urlParams.append("search", search);
+    }
+
+    const queryString = urlParams.toString();
+    const url = queryString
+      ? `${API_BASE}/departments/simple-list?${queryString}`
+      : `${API_BASE}/departments/simple-list`;
+
+    const res = await fetch(url, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (res.status === 404) {
+      console.warn("Departments not found (404).");
+      return null;
+    }
+
+    if (res.status === 401 || res.status === 403) {
+      console.warn("Unauthorized: Access token not found.");
+      return null;
+    }
+
+    if (!res.ok) {
+      throw new Error(
+        `getDepartmentsSimpleList API Error: ${res.status} ${res.statusText}`,
+      );
+    }
+
+    const data: DepartmentsSimpleListApiResponse = await res.json();
+    return data;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("getDepartmentsSimpleList Error:", error.message);
+      throw error;
+    }
+    throw new Error(
+      "Unknown error occurred while fetching departments simple list",
+    );
+  }
+}
