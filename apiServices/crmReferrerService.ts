@@ -198,7 +198,9 @@ export async function createCRMReferrer(
 
     const result = await res.json();
 
-    updateTag("crm-referrers-list");
+    if (res.ok && result?.success) {
+      updateTag("crm-referrers-list");
+    }
     return result;
   } catch (error: unknown) {
     console.error("Error in createCRMReferrer:", error);
@@ -238,7 +240,9 @@ export async function updateCRMReferrer(
 
     const result = await res.json();
 
-    updateTag("crm-referrers-list");
+    if (res.ok && result?.success) {
+      updateTag("crm-referrers-list");
+    }
     return result;
   } catch (error: unknown) {
     console.error("Error in updateCRMReferrer:", error);
@@ -275,7 +279,9 @@ export async function deleteCRMReferrer(
 
     const result = await res.json();
 
-    updateTag("crm-referrers-list");
+    if (res.ok && result?.success) {
+      updateTag("crm-referrers-list");
+    }
     return result;
   } catch (error: unknown) {
     console.error("Error in deleteCRMReferrer:", error);

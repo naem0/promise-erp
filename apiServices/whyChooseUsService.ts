@@ -192,7 +192,7 @@ export async function createWhyChooseUs(
 
     const result = await res.json();
 
-    if (result.success) {
+    if (res.ok && result?.success) {
       updateTag("why-choose-us-list");
     }
     return result;
@@ -230,7 +230,7 @@ export async function updateWhyChooseUs(
 
     const result = await res.json();
 
-    if (result.success) {
+    if (res.ok && result?.success) {
       updateTag("why-choose-us-list");
     }
     return result;
@@ -267,7 +267,9 @@ export async function deleteWhyChooseUs(
 
     const result = await res.json();
 
-    updateTag("why-choose-us-list");
+    if (res.ok && result?.success) {
+      updateTag("why-choose-us-list");
+    }
     return result;
   } catch (error: unknown) {
     console.error("Error in deleteWhyChooseUs:", error);

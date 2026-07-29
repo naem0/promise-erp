@@ -114,11 +114,16 @@ export async function assignLeadsToUser(
     });
 
 
-    updateTag("crm-leads-list");
-    updateTag("leads-activity-list");
-    updateTag("today-follow-up-leads");
-    
     const result = await res.json();
+
+    if (res.ok && result?.success) {
+      updateTag("crm-leads-list");
+      if (res.ok && result?.success) {
+        updateTag("leads-activity-list");
+        updateTag("today-follow-up-leads");
+      }
+    }
+
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {

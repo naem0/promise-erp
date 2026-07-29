@@ -287,7 +287,9 @@ export async function createBrand(
 
     const result = await res.json();
 
-    updateTag("brands-list");
+    if (res.ok && result?.success) {
+      updateTag("brands-list");
+    }
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -327,7 +329,9 @@ export async function updateBrand(
 
     const result = await res.json();
 
-    updateTag("brands-list");
+    if (res.ok && result?.success) {
+      updateTag("brands-list");
+    }
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -360,7 +364,9 @@ export async function deleteBrand(id: number): Promise<SingleBrandResponse> {
 
     const result = await res.json();
 
-    updateTag("brands-list");
+    if (res.ok && result?.success) {
+      updateTag("brands-list");
+    }
     return result;
   } catch (error: unknown) {
     console.error("Error in deleteBrand:", error);

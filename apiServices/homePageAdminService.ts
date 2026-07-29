@@ -176,7 +176,9 @@ export async function createHeroSection(
     });
 
     const result = await response.json();
-    updateTag("hero-sections-list");
+    if (response.ok && result?.success) {
+      updateTag("hero-sections-list");
+    }
 
     return result;
   } catch (error: unknown) {
@@ -218,7 +220,9 @@ export async function updateHeroSection(
 
     const result = await res.json();
 
-    updateTag("hero-sections-list");
+    if (res.ok && result?.success) {
+      updateTag("hero-sections-list");
+    }
 
     return result;
   } catch (error: unknown) {
@@ -252,7 +256,9 @@ export async function deleteHeroSection(
 
     const result = await res.json();
 
-    updateTag("hero-sections-list");
+    if (res.ok && result?.success) {
+      updateTag("hero-sections-list");
+    }
 
     return result;
   } catch (error: unknown) {
@@ -410,7 +416,9 @@ export async function createVideoGallery(formData: FormData): Promise<SingleVide
 
     const result = await response.json();
 
-    updateTag("public-reviews");
+    if (response.ok && result?.success) {
+      updateTag("public-reviews");
+    }
     return result;
   } catch (error: unknown) {
     console.error("Error in createVideoGallery:", error);
@@ -444,7 +452,9 @@ export async function updateVideoGallery(
 
     const result = await res.json();
 
-    updateTag("public-reviews");
+    if (res.ok && result?.success) {
+      updateTag("public-reviews");
+    }
 
     return result;
   } catch (error: unknown) {
@@ -478,7 +488,9 @@ export async function deleteVideoGallery(
     });
     const result = await res.json();
 
-    updateTag("public-reviews");
+    if (res.ok && result?.success) {
+      updateTag("public-reviews");
+    }
     return result;
   } catch (error: unknown) {
     console.error("Error in deleteVideoGallery:", error);
@@ -663,18 +675,22 @@ export async function createCommonSection(
 
     const result = await response.json();
 
-    updateTag("common-sections-list");
-    updateTag("categories-list");
-    updateTag("public-services");
-    updateTag("public-govt-course");
-    updateTag("public-opportunity");
-    updateTag("public-teachers");
-    updateTag("public-video-galleries");
-    updateTag("public-blog");
-    updateTag("public-reviews");
-    updateTag("public-news-feeds");
-    updateTag("affiliates-clients");
-    updateTag("public-branches");
+    if (response.ok && result?.success) {
+      updateTag("common-sections-list");
+      if (response.ok && result?.success) {
+        updateTag("categories-list");
+        updateTag("public-services");
+        updateTag("public-govt-course");
+        updateTag("public-opportunity");
+        updateTag("public-teachers");
+        updateTag("public-video-galleries");
+        updateTag("public-blog");
+        updateTag("public-reviews");
+        updateTag("public-news-feeds");
+        updateTag("affiliates-clients");
+        updateTag("public-branches");
+      }
+    }
 
     revalidatePath("/web-content/common-sections");
     revalidatePath("/about");
@@ -715,18 +731,22 @@ export async function updateCommonSection(
 
     const result = await res.json();
 
-    updateTag("common-sections-list");
-    updateTag("categories-list");
-    updateTag("public-services");
-    updateTag("public-govt-course");
-    updateTag("public-opportunity");
-    updateTag("public-teachers");
-    updateTag("public-video-galleries");
-    updateTag("public-blog");
-    updateTag("public-reviews");
-    updateTag("public-news-feeds");
-    updateTag("affiliates-clients");
-    updateTag("public-branches");
+    if (res.ok && result?.success) {
+      updateTag("common-sections-list");
+      if (res.ok && result?.success) {
+        updateTag("categories-list");
+        updateTag("public-services");
+        updateTag("public-govt-course");
+        updateTag("public-opportunity");
+        updateTag("public-teachers");
+        updateTag("public-video-galleries");
+        updateTag("public-blog");
+        updateTag("public-reviews");
+        updateTag("public-news-feeds");
+        updateTag("affiliates-clients");
+        updateTag("public-branches");
+      }
+    }
 
     revalidatePath("/web-content/common-sections");
     revalidatePath("/web-content/common-sections/[id]/edit", "page");
@@ -766,18 +786,22 @@ export async function deleteCommonSection(
     const result = await res.json();
 
 
-    updateTag("common-sections-list");
-    updateTag("categories-list");
-    updateTag("public-services");
-    updateTag("public-govt-course");
-    updateTag("public-opportunity");
-    updateTag("public-teachers");
-    updateTag("public-video-galleries");
-    updateTag("public-blog");
-    updateTag("public-reviews");
-    updateTag("public-news-feeds");
-    updateTag("affiliates-clients");
-    updateTag("public-branches");
+    if (res.ok && result?.success) {
+      updateTag("common-sections-list");
+      if (res.ok && result?.success) {
+        updateTag("categories-list");
+        updateTag("public-services");
+        updateTag("public-govt-course");
+        updateTag("public-opportunity");
+        updateTag("public-teachers");
+        updateTag("public-video-galleries");
+        updateTag("public-blog");
+        updateTag("public-reviews");
+        updateTag("public-news-feeds");
+        updateTag("affiliates-clients");
+        updateTag("public-branches");
+      }
+    }
 
     revalidatePath("/web-content/common-sections");
     revalidatePath("/about");
@@ -960,8 +984,12 @@ export async function createOpportunity(
 
     const result = await response.json();
 
-    updateTag("opportunities-list");
-    updateTag("public-opportunity");
+    if (response.ok && result?.success) {
+      updateTag("opportunities-list");
+      if (response.ok && result?.success) {
+        updateTag("public-opportunity");
+      }
+    }
 
     return result;
   } catch (error: unknown) {
@@ -999,8 +1027,12 @@ export async function updateOpportunity(
 
     const result = await res.json();
 
-    updateTag("opportunities-list");
-    updateTag("public-opportunity");
+    if (res.ok && result?.success) {
+      updateTag("opportunities-list");
+      if (res.ok && result?.success) {
+        updateTag("public-opportunity");
+      }
+    }
 
     return result;
   } catch (error: unknown) {
@@ -1035,8 +1067,12 @@ export async function deleteOpportunity(
 
     const result = await res.json();
 
-    updateTag("opportunities-list");
-    updateTag("public-opportunity");
+    if (res.ok && result?.success) {
+      updateTag("opportunities-list");
+      if (res.ok && result?.success) {
+        updateTag("public-opportunity");
+      }
+    }
 
     return result;
   } catch (error: unknown) {
@@ -1212,7 +1248,9 @@ export async function createPartner(
 
     const result = await response.json();
 
-    updateTag("partners-list");
+    if (response.ok && result?.success) {
+      updateTag("partners-list");
+    }
 
     return result;
   } catch (error: unknown) {
@@ -1250,7 +1288,9 @@ export async function updatePartner(
 
     const result = await res.json();
 
-    updateTag("partners-list");
+    if (res.ok && result?.success) {
+      updateTag("partners-list");
+    }
 
     return result;
   } catch (error: unknown) {
@@ -1285,7 +1325,9 @@ export async function deletePartner(
 
     const result = await res.json();
 
-    updateTag("partners-list");
+    if (res.ok && result?.success) {
+      updateTag("partners-list");
+    }
 
     return result;
   } catch (error: unknown) {
@@ -1466,8 +1508,12 @@ export async function createNewsFeed(
 
     const result = await response.json();
 
-    updateTag("news-feeds-list");
-    updateTag("public-news-feeds");
+    if (response.ok && result?.success) {
+      updateTag("news-feeds-list");
+      if (response.ok && result?.success) {
+        updateTag("public-news-feeds");
+      }
+    }
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -1504,8 +1550,12 @@ export async function updateNewsFeed(
 
     const result = await res.json();
 
-    updateTag("news-feeds-list");
-    updateTag("public-news-feeds");
+    if (res.ok && result?.success) {
+      updateTag("news-feeds-list");
+      if (res.ok && result?.success) {
+        updateTag("public-news-feeds");
+      }
+    }
 
     return result;
   } catch (error: unknown) {
@@ -1540,8 +1590,12 @@ export async function deleteNewsFeed(
 
     const result = await res.json();
 
-    updateTag("news-feeds-list");
-    updateTag("public-news-feeds");
+    if (res.ok && result?.success) {
+      updateTag("news-feeds-list");
+      if (res.ok && result?.success) {
+        updateTag("public-news-feeds");
+      }
+    }
 
     return result;
   } catch (error: unknown) {
@@ -1704,7 +1758,9 @@ export async function createImageGallery(formData: FormData): Promise<SingleImag
 
     const result = await response.json();
 
-    updateTag("image-galleries-list");
+    if (response.ok && result?.success) {
+      updateTag("image-galleries-list");
+    }
     return result;
   } catch (error: unknown) {
     console.error("Error in createImageGallery:", error);
@@ -1739,7 +1795,9 @@ export async function updateImageGallery(
 
     const result = await res.json();
 
-    updateTag("image-galleries-list");
+    if (res.ok && result?.success) {
+      updateTag("image-galleries-list");
+    }
 
     return result;
   } catch (error: unknown) {
@@ -1773,7 +1831,9 @@ export async function deleteImageGallery(
     });
     const result = await res.json();
 
-    updateTag("image-galleries-list");
+    if (res.ok && result?.success) {
+      updateTag("image-galleries-list");
+    }
     return result;
   } catch (error: unknown) {
     console.error("Error in deleteImageGallery:", error);

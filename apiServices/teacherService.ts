@@ -88,7 +88,9 @@ export async function addTeacher(
       return result;
     }
 
-    updateTag("teachers-list");
+    if (res.ok && result?.success) {
+      updateTag("teachers-list");
+    }
     return {
       success: true,
       message: result.message || "Teacher added successfully.",
@@ -207,7 +209,9 @@ export async function updateTeacher(
       return result;
     }
 
-    updateTag("teachers-list");
+    if (res.ok && result?.success) {
+      updateTag("teachers-list");
+    }
     return {
       success: true,
       message: result.message || "Teacher updated successfully.",
@@ -245,7 +249,9 @@ export async function deleteTeacher(id: number): Promise<{ success: boolean; mes
       return { success: false, message: result.message, code: result.code };
     }
     
-    updateTag("teachers-list");
+    if (res.ok && result?.success) {
+      updateTag("teachers-list");
+    }
     return { success: true, message: result.message || "Teacher deleted successfully", code: result.code };
   } catch (error) {
     const errorResult = await handleApiError(error, "Failed to delete teacher");

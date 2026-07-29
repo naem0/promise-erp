@@ -164,7 +164,9 @@ export async function createTool(
 
         const result = await res.json();
 
-        updateTag("tools-list");
+        if (res.ok && result?.success) {
+          updateTag("tools-list");
+        }
         return result;
     } catch (error: unknown) {
         if (error instanceof Error) {
@@ -203,7 +205,9 @@ export async function updateTool(
 
         const result = await res.json();
 
-        updateTag("tools-list");
+        if (res.ok && result?.success) {
+          updateTag("tools-list");
+        }
         return result;
     } catch (error: unknown) {
         if (error instanceof Error) {
@@ -238,7 +242,9 @@ export async function deleteTool(id: number): Promise<SingleToolResponse> {
 
         const result = await res.json();
 
-        updateTag("tools-list");
+        if (res.ok && result?.success) {
+          updateTag("tools-list");
+        }
         return result;
     } catch (error: unknown) {
         console.error("Error in deleteTool:", error);

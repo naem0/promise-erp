@@ -232,7 +232,9 @@ export async function createCRMLead(
 
     const result = await res.json();
 
-    updateTag("crm-leads-list");
+    if (res.ok && result?.success) {
+      updateTag("crm-leads-list");
+    }
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -268,7 +270,9 @@ export async function updateCRMLead(
 
     const result = await res.json();
 
-    updateTag("crm-leads-list");
+    if (res.ok && result?.success) {
+      updateTag("crm-leads-list");
+    }
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -306,7 +310,9 @@ export async function deleteCRMLead(
 
     const result = await res.json();
 
-    updateTag("crm-leads-list");
+    if (res.ok && result?.success) {
+      updateTag("crm-leads-list");
+    }
     return result;
   } catch (error: unknown) {
     console.error("Error in deleteCRMLead:", error);
@@ -348,7 +354,9 @@ export async function importCRMLeads(formData: FormData): Promise<CRMLeadsImport
     const result = await res.json();
 
     // Invalidate the cache to show the new imported leads
-    updateTag("crm-leads-list");
+    if (res.ok && result?.success) {
+      updateTag("crm-leads-list");
+    }
     return result;
   } catch (error: unknown) {
     console.error("Error in importCRMLeads:", error);

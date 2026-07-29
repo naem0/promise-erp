@@ -36,8 +36,8 @@ const BranchesClient = async ({ searchParams }: BranchesPageProps) => {
     const res = await getPublicWebBranches(params);
     if (res?.success) {
       result = res;
-      divisions = res?.data || [];
-      branches = divisions.flatMap((division) => division.branches) || [];
+      divisions = res?.data;
+      branches = divisions?.flatMap((division) => division?.branches) || [];
     }
 
     // Fetch divisions server-side
@@ -69,7 +69,7 @@ const BranchesClient = async ({ searchParams }: BranchesPageProps) => {
         {/* Pass server-side division data */}
         <BranchHeader divisions={divisionList} />
         <div className="grid gap-4 md:grid-cols-2">
-          {branches.length === 0 ? (
+          {branches?.length === 0 ? (
             <div className="col-span-full flex justify-center items-center w-full">
               <NotFoundComponent
                 message={result?.message || "No branches found"}

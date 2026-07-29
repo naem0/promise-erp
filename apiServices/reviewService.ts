@@ -172,7 +172,9 @@ export async function createReview(
 
     const result = await res.json();
 
-    updateTag("reviews-list");
+    if (res.ok && result?.success) {
+      updateTag("reviews-list");
+    }
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -210,7 +212,9 @@ export async function updateReview(
 
     const result = await res.json();
 
-    updateTag("reviews-list");
+    if (res.ok && result?.success) {
+      updateTag("reviews-list");
+    }
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -247,7 +251,9 @@ export async function approveReview(
 
     const result = await res.json();
 
-    updateTag("reviews-list");
+    if (res.ok && result?.success) {
+      updateTag("reviews-list");
+    }
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -282,7 +288,9 @@ export async function deleteReview(
 
     const result = await res.json();
 
-    updateTag("reviews-list");
+    if (res.ok && result?.success) {
+      updateTag("reviews-list");
+    }
     return result;
   } catch (error: unknown) {
     console.error("Error in deleteReview:", error);

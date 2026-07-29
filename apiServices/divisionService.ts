@@ -134,7 +134,9 @@ export async function addDivision(
       return result;
     }
     
-    updateTag("divisions-list");
+    if (res.ok && result?.success) {
+      updateTag("divisions-list");
+    }
     return {
       success: true,
       message: result.message || "Division added successfully.",
@@ -220,7 +222,9 @@ export async function updateDivision(
       return result;
     }
     
-    updateTag("divisions-list");
+    if (res.ok && result?.success) {
+      updateTag("divisions-list");
+    }
     return {
       success: true,
       message: result.message || "Division updated successfully.",
@@ -259,7 +263,9 @@ export async function deleteDivision(id: number): Promise<{ success: boolean; me
     }
 
     // If the response is OK, assume success and provide a default message
-    updateTag("divisions-list")
+    if (res.ok) {
+      updateTag("divisions-list")
+    }
     return { success: true, message: "Division deleted successfully." };
   } catch (error) {
     console.error("Error in deleteDivision:", error)

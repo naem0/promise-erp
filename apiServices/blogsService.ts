@@ -175,7 +175,9 @@ export async function createBlog(
 
         const result = await res.json();
 
-        updateTag("blogs-list");
+        if (res.ok && result?.success) {
+          updateTag("blogs-list");
+        }
         return result;
     } catch (error: unknown) {
         console.error("Error in createBlog:", error);
@@ -212,7 +214,9 @@ export async function updateBlog(
 
         const result = await res.json();
 
-        updateTag("blogs-list");
+        if (res.ok && result?.success) {
+          updateTag("blogs-list");
+        }
         return result;
     } catch (error: unknown) {
         console.error("Error in updateBlog:", error);
@@ -248,7 +252,9 @@ export async function deleteBlog(id: number): Promise<SingleBlogResponse> {
 
         const result = await res.json();
 
-        updateTag("blogs-list");
+        if (res.ok && result?.success) {
+          updateTag("blogs-list");
+        }
         return result;
     } catch (error: unknown) {
         console.error("Error in deleteBlog:", error);

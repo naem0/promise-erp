@@ -239,7 +239,9 @@ export async function createGroupItem(
 
     const result = await res.json();
 
-    updateTag("group-items-list");
+    if (res.ok && result?.success) {
+      updateTag("group-items-list");
+    }
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -276,7 +278,9 @@ export async function updateGroupItem(
 
     const result = await res.json();
 
-    updateTag("group-items-list");
+    if (res.ok && result?.success) {
+      updateTag("group-items-list");
+    }
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -311,7 +315,9 @@ export async function deleteGroupItem(
 
     const result = await res.json();
 
-    updateTag("group-items-list");
+    if (res.ok && result?.success) {
+      updateTag("group-items-list");
+    }
     return result;
   } catch (error: unknown) {
     console.error("Error in deleteGroupItem:", error);

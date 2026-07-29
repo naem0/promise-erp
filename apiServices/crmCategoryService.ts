@@ -166,7 +166,9 @@ export async function createCRMCategory(
 
     const result = await res.json();
 
-    updateTag("crm-categories-list");
+    if (res.ok && result?.success) {
+      updateTag("crm-categories-list");
+    }
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -206,7 +208,9 @@ export async function updateCRMCategory(
 
     const result = await res.json();
 
-    updateTag("crm-categories-list");
+    if (res.ok && result?.success) {
+      updateTag("crm-categories-list");
+    }
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -243,7 +247,9 @@ export async function deleteCRMCategory(
 
     const result = await res.json();
 
-    updateTag("crm-categories-list");
+    if (res.ok && result?.success) {
+      updateTag("crm-categories-list");
+    }
     return result;
   } catch (error: unknown) {
     console.error("Error in deleteCRMCategory:", error);

@@ -169,7 +169,9 @@ export async function createFaq(
 
     const result = await res.json();
 
-    updateTag("faqs-list");
+    if (res.ok && result?.success) {
+      updateTag("faqs-list");
+    }
     return result;
   } catch (error: unknown) {
    if (error instanceof Error) {
@@ -214,7 +216,9 @@ export async function updateFaq(
     const result = await res.json();
 
 
-    updateTag("faqs-list");
+    if (res.ok && result?.success) {
+      updateTag("faqs-list");
+    }
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -249,7 +253,9 @@ export async function deleteFaq(id: number): Promise<SingleFaqResponse> {
 
     const result = await res.json()
 
-    updateTag("faqs-list");
+    if (res.ok && result?.success) {
+      updateTag("faqs-list");
+    }
     return result;
   } catch (error: unknown) {
     console.error("Error in deleteFaq:", error);

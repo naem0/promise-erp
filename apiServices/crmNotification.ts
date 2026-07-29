@@ -261,7 +261,9 @@ export async function markCRMNotificationAsRead(
 
     const result = await res.json();
 
-    updateTag("crm-notifications-list");
+    if (res.ok && result?.success) {
+      updateTag("crm-notifications-list");
+    }
 
     return result;
   } catch (error: unknown) {

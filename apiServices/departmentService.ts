@@ -185,7 +185,9 @@ export async function createDepartment(data: {
 
     const result = await res.json();
 
-    updateTag("departments-list");
+    if (res.ok && result?.success) {
+      updateTag("departments-list");
+    }
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -222,7 +224,9 @@ export async function updateDepartment(
 
     const result = await res.json();
 
-    updateTag("departments-list");
+    if (res.ok && result?.success) {
+      updateTag("departments-list");
+    }
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -257,7 +261,9 @@ export async function toggleDepartmentStatus(
 
     const result = await res.json();
 
-    updateTag("departments-list");
+    if (res.ok && result?.success) {
+      updateTag("departments-list");
+    }
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -292,7 +298,9 @@ export async function deleteDepartment(
 
     const result = await res.json();
 
-    updateTag("departments-list");
+    if (res.ok && result?.success) {
+      updateTag("departments-list");
+    }
     return result;
   } catch (error: unknown) {
     console.error("Error in deleteDepartment:", error);

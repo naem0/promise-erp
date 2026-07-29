@@ -353,7 +353,9 @@ export async function createProductCategory(
 
     const result = await res.json();
 
-    updateTag("product-categories-list");
+    if (res.ok && result?.success) {
+      updateTag("product-categories-list");
+    }
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -393,7 +395,9 @@ export async function updateProductCategory(
 
     const result = await res.json();
 
-    updateTag("product-categories-list");
+    if (res.ok && result?.success) {
+      updateTag("product-categories-list");
+    }
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -428,7 +432,9 @@ export async function deleteProductCategory(
 
     const result = await res.json();
 
-    updateTag("product-categories-list");
+    if (res.ok && result?.success) {
+      updateTag("product-categories-list");
+    }
     return result;
   } catch (error: unknown) {
     console.error("Error in deleteProductCategory:", error);

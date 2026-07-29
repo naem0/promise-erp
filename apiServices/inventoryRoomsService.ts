@@ -190,7 +190,9 @@ export async function createRoom(
 
     const result = await res.json();
 
-    updateTag("rooms-list");
+    if (res.ok && result?.success) {
+      updateTag("rooms-list");
+    }
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -229,7 +231,9 @@ export async function updateRoom(
 
     const result = await res.json();
 
-    updateTag("rooms-list");
+    if (res.ok && result?.success) {
+      updateTag("rooms-list");
+    }
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -262,7 +266,9 @@ export async function deleteRoom(id: number): Promise<SingleRoomResponse> {
 
     const result = await res.json();
 
-    updateTag("rooms-list");
+    if (res.ok && result?.success) {
+      updateTag("rooms-list");
+    }
     return result;
   } catch (error: unknown) {
     console.error("Error in deleteRoom:", error);

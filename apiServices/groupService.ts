@@ -170,7 +170,9 @@ export async function addGroup(
       };
     }
 
-    updateTag("groups-list");
+    if (response.ok && result?.success) {
+      updateTag("groups-list");
+    }
 
     return {
       success: true,
@@ -263,7 +265,9 @@ export async function updateGroup(
       };
     }
 
-    updateTag("groups-list");
+    if (res.ok && result?.success) {
+      updateTag("groups-list");
+    }
     return {
       success: true,
       message: result.message || "Group updated successfully.",
@@ -311,7 +315,9 @@ export async function deleteGroup(
       return { success: false, message: result.message, code: result.code };
     }
     
-    updateTag("groups-list");
+    if (res.ok && result?.success) {
+      updateTag("groups-list");
+    }
     return { success: true, message: result.message || "Group deleted successfully", code: result.code };
   } catch (error) {
     const errorResult = await handleApiError(error, "Failed to delete group");

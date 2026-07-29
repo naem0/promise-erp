@@ -246,7 +246,9 @@ export async function createChapter(
     };
     }
 
-    updateTag("chapters-list");
+    if (res.ok && result?.success) {
+      updateTag("chapters-list");
+    }
     return {
       success: true,
       message: result.message || "Chapter created successfully",
@@ -311,7 +313,9 @@ export async function updateChapter(
     };
     }
 
-    updateTag("chapters-list");
+    if (res.ok && result?.success) {
+      updateTag("chapters-list");
+    }
     return {
       success: true,
       message: result.message || "Chapter updated successfully",
@@ -362,7 +366,9 @@ export async function deleteChapter(id: number): Promise<SingleChapterResponse> 
       };
     }
 
-    updateTag("chapters-list");
+    if (res.ok && result?.success) {
+      updateTag("chapters-list");
+    }
     return {
       success: true,
       message: result.message || "Chapter deleted successfully",

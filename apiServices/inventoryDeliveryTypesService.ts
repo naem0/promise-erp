@@ -188,7 +188,7 @@ export async function createDeliveryType(
 
     const result = await res.json();
 
-    if (result.success) {
+    if (res.ok && result?.success) {
       updateTag("delivery-types-list");
     }
     return result;
@@ -230,7 +230,7 @@ export async function updateDeliveryType(
 
     const result = await res.json();
 
-    if (result.success) {
+    if (res.ok && result?.success) {
       updateTag("delivery-types-list");
     }
     return result;
@@ -266,7 +266,9 @@ export async function deleteDeliveryType(
 
     const result = await res.json();
 
-    updateTag("delivery-types-list");
+    if (res.ok && result?.success) {
+      updateTag("delivery-types-list");
+    }
     return result;
   } catch (error: unknown) {
     console.error("Error in deleteDeliveryType:", error);

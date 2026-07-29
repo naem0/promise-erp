@@ -185,7 +185,9 @@ export async function createRequisitionFlow(data: {
 
     const result = await res.json();
 
-    updateTag("requisition-flows-list");
+    if (res.ok && result?.success) {
+      updateTag("requisition-flows-list");
+    }
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -221,7 +223,9 @@ export async function updateRequisitionFlow(
 
     const result = await res.json();
 
-    updateTag("requisition-flows-list");
+    if (res.ok && result?.success) {
+      updateTag("requisition-flows-list");
+    }
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -255,7 +259,9 @@ export async function deleteRequisitionFlow(
 
     const result = await res.json();
 
-    updateTag("requisition-flows-list");
+    if (res.ok && result?.success) {
+      updateTag("requisition-flows-list");
+    }
     return result;
   } catch (error: unknown) {
     console.error("Error in deleteRequisitionFlow:", error);

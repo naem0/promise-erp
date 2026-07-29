@@ -170,7 +170,9 @@ export async function createCourseProject(categoryData:FormData): Promise<Single
       if (!response.ok) {
         return { success: false, message: data.message || "Failed to create course project", errors: data.errors, code: response.status };
       }
-      updateTag("course-projects-list");
+      if (response.ok && data?.success) {
+        updateTag("course-projects-list");
+      }
       return data;
     } catch (error) {
       console.error("Error in course projects:", error);
@@ -201,7 +203,9 @@ export async function createCourseProject(categoryData:FormData): Promise<Single
       if (!response.ok) {
         return { success: false, message: data.message || "Failed to update course project", errors: data.errors, code: response.status };
       }
-      updateTag("course-projects-list");
+      if (response.ok && data?.success) {
+        updateTag("course-projects-list");
+      }
       return data;
     } catch (error) {
       console.error("Error in updateCourseProject:", error);
@@ -231,7 +235,9 @@ export async function createCourseProject(categoryData:FormData): Promise<Single
       if (!response.ok) {
         return { success: false, message: data.message || "Failed to delete course project", code: response.status };
       }
-      updateTag("course-projects-list");
+      if (response.ok && data?.success) {
+        updateTag("course-projects-list");
+      }
       return data;
     } catch (error) {
       console.error("Error in deleteCourseProject:", error);

@@ -191,7 +191,9 @@ export async function createClassSchedule(
     });
 
     const result = await res.json();
-    updateTag("class-schedules-list");
+    if (res.ok && result?.success) {
+      updateTag("class-schedules-list");
+    }
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -230,7 +232,9 @@ export async function updateClassSchedule(
     });
 
     const result = await res.json();
-    updateTag("class-schedules-list");
+    if (res.ok && result?.success) {
+      updateTag("class-schedules-list");
+    }
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -264,7 +268,9 @@ export async function deleteClassSchedule(
     });
 
     const result = await res.json();
-    updateTag("class-schedules-list");
+    if (res.ok && result?.success) {
+      updateTag("class-schedules-list");
+    }
     return result;
   } catch (error: unknown) {
     console.error("Error in deleteClassSchedule:", error);
@@ -331,7 +337,9 @@ export async function toggleClassScheduleStatus(
     });
 
     const result = await res.json();
-    updateTag("class-schedules-list");
+    if (res.ok && result?.success) {
+      updateTag("class-schedules-list");
+    }
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
