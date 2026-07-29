@@ -152,8 +152,13 @@ export default function BatchForm({ title, batch }: BatchFormProps) {
                 if (active && res.success) {
                     setBranches(res.data?.branches || []);
                 }
-            } catch (error) {
-                console.error("Error fetching branches:", error);
+            } catch (error: unknown) {
+                if (typeof error === "object" && error !== null && "digest" in error) throw error;
+                if (error instanceof Error) {
+                    console.error("Error fetching branches:", error.message);
+                } else {
+                    console.error("Error fetching branches:", error);
+                }
             } finally {
                 if (active) {
                     setBranchSearching(false);

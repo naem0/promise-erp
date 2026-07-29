@@ -508,7 +508,7 @@ export interface BranchStatisticsResponse {
   code: number;
   data: BranchStatisticsData;
 }
-export async function getPublicBranchStatistics(): Promise<BranchStatisticsResponse> {
+export async function getPublicBranchStatistics(): Promise<BranchStatisticsResponse | null> {
   try {
     const res = await fetch(`${API_BASE}/public/geo-statistics`);
 
@@ -532,6 +532,12 @@ export async function getPublicBranchStatistics(): Promise<BranchStatisticsRespo
     const data: BranchStatisticsResponse = await res.json();
     return data;
   } catch (error: unknown) {
+    if (typeof error === "object" && error !== null && "digest" in error) {
+      throw error;
+    }
+    if (error instanceof Error && error.name === "AbortError") {
+      return null;
+    }
     if (error instanceof Error) {
       console.error("Error fetching public branch statistics:", error.message);
       throw new Error(error.message);

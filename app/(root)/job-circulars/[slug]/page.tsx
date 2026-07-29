@@ -32,6 +32,7 @@ const JobCircularBySlugdPage = async ({ params }: JobCircularParams) => {
   try {
     jobCircularData = await getPublicJobCircularBySlug(slug);
   } catch (error: unknown) {
+    if (typeof error === "object" && error !== null && "digest" in error) throw error;
     if (error instanceof Error) {
       return (
         <ErrorComponent

@@ -42,6 +42,12 @@ export async function getPublicContactPageInfo(): Promise<ContactPageInfoApiResp
     const data: ContactPageInfoApiResponse = await res.json();
     return data;
   } catch (error: unknown) {
+    if (typeof error === "object" && error !== null && "digest" in error) {
+      throw error;
+    }
+    if (error instanceof Error && error.name === "AbortError") {
+      return null;
+    }
     if (error instanceof Error) {
       console.error("Error fetching contact page info:", error.message);
       throw new Error(error.message);
@@ -140,6 +146,12 @@ export async function getPublicContactFaqs(): Promise<ContactPagePublicFaqRespon
     const data: ContactPagePublicFaqResponse = await res.json();
     return data;
   } catch (error: unknown) {
+    if (typeof error === "object" && error !== null && "digest" in error) {
+      throw error;
+    }
+    if (error instanceof Error && error.name === "AbortError") {
+      return { success: false, message: "Request aborted", code: 499, data: [] };
+    }
     if (error instanceof Error) {
       console.error("Error fetching public contact FAQs:", error.message);
       throw new Error(error.message);

@@ -568,6 +568,12 @@ export async function getPublicAllEmployees(): Promise<AllOfficeEmployeesApiResp
     const result: AllOfficeEmployeesApiResponse = await res.json();
     return result;
   } catch (error: unknown) {
+    if (typeof error === "object" && error !== null && "digest" in error) {
+      throw error;
+    }
+    if (error instanceof Error && error.name === "AbortError") {
+      return null;
+    }
     if (error instanceof Error) {
       console.warn("Error fetching public employees:", error.message);
     } else {
@@ -605,6 +611,18 @@ export async function getPublicAllExecutives(): Promise<ChairmanMessageResponse 
       console.warn("No Management messages found.");
       return null;
     }
+    if (res.status === 401) {
+      console.warn("Unauthorized access.");
+      return null;
+    }
+    if (res.status === 400) {
+      console.warn("Bad request.");
+      return null;
+    }
+    if (res.status === 403) {
+      console.warn("Access denied.");
+      return null;
+    }
 
     if (!res.ok) {
       throw new Error(`Failed to fetch public employees — HTTP ${res.status}`);
@@ -612,6 +630,12 @@ export async function getPublicAllExecutives(): Promise<ChairmanMessageResponse 
     const result: ChairmanMessageResponse = await res.json();
     return result;
   } catch (error: unknown) {
+    if (typeof error === "object" && error !== null && "digest" in error) {
+      throw error;
+    }
+    if (error instanceof Error && error.name === "AbortError") {
+      return null;
+    }
     if (error instanceof Error) {
       console.warn("Error fetching public executives:", error.message);
     } else {

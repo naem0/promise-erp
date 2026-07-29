@@ -99,6 +99,12 @@ export async function getPublicLicensesCertificate(): Promise<LicenseApiResponse
     const data: LicenseApiResponse = await res.json();
     return data;
   } catch (error: unknown) {
+    if (typeof error === "object" && error !== null && "digest" in error) {
+      throw error;
+    }
+    if (error instanceof Error && error.name === "AbortError") {
+      return null;
+    }
     if (error instanceof Error) {
       console.error("Error fetching licenses Certificate:", error.message);
       throw new Error(error.message);
@@ -209,6 +215,12 @@ export async function getPublicCompanyMissionSection(): Promise<CompanyMissionAp
     const data: CompanyMissionApiResponse = await res.json();
     return data;
   } catch (error: unknown) {
+    if (typeof error === "object" && error !== null && "digest" in error) {
+      throw error;
+    }
+    if (error instanceof Error && error.name === "AbortError") {
+      return null;
+    }
     if (error instanceof Error) {
       console.error("Error fetching company mission:", error.message);
       throw new Error(error.message);
@@ -272,6 +284,12 @@ export async function getPublicAboutBanner(): Promise<AboutBannerApiResponse | n
     const data: AboutBannerApiResponse = await res.json();
     return data;
   } catch (error: unknown) {
+    if (typeof error === "object" && error !== null && "digest" in error) {
+      throw error;
+    }
+    if (error instanceof Error && error.name === "AbortError") {
+      return null;
+    }
     if (error instanceof Error) {
       console.error("Error fetching About Banner:", error.message);
       throw new Error(error.message);
@@ -306,6 +324,12 @@ export async function getPublicWhyChooseUsSection(): Promise<AboutBannerApiRespo
     const data: AboutBannerApiResponse = await res.json();
     return data;
   } catch (error: unknown) {
+    if (typeof error === "object" && error !== null && "digest" in error) {
+      throw error;
+    }
+    if (error instanceof Error && error.name === "AbortError") {
+      return null;
+    }
     if (error instanceof Error) {
       console.error("Error fetching Why Choose Us section:", error.message);
       throw new Error(error.message);

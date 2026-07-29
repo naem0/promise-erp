@@ -29,9 +29,9 @@ export interface MonthlyBreakdownItem {
   value: number;
 }
 export interface DivisionalIncomeItem {
-  title: string;          // Dhaka, Chittagong etc.
+  title: string; // Dhaka, Chittagong etc.
   value: number;
-  period: string;         // Apr
+  period: string; // Apr
   total_sell: number;
   monthly_breakdown: MonthlyBreakdownItem[];
 }
@@ -61,11 +61,11 @@ export interface DashboardSummaryApiResponse {
 export async function getDashboardSummaryStats(): Promise<DashboardSummaryApiResponse | null> {
   const session = await getServerSession(authOptions);
   const token = session?.accessToken;
+  if (!token) {
+    throw new Error("No valid session or access token found.");
+  }
 
   try {
-    if (!token) {
-      throw new Error("No valid session or access token found.");
-    }
     const res = await fetch(`${API_BASE}/dashboard/overview`, {
       headers: {
         "Content-Type": "application/json",
@@ -96,6 +96,12 @@ export async function getDashboardSummaryStats(): Promise<DashboardSummaryApiRes
     const data: DashboardSummaryApiResponse = await res.json();
     return data;
   } catch (error: unknown) {
+    if (typeof error === "object" && error !== null && "digest" in error) {
+      throw error;
+    }
+    if (error instanceof Error && error.name === "AbortError") {
+      return null;
+    }
     if (error instanceof Error) {
       console.error("Error fetching company mission:", error.message);
       throw new Error(error.message);

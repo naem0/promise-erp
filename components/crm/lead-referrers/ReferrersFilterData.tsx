@@ -9,6 +9,7 @@ export default async function ReferrersFilterData() {
         const res = await getBranches({ per_page: 500 });
         branches = res?.data?.branches || [];
     } catch (error: unknown) {
+        if (typeof error === "object" && error !== null && "digest" in error) throw error;
         if (error instanceof Error) {
             return (
                 <div className="py-2">

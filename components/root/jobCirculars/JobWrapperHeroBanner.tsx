@@ -3,10 +3,11 @@ import CommonHeroBanner from "@/components/common/CommonHeroBanner";
 import ErrorComponent from "@/components/common/ErrorComponent";
 
 const JobWrapperHeroBanner = async () => {
-  let bannerData:any
+  let bannerData
   try {
     bannerData = await fetchCommonBannerSectionData({ type: "job_banner" });
   } catch (error: unknown) {
+    if (typeof error === "object" && error !== null && "digest" in error) throw error;
     if (error instanceof Error) {
       return <ErrorComponent message={bannerData?.message || "Failed to fetch banner data"} />;
     } else {

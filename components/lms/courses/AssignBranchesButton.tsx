@@ -53,6 +53,9 @@ const AssignBranchesButton: React.FC<AssignBranchesButtonProps> = ({
         setError(response?.message || "Failed to fetch branches.");
       }
     } catch (err: unknown) {
+      if (typeof error === "object" && error !== null && "digest" in error) {
+      throw error;
+    }
       if (err instanceof Error) {
         setError(err.message);
       } else {

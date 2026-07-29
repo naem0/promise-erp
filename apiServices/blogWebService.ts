@@ -113,7 +113,7 @@ export interface BlogCategoryApiResponse {
   errors?: Record<string, string[]>;
 }
 
-export async function getPublicBlogCategories(): Promise<BlogCategoryApiResponse> {
+export async function getPublicBlogCategories(): Promise<BlogCategoryApiResponse | null> {
   try {
     const res = await fetch(`${API_BASE}/public/blog-categories`);
 
@@ -126,6 +126,13 @@ export async function getPublicBlogCategories(): Promise<BlogCategoryApiResponse
     const data: BlogCategoryApiResponse = await res.json();
     return data;
   } catch (error: unknown) {
+    if (typeof error === "object" && error !== null && "digest" in error) {
+      throw error;
+    }
+    if (error instanceof Error && error.name === "AbortError") {
+      return null;
+    }
+
     if (error instanceof Error) {
       console.error("Error fetching blog categories:", error.message);
       throw new Error(error.message);

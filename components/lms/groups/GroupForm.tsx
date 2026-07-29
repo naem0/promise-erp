@@ -129,8 +129,13 @@ export default function GroupForm({ title, onSubmit, group }: GroupFormProps) {
                 if (res.success) {
                     setBranches(res.data?.branches || []);
                 }
-            } catch (error) {
-                console.error("Error loading branches:", error);
+            } catch (error: unknown) {
+                if (typeof error === "object" && error !== null && "digest" in error) throw error;
+                if (error instanceof Error) {
+                    console.error("Error loading branches:", error.message);
+                } else {
+                    console.error("Error loading branches:", error);
+                }
             }
         }
         loadBranches();

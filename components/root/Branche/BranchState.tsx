@@ -8,11 +8,14 @@ import ErrorComponent from "@/components/common/ErrorComponent";
 import NotFoundComponent from "@/components/common/NotFoundComponent";
 
 const BranchState = async () => {
-  let statistics: BranchStatisticsResponse;
+  let statistics: BranchStatisticsResponse | null = null;
 
   try {
     statistics = await getPublicBranchStatistics();
   } catch (error: unknown) {
+    if (typeof error === "object" && error !== null && "digest" in error) {
+      throw error;
+    }
     if (error instanceof Error) {
       console.error("Failed to fetch branch statistics:", error.message);
       return (
@@ -65,7 +68,7 @@ const BranchState = async () => {
     <section className="pt-8 md:pt-12">
       <div className="container mx-auto">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 px-4 w-full">
-          {statsItems.map((item, index) => (
+          {statsItems?.map((item, index) => (
             <Card
               key={index}
               className="py-3 gap-2 bg-linear-to-r from-[#0B5B28] via-[#1C833E] to-[#009F41] border-none shadow-lg text-white"

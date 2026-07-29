@@ -20,12 +20,13 @@ const FreeSeminarDetailsWrapper = async ({
   try {
     const constseminarRes = await getPublicFreeSeminarBySlug(slug);
 
-    if (!constseminarRes || !constseminarRes.success || !constseminarRes?.data) {
+    if (!constseminarRes || !constseminarRes?.success || !constseminarRes?.data) {
       return null
     }
 
     seminar = constseminarRes?.data;
   } catch (error: unknown) {
+    if (typeof error === "object" && error !== null && "digest" in error) throw error;
     if (error instanceof Error) {
       return (
         <div className="container mx-auto px-4 py-8 md:py-14">

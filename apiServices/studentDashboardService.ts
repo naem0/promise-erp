@@ -323,11 +323,17 @@ export async function getStudentEarningState(): Promise<StEarningStateResponse |
     const data: StEarningStateResponse = await res.json();
     return data;
   } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error("getUpcomingCourses Error:", error.message);
+    if (typeof error === "object" && error !== null && "digest" in error) {
       throw error;
     }
-    throw new Error("Unknown error occurred while fetching upcoming courses");
+    if (error instanceof Error && error.name === "AbortError") {
+      return null;
+    }
+    if (error instanceof Error) {
+      console.error("getStudentEarningState Error:", error.message);
+      throw error;
+    }
+    throw new Error("Unknown error occurred while fetching student earning state");
   }
 }
 
@@ -1426,6 +1432,14 @@ export async function getPublicFreeSeminarBySlug(
       console.warn("No free seminar found.");
       return null;
     }
+    if (response.status === 401) {
+      console.warn("Unauthorized access to free seminar (401).");
+      return null;
+    }
+    if (response.status === 403) {
+      console.warn("Forbidden access to free seminar (403).");
+      return null;
+    }
 
     if (!response.ok) {
       throw new Error(
@@ -1436,6 +1450,12 @@ export async function getPublicFreeSeminarBySlug(
     const data: PublicFreeSeminarBySlugResponse = await response.json();
     return data;
   } catch (error: unknown) {
+    if (typeof error === "object" && error !== null && "digest" in error) {
+      throw error;
+    }
+    if (error instanceof Error && error.name === "AbortError") {
+      return null;
+    }
     if (error instanceof Error) {
       console.error("getPublicFreeSeminarBySlug Error:", error.message);
     } else {
@@ -1486,7 +1506,7 @@ export interface FreeSeminarRegistrationApiResponse {
   success: boolean;
   message: string;
   code: number;
-  data?: any;
+  data?: unknown;
   errors?: Record<string, string[]>;
 }
 
