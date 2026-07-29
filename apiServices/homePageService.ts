@@ -966,6 +966,11 @@ export async function getMembersByType(
       return null;
     }
 
+    if (res.status === 401 || res.status === 403) {
+      console.warn("Unauthorized: Access token not found.");
+      return null;
+    }
+
     if (!res.ok) {
       throw new Error(
         `getMembersByType API error: ${res.status} ${res.statusText}`,
@@ -975,6 +980,12 @@ export async function getMembersByType(
     const data: MemberApiResponse = await res.json();
     return data;
   } catch (error: unknown) {
+    if (typeof error === "object" && error !== null && "digest" in error) {
+      throw error;
+    }
+    if (error instanceof Error && error.name === "AbortError") {
+      return null;
+    }
     if (error instanceof Error) {
       console.error("Error fetching partners:", error.message);
       return null;

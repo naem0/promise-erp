@@ -7,6 +7,7 @@ const StoriesBannerWrapper = async () => {
   try {
     bannerData = await fetchCommonBannerSectionData({ type: "success_story_banner" });
   } catch (error: unknown) {
+    if (typeof error === "object" && error !== null && "digest" in error) throw error;
     if (error instanceof Error) {
       return <ErrorComponent message={bannerData?.message || "Failed to fetch banner data"} />;
     } else {

@@ -13,6 +13,9 @@ const TeamMemberCardWrapper = async ({ isAbout =false }: Props) => {
   try {
     memberDatas = await getPublicAllExecutives();
   } catch (error: unknown) {
+    if (typeof error === "object" && error !== null && "digest" in error){
+      throw error;
+    };
     if (error instanceof Error) {
       return (
         <div className="container mx-auto px-4 py-8 md:py-14">
@@ -39,12 +42,12 @@ const TeamMemberCardWrapper = async ({ isAbout =false }: Props) => {
     return 0;
   });
 
-  const displayMembers = isAbout ? sortedMembers.slice(0, 1) : sortedMembers;
+  const displayMembers = isAbout ? sortedMembers?.slice(0, 1) : sortedMembers;
   return (
     <>
       <div className="grid grid-cols-1 gap-8">
-        {displayMembers.length > 0 ? (
-          displayMembers.map((member) => (
+        {displayMembers?.length > 0 ? (
+          displayMembers?.map((member) => (
             <TeamMemberCard key={member?.id} member={member} />
           ))
         ) : (

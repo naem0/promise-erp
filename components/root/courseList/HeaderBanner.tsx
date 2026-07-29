@@ -7,7 +7,9 @@ const HeaderBanner = async () => {
   try {
     bannerData = await fetchCommonBannerSectionData({ type: "course_category_banner" });
   } catch (error: unknown) {
+    if (typeof error === "object" && error !== null && "digest" in error) throw error;
     if (error instanceof Error) {
+      console.error("Failed to fetch banner data:", error.message);
       return <ErrorComponent message={bannerData?.message || "Failed to fetch banner data"} />;
     } else {
       return <ErrorComponent message="Failed to fetch banner data" />;
@@ -16,7 +18,6 @@ const HeaderBanner = async () => {
   if (!bannerData?.success || !bannerData?.data) {
     return null;
   }
-  const branchBanner = bannerData?.data?.sections;
   return (
     <>
       <CommonHeroBanner

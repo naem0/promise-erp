@@ -28,8 +28,11 @@ export default async function EditStudentPage({ params }: PageProps) {
   try {
     branchesRes = await getBranches({ per_page: 999 })
   } catch (error: unknown) {
+    if (typeof error === 'object' && error !== null && 'digest' in error) throw error
     if (error instanceof Error) {
       console.error('Error fetching branches:', error.message)
+    }else {
+      console.error('Error fetching branches:', error)
     }
   }
 

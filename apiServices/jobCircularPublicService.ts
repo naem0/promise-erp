@@ -137,6 +137,14 @@ export async function getPublicJobCircularBySlug(
       console.warn("No job circular found.");
       return null;
     }
+    if (res.status === 401) {
+      console.warn("Unauthorized access.");
+      return null;
+    }
+    if (res.status === 403) {
+      console.warn("Forbidden access.");
+      return null;
+    }
 
     if (!res.ok) {
       throw new Error(
@@ -147,6 +155,12 @@ export async function getPublicJobCircularBySlug(
     const data: JobCircularDetailsApiResponse = await res.json();
     return data;
   } catch (error: unknown) {
+    if (typeof error === "object" && error !== null && "digest" in error) {
+      throw error;
+    }
+    if (error instanceof Error && error.name === "AbortError") {
+      return null;
+    }
     if (error instanceof Error) {
       console.error("Error in getPublicJobCircularBySlug:", error.message);
     } else {

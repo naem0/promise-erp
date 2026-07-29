@@ -114,6 +114,7 @@ const CRMLeadsData = async ({
         const branchesRes = await getBranches({ per_page: 500 });
         branches = branchesRes?.data?.branches || [];
     } catch (error: unknown) {
+        if (typeof error === "object" && error !== null && "digest" in error) throw error;
         console.log(error);
         if (error instanceof Error) {
             return <ErrorComponent message={error.message} />;

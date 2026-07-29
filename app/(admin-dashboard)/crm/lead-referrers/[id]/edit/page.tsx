@@ -34,8 +34,14 @@ export default async function EditReferrerPage({
       branches = branchesResponse?.data?.branches;
     }
   } catch (error: unknown) {
-    console.error("Failed to load branches:", error);
-    branches = [];
+    if (typeof error === "object" && error !== null && "digest" in error) throw error;
+    if (error instanceof Error) {
+      console.error("Failed to load branches:", error.message);
+      branches = [];
+    }else {
+      console.error("Failed to load branches:", error);
+    }
+    
   }
 
   return (

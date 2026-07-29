@@ -7,6 +7,7 @@ const ImageGalleryBanner = async () => {
   try {
     bannerData = await fetchCommonBannerSectionData({ type: "image_gallery_banner" });
   } catch (error: unknown) {
+    if (typeof error === "object" && error !== null && "digest" in error) throw error;
     if (error instanceof Error) {
       return <ErrorComponent message={bannerData?.message || "Failed to fetch banner data"} />;
     } else {

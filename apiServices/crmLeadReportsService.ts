@@ -117,7 +117,6 @@ export interface CRMLeadReportsResponse {
   errors?: Record<string, string[]>;
 }
 
-
 // Old Leads Report item (assigned outside date range, talked to during)
 export interface CRMOldLeadReportsItem {
   user_id: number;
@@ -159,7 +158,6 @@ export interface CRMNewLeadReportsItem {
 }
 
 export interface CRMOldLeadReportsResponse {
-
   success: boolean;
   message: string;
   code: number;
@@ -237,7 +235,7 @@ export async function getCRMLeadReportsCached(
     if (res?.status === 404) {
       console.warn("No leads report data found for the given parameters.");
       return null;
-    } 
+    }
     if (res?.status === 401) {
       console.warn("Unauthorized: Access token not found.");
       return null;
@@ -282,12 +280,12 @@ export async function getCRMLeadReports(
 // =======================
 
 export async function getCRMLeadReportsSummaryCards(): Promise<CRMLeadReportsSummaryCardsResponse | null> {
+  
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+  if (!token) throw new Error("No valid session/token");
+
   try {
-    const session = await getServerSession(authOptions);
-    const token = session?.accessToken;
-
-    if (!token) throw new Error("No valid session/token");
-
     const res = await fetch(`${API_BASE}/crm/lead/reports/summary`, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -297,7 +295,7 @@ export async function getCRMLeadReportsSummaryCards(): Promise<CRMLeadReportsSum
     if (res?.status === 404) {
       console.warn("No leads report summary cards data found.");
       return null;
-    } 
+    }
     if (res?.status === 401) {
       console.warn("Unauthorized: Access token not found.");
       return null;

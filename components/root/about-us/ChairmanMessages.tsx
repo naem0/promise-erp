@@ -10,6 +10,9 @@ const ChairmanMessages = async () => {
   try {
     memberDatas = await getPublicAllExecutives();
   } catch (error: unknown) {
+    if (typeof error === "object" && error !== null && "digest" in error) {
+      throw error;
+    };
     if (error instanceof Error) {
       return (
         <div className="container mx-auto px-4 py-8 md:py-14">
@@ -26,7 +29,7 @@ const ChairmanMessages = async () => {
   }
 
   const members: ChairmanMessage[] = memberDatas?.data || [];
-  const displayMember = members.find((member) => member.type === 1);
+  const displayMember = members?.find((member) => member?.type === 1);
 
   if (!displayMember) {
     return null;

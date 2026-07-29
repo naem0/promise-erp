@@ -10,6 +10,9 @@ const EarningStateGrids = async () => {
   try {
     earningStateData = await getStudentEarningState();
   } catch (error: unknown) {
+    if (typeof error === "object" && error !== null && "digest" in error) {
+      throw error;
+    }
     if (error instanceof Error) {
       console.error("Error fetching BDT earnings data:", error.message);
     } else {

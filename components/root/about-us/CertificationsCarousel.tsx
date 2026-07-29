@@ -10,6 +10,9 @@ const CertificationsSection = async () => {
     // Fetch branches
     certificateList = await getPublicLicensesCertificate();
   } catch (error: unknown) {
+    if (typeof error === "object" && error !== null && "digest" in error) {
+      throw error;
+    }
     if (error instanceof Error) {
       console.error("Failed to fetch Certificates:", error.message);
       return (
@@ -53,8 +56,8 @@ const CertificationsSection = async () => {
 
       <div className="space-y-12 pt-10 lg:pt-20">
         <div className="grid grid-cols-1 items-center gap-6">
-          {certificates.length > 0 ? (
-            certificates.map((cert, index) => {
+          {certificates?.length > 0 ? (
+            certificates?.map((cert, index) => {
               const isEven = index % 2 === 0;
 
               return (
@@ -87,10 +90,10 @@ const CertificationsSection = async () => {
                     }`}
                   >
                     <h3 className="text-xl text-secondary lg:text-2xl font-semibold mb-3">
-                      {cert.title}
+                      {cert?.title}
                     </h3>
                     <p className="text-black/60 leading-relaxed text-base">
-                      {cert.description}
+                      {cert?.description}
                     </p>
                   </div>
                 </div>

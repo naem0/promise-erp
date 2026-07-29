@@ -6,9 +6,14 @@ export default async function AddReferrerPage() {
     try {
         const branchesRes = await getBranches({ per_page: 500 });
         branches = branchesRes?.data?.branches || [];
-    } catch (error) {
+    } catch (error : unknown) {
         if (typeof error === 'object' && error !== null && 'digest' in error) throw error;
-        console.error("Failed to load branches for referrer form:", error);
+        if (error instanceof Error) {
+            console.error("Failed to load branches for referrer form:", error.message);
+            branches = [];
+        } else {
+            console.error("Failed to load branches for referrer form:", error);
+        }
     }
 
     return (

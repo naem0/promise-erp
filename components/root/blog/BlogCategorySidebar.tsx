@@ -130,7 +130,7 @@ const BlogCategorySidebar = async () => {
   if (categories.length === 0) {
     return (
       <div>
-        <NotFoundComponent message={blogCategories?.message} />
+        <NotFoundComponent message={blogCategories?.message || "No blog categories found."} />
       </div>
     );
   }
