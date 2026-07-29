@@ -187,7 +187,9 @@ export async function createUnit(
 
     const result = await res.json();
 
-    updateTag("units-list");
+    if (res.ok && result?.success) {
+      updateTag("units-list");
+    }
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -228,7 +230,9 @@ export async function updateUnit(
 
     const result = await res.json();
 
-    updateTag("units-list");
+    if (res.ok && result?.success) {
+      updateTag("units-list");
+    }
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -263,7 +267,9 @@ export async function deleteUnit(
 
     const result = await res.json();
 
-    updateTag("units-list");
+    if (res.ok && result?.success) {
+      updateTag("units-list");
+    }
     return result;
   } catch (error: unknown) {
     console.error("Error in deleteUnit:", error);

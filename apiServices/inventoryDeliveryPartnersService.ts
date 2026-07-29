@@ -188,7 +188,9 @@ export async function createDeliveryPartner(
 
     const result = await res.json();
 
-    updateTag("delivery-partners-list");
+    if (res.ok && result?.success) {
+      updateTag("delivery-partners-list");
+    }
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -229,7 +231,9 @@ export async function updateDeliveryPartner(
 
     const result = await res.json();
 
-    updateTag("delivery-partners-list");
+    if (res.ok && result?.success) {
+      updateTag("delivery-partners-list");
+    }
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -264,7 +268,9 @@ export async function deleteDeliveryPartner(
 
     const result = await res.json();
 
-    updateTag("delivery-partners-list");
+    if (res.ok && result?.success) {
+      updateTag("delivery-partners-list");
+    }
     return result;
   } catch (error: unknown) {
     console.error("Error in deleteDeliveryPartner:", error);

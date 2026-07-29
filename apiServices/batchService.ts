@@ -119,7 +119,9 @@ export async function addBatch(
 
     const result = await res.json();
 
-    updateTag("batches-list");
+    if (res.ok && result?.success) {
+      updateTag("batches-list");
+    }
 
     return result;
   } catch (error: unknown) {
@@ -239,8 +241,12 @@ export async function updateBatch(
 
     const result = await res.json();
 
-    updateTag("batches-list");
-    updateTag(`batch-${id}`);
+    if (res.ok && result?.success) {
+      updateTag("batches-list");
+      if (res.ok && result?.success) {
+        updateTag(`batch-${id}`);
+      }
+    }
 
     return result;
   } catch (error: unknown) {
@@ -391,8 +397,12 @@ export async function deleteBatch(id: number): Promise<ApiResponse> {
     const result = await res.json();
 
     // Revalidate cache
-    updateTag("batches-list");
-    updateTag(`batch-${id}`);
+    if (res.ok && result?.success) {
+      updateTag("batches-list");
+      if (res.ok && result?.success) {
+        updateTag(`batch-${id}`);
+      }
+    }
 
     return result;
   } catch (error: unknown) {
@@ -490,7 +500,9 @@ export async function duplicateBatch(id: number): Promise<BatchResponseType> {
     const result = await res.json();
 
     // Revalidate cache
-    updateTag("batches-list");
+    if (res.ok && result?.success) {
+      updateTag("batches-list");
+    }
 
     return result;
   } catch (error: unknown) {

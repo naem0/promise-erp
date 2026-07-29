@@ -216,7 +216,9 @@ export async function createCoupon(couponData: CreateCouponRequest): Promise<Sin
       };
     }
 
-    updateTag("coupons-list");
+    if (res.ok && result?.success) {
+      updateTag("coupons-list");
+    }
 
     return {
       success: true,
@@ -278,7 +280,9 @@ export async function updateCoupon(id: number, couponData: UpdateCouponRequest):
       };
     }
 
-    updateTag("coupons-list");
+    if (res.ok && result?.success) {
+      updateTag("coupons-list");
+    }
 
     return {
       success: true,
@@ -334,7 +338,9 @@ export async function deleteCoupon(id: number): Promise<SingleCouponResponse> {
       };
     }
 
-    updateTag("coupons-list");
+    if (res.ok && result?.success) {
+      updateTag("coupons-list");
+    }
 
     return {
       success: true,

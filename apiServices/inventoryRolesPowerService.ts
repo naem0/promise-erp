@@ -234,7 +234,9 @@ export async function createRolesPowerStep(
 
     const result = await res.json();
 
-    updateTag("inventory-roles-power-list");
+    if (res.ok && result?.success) {
+      updateTag("inventory-roles-power-list");
+    }
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -271,8 +273,12 @@ export async function updateRolesPowerStep(
 
     const result = await res.json();
 
-    updateTag("inventory-roles-power-list");
-    updateTag(`inventory-roles-power-${id}`);
+    if (res.ok && result?.success) {
+      updateTag("inventory-roles-power-list");
+      if (res.ok && result?.success) {
+        updateTag(`inventory-roles-power-${id}`);
+      }
+    }
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -308,7 +314,9 @@ export async function reorderRolesPowerSteps(
 
     const result = await res.json();
 
-    updateTag("inventory-roles-power-list");
+    if (res.ok && result?.success) {
+      updateTag("inventory-roles-power-list");
+    }
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {

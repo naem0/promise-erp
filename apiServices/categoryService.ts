@@ -205,7 +205,9 @@ export async function createCategory(
 
     const result = await response.json();
 
-    updateTag("categories-list");
+    if (response.ok && result?.success) {
+      updateTag("categories-list");
+    }
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -247,7 +249,9 @@ export async function updateCategory(
 
     const result = await response.json();
 
-    updateTag("categories-list");
+    if (response.ok && result?.success) {
+      updateTag("categories-list");
+    }
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -287,7 +291,9 @@ export async function deleteCategory(
 
     const result = await response.json();
 
-    updateTag("categories-list");
+    if (response.ok && result?.success) {
+      updateTag("categories-list");
+    }
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {

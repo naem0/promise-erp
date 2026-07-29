@@ -56,8 +56,11 @@ export async function createBlogCategory(
       },
       body: formData,
     });
-    updateTag("blog-categories-list");
-    return await res.json();
+    const result = await res.json();
+    if (res.ok && result?.success) {
+      updateTag("blog-categories-list");
+    }
+    return result;
   } catch (error: unknown) {
     console.error("Error creating blog category:", error);
     if (error instanceof Error) {
@@ -85,8 +88,11 @@ export async function updateBlogCategory(
       body: formData,
     });
 
-    updateTag("blog-categories-list");
-    return await res.json();
+    const result = await res.json();
+    if (res.ok && result?.success) {
+      updateTag("blog-categories-list");
+    }
+    return result;
   } catch (error: unknown) {
     console.error("Error updating blog category:", error);
     if (error instanceof Error) {
@@ -200,8 +206,11 @@ export async function deleteBlogCategory(
       },
     });
 
-    updateTag("blog-categories-list");
-    return await res.json();
+    const result = await res.json();
+    if (res.ok && result?.success) {
+      updateTag("blog-categories-list");
+    }
+    return result;
   } catch (error) {
     console.error("Error deleting blog category:", error);
     throw new Error(

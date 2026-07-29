@@ -222,7 +222,9 @@ export async function createStudent(
 
     const result: CreateStudentResponse = await res.json();
 
-    updateTag("students-list");
+    if (res.ok && result?.success) {
+      updateTag("students-list");
+    }
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -261,7 +263,9 @@ export async function updateStudent(
 
     const result = await res.json();
 
-    updateTag("students-list");
+    if (res.ok && result?.success) {
+      updateTag("students-list");
+    }
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -298,7 +302,9 @@ export async function deleteStudent(
 
     const result = await res.json();
 
-    updateTag("students-list");
+    if (res.ok && result?.success) {
+      updateTag("students-list");
+    }
     return result;
   } catch (error: unknown) {
     console.error("Error in deleteStudent:", error);

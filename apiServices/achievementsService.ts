@@ -190,7 +190,7 @@ export async function createAchievement(
 
     const result = await res.json();
 
-    if (result.success) {
+    if (res.ok && result?.success) {
       updateTag("achievements-list");
     }
     return result;
@@ -227,7 +227,7 @@ export async function updateAchievement(
 
     const result = await res.json();
 
-    if (result.success) {
+    if (res.ok && result?.success) {
       updateTag("achievements-list");
     }
     return result;
@@ -263,7 +263,9 @@ export async function deleteAchievement(
 
     const result = await res.json();
 
-    updateTag("achievements-list");
+    if (res.ok && result?.success) {
+      updateTag("achievements-list");
+    }
     return result;
   } catch (error: unknown) {
     console.error("Error in deleteAchievement:", error);

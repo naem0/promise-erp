@@ -185,7 +185,7 @@ export async function createLicense(
 
     const result = await res.json();
 
-    if (result.success) {
+    if (res.ok && result?.success) {
       updateTag("licenses-list");
     }
     return result;
@@ -222,7 +222,7 @@ export async function updateLicense(
 
     const result = await res.json();
 
-    if (result.success) {
+    if (res.ok && result?.success) {
       updateTag("licenses-list");
     }
     return result;
@@ -258,7 +258,9 @@ export async function deleteLicense(
 
     const result = await res.json();
 
-    updateTag("licenses-list");
+    if (res.ok && result?.success) {
+      updateTag("licenses-list");
+    }
     return result;
   } catch (error: unknown) {
     console.error("Error in deleteLicense:", error);

@@ -303,7 +303,7 @@ export async function createRequisition(
     });
 
     const result = await res.json();
-    if (result.success) {
+    if (res.ok && result?.success) {
       updateTag("requisitions-list");
     }
     return result;
@@ -341,7 +341,7 @@ export async function updateRequisition(
     });
 
     const result = await res.json();
-    if (result.success) {
+    if (res.ok && result?.success) {
       updateTag("requisitions-list");
     }
     return result;
@@ -377,7 +377,9 @@ export async function deleteRequisition(
     });
 
     const result = await res.json();
-    updateTag("requisitions-list");
+    if (res.ok && result?.success) {
+      updateTag("requisitions-list");
+    }
     return result;
   } catch (error: unknown) {
     console.error("Error in deleteRequisition:", error);
@@ -488,7 +490,9 @@ export async function requisitionRequestApproval(
     const result = await res.json();
 
     if (result?.success) {
-      updateTag("requisitions-list");
+      if (res.ok && result?.success) {
+        updateTag("requisitions-list");
+      }
     }
 
     return result;

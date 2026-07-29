@@ -191,7 +191,7 @@ export async function createChairmanMessage(
 
     const result = await res.json();
 
-    if (result.success) {
+    if (res.ok && result?.success) {
       updateTag("chairman-messages-list");
     }
     return result;
@@ -228,7 +228,7 @@ export async function updateChairmanMessage(
 
     const result = await res.json();
 
-    if (result.success) {
+    if (res.ok && result?.success) {
       updateTag("chairman-messages-list");
     }
     return result;
@@ -264,7 +264,9 @@ export async function deleteChairmanMessage(
 
     const result = await res.json();
 
-    updateTag("chairman-messages-list");
+    if (res.ok && result?.success) {
+      updateTag("chairman-messages-list");
+    }
     return result;
   } catch (error: unknown) {
     console.error("Error in deleteChairmanMessage:", error);

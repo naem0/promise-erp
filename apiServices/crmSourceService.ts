@@ -189,7 +189,9 @@ export async function createCRMSource(
     });
 
     const result = await res.json();
-    updateTag("crm-sources-list");
+    if (res.ok && result?.success) {
+      updateTag("crm-sources-list");
+    }
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -228,7 +230,9 @@ export async function updateCRMSource(
     });
 
     const result = await res.json();
-    updateTag("crm-sources-list");
+    if (res.ok && result?.success) {
+      updateTag("crm-sources-list");
+    }
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -262,7 +266,9 @@ export async function deleteCRMSource(
     });
 
     const result = await res.json();
-    updateTag("crm-sources-list");
+    if (res.ok && result?.success) {
+      updateTag("crm-sources-list");
+    }
     return result;
   } catch (error: unknown) {
     console.error("Error in deleteCRMSource:", error);

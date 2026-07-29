@@ -164,7 +164,9 @@ export async function addDistrict(
       return result;
     }
 
-    updateTag("districts-list");
+    if (response.ok && result?.success) {
+      updateTag("districts-list");
+    }
 
     return {
       success: true,
@@ -213,7 +215,9 @@ export async function deleteDistrict(
       return { success: false, message: result.message, code: result.code };
     }
     
-    updateTag("districts-list");
+    if (res.ok && result?.success) {
+      updateTag("districts-list");
+    }
     return { success: true, message: result.message || "District deleted successfully", code: result.code };
   } catch (error) {
     const errorResult = await handleApiError(error, "Failed to delete district");
@@ -288,7 +292,9 @@ export async function updateDistrict(
       return result;
     }
 
-    updateTag("districts-list");
+    if (res.ok && result?.success) {
+      updateTag("districts-list");
+    }
     return {
       success: true,
       message: result.message || "District updated successfully.",

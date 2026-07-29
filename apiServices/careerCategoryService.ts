@@ -156,7 +156,9 @@ export async function createCareerCategory(
     });
     const data = await res.json();
 
-    updateTag("career-categories-list");
+    if (res.ok && data?.success) {
+      updateTag("career-categories-list");
+    }
     return data;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -190,7 +192,9 @@ export async function updateCareerCategory(
     });
 
     const data = await res.json();
-    updateTag("career-categories-list");
+    if (res.ok && data?.success) {
+      updateTag("career-categories-list");
+    }
     return data;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -224,7 +228,9 @@ export async function deleteCareerCategory(
     });
     const data = await res.json();
 
-    updateTag("career-categories-list");
+    if (res.ok && data?.success) {
+      updateTag("career-categories-list");
+    }
     return data;
   } catch (error: unknown) {
     if (error instanceof Error) {

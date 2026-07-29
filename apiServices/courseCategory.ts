@@ -187,7 +187,9 @@ export async function createCourseCategory(categoryData: CreateCategoryRequest):
       };
     }
 
-    updateTag("course-categories-list");
+    if (response.ok && result?.success) {
+      updateTag("course-categories-list");
+    }
     return {
       success: true,
       message: result.message || "Course category created successfully",
@@ -244,7 +246,9 @@ export async function updateCourseCategory(id: number, categoryData: UpdateCateg
       };
     }
 
-    updateTag("course-categories-list");
+    if (response.ok && result?.success) {
+      updateTag("course-categories-list");
+    }
     return {
       success: true,
       message: result.message || "Course category updated successfully",
@@ -298,7 +302,9 @@ export async function deleteCourseCategory(id: number): Promise<SingleCategoryRe
       };
     }
 
-    updateTag("course-categories-list");
+    if (response.ok && result?.success) {
+      updateTag("course-categories-list");
+    }
     return {
       success: true,
       message: result.message || "Course category deleted successfully",

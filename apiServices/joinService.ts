@@ -166,7 +166,9 @@ export async function createJoin(
 
     const result = await res.json();
 
-    updateTag("joins-list");
+    if (res.ok && result?.success) {
+      updateTag("joins-list");
+    }
     return result;
   } catch (error: unknown) {
     console.error("Error in createJoin:", error);
@@ -210,7 +212,9 @@ export async function updateJoin(
 
     const result = await res.json();
 
-    updateTag("joins-list");
+    if (res.ok && result?.success) {
+      updateTag("joins-list");
+    }
     return result;
   } catch (error: unknown) {
     console.error("Error in updateJoin:", error);
@@ -247,7 +251,9 @@ export async function deleteJoin(id: number): Promise<SingleJoinResponse> {
     if (!result.success) {
       throw new Error(result.message);
     }
-    updateTag("joins-list");
+    if (res.ok && result?.success) {
+      updateTag("joins-list");
+    }
     return result;
   } catch (error: unknown) {
     console.error("Error in deleteJoin:", error);

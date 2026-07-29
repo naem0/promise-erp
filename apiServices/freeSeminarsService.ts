@@ -246,7 +246,9 @@ export async function createFreeSeminar(
     });
 
     const result: SingleFreeSeminarResponse = await response.json();
-    updateTag("free-seminars-list");
+    if (response.ok && result?.success) {
+      updateTag("free-seminars-list");
+    }
 
     return result;
   } catch (error: unknown) {
@@ -285,7 +287,9 @@ export async function updateFreeSeminar(
 
     const result: SingleFreeSeminarResponse = await res.json();
 
-    updateTag("free-seminars-list");
+    if (res.ok && result?.success) {
+      updateTag("free-seminars-list");
+    }
 
     return result;
   } catch (error: unknown) {
@@ -323,7 +327,9 @@ export async function deleteFreeSeminar(
 
     const result: SingleFreeSeminarResponse = await res.json();
 
-    updateTag("free-seminars-list");
+    if (res.ok && result?.success) {
+      updateTag("free-seminars-list");
+    }
 
     return result;
   } catch (error: unknown) {

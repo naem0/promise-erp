@@ -201,7 +201,7 @@ export async function createProductItem(
 
     const result = await res.json();
 
-    if (result.success) {
+    if (res.ok && result?.success) {
       updateTag("product-items-list");
     }
     return result;
@@ -238,7 +238,7 @@ export async function updateProductItem(
 
     const result = await res.json();
 
-    if (result.success) {
+    if (res.ok && result?.success) {
       updateTag("product-items-list");
     }
     return result;
@@ -274,7 +274,9 @@ export async function deleteProductItem(
 
     const result = await res.json();
 
-    updateTag("product-items-list");
+    if (res.ok && result?.success) {
+      updateTag("product-items-list");
+    }
     return result;
   } catch (error: unknown) {
     console.error("Error in deleteProductItem:", error);
@@ -328,7 +330,7 @@ export async function updateProductStock(
 
     const result = await res.json();
 
-    if (result.success) {
+    if (res.ok && result?.success) {
       updateTag("product-items-list");
     }
 

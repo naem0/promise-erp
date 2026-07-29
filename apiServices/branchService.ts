@@ -96,7 +96,9 @@ export async function createBranch(
 
     const result = await res.json();
 
-    updateTag("branches-list");
+    if (res.ok && result?.success) {
+      updateTag("branches-list");
+    }
 
     return result;
   } catch (error: unknown) {
@@ -265,7 +267,9 @@ export async function updateBranch(
 
 
     const result = await res.json();
-    updateTag("branches-list");
+    if (res.ok && result?.success) {
+      updateTag("branches-list");
+    }
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -302,7 +306,9 @@ export async function deleteBranch(
     });
 
     const result = await res.json();
-    updateTag("branches-list");
+    if (res.ok && result?.success) {
+      updateTag("branches-list");
+    }
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {

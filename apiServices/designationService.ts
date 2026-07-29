@@ -162,7 +162,9 @@ export async function createDesignation(
 
     const result = await res.json();
 
-    updateTag("designations-list");
+    if (res.ok && result?.success) {
+      updateTag("designations-list");
+    }
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -199,7 +201,9 @@ export async function updateDesignation(
 
     const result = await res.json();
 
-    updateTag("designations-list");
+    if (res.ok && result?.success) {
+      updateTag("designations-list");
+    }
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -234,7 +238,9 @@ export async function toggleDesignationStatus(
 
     const result = await res.json();
 
-    updateTag("designations-list");
+    if (res.ok && result?.success) {
+      updateTag("designations-list");
+    }
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -269,7 +275,9 @@ export async function deleteDesignation(
 
     const result = await res.json();
 
-    updateTag("designations-list");
+    if (res.ok && result?.success) {
+      updateTag("designations-list");
+    }
     return result;
   } catch (error: unknown) {
     console.error("Error in deleteDesignation:", error);

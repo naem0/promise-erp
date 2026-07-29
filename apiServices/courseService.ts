@@ -313,7 +313,9 @@ export async function createCourse(
       throw new Error(result.message || "Failed to create course");
     }
 
-    updateTag("courses-list");
+    if (res.ok && result?.success) {
+      updateTag("courses-list");
+    }
     return result;
   } catch (error: unknown) {
     console.error("Error in createCourse:", error);
@@ -390,7 +392,9 @@ export async function updateCourse(
       throw new Error(result.message || "Failed to update course");
     }
 
-    updateTag("courses-list");
+    if (res.ok && result?.success) {
+      updateTag("courses-list");
+    }
     return result;
   } catch (error: unknown) {
     console.error("Error in updateCourse:", error);
@@ -426,7 +430,9 @@ export async function DeleteCourse(id: number): Promise<CourseSingleResponse> {
       throw new Error(result.message || "Failed to delete course");
     }
 
-    updateTag("courses-list");
+    if (res.ok && result?.success) {
+      updateTag("courses-list");
+    }
     return result;
   } catch (error: unknown) {
     console.error("Error in DeleteCourse:", error);
@@ -467,7 +473,9 @@ export async function assignBranchesToCourse(
       throw new Error(result.message || "Failed to assign branches");
     }
 
-    updateTag("courses-list");
+    if (res.ok && result?.success) {
+      updateTag("courses-list");
+    }
     return result;
   } catch (error: unknown) {
     console.error("Error in assignBranchesToCourse:", error);
@@ -577,7 +585,9 @@ export async function assignFaqsToCourse(
       throw new Error(result.message || "Failed to assign FAQs");
     }
 
-    updateTag("courses-list");
+    if (response.ok && result?.success) {
+      updateTag("courses-list");
+    }
     return result;
   } catch (error: unknown) {
     console.error("Error in assignFaqsToCourse:", error);
@@ -619,7 +629,9 @@ export async function assignFacilitiesToCourse(
       throw new Error(result.message || "Failed to assign facilities");
     }
 
-    updateTag("courses-list");
+    if (response.ok && result?.success) {
+      updateTag("courses-list");
+    }
     return result;
   } catch (error: unknown) {
     console.error("Error in assignFacilitiesToCourse:", error);
@@ -908,7 +920,9 @@ export async function assignJoinsToCourse(
       throw new Error(result.message || "Failed to assign joins");
     }
 
-    updateTag("courses-list");
+    if (response.ok && result?.success) {
+      updateTag("courses-list");
+    }
     return result;
   } catch (error: unknown) {
     console.error("Error in assignJoinsToCourse:", error);
@@ -988,7 +1002,9 @@ export async function assignToolsToCourse(
       throw new Error(result.message || "Failed to assign tools");
     }
 
-    updateTag("courses-list");
+    if (response.ok && result?.success) {
+      updateTag("courses-list");
+    }
     return result;
   } catch (error: unknown) {
     console.error("Error in assignToolsToCourse:", error);

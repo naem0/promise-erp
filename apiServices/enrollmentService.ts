@@ -276,7 +276,9 @@ export async function updateEnrollmentPaymentStatus(
       throw new Error(result.message || "Failed to update enrollment payment status.");
     }
 
-    updateTag("enrollments-list");
+    if (res.ok && result?.success) {
+      updateTag("enrollments-list");
+    }
     return result;
   } catch (error) {
     console.error("Error in updateEnrollmentPaymentStatus:", error);
@@ -316,7 +318,9 @@ export async function approveEnrollment(
       throw new Error(result.message || "Failed to approve enrollment.");
     }
 
-    updateTag("enrollments-list");
+    if (res.ok && result?.success) {
+      updateTag("enrollments-list");
+    }
     return result;
   } catch (error) {
     console.error("Error in approveEnrollment:", error);
@@ -353,7 +357,7 @@ export async function createEnrollment(
       throw new Error(result.message || "Failed to create enrollment.");
     }
 
-    if (result.success) {
+    if (res.ok && result?.success) {
       updateTag("enrollments-list");
     }
     return result;
@@ -413,7 +417,9 @@ export async function bulkTransferEnrollments(
       throw new Error(result.message || "Failed to bulk transfer enrollments.");
     }
 
-    updateTag("enrollments-list");
+    if (res.ok && result?.success) {
+      updateTag("enrollments-list");
+    }
     return result;
   } catch (error) {
     console.error("Error in bulkTransferEnrollments:", error);

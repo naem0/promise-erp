@@ -180,7 +180,9 @@ export async function createJobApply(
 
         const result = await res.json();
 
-        updateTag("job-applies-list");
+        if (res.ok && result?.success) {
+          updateTag("job-applies-list");
+        }
         return result;
     } catch (error: unknown) {
         if (error instanceof Error) {
@@ -216,7 +218,9 @@ export async function updateJobApply(
 
         const result = await res.json();
 
-        updateTag("job-applies-list");
+        if (res.ok && result?.success) {
+          updateTag("job-applies-list");
+        }
         return result;
     } catch (error: unknown) {
         if (error instanceof Error) {
@@ -253,7 +257,9 @@ export async function deleteJobApply(
 
         const result = await res.json();
 
-        updateTag("job-applies-list");
+        if (res.ok && result?.success) {
+          updateTag("job-applies-list");
+        }
         return result;
     } catch (error: unknown) {
         console.error("Error in deleteJobApply:", error);

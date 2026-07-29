@@ -176,7 +176,9 @@ export async function createFacility(
       };
     }
 
-    updateTag("facilities-list");
+    if (res.ok && result?.success) {
+      updateTag("facilities-list");
+    }
     return {
       success: true,
       message: result.message || "Facility created successfully",
@@ -230,7 +232,9 @@ export async function updateFacility(
       };
     }
 
-    updateTag("facilities-list");
+    if (res.ok && result?.success) {
+      updateTag("facilities-list");
+    }
     return {
       success: true,
       message: result.message || "Facility updated successfully",
@@ -279,7 +283,9 @@ export async function deleteFacility(
       };
     }
 
-    updateTag("facilities-list");
+    if (res.ok && result?.success) {
+      updateTag("facilities-list");
+    }
     return {
       success: true,
       message: result.message || "Facility deleted successfully",

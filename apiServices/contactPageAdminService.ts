@@ -164,7 +164,9 @@ export async function createContactPage(
 
     const result = await res.json();
 
-    updateTag("contact-pages-list");
+    if (res.ok && result?.success) {
+      updateTag("contact-pages-list");
+    }
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -200,7 +202,9 @@ export async function updateContactPage(
 
     const result = await res.json();
 
-    updateTag("contact-pages-list");
+    if (res.ok && result?.success) {
+      updateTag("contact-pages-list");
+    }
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -237,7 +241,9 @@ export async function deleteContactPage(
 
     const result = await res.json();
 
-    updateTag("contact-pages-list");
+    if (res.ok && result?.success) {
+      updateTag("contact-pages-list");
+    }
     return result;
   } catch (error: unknown) {
     console.error("Error in deleteContactPage:", error);

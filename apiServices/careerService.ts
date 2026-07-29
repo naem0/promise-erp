@@ -194,7 +194,9 @@ export async function createCareer(
 
         const result = await res.json();
 
-        updateTag("careers-list");
+        if (res.ok && result?.success) {
+          updateTag("careers-list");
+        }
         return result;
     } catch (error: unknown) {
         console.error("Error in createCareer:", error);
@@ -234,7 +236,9 @@ export async function updateCareer(
 
         const result = await res.json();
 
-        updateTag("careers-list");
+        if (res.ok && result?.success) {
+          updateTag("careers-list");
+        }
         return result;
     } catch (error: unknown) {
             console.error("Error in updateCareer:", error);
@@ -270,7 +274,9 @@ export async function deleteCareer(id: number): Promise<SingleCareerResponse> {
 
         const result = await res.json();
 
-        updateTag("careers-list");
+        if (res.ok && result?.success) {
+          updateTag("careers-list");
+        }
         return result;
     } catch (error: unknown) {
         console.error("Error in deleteCareer:", error);

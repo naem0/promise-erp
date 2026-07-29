@@ -255,7 +255,9 @@ export async function createEmployee(
 
     const result = await res.json();
 
-    updateTag("employees-list");
+    if (res.ok && result?.success) {
+      updateTag("employees-list");
+    }
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -307,7 +309,9 @@ export async function updateEmployee(
 
     const result = await res.json();
 
-    updateTag("employees-list");
+    if (res.ok && result?.success) {
+      updateTag("employees-list");
+    }
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -462,7 +466,9 @@ export async function deleteEmployee(
 
     const result = await res.json();
 
-    updateTag("employees-list");
+    if (res.ok && result?.success) {
+      updateTag("employees-list");
+    }
     return result;
   } catch (error: unknown) {
     console.error("Error in deleteEmployee:", error);
@@ -497,7 +503,9 @@ export async function toggleEmployeeStatus(
 
     const result = await res.json();
 
-    updateTag("employees-list");
+    if (res.ok && result?.success) {
+      updateTag("employees-list");
+    }
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {

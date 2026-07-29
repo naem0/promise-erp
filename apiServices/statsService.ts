@@ -195,7 +195,7 @@ export async function createStat(
 
     const result = await res.json();
 
-    if (result.success) {
+    if (res.ok && result?.success) {
       updateTag("stats-list");
     }
     return result;
@@ -233,7 +233,7 @@ export async function updateStat(
 
     const result = await res.json();
 
-    if (result.success) {
+    if (res.ok && result?.success) {
       updateTag("stats-list");
     }
     return result;
@@ -270,7 +270,9 @@ export async function deleteStat(
 
     const result = await res.json();
 
-    updateTag("stats-list");
+    if (res.ok && result?.success) {
+      updateTag("stats-list");
+    }
     return result;
   } catch (error: unknown) {
     console.error("Error in deleteStat:", error);
