@@ -176,6 +176,10 @@
     { "path": "/crm/categories/add", "permissions": ["create-crm-categories"] },
     { "path": "/crm/categories/edit", "permissions": ["edit-crm-categories"], "isDynamic": true },
   
+    { "path": "/crm/lead-statuses", "permissions": ["view-crm-statuses"] },
+    { "path": "/crm/lead-statuses/add", "permissions": ["create-crm-statuses"] },
+    { "path": "/crm/lead-statuses/edit", "permissions": ["edit-crm-statuses"], "isDynamic": true },
+
       { "path": "/crm/lead-referrers", "permissions": ["view-crm-referrers"] },
       { "path": "/crm/lead-referrers/add", "permissions": ["create-crm-referrers"] },
       { "path": "/crm/lead-referrers/edit", "permissions": ["edit-crm-referrers"], "isDynamic": true },
