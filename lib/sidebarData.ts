@@ -512,6 +512,11 @@ export const sidebarData = {
               url: "/crm/lead-referrers",
               permissions: ["view-crm-referrers"],
             },
+           {
+              title: "Lead Status",
+              url: "/crm/lead-statuses",
+              permissions: ["view-crm-statuses"],
+            },
             {
               title: "All Notifications",
               url: "/crm/notifications",
