@@ -21,6 +21,7 @@ import {
   User,
   MessageSquare,
   FileText,
+  AlertCircle,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -65,6 +66,12 @@ export function StudentSidebar() {
       url: "/student/certificate",
       icon: Award,
       isActive: pathname.startsWith("/student/certificate"),
+    },
+    {
+      title: "Complain",
+      url: "/student/complain",
+      icon: AlertCircle,
+      isActive: pathname.startsWith("/student/complain"),
     },
     {
       title: "Reviews",
@@ -112,6 +119,7 @@ export function StudentSidebar() {
             src="/images/logo.svg"
             alt="Logo"
             fill
+            sizes="162px"
             className="max-w-[162px]"
           />
         </Link>

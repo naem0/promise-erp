@@ -1,17 +1,17 @@
 "use server";
- 
+
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import { cacheTag, updateTag } from "next/cache";
 import { PaginationType } from "@/types/pagination";
- 
+
 const API_BASE =
   process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
- 
+
 // =======================
 // Interfaces
 // =======================
- 
+
 export interface LeadActivity {
   id: number;
   lead_id: number;
@@ -44,7 +44,7 @@ export interface GrowthStats {
   today_follow_up: number;
   conversion_rate: number;
 }
- 
+
 export interface LeadsActivityResponse {
   success: boolean;
   message: string;
@@ -66,7 +66,7 @@ export interface LeadsActivityResponse {
   };
   errors?: Record<string, string[]>;
 }
- 
+
 export interface SingleLeadActivityResponse {
   success: boolean;
   message: string;
@@ -74,7 +74,7 @@ export interface SingleLeadActivityResponse {
   data: LeadActivity;
   errors?: Record<string, string[]>;
 }
- 
+
 export interface Lead {
   id: number;
   name: string;
@@ -84,14 +84,14 @@ export interface Lead {
   lead_id?: string;
   interested_batch?: string;
 }
- 
+
 export interface SingleLeadResponse {
   success: boolean;
   message: string;
   code: number;
   data: Lead;
 }
- 
+
 export interface LeadInfo {
   id?: number;
   name: string;
@@ -118,7 +118,7 @@ export interface LeadInfo {
   institute?: string;
   age?: number;
 }
- 
+
 export interface LeadActivitiesListResponse {
   success: boolean;
   message: string;
@@ -129,33 +129,31 @@ export interface LeadActivitiesListResponse {
   };
   errors?: Record<string, string[]>;
 }
- 
+
 // =======================
 // GET LEAD BY ID
 // =======================
- 
-export async function getLeadById(
-  id: number,
-): Promise<SingleLeadResponse> {
+
+export async function getLeadById(id: number): Promise<SingleLeadResponse> {
   try {
     const session = await getServerSession(authOptions);
     const token = session?.accessToken;
- 
+
     if (!token) throw new Error("No valid session/token");
- 
+
     const res = await fetch(`${API_BASE}/crm/leads/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
     });
- 
+
     if (!res.ok) {
       throw new Error(`Status: ${res.status} ${res.statusText}`);
     }
- 
+
     const result = await res.json();
- 
+
     return result;
   } catch (error: unknown) {
     console.error("Error in getLeadById:", error);
@@ -166,39 +164,42 @@ export async function getLeadById(
     }
   }
 }
- 
+
 // =======================
 // GET ALL LEADS ACTIVITY (CACHED)
 // =======================
- 
+
 export async function getLeadsActivityCached(
   token: string,
   params: Record<string, unknown> = {},
 ): Promise<LeadsActivityResponse | null> {
   "use cache";
   cacheTag("leads-activity-list");
- 
+
   try {
-  // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
+    // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
     const urlParams = new URLSearchParams();
     for (const key in params) {
       if (params[key] !== undefined && params[key] !== null) {
         urlParams.append(key, String(params[key]));
       }
     }
- 
-    const res = await fetch(`${API_BASE}/crm/leads/activity-list?${urlParams.toString()}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
+
+    const res = await fetch(
+      `${API_BASE}/crm/leads/activity-list?${urlParams.toString()}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
       },
-    });
- 
+    );
+
     if (!res.ok) {
       throw new Error(`Status: ${res.status} ${res.statusText}`);
     }
     const result = await res.json();
- 
+
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -210,11 +211,11 @@ export async function getLeadsActivityCached(
     }
   }
 }
- 
+
 // =======================
 // GET ALL LEADS ACTIVITY WRAPPER
 // =======================
- 
+
 export async function getLeadsActivity(
   params: Record<string, unknown> = {},
 ): Promise<LeadsActivityResponse> {
@@ -249,12 +250,15 @@ export async function getTodayFollowUpLeadsCached(
       }
     }
 
-    const res = await fetch(`${API_BASE}/crm/leads/today-follow-ups?${urlParams.toString()}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
+    const res = await fetch(
+      `${API_BASE}/crm/leads/today-follow-ups?${urlParams.toString()}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
       },
-    });
+    );
 
     if (!res.ok) {
       throw new Error(`Status: ${res.status} ${res.statusText}`);
@@ -287,37 +291,38 @@ export async function getTodayFollowUpLeads(
 
   const _cachedResult = await getTodayFollowUpLeadsCached(token, params);
 
-  if (!_cachedResult) throw new Error("Failed to fetch today's follow-up data from cache.");
+  if (!_cachedResult)
+    throw new Error("Failed to fetch today's follow-up data from cache.");
 
   return _cachedResult;
 }
- 
+
 // =======================
 // GET LEAD ACTIVITIES BY LEAD ID
 // =======================
- 
+
 export async function getLeadActivitiesByLeadId(
   leadId: number,
 ): Promise<LeadActivitiesListResponse> {
   try {
     const session = await getServerSession(authOptions);
     const token = session?.accessToken;
- 
+
     if (!token) throw new Error("No valid session/token");
- 
+
     const res = await fetch(`${API_BASE}/crm/leads/${leadId}/activities`, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
     });
- 
+
     if (!res.ok) {
       throw new Error(`Status: ${res.status} ${res.statusText}`);
     }
- 
+
     const result = await res.json();
- 
+
     return result;
   } catch (error: unknown) {
     console.error("Error in getLeadActivitiesByLeadId:", error);
@@ -328,27 +333,25 @@ export async function getLeadActivitiesByLeadId(
     }
   }
 }
- 
+
 // =======================
 // CREATE LEAD ACTIVITY
 // =======================
- 
-export async function createLeadActivity(
-  payload: {
-    lead_id: number;
-    date: string;
-    type: number;
-    status_id: number;
-    note: string;
-    time?: string;
-  },
-): Promise<SingleLeadActivityResponse> {
+
+export async function createLeadActivity(payload: {
+  lead_id: number;
+  date: string;
+  type: number;
+  status_id: number;
+  note: string;
+  time?: string;
+}): Promise<SingleLeadActivityResponse> {
   try {
     const session = await getServerSession(authOptions);
     const token = session?.accessToken;
- 
+
     if (!token) throw new Error("No valid session/token");
- 
+
     const res = await fetch(`${API_BASE}/crm/leads/activities`, {
       method: "POST",
       headers: {
@@ -357,15 +360,13 @@ export async function createLeadActivity(
       },
       body: JSON.stringify(payload),
     });
- 
+
     const result = await res.json();
 
     if (res.ok && result?.success) {
       updateTag("leads-activity-list");
-      if (res.ok && result?.success) {
-        updateTag("today-follow-up-leads");
-        updateTag("crm-notifications-list");
-      }
+      updateTag("today-follow-up-leads");
+      updateTag("crm-notifications-list");
     }
     return result;
   } catch (error: unknown) {
@@ -443,9 +444,6 @@ export async function getLeadEnrollmentInfo(
   }
 }
 
-
-
-
 // ======================= getLeadActivitiesSummary =======================
 export interface LeadActivitySummary {
   total_leads: number;
@@ -464,11 +462,10 @@ export interface LeadActivitiesSummaryResponse {
   code: number;
   data: {
     stats: LeadActivitySummary;
-  }
+  };
   errors?: Record<string, string[]>;
 }
-export async function getLeadActivitiesSummary(
-): Promise<LeadActivitiesSummaryResponse | null> {
+export async function getLeadActivitiesSummary(): Promise<LeadActivitiesSummaryResponse | null> {
   // try-এর বাইরে রাখা হয়েছে যাতে Next.js build-time dynamic signal সঠিকভাবে প্রপাগেট হয়
   const session = await getServerSession(authOptions);
   const token = session?.accessToken;

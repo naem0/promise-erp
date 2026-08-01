@@ -59,29 +59,31 @@ export async function getInvoices(
         urlParams.append(key, params[key].toString());
       }
     }
-  const url = `${API_BASE}/invoices?${urlParams.toString()}`;
+    const url = `${API_BASE}/invoices?${urlParams.toString()}`;
 
     const res = await fetch(url, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
-      }
+      },
     });
 
     const result = await res.json();
 
-    if (!res.ok) {
-      throw new Error(result.message || `Status: ${res.status} ${res.statusText}`);
-    }
-
-    if(res.status === 401 || res.status === 403) {
+    if (res.status === 401 || res.status === 403) {
       console.error("Unauthorized");
-      return null
+      return null;
     }
 
-    if(res.status === 404) {
+    if (res.status === 404) {
       console.error("Not Found");
-      return null
+      return null;
+    }
+
+    if (!res.ok) {
+      throw new Error(
+        result.message || `Status: ${res.status} ${res.statusText}`,
+      );
     }
 
     return result;
@@ -187,7 +189,7 @@ export interface InvoiceDetailResponse {
 }
 
 export async function getInvoiceById(
-  id: string | number
+  id: string | number,
 ): Promise<InvoiceDetailResponse | null> {
   try {
     const session = await getServerSession(authOptions);
@@ -203,7 +205,7 @@ export async function getInvoiceById(
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
-      }
+      },
     });
 
     if (res.status === 401 || res.status === 403) {
@@ -219,7 +221,9 @@ export async function getInvoiceById(
     const result = await res.json();
 
     if (!res.ok) {
-      throw new Error(result.message || `Status: ${res.status} ${res.statusText}`);
+      throw new Error(
+        result.message || `Status: ${res.status} ${res.statusText}`,
+      );
     }
 
     return result;
@@ -228,8 +232,9 @@ export async function getInvoiceById(
     if (error instanceof Error) {
       throw error;
     } else {
-      throw new Error("An unknown error occurred while fetching invoice details.");
+      throw new Error(
+        "An unknown error occurred while fetching invoice details.",
+      );
     }
   }
 }
-
