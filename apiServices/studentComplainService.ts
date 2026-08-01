@@ -70,7 +70,12 @@ export async function getStudentComplainsCached(
       },
     });
 
-    if (res.status === 401 || res.status === 403 || res.status === 404) {
+    if (res.status === 401 || res.status === 403) {
+      console.warn("Unauthorized: Access token not found.");
+      return null;
+    }
+    if (res.status === 404) {
+      console.warn("Not Found: No complains found.");
       return null;
     }
 
@@ -80,6 +85,9 @@ export async function getStudentComplainsCached(
 
     return await res.json();
   } catch (error: unknown) {
+     if (typeof error === "object" && error !== null && "digest" in error)
+      throw error;
+    console.error("getStudentComplainsCached Error:", error);
     if (error instanceof Error) {
       console.error("getStudentComplainsCached Error:", error.message);
     }
