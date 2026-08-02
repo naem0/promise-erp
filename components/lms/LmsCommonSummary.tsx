@@ -61,11 +61,11 @@ const LmsCommonSummary = ({ data }: Props) => {
         return (
           <div
             key={index}
-            className={`text-white rounded-[22px] p-3 flex flex-col shadow-sm relative overflow-hidden bg-gradient-to-br ${gradient} transition-all duration-300 hover:shadow-lg hover:-translate-y-1 group`}
+            className={`text-white rounded-[22px] p-3 flex flex-col shadow-sm relative overflow-hidden bg-linear-to-br ${gradient} transition-all duration-300 hover:shadow-lg hover:-translate-y-1 group`}
           >
             {/* Header */}
             <div className="flex items-center gap-3 relative z-10">
-              <div className="w-10 h-10 bg-white/15 rounded-xl backdrop-blur-sm flex items-center justify-center flex-shrink-0">
+              <div className="w-10 h-10 bg-white/15 rounded-xl backdrop-blur-sm flex items-center justify-center shrink-0">
                 <Icon className="w-5 h-5 text-white" />
               </div>
               <h3 className="font-bold text-[16px] text-white tracking-wide">
@@ -74,20 +74,42 @@ const LmsCommonSummary = ({ data }: Props) => {
             </div>
 
             {/* Stats — fully dynamic from API metrics keys */}
-            <div className="flex gap-2.5 mt-2 relative z-10">
-              {metricEntries.map(([key, value]) => (
-                <div
-                  key={key}
-                  className="flex flex-col border border-white/15 rounded-[14px] py-1.5 px-3 bg-white/10 flex-1 backdrop-blur-sm"
-                >
+            <div className="flex flex-wrap gap-2.5 mt-2 relative z-10">
+              {metricEntries.length > 0 ? (
+                metricEntries.map(([key, value], idx) => {
+                  const isExtra = metricEntries.length > 2 && idx >= 2;
+                  const hasData = value !== null && value !== undefined && value !== "";
+
+                  return (
+                    <div
+                      key={key}
+                      className={`flex flex-col border border-white/15 rounded-[14px] py-1.5 px-3 bg-white/10 backdrop-blur-sm ${
+                        isExtra ? "w-full" : "flex-1"
+                      }`}
+                    >
+                      <span className="text-[10px] font-semibold text-white/75 uppercase tracking-wider mb-1">
+                        {key.replace(/_/g, " ")}
+                      </span>
+                      <span
+                        className={`font-semibold tracking-tight text-white leading-none ${
+                          isExtra ? "text-sm mt-0.5" : "text-base"
+                        }`}
+                      >
+                        {hasData ? value : "Not Found"}
+                      </span>
+                    </div>
+                  );
+                })
+              ) : (
+                <div className="flex flex-col border border-white/15 rounded-[14px] py-1.5 px-3 bg-white/10 backdrop-blur-sm flex-1">
                   <span className="text-[10px] font-semibold text-white/75 uppercase tracking-wider mb-1">
-                    {key.replace(/_/g, " ")}
+                    Status
                   </span>
-                  <span className="text-xl font-semibold tracking-tight text-white leading-none">
-                    {value ?? 0}
+                  <span className="font-semibold tracking-tight text-white text-base leading-none">
+                    Not Found
                   </span>
                 </div>
-              ))}
+              )}
             </div>
 
             {/* Background Icon */}

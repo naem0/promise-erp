@@ -12,13 +12,13 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Search, FilterX } from "lucide-react";
-import { Branch } from "@/apiServices/branchService";
+import BranchSearchSelect from "@/components/common/BranchSearchSelect";
 import { CRMCategory } from "@/apiServices/crmCategoryService";
-import { Consultant } from "@/apiServices/crmLeadsActions";
 import { Course } from "@/apiServices/courseService";
 import PermissionGuard from "@/components/auth/PermissionGuard";
 import CourseMultipleSearchSelect from "@/components/common/CourseMultipleSearchSelect";
 import { DatePickerWithRange } from "@/components/common/DatePickerWithRange";
+import ConsultantSearchSelect from "@/components/common/ConsultantSearchSelect";
 
 interface FilterFormValues {
     search?: string;
@@ -35,16 +35,12 @@ interface FilterFormValues {
 }
 
 interface CRMLeadsFilterProps {
-    branches: Branch[];
     categories?: CRMCategory[];
-    consultants?: Consultant[];
     courses?: Course[];
 }
 
 export default function CRMLeadsFilter({
-    branches,
     categories,
-    consultants,
     courses,
 }: CRMLeadsFilterProps) {
     const router = useRouter();
@@ -234,31 +230,14 @@ export default function CRMLeadsFilter({
                     name="branch_id"
                     control={control}
                     render={({ field }) => (
-                        <Select
+                        <BranchSearchSelect
                             value={field.value || ""}
                             onValueChange={(value) => {
-                                field.onChange(value);
-                                handleSelectChange("branch_id")(value);
+                                field.onChange(value ?? "");
+                                handleSelectChange("branch_id")(value ?? "");
                             }}
-                        >
-                            <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Branch" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {
-                                    branches?.length ? (
-                                        branches.map((branch) => (
-                                            <SelectItem key={branch.id} value={String(branch.id)}>
-                                                {branch.name}
-                                            </SelectItem>
-                                        ))
-                                    ) : (
-                                        <SelectItem value="none" disabled>
-                                            No branch found
-                                        </SelectItem>
-                                    )}
-                            </SelectContent>
-                        </Select>
+                            placeholder="Branch"
+                        />
                     )}
                 />
 
@@ -353,30 +332,14 @@ export default function CRMLeadsFilter({
                         name="user_id"
                         control={control}
                         render={({ field }) => (
-                            <Select
+                            <ConsultantSearchSelect
                                 value={field.value || ""}
                                 onValueChange={(value) => {
-                                    field.onChange(value);
-                                    handleSelectChange("user_id")(value);
+                                    field.onChange(value ?? "");
+                                    handleSelectChange("user_id")(value ?? "");
                                 }}
-                            >
-                                <SelectTrigger className="w-full">
-                                    <SelectValue placeholder="Select Counsellor" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {consultants?.length ? (
-                                        consultants.map((consultant) => (
-                                            <SelectItem key={consultant.id} value={String(consultant.id)}>
-                                                {consultant.name}
-                                            </SelectItem>
-                                        ))
-                                    ) : (
-                                        <SelectItem value="none" disabled>
-                                            No consultant found
-                                        </SelectItem>
-                                    )}
-                                </SelectContent>
-                            </Select>
+                                placeholder="Select Counsellor"
+                            />
                         )}
                     />
                 </PermissionGuard>

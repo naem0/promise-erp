@@ -2,6 +2,8 @@
 import { PaginationType } from "@/types/pagination";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
+import { cacheTag } from "next/cache";
+
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
 
 //   ******* Start getCourseSalesSummary API *******
@@ -27,14 +29,13 @@ export interface CourseSalesSummaryApiResponse {
   errors?: Record<string, string[]>;
 }
 
-export async function getCourseSalesSummary(): Promise<CourseSalesSummaryApiResponse | null> {
-  const session = await getServerSession(authOptions);
-  const token = session?.accessToken;
+export async function getCourseSalesSummaryCached(
+  token: string
+): Promise<CourseSalesSummaryApiResponse | null> {
+  "use cache";
+  cacheTag("course-sales-summary");
 
   try {
-    if (!token) {
-      throw new Error("No valid session or access token found.");
-    }
     const res = await fetch(`${API_BASE}/dashboard/course-sales-summary`, {
       headers: {
         "Content-Type": "application/json",
@@ -43,30 +44,46 @@ export async function getCourseSalesSummary(): Promise<CourseSalesSummaryApiResp
     });
 
     if (res?.status === 404) {
-      console.warn("No course sales summary found.");
+      console.warn("No course sales summary found (404).");
       return null;
     }
 
     if (res?.status === 401 || res?.status === 403) {
-      console.warn("Unauthorized: Access token not found.");
+      console.warn("Unauthorized/Forbidden access to course sales summary");
       return null;
     }
 
     if (!res.ok) {
-      throw new Error(
-        `getCourseSalesSummary API error: ${res.status} ${res.statusText}`,
-      );
+      throw new Error(`Status: ${res.status} ${res.statusText}`);
     }
 
     const data: CourseSalesSummaryApiResponse = await res.json();
     return data;
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error("Error fetching course sales summary:", error.message);
-      throw new Error(error.message);
+      console.error("Service error in getCourseSalesSummaryCached:", error.message);
+    } else {
+      console.error("Service error in getCourseSalesSummaryCached");
     }
-    throw new Error("Unknown error occurred while fetching course sales summary");
+    return null;
   }
+}
+
+export async function getCourseSalesSummary(): Promise<CourseSalesSummaryApiResponse> {
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+
+  if (!token) {
+    throw new Error("No valid session/token");
+  }
+
+  const _cachedResult = await getCourseSalesSummaryCached(token);
+
+  if (!_cachedResult) {
+    throw new Error("Failed to fetch course sales summary from cache.");
+  }
+
+  return _cachedResult;
 }
 //   ******* End getCourseSalesSummary API *******
 
@@ -100,17 +117,14 @@ export interface CourseSalesReportApiResponse {
   errors?: Record<string, string[]>;
 }
 
-export async function getCourseSalesReportList(
+export async function getCourseSalesReportListCached(
+  token: string,
   params: Record<string, unknown> = {}
 ): Promise<CourseSalesReportApiResponse | null> {
-  const session = await getServerSession(authOptions);
-  const token = session?.accessToken;
+  "use cache";
+  cacheTag("course-sales-report-list");
 
   try {
-    if (!token) {
-      throw new Error("No valid session or access token found.");
-    }
-    
     const urlParams = new URLSearchParams();
     for (const key in params) {
       if (params[key] !== undefined && params[key] !== null && params[key] !== "") {
@@ -118,7 +132,9 @@ export async function getCourseSalesReportList(
       }
     }
 
-    const res = await fetch(`${API_BASE}/dashboard/course-sales-report?${urlParams.toString()}`, {
+    const queryString = urlParams.toString() ? `?${urlParams.toString()}` : "";
+
+    const res = await fetch(`${API_BASE}/dashboard/course-sales-report${queryString}`, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
@@ -126,29 +142,47 @@ export async function getCourseSalesReportList(
     });
 
     if (res?.status === 404) {
-      console.warn("No course sales report found.");
+      console.warn("No course sales report found (404).");
       return null;
     }
 
     if (res?.status === 401 || res?.status === 403) {
-      console.warn("Unauthorized: Access token not found.");
+      console.warn("Unauthorized/Forbidden access to course sales report");
       return null;
     }
 
     if (!res.ok) {
-      throw new Error(
-        `getCourseSalesReportList API error: ${res.status} ${res.statusText}`,
-      );
+      throw new Error(`Status: ${res.status} ${res.statusText}`);
     }
 
     const data: CourseSalesReportApiResponse = await res.json();
     return data;
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error("Error fetching course sales report list:", error.message);
-      throw new Error(error.message);
+      console.error("Service error in getCourseSalesReportListCached:", error.message);
+    } else {
+      console.error("Service error in getCourseSalesReportListCached");
     }
-    throw new Error("Unknown error occurred while fetching course sales report list");
+    return null;
   }
+}
+
+export async function getCourseSalesReportList(
+  params: Record<string, unknown> = {}
+): Promise<CourseSalesReportApiResponse> {
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+
+  if (!token) {
+    throw new Error("No valid session/token");
+  }
+
+  const _cachedResult = await getCourseSalesReportListCached(token, params);
+
+  if (!_cachedResult) {
+    throw new Error("Failed to fetch course sales report list from cache.");
+  }
+
+  return _cachedResult;
 }
 //   ******* End getCourseSalesReportList API *******
