@@ -132,6 +132,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "erp-back.e-laeltd.com",
       },
+      {
+        protocol: "https",
+        hostname: "beta.e-laeltd.com",
+      },
     ],
   },
 
