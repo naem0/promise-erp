@@ -15,6 +15,8 @@ import { DatePickerWithRange } from "@/components/common/DatePickerWithRange";
 import { Consultant } from "@/apiServices/crmLeadsActions";
 import CourseSearchSelect from "@/components/common/CourseSearchSelect";
 import BranchSearchSelect from "@/components/common/BranchSearchSelect";
+import PerPageSelect from "@/components/common/PerPageSelect";
+import ConsultantSearchSelect from "@/components/common/ConsultantSearchSelect";
 
 interface FilterFormValues {
     consultant_id?: string;
@@ -165,30 +167,14 @@ export default function CRMLeadReportsFilter({
                     name="consultant_id"
                     control={control}
                     render={({ field }) => (
-                        <Select
+                        <ConsultantSearchSelect
                             value={field.value || ""}
                             onValueChange={(value) => {
-                                field.onChange(value);
-                                handleSelectChange("consultant_id")(value);
+                                field.onChange(value ?? "");
+                                handleSelectChange("consultant_id")(value ?? "");
                             }}
-                        >
-                            <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Select Counsellor" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {consultants?.length ? (
-                                    consultants.map((consultant) => (
-                                        <SelectItem key={consultant.id} value={String(consultant.id)}>
-                                            {consultant.name}
-                                        </SelectItem>
-                                    ))
-                                ) : (
-                                    <SelectItem value="none" disabled>
-                                        No Counsellor found
-                                    </SelectItem>
-                                )}
-                            </SelectContent>
-                        </Select>
+                            placeholder="Select Counsellor"
+                        />
                     )}
                 />
 
@@ -242,29 +228,10 @@ export default function CRMLeadReportsFilter({
                 {/* Date Range */}
                 <DatePickerWithRange />
 
-                {/* Per Page */}
-                <Controller
-                    name="per_page"
-                    control={control}
-                    render={({ field }) => (
-                        <Select
-                            value={field.value || "15"}
-                            onValueChange={(value) => {
-                                field.onChange(value);
-                                handleSelectChange("per_page")(value);
-                            }}
-                        >
-                            <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Per Page" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="15">15 Per Page</SelectItem>
-                                <SelectItem value="50">50 Per Page</SelectItem>
-                                <SelectItem value="100">100 Per Page</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    )}
-                />
+                {/* Per Page Select */}
+                <div className="flex items-center justify-start">
+                    <PerPageSelect className="w-full" />
+                </div>
             </div>
         </div>
     );

@@ -19,6 +19,7 @@ import PermissionGuard from "@/components/auth/PermissionGuard";
 import CourseMultipleSearchSelect from "@/components/common/CourseMultipleSearchSelect";
 import { DatePickerWithRange } from "@/components/common/DatePickerWithRange";
 import ConsultantSearchSelect from "@/components/common/ConsultantSearchSelect";
+import PerPageSelect from "@/components/common/PerPageSelect";
 
 interface FilterFormValues {
     search?: string;
@@ -396,29 +397,10 @@ export default function CRMLeadsFilter({
                 <div className="space-y-1">
                     <DatePickerWithRange />
                 </div>
-                {/* Per Page */}
-                <Controller
-                    name="per_page"
-                    control={control}
-                    render={({ field }) => (
-                        <Select
-                            value={field.value || "15"}
-                            onValueChange={(value) => {
-                                field.onChange(value);
-                                handleSelectChange("per_page")(value);
-                            }}
-                        >
-                            <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Per Page" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="15">15 Per Page</SelectItem>
-                                <SelectItem value="50">50 Per Page</SelectItem>
-                                <SelectItem value="100">100 Per Page</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    )}
-                />
+                {/* Per Page Select */}
+                <div className="flex items-center justify-start">
+                    <PerPageSelect className="w-full" />
+                </div>
             </div>
 
         </div>

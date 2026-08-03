@@ -13,12 +13,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { Search, FilterX } from "lucide-react";
 import { DatePickerWithRange } from "@/components/common/DatePickerWithRange";
+import PerPageSelect from "@/components/common/PerPageSelect";
 
 import { Branch } from "@/apiServices/branchService";
 
 interface FilterFormValues {
     search?: string;
     branch_id?: string;
+    per_page?: string;
 }
 
 interface ConsultantsPerformanceFilterProps {
@@ -37,6 +39,7 @@ export default function ConsultantsPerformanceFilter({
             defaultValues: {
                 search: searchParams.get("search") || "",
                 branch_id: searchParams.get("branch_id") || "",
+                per_page: searchParams.get("per_page") || "15",
             },
         });
 
@@ -84,6 +87,7 @@ export default function ConsultantsPerformanceFilter({
         reset({
             search: "",
             branch_id: "",
+            per_page: "15",
         });
         router.replace(pathname, { scroll: false });
     };
@@ -92,12 +96,14 @@ export default function ConsultantsPerformanceFilter({
     const currentBranchId = searchParams.get("branch_id") || "";
     const currentDateFrom = searchParams.get("date_from") || "";
     const currentDateTo = searchParams.get("date_to") || "";
+    const currentPerPage = searchParams.get("per_page") || "15";
 
     const hasActiveFilters =
         currentSearch !== "" ||
         currentBranchId !== "" ||
         currentDateFrom !== "" ||
-        currentDateTo !== "";
+        currentDateTo !== "" ||
+        currentPerPage !== "15";
 
 
 
@@ -120,7 +126,7 @@ export default function ConsultantsPerformanceFilter({
                 )}
             </div>
 
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
                 {/* Search */}
                 <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -166,6 +172,11 @@ export default function ConsultantsPerformanceFilter({
                 {/* Date Range */}
                 <div className="space-y-1">
                     <DatePickerWithRange />
+                </div>
+
+                {/* Per Page Select */}
+                <div className="flex items-center justify-start">
+                    <PerPageSelect className="w-full" />
                 </div>
             </div>
         </div>
