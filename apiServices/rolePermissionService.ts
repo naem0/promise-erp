@@ -237,15 +237,29 @@ export interface PermissionByApiResponse {
 
 export async function getRolePermissionslist({
   token,
+  params = {},
 }: {
   token: string;
+  params?: Record<string, unknown>;
 }): Promise<PermissionByApiResponse> {
   if (!token) {
     throw new Error("Unauthorized: Access token not found");
   }
 
   try {
-    const url = `${API_BASE}/roles/permissions/list`;
+    const urlParams = new URLSearchParams();
+
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== "") {
+        urlParams.append(key, String(value));
+      }
+    });
+
+    const queryString = urlParams.toString();
+    const url = queryString
+      ? `${API_BASE}/roles/permissions/list?${queryString}`
+      : `${API_BASE}/roles/permissions/list`;
+
     const res = await fetch(url, {
       method: "GET",
       headers: {
@@ -517,7 +531,10 @@ export async function getAllUserlist(
   }
 
   try {
-    const url = `${API_BASE}/users/all-user-list`;
+    const queryString = urlParams.toString();
+    const url = queryString
+      ? `${API_BASE}/users/all-user-list?${queryString}`
+      : `${API_BASE}/users/all-user-list`;
     const res = await fetch(url, {
       method: "GET",
       headers: {

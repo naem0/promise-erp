@@ -113,7 +113,7 @@ const RolesWrapper = () => {
             {/* Add New Role Card */}
 
             {/* Role Cards */}
-            {roles.map((role) => (
+            {roles?.map((role) => (
               <Card
                 key={role?.id}
                 className="flex justify-between items-center p-4"
