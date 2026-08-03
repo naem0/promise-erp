@@ -1,11 +1,21 @@
 'use client'
 
 import { useEffect, useState, useTransition, useMemo } from 'react'
-import { Combobox } from '@/components/ui/combobox'
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { Input } from '@/components/ui/input'
+import { Search } from 'lucide-react'
+import {
+  getAllRolesList,
   getRolesSimpleList,
-  SimpleRole,
+  Role,
 } from '@/apiServices/rolePermissionService'
+import { useSession } from 'next-auth/react'
 
 interface RoleSearchSelectProps {
   value?: string | null
@@ -17,79 +27,97 @@ interface RoleSearchSelectProps {
 }
 
 export default function RoleSearchSelect({
-  value,
+  value = "",
   onValueChange,
-  placeholder = 'Select role',
+  placeholder = "Select role",
   disabled = false,
   className,
   useNameAsValue = false,
 }: RoleSearchSelectProps) {
-  const [roles, setRoles] = useState<SimpleRole[]>([])
+  const { data: session } = useSession()
+  const [roles, setRoles] = useState<Role[]>([])
   const [isPending, startTransition] = useTransition()
-  const [searchTerm, setSearchTerm] = useState('')
-  const [selectedOption, setSelectedOption] = useState<{
-    value: string
-    label: string
-  } | null>(null)
+  const [searchTerm, setSearchTerm] = useState("")
 
   useEffect(() => {
-    const delayDebounce = setTimeout(() => {
-      startTransition(async () => {
-        try {
-          const res = await getRolesSimpleList(searchTerm || undefined)
-          if (res?.success && res?.data) {
-            setRoles(res?.data?.roles || [])
-          } else {
-            setRoles([])
+    startTransition(async () => {
+      try {
+        let fetchedRoles: Role[] = []
+        if (session?.accessToken) {
+          const res = await getAllRolesList({
+            token: session?.accessToken,
+          })
+          if (res?.success && res?.data?.roles) {
+            fetchedRoles = res?.data?.roles
           }
-        } catch (error: unknown) {
-          console.error('Failed to fetch roles:', error)
-          setRoles([])
         }
-      })
-    }, 300)
 
-    return () => clearTimeout(delayDebounce)
-  }, [searchTerm])
+        if (fetchedRoles?.length === 0) {
+          const resSimple = await getRolesSimpleList()
+          if (resSimple?.success && resSimple?.data?.roles) {
+            fetchedRoles = resSimple?.data?.roles as unknown as Role[]
+          }
+        }
 
-  const options = useMemo(() => {
-    return (roles || [])?.map((role) => ({
-      value: useNameAsValue ? (role?.name || '') : String(role?.id),
-      label: role?.display_name || role?.name,
-    }))
-  }, [roles, useNameAsValue])
-
-  // Retain the selected option so it doesn't disappear when user searches for something else
-  useEffect(() => {
-    if (value) {
-      const found = options?.find((o) => o.value === value)
-      if (found) {
-        setSelectedOption(found)
+        setRoles(fetchedRoles)
+      } catch (error: unknown) {
+        console.error("Failed to fetch roles:", error)
       }
-    } else {
-      setSelectedOption(null)
-    }
-  }, [value, options])
+    })
+  }, [session?.accessToken])
 
-  const finalOptions = useMemo(() => {
-    if (selectedOption && !options?.some((o) => o.value === selectedOption?.value)) {
-      return [selectedOption, ...options]
-    }
-    return options
-  }, [options, selectedOption])
+  const filteredRoles = useMemo(() => {
+    if (!searchTerm.trim()) return roles
+    const lower = searchTerm.toLowerCase()
+    return roles?.filter(
+      (r) =>
+        r?.name?.toLowerCase().includes(lower) ||
+        r?.display_name?.toLowerCase().includes(lower)
+    )
+  }, [roles, searchTerm])
 
   return (
-    <Combobox
-      options={finalOptions}
-      value={value || ''}
-      onValueChange={onValueChange}
-      onInputValueChange={(val) => setSearchTerm(val)}
-      placeholder={isPending ? 'Loading roles...' : placeholder}
-      searchPlaceholder="Search role..."
-      emptyMessage={isPending ? 'Loading...' : 'No roles found'}
+    <Select
+      value={value || ""}
+      onValueChange={(val) => onValueChange?.(val)}
       disabled={disabled || isPending}
-      disableFilter={true}
-      className={className}
-    />
+    >
+      <SelectTrigger className={className || "w-full"}>
+        <SelectValue placeholder={isPending ? "Loading roles..." : placeholder} />
+      </SelectTrigger>
+      <SelectContent className="max-h-60 overflow-y-auto">
+        <div
+          className="p-2 sticky top-0 bg-popover z-10 border-b"
+          onKeyDown={(e) => e.stopPropagation()}
+        >
+          <div className="relative">
+            <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
+            <Input
+              type="text"
+              placeholder="Search role..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="h-8 pl-8 text-xs w-full"
+              onKeyDown={(e) => e.stopPropagation()}
+            />
+          </div>
+        </div>
+
+        {filteredRoles?.map((role) => {
+          const val = useNameAsValue ? (role?.name || "") : String(role?.id)
+          return (
+            <SelectItem key={role?.id} value={val}>
+              {role?.display_name || role?.name}
+            </SelectItem>
+          )
+        })}
+
+        {filteredRoles?.length === 0 && (
+          <div className="p-3 text-center text-xs text-muted-foreground">
+            {isPending ? "Loading..." : "No roles found"}
+          </div>
+        )}
+      </SelectContent>
+    </Select>
   )
 }
