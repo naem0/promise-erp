@@ -18,26 +18,26 @@ export interface Student {
   name: string;
   email: string;
   phone: string;
-  alternate_phone: string ;
-  blood_group: string ;
-  nid_no: string ;
-  date_of_birth: string ;
-  present_address: string ;
-  occupation: string ;
-  father_name: string ;
-  father_occupation: string ;
-  father_phone: string ;
+  alternate_phone: string;
+  blood_group: string;
+  nid_no: string;
+  date_of_birth: string;
+  present_address: string;
+  occupation: string;
+  father_name: string;
+  father_occupation: string;
+  father_phone: string;
   profile_image: string | null;
   status: string | null;
   is_govt: number;
   gender?: string | null;
   total_courses: number;
   courses:
-  | {
-    title: string;
-    batch: string;
-  }[]
-  | null;
+    | {
+        title: string;
+        batch: string;
+      }[]
+    | null;
   branches: string | null;
   districts: string | null;
   divisions: string | null;
@@ -72,13 +72,13 @@ export interface SingleStudentResponse {
 
 export async function getStudentsCached(
   token: string,
-  params: Record<string, unknown> = {}
+  params: Record<string, unknown> = {},
 ): Promise<StudentResponse | null> {
   "use cache";
   cacheTag("students-list");
 
   try {
-  // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
+    // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
     const urlParams = new URLSearchParams();
     for (const key in params) {
       if (params[key] !== undefined && params[key] !== null) {
@@ -114,7 +114,7 @@ export async function getStudentsCached(
 // =======================
 
 export async function getStudents(
-  params: Record<string, unknown> = {}
+  params: Record<string, unknown> = {},
 ): Promise<StudentResponse> {
   const session = await getServerSession(authOptions);
   const token = session?.accessToken;
@@ -133,7 +133,7 @@ export async function getStudents(
 // =======================
 
 export async function getStudentById(
-  id: number
+  id: number,
 ): Promise<SingleStudentResponse> {
   try {
     const session = await getServerSession(authOptions);
@@ -149,7 +149,9 @@ export async function getStudentById(
     });
 
     if (!res.ok) {
-      throw new Error(`Get Student By ID API error: ${res.status} ${res.statusText}`);
+      throw new Error(
+        `Get Student By ID API error: ${res.status} ${res.statusText}`,
+      );
     }
 
     return await res.json();
@@ -202,9 +204,8 @@ export interface CreateStudentResponse {
   errors?: Record<string, string[]>;
 }
 
-
 export async function createStudent(
-  formData: FormData
+  formData: FormData,
 ): Promise<CreateStudentResponse> {
   try {
     const session = await getServerSession(authOptions);
@@ -242,7 +243,7 @@ export async function createStudent(
 
 export async function updateStudent(
   id: number,
-  formData: FormData
+  formData: FormData,
 ): Promise<SingleStudentResponse> {
   try {
     const session = await getServerSession(authOptions);
@@ -282,7 +283,7 @@ export async function updateStudent(
 // =======================
 
 export async function deleteStudent(
-  id: number
+  id: number,
 ): Promise<SingleStudentResponse> {
   try {
     const session = await getServerSession(authOptions);
@@ -320,7 +321,7 @@ export interface StudentStatsResponse {
   success: boolean;
   message?: string;
   code?: number;
-   data: {
+  data: {
     card_name: string;
     metrics: {
       value: number;
@@ -330,7 +331,7 @@ export interface StudentStatsResponse {
 }
 
 export async function getStudentStatsCached(
-  token: string
+  token: string,
 ): Promise<StudentStatsResponse | null> {
   "use cache";
   cacheTag("students-list");
@@ -370,11 +371,84 @@ export async function getStudentStats(): Promise<StudentStatsResponse | null> {
 
   try {
     const cachedResult = await getStudentStatsCached(token);
-    if (!cachedResult) throw new Error("Failed to fetch student stats from cache.");
+    if (!cachedResult)
+      throw new Error("Failed to fetch student stats from cache.");
     return cachedResult;
   } catch (error: unknown) {
     console.error("getStudentStats error:", error);
     if (error instanceof Error) throw error;
     throw new Error("Failed to fetch student stats");
+  }
+}
+
+// =======================
+// GET STUDENTS SIMPLE LIST
+// =======================
+
+export interface SimpleStudent {
+  id: number;
+  uuid: string;
+  name: string;
+  email: string;
+  phone: string;
+  is_govt: number;
+  is_paid: number;
+  courses: string | null;
+  batch: string | null;
+  branches: string | null;
+}
+
+export interface StudentsSimpleListResponse {
+  success: boolean;
+  message: string;
+  code: number;
+  data: {
+    total_students: number;
+    students: SimpleStudent[];
+    pagination?: PaginationType;
+  };
+  errors?: Record<string, string[]>;
+}
+
+export async function getStudentsSimpleList(
+  search?: string,
+): Promise<StudentsSimpleListResponse | null> {
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+  if (!token) throw new Error("No valid session/token");
+  try {
+    const urlParams = new URLSearchParams();
+    urlParams.append("is_blocked", "0");
+    if (search) {
+      urlParams.append("search", search);
+    }
+
+    const res = await fetch(
+      `${API_BASE}/students/simple-list?${urlParams.toString()}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      },
+    );
+
+    if (res.status === 401 || res.status === 403) {
+      console.warn("Unauthorized/Forbidden access to students simple-list");
+      return null;
+    }
+    if (res.status === 404) {
+      return null;
+    }
+    if (!res.ok) {
+      throw new Error(`Status: ${res.status} ${res.statusText}`);
+    }
+
+    return await res.json();
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("getStudentsSimpleList error:", error.message);
+    }
+    return null;
   }
 }

@@ -216,6 +216,13 @@ export const sidebarData = {
             //   url: "#",
             //   permissions: ["view-subscriptions"],
             // },
+            // Student Earnings
+            {
+              title: "Student Earnings",
+              url: "/lms/student-earnings",
+              permissions: ["view-student-earnings"],
+            },
+            
             {
               title: "Enrollment Reports",
               url: "/lms/enrollment-reports",
