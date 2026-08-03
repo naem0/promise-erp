@@ -237,7 +237,7 @@ export default function CRMLeadsClientTable({
                             </TableHead>
                             <TableHead className="text-center">Sl</TableHead>
                             <TableHead className="text-center">Action</TableHead>
-                            <TableHead className="text-center">Lead Profile</TableHead>
+                            <TableHead className="">Lead Profile</TableHead>
                             <TableHead className="text-center">Referrer</TableHead>
                             <TableHead className="text-center">Course</TableHead>
                             <TableHead className="text-center">Type & Shift</TableHead>
@@ -306,27 +306,27 @@ export default function CRMLeadsClientTable({
                                 </TableCell>
 
                                 {/* Name,Email & Phone */}
-                                <TableCell className="font-medium text-center">
-                                    <div className="flex flex-col items-center gap-0.5">
+                                <TableCell className="font-medium">
+                                    <div className="flex flex-col gap-0.5">
                                         <span className="font-semibold">
                                             {lead?.name || "N/A"}
                                         </span>
 
                                         {lead?.phone && (
                                             <span className="text-xs text-muted-foreground">
-                                                {lead.phone}
+                                                Phone: {lead.phone}
                                             </span>
                                         )}
 
                                         {lead?.whatsapp && (
                                             <span className="text-xs text-green-600">
-                                                WA: {lead.whatsapp}
+                                                Whatsapp: {lead.whatsapp}
                                             </span>
                                         )}
 
                                         {lead?.email && (
                                             <span className="text-xs text-secondary" title={lead.email}>
-                                                {truncate(lead.email, 20)}
+                                                Email: {truncate(lead.email, 20)}
                                             </span>
                                         )}
                                     </div>

@@ -121,8 +121,7 @@ const LeadsActivityData = async ({
             <TableRow>
               <TableHead className="text-center">Sl</TableHead>
               <TableHead className="text-center">Action</TableHead>
-              <TableHead className="text-center">Lead Name</TableHead>
-              <TableHead className="text-center">Course</TableHead>
+              <TableHead className="">Lead Details</TableHead>
               <TableHead className="text-center">Lead Created Date</TableHead>
               <TableHead className="text-center">Last Follow Up</TableHead>
               <TableHead className="text-center">Next Follow Up</TableHead>
@@ -153,18 +152,17 @@ const LeadsActivityData = async ({
                   </PermissionGuard>
                 </TableCell>
 
-                <TableCell className="text-center font-medium">
-                  {activity?.lead_name}
+                <TableCell>
+                  <span className="text-black/80" title={activity?.lead_name}>
+                     {activity?.lead_name}
+                  </span>
+                  <br />
+                  <span className="text-black/80" title={activity?.course_name}>
+                    <strong className="text-secondary">Course:</strong>{" "}
+                    {truncate(activity?.course_name || "—", 25)}
+                  </span>
                 </TableCell>
-                <TableCell
-                  className="text-center"
-                  title={activity?.course_name}
-                >
-                  {truncate(activity?.course_name || "—", 25)}
-                </TableCell>
-                <TableCell
-                  className="text-center"
-                >
+                <TableCell className="text-center">
                   {activity?.lead_created_date}
                 </TableCell>
                 <TableCell className="text-center">
@@ -198,9 +196,7 @@ const LeadsActivityData = async ({
                 <TableCell className="text-center">
                   {activity?.time ?? "00:00:00"}
                 </TableCell>
-                <TableCell
-                  className="text-center"
-                >
+                <TableCell className="text-center">
                   {activity?.last_activity}
                 </TableCell>
                 <TableCell

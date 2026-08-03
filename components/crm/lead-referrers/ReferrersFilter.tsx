@@ -14,12 +14,14 @@ import { Button } from "@/components/ui/button";
 import { Search, FilterX } from "lucide-react";
 import { Branch } from "@/apiServices/branchService";
 import { DatePickerWithRange } from "@/components/common/DatePickerWithRange";
+import PerPageSelect from "@/components/common/PerPageSelect";
 
 interface FilterFormValues {
     search?: string;
     status?: string;
     sort_order?: string;
     branch_name?: string;
+    per_page?: string;
 }
 
 interface ReferrersFilterProps {
@@ -38,6 +40,7 @@ export default function ReferrersFilter({ branches = [] }: ReferrersFilterProps)
                 status: searchParams.get("status") || "",
                 sort_order: searchParams.get("sort_order") || "",
                 branch_name: searchParams.get("branch_name") || "",
+                per_page: searchParams.get("per_page") || "15",
             },
         });
 
@@ -87,6 +90,7 @@ export default function ReferrersFilter({ branches = [] }: ReferrersFilterProps)
             status: "",
             sort_order: "",
             branch_name: "",
+            per_page: "15",
         });
         router.replace(pathname, { scroll: false });
     };
@@ -95,12 +99,14 @@ export default function ReferrersFilter({ branches = [] }: ReferrersFilterProps)
     const currentStatus = searchParams.get("status") || "";
     const currentSortOrder = searchParams.get("sort_order") || "";
     const currentBranchName = searchParams.get("branch_name") || "";
+    const currentPerPage = searchParams.get("per_page") || "15";
 
     const hasActiveFilters =
         currentSearch !== "" ||
         currentStatus !== "" ||
         currentSortOrder !== "" ||
         currentBranchName !== "" ||
+        currentPerPage !== "15" ||
         !!searchParams.get("date_from") ||
         !!searchParams.get("date_to");
 
@@ -123,7 +129,7 @@ export default function ReferrersFilter({ branches = [] }: ReferrersFilterProps)
                 )}
             </div>
 
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
                 {/* Search */}
                 <div className="relative md:col-span-2 xl:col-span-2">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -218,6 +224,11 @@ export default function ReferrersFilter({ branches = [] }: ReferrersFilterProps)
                 {/* Date Picker Range */}
                 <div >
                     <DatePickerWithRange />
+                </div>
+
+                {/* Per Page Select */}
+                <div className="flex items-center justify-start">
+                    <PerPageSelect className="w-full" />
                 </div>
             </div>
         </div>

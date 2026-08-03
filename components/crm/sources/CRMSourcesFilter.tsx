@@ -13,11 +13,13 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Search, FilterX } from "lucide-react";
+import PerPageSelect from "@/components/common/PerPageSelect";
 
 interface FilterFormValues {
     search?: string;
     status?: string;
     sort_order?: string;
+    per_page?: string;
 }
 
 export default function CRMSourcesFilter() {
@@ -31,6 +33,7 @@ export default function CRMSourcesFilter() {
                 search: searchParams.get("search") || "",
                 status: searchParams.get("status") || "",
                 sort_order: searchParams.get("sort_order") || "",
+                per_page: searchParams.get("per_page") || "15",
             },
         });
 
@@ -79,6 +82,7 @@ export default function CRMSourcesFilter() {
             search: "",
             status: "",
             sort_order: "",
+            per_page: "15",
         });
         router.replace(pathname, { scroll: false });
     };
@@ -86,11 +90,13 @@ export default function CRMSourcesFilter() {
     const currentSearch = searchParams.get("search") || "";
     const currentStatus = searchParams.get("status") || "";
     const currentSortOrder = searchParams.get("sort_order") || "";
+    const currentPerPage = searchParams.get("per_page") || "15";
 
     const hasActiveFilters =
         currentSearch !== "" ||
         currentStatus !== "" ||
-        currentSortOrder !== "";
+        currentSortOrder !== "" ||
+        currentPerPage !== "15";
 
     return (
         <div className="p-6 mb-6 border rounded-xl bg-card shadow-sm">
@@ -167,6 +173,11 @@ export default function CRMSourcesFilter() {
                         </Select>
                     )}
                 />
+
+                {/* Per Page Select */}
+                <div className="flex items-center justify-start">
+                    <PerPageSelect className="w-full" />
+                </div>
             </div>
         </div>
     );
