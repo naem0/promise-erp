@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -10,18 +10,10 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   assignRole,
-  getAllUserlist,
-  UserList,
 } from "@/apiServices/rolePermissionService";
 import RoleSearchSelect from "@/components/common/RoleSearchSelect";
+import UserSearchSelect from "@/components/common/UserSearchSelect";
 import { useSession } from "next-auth/react";
 import { X } from "lucide-react";
 import { toast } from "sonner";
@@ -35,7 +27,6 @@ const AssignRoleDialog: React.FC<AssignRoleDialogProps> = ({
   open,
   onOpenChange,
 }) => {
-  const [userList, setUserList] = useState<UserList[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   // future use
@@ -44,27 +35,6 @@ const AssignRoleDialog: React.FC<AssignRoleDialogProps> = ({
 
   const [isPending, startTransition] = useTransition();
   const { data: session } = useSession();
-
-  //=========================== User List =============================
-
-  useEffect(() => {
-    if (!open || !session?.accessToken) return;
-    startTransition(async () => {
-      try {
-        setError(null);
-        const response = await getAllUserlist(session?.accessToken);
-        if (response?.success) {
-          setUserList(response?.data?.users || []);
-        } else {
-          setError(response?.message || "Failed to load users");
-        }
-      } catch (err: unknown) {
-        if (err instanceof Error) {
-          setError(err.message);
-        }
-      }
-    });
-  }, [open, session?.accessToken]);
 
   //=========================== Save (Assign Role API) ==========================
 
@@ -133,24 +103,12 @@ const AssignRoleDialog: React.FC<AssignRoleDialogProps> = ({
           {/* User */}
           <div>
             <label className="text-sm font-medium mb-1 block">User</label>
-            <Select
-              value={selectedUser?.toString()}
-              onValueChange={(value) => setSelectedUser(Number(value))}
+            <UserSearchSelect
+              value={selectedUser}
+              onValueChange={setSelectedUser}
               disabled={isPending}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue
-                  placeholder={isPending ? "Loading Users..." : "Select User"}
-                />
-              </SelectTrigger>
-              <SelectContent>
-                {userList?.map((user) => (
-                  <SelectItem key={user?.id} value={user?.id.toString()}>
-                    {user?.name} {"->"} {user?.email}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              placeholder="Select User"
+            />
             {error && <p className="text-sm text-destructive">{error}</p>}
           </div>
         </div>

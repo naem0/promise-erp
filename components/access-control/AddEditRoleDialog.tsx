@@ -20,8 +20,9 @@ import {
 } from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { X } from "lucide-react";
+import { X, Search } from "lucide-react";
 import { toast } from "sonner";
 
 import {
@@ -56,6 +57,7 @@ const AddEditRoleDialog: React.FC<AddEditRoleDialogProps> = ({
 }) => {
     const [roleName, setRoleName] = useState<string>("");
     const [displayName, setDisplayName] = useState<string>("");
+    const [searchQuery, setSearchQuery] = useState<string>("");
     const [rolePermissionList, setRolePermissionList] = useState<
         RolePermissionModule[]
     >([]);
@@ -63,27 +65,36 @@ const AddEditRoleDialog: React.FC<AddEditRoleDialogProps> = ({
     const [roleWiseUsers, setRoleWiseUsers] = useState<RoleWiseUserList[]>([]);
     const [isPending, startTransition] = useTransition();
 
-    //===== Fetch all permissions list ======
+    //===== Fetch all permissions list (with debounced search) ======
     useEffect(() => {
         if (!token || !open) return;
 
-        startTransition(async () => {
-            try {
-                const response = await getRolePermissionslist({ token });
-                if (response?.success) {
-                    setRolePermissionList(response?.data?.permissions || []);
+        const timer = setTimeout(() => {
+            startTransition(async () => {
+                try {
+                    const search = searchQuery.trim() ? searchQuery.trim() : undefined;
+                    const response = await getRolePermissionslist({
+                        token,
+                        params: { search },
+                    });
+                    if (response?.success) {
+                        setRolePermissionList(response?.data?.permissions || []);
+                    }
+                } catch (error) {
+                    console.error("Permission fetch error:", error);
                 }
-            } catch (error) {
-                console.error("Permission fetch error:", error);
-            }
-        });
-    }, [token, open]);
+            });
+        }, 300);
+
+        return () => clearTimeout(timer);
+    }, [token, open, searchQuery]);
 
     //==== Reset and Set states (Add / Edit mode transition & dialog open/close) =====
     useEffect(() => {
         if (!open) {
             setRoleName("");
             setDisplayName("");
+            setSearchQuery("");
             setSelectedPermissions([]);
             setRoleWiseUsers([]);
         } else {
@@ -231,7 +242,7 @@ const AddEditRoleDialog: React.FC<AddEditRoleDialogProps> = ({
         <div className="border rounded-lg p-4 mb-3 bg-white shadow-sm">
             <div className="flex justify-between items-center mb-3 pb-2 border-b">
                 <h4 className="font-semibold text-sm truncate">
-                    {module.module_title}
+                    {module?.module_title}
                 </h4>
 
                 <div className="flex items-center gap-1">
@@ -245,15 +256,15 @@ const AddEditRoleDialog: React.FC<AddEditRoleDialogProps> = ({
             </div>
 
             <div className="grid grid-cols-2 gap-3">
-                {module.module_permission.map((perm) => (
-                    <div key={perm.id} className="flex items-center space-x-2">
+                {module?.module_permission?.map((perm) => (
+                    <div key={perm?.id} className="flex items-center space-x-2">
                         <Checkbox
                             className="cursor-pointer"
-                            id={perm.name}
-                            checked={selectedPermissions.includes(perm.name)}
-                            onCheckedChange={() => togglePermission(perm.name)}
+                            id={perm?.name}
+                            checked={selectedPermissions.includes(perm?.name)}
+                            onCheckedChange={() => togglePermission(perm?.name)}
                         />
-                        <Label className="text-sm cursor-pointer" htmlFor={perm.name}>{perm.name}</Label>
+                        <Label className="text-sm cursor-pointer" htmlFor={perm?.name}>{perm?.name}</Label>
                     </div>
                 ))}
             </div>
@@ -308,9 +319,30 @@ const AddEditRoleDialog: React.FC<AddEditRoleDialogProps> = ({
                                 </div>
 
                                 <div>
-                                    <h3 className="text-base sm:text-lg font-semibold mb-3">
-                                        Role Permissions
-                                    </h3>
+                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+                                        <h3 className="text-base sm:text-lg font-semibold">
+                                            Role Permissions
+                                        </h3>
+                                        <div className="relative w-full sm:w-64">
+                                            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                                            <Input
+                                                type="text"
+                                                placeholder="Search permissions..."
+                                                value={searchQuery}
+                                                onChange={(e) => setSearchQuery(e.target.value)}
+                                                className="pl-9 pr-8 h-9 text-xs"
+                                            />
+                                            {searchQuery && (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setSearchQuery("")}
+                                                    className="absolute right-2.5 top-2.5 text-muted-foreground hover:text-foreground cursor-pointer"
+                                                >
+                                                    <X className="h-4 w-4" />
+                                                </button>
+                                            )}
+                                        </div>
+                                    </div>
 
                                     <div className="hidden sm:block">
                                         <Card>
@@ -331,45 +363,45 @@ const AddEditRoleDialog: React.FC<AddEditRoleDialogProps> = ({
                                                                     <h1 className="text-xl font-bold">Loading...</h1>
                                                                 </TableCell>
                                                             </TableRow>
-                                                        ) : rolePermissionList.length > 0 ? (
-                                                            rolePermissionList.map((module) => (
-                                                                <TableRow key={module.module_title}>
+                                                        ) : rolePermissionList?.length > 0 ? (
+                                                            rolePermissionList?.map((module) => (
+                                                                <TableRow key={module?.module_title}>
                                                                     <TableCell className="font-bold text-base capitalize">
-                                                                        {module.module_title}
+                                                                        {module?.module_title}
                                                                     </TableCell>
                                                                     <TableCell>
                                                                         <div className="flex gap-4 flex-wrap justify-start items-center">
                                                                             <div className="flex items-center gap-1">
                                                                                 <Checkbox
-                                                                                    id={module.module_title}
+                                                                                    id={module?.module_title}
                                                                                     className="cursor-pointer"
                                                                                     checked={isModuleAllSelected(module)}
                                                                                     onCheckedChange={() =>
                                                                                         toggleModulePermissions(module)
                                                                                     }
                                                                                 />
-                                                                                <Label htmlFor={module.module_title} className="text-base font-semibold cursor-pointer">
+                                                                                <Label htmlFor={module?.module_title} className="text-base font-semibold cursor-pointer">
                                                                                     All
                                                                                 </Label>
                                                                             </div>
 
-                                                                            {module.module_permission.map((perm) => (
+                                                                            {module?.module_permission?.map((perm) => (
                                                                                 <div
-                                                                                    key={perm.id}
+                                                                                    key={perm?.id}
                                                                                     className="flex items-center gap-1"
                                                                                 >
                                                                                     <Checkbox
                                                                                         className="cursor-pointer"
-                                                                                        id={perm.name}
+                                                                                        id={perm?.name}
                                                                                         checked={selectedPermissions.includes(
-                                                                                            perm.name,
+                                                                                            perm?.name,
                                                                                         )}
                                                                                         onCheckedChange={() =>
-                                                                                            togglePermission(perm.name)
+                                                                                            togglePermission(perm?.name)
                                                                                         }
                                                                                     />
-                                                                                    <Label htmlFor={perm.name} className="text-md cursor-pointer">
-                                                                                        {perm.name}
+                                                                                    <Label htmlFor={perm?.name} className="text-md cursor-pointer">
+                                                                                        {perm?.name}
                                                                                     </Label>
                                                                                 </div>
                                                                             ))}
@@ -397,10 +429,10 @@ const AddEditRoleDialog: React.FC<AddEditRoleDialogProps> = ({
                                             <div className="text-center">
                                                 <h1 className="text-lg font-bold">Loading...</h1>
                                             </div>
-                                        ) : rolePermissionList.length > 0 ? (
-                                            rolePermissionList.map((module) => (
+                                        ) : rolePermissionList?.length > 0 ? (
+                                            rolePermissionList?.map((module) => (
                                                 <MobilePermissionRow
-                                                    key={module.module_title}
+                                                    key={module?.module_title}
                                                     module={module}
                                                 />
                                             ))
