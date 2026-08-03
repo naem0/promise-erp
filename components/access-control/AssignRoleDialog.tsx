@@ -3,12 +3,12 @@
 import { useEffect, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogFooter,
-} from "@/components/ui/alert-dialog";
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import {
   Select,
   SelectContent,
@@ -18,11 +18,10 @@ import {
 } from "@/components/ui/select";
 import {
   assignRole,
-  getAllRolesList,
   getAllUserlist,
-  Role,
   UserList,
 } from "@/apiServices/rolePermissionService";
+import RoleSearchSelect from "@/components/common/RoleSearchSelect";
 import { useSession } from "next-auth/react";
 import { X } from "lucide-react";
 import { toast } from "sonner";
@@ -36,7 +35,6 @@ const AssignRoleDialog: React.FC<AssignRoleDialogProps> = ({
   open,
   onOpenChange,
 }) => {
-  const [roles, setRoles] = useState<Role[]>([]);
   const [userList, setUserList] = useState<UserList[]>([]);
   const [error, setError] = useState<string | null>(null);
 
@@ -47,30 +45,6 @@ const AssignRoleDialog: React.FC<AssignRoleDialogProps> = ({
   const [isPending, startTransition] = useTransition();
   const { data: session } = useSession();
 
-  // ============================ Fetch Roles =============================
-  useEffect(() => {
-    if (!session?.accessToken || !open) return;
-
-    startTransition(async () => {
-      try {
-        setError(null);
-        const response = await getAllRolesList({
-          token: session.accessToken,
-        });
-
-        if (response?.success) {
-          setRoles(response?.data?.roles || []);
-        } else {
-          setError(response?.message || "Failed to load roles");
-        }
-      } catch (err: unknown) {
-        if (err instanceof Error) {
-          setError(err.message);
-        }
-      }
-    });
-  }, [session?.accessToken, open]);
-
   //=========================== User List =============================
 
   useEffect(() => {
@@ -79,10 +53,10 @@ const AssignRoleDialog: React.FC<AssignRoleDialogProps> = ({
       try {
         setError(null);
         const response = await getAllUserlist(session?.accessToken);
-        if (response.success) {
+        if (response?.success) {
           setUserList(response?.data?.users || []);
         } else {
-          setError(response.message || "Failed to load roles");
+          setError(response?.message || "Failed to load users");
         }
       } catch (err: unknown) {
         if (err instanceof Error) {
@@ -100,16 +74,16 @@ const AssignRoleDialog: React.FC<AssignRoleDialogProps> = ({
     startTransition(async () => {
       try {
         const res = await assignRole(
-          session.accessToken,
+          session?.accessToken,
           selectedUser,
           selectedRole,
         );
-        if (res.success) {
-          toast.success(res.message);
+        if (res?.success) {
+          toast.success(res?.message);
           resetAndClose();
         } else {
-          setError(res.message || "Failed to assign role");
-          toast.error(error || res.message);
+          setError(res?.message || "Failed to assign role");
+          toast.error(error || res?.message);
         }
       } catch (err: unknown) {
         if (err instanceof Error) {
@@ -129,10 +103,10 @@ const AssignRoleDialog: React.FC<AssignRoleDialogProps> = ({
   };
 
   return (
-    <AlertDialog open={open} onOpenChange={resetAndClose}>
-      <AlertDialogContent className="sm:max-w-md w-full">
-        <AlertDialogHeader className="relative">
-          <AlertDialogTitle>Assign Role</AlertDialogTitle>
+    <Dialog open={open} onOpenChange={resetAndClose}>
+      <DialogContent className="sm:max-w-md w-full" showCloseButton={false}>
+        <DialogHeader className="relative">
+          <DialogTitle>Assign Role</DialogTitle>
 
           <button
             onClick={resetAndClose}
@@ -140,30 +114,19 @@ const AssignRoleDialog: React.FC<AssignRoleDialogProps> = ({
           >
             <X className="h-4 w-4" />
           </button>
-        </AlertDialogHeader>
+        </DialogHeader>
 
         <div className="flex flex-col gap-4 mt-4">
           {/* Role */}
           <div>
             <label className="text-sm font-medium mb-1 block">Role</label>
-            <Select
+            <RoleSearchSelect
               value={selectedRole}
-              onValueChange={setSelectedRole}
+              onValueChange={(val) => setSelectedRole(val || "")}
+              useNameAsValue={true}
               disabled={isPending}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue
-                  placeholder={isPending ? "Loading Roles..." : "Select Role"}
-                />
-              </SelectTrigger>
-              <SelectContent>
-                {roles.map((role) => (
-                  <SelectItem key={role.id} value={String(role.name)}>
-                    {role.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              placeholder="Select Role"
+            />
             {error && <p className="text-sm text-destructive">{error}</p>}
           </div>
 
@@ -181,9 +144,9 @@ const AssignRoleDialog: React.FC<AssignRoleDialogProps> = ({
                 />
               </SelectTrigger>
               <SelectContent>
-                {userList.map((user) => (
-                  <SelectItem key={user.id} value={user.id.toString()}>
-                    {user.name} {"->"} {user.email}
+                {userList?.map((user) => (
+                  <SelectItem key={user?.id} value={user?.id.toString()}>
+                    {user?.name} {"->"} {user?.email}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -192,7 +155,7 @@ const AssignRoleDialog: React.FC<AssignRoleDialogProps> = ({
           </div>
         </div>
 
-        <AlertDialogFooter className="mt-6 gap-2">
+        <DialogFooter className="mt-6 gap-2">
           <Button
             variant="outline"
             className="cursor-pointer"
@@ -207,9 +170,9 @@ const AssignRoleDialog: React.FC<AssignRoleDialogProps> = ({
           >
             {isPending ? "Assigning..." : "Assign Role"}
           </Button>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };
 

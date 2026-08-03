@@ -8,6 +8,7 @@ import { Suspense } from "react";
 
 import PermissionGuard from "@/components/auth/PermissionGuard";
 import EmployeesSummaryWrapper from "@/components/lms/employees/EmployeesSummaryWrapper";
+import EmployeeExportButton from "@/components/lms/employees/EmployeeExportButton";
 
 export default function EmployeesPage({
     searchParams,
@@ -19,14 +20,20 @@ export default function EmployeesPage({
             <div className="flex justify-between items-center">
                 <h1 className="text-2xl font-semibold tracking-tight text-slate-800">Employees</h1>
 
-                <PermissionGuard requiredPermission="create-employees">
-                    <Button asChild className="bg-green-600">
-                        <Link href="/lms/employees/add">
-                            <PlusCircle className="w-4 h-4 mr-2" />
-                            Add Employee
-                        </Link>
-                    </Button>
-                </PermissionGuard>
+                <div className="flex items-center gap-2">
+                    <Suspense fallback={null}>
+                        <EmployeeExportButton />
+                    </Suspense>
+
+                    <PermissionGuard requiredPermission="create-employees">
+                        <Button asChild className="bg-green-600">
+                            <Link href="/lms/employees/add">
+                                <PlusCircle className="w-4 h-4 mr-2" />
+                                Add Employee
+                            </Link>
+                        </Button>
+                    </PermissionGuard>
+                </div>
             </div>
 
             <Suspense

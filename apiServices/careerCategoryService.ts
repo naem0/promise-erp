@@ -240,3 +240,40 @@ export async function deleteCareerCategory(
     throw new Error("Failed to delete career category");
   }
 }
+
+// =======================
+// GET PUBLIC CAREER CATEGORIES (no auth)
+// =======================
+
+export async function getPublicCareerCategories(
+  search?: string,
+): Promise<CareerCategoryResponse | null> {
+  try {
+    const urlParams = new URLSearchParams();
+    if (search) urlParams.append("search", search);
+
+    const res = await fetch(
+      `${API_BASE}/public/career-categories?${urlParams.toString()}`,
+      { headers: { "Content-Type": "application/json" } },
+    );
+
+    if (res.status === 404) {
+      console.warn("No items found (404). Returning empty list.");
+      return null;
+    }
+
+    if (res.status === 401 || res.status === 403) {
+      console.warn("Unauthorized: Access token not found.");
+      return null;
+    }
+
+    if (!res.ok) return null;
+
+    return await res.json();
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("getPublicCareerCategories error:", error.message);
+    }
+    return null;
+  }
+}

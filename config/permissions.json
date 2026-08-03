@@ -88,6 +88,10 @@
     { "path": "/lms/careers", "permissions": ["view-careers"] },
     { "path": "/lms/careers/add", "permissions": ["create-careers"] },
     { "path": "/lms/careers/edit", "permissions": ["edit-careers"], "isDynamic": true },
+
+    { "path": "/lms/student-earnings", "permissions": ["view-student-earnings"] },
+    { "path": "/lms/student-earnings/add", "permissions": ["create-student-earnings"] },
+    { "path": "/lms/student-earnings/edit", "permissions": ["edit-student-earnings"], "isDynamic": true },
     
     { "path": "/districts", "permissions": ["view-districts"] },
     { "path": "/districts/add", "permissions": ["create-districts"] },
