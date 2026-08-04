@@ -212,7 +212,12 @@ export default function TodayFollowUpsFilter({ consultants }: { consultants?: Co
                 </div>
                 {/* Per Page Select */}
                 <div className="flex items-center justify-start">
-                    <PerPageSelect className="w-full" />
+                    <PerPageSelect
+                        control={control}
+                        name="per_page"
+                        onValueChange={handleSelectChange("per_page")}
+                        className="w-full"
+                    />
                 </div>
             </div>
         </div>

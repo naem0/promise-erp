@@ -33,7 +33,7 @@ export default function CRMSourcesFilter() {
                 search: searchParams.get("search") || "",
                 status: searchParams.get("status") || "",
                 sort_order: searchParams.get("sort_order") || "",
-                per_page: searchParams.get("per_page") || "15",
+                per_page: searchParams.get("per_page") || "",
             },
         });
 
@@ -82,7 +82,7 @@ export default function CRMSourcesFilter() {
             search: "",
             status: "",
             sort_order: "",
-            per_page: "15",
+            per_page: "",
         });
         router.replace(pathname, { scroll: false });
     };
@@ -90,7 +90,7 @@ export default function CRMSourcesFilter() {
     const currentSearch = searchParams.get("search") || "";
     const currentStatus = searchParams.get("status") || "";
     const currentSortOrder = searchParams.get("sort_order") || "";
-    const currentPerPage = searchParams.get("per_page") || "15";
+    const currentPerPage = searchParams.get("per_page") || "";
 
     const hasActiveFilters =
         currentSearch !== "" ||
@@ -176,7 +176,12 @@ export default function CRMSourcesFilter() {
 
                 {/* Per Page Select */}
                 <div className="flex items-center justify-start">
-                    <PerPageSelect className="w-full" />
+                    <PerPageSelect
+                        control={control}
+                        name="per_page"
+                        onValueChange={handleSelectChange("per_page")}
+                        className="w-full"
+                    />
                 </div>
             </div>
         </div>

@@ -4,11 +4,11 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Search, FilterX } from "lucide-react";
@@ -22,387 +22,389 @@ import ConsultantSearchSelect from "@/components/common/ConsultantSearchSelect";
 import PerPageSelect from "@/components/common/PerPageSelect";
 
 interface FilterFormValues {
-    search?: string;
-    sort_order?: string;
-    status?: string;
-    branch_id?: string;
-    category_id?: string;
-    source?: string;
-    shift?: string;
-    user_id?: string;
-    per_page?: string;
-    assignment_status?: string;
-    course_id?: string;
+  search?: string;
+  sort_order?: string;
+  status?: string;
+  branch_id?: string;
+  category_id?: string;
+  source?: string;
+  shift?: string;
+  user_id?: string;
+  per_page?: string;
+  assignment_status?: string;
+  course_id?: string;
 }
 
 interface CRMLeadsFilterProps {
-    categories?: CRMCategory[];
-    courses?: Course[];
+  categories?: CRMCategory[];
+  courses?: Course[];
 }
 
-export default function CRMLeadsFilter({
-    categories,
-    courses,
-}: CRMLeadsFilterProps) {
-    const router = useRouter();
-    const pathname = usePathname();
-    const searchParams = useSearchParams();
+export default function CRMLeadsFilter({ categories }: CRMLeadsFilterProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
-    const { register, control, reset, watch, setValue } =
-        useForm<FilterFormValues>({
-            defaultValues: {
-                search: searchParams.get("search") || "",
-                sort_order: searchParams.get("sort_order") || "",
-                status: searchParams.get("status") || "",
-                branch_id: searchParams.get("branch_id") || "",
-                category_id: searchParams.get("category_id") || "",
-                source: searchParams.get("source") || "",
-                shift: searchParams.get("shift") || "",
-                user_id: searchParams.get("user_id") || "",
-                per_page: searchParams.get("per_page") || "15",
-                assignment_status: searchParams.get("assignment_status") || "",
-                course_id: searchParams.get("course_id") || "",
-            },
+  const { register, control, reset, watch, setValue } =
+    useForm<FilterFormValues>({
+      defaultValues: {
+        search: searchParams.get("search") || "",
+        sort_order: searchParams.get("sort_order") || "",
+        status: searchParams.get("status") || "",
+        branch_id: searchParams.get("branch_id") || "",
+        category_id: searchParams.get("category_id") || "",
+        source: searchParams.get("source") || "",
+        shift: searchParams.get("shift") || "",
+        user_id: searchParams.get("user_id") || "",
+        per_page: searchParams.get("per_page") || "",
+        assignment_status: searchParams.get("assignment_status") || "",
+        course_id: searchParams.get("course_id") || "",
+      },
+    });
+
+  const watchedValues = watch();
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      const params = new URLSearchParams(searchParams.toString());
+      let isChanged = false;
+
+      Object.entries(watchedValues).forEach(([key, value]) => {
+        const urlValue = params.get(key) || "";
+        const formValue = String(value || "");
+        if (urlValue !== formValue) {
+          isChanged = true;
+        }
+      });
+
+      if (isChanged) {
+        params.delete("page");
+        Object.entries(watchedValues).forEach(([key, value]) => {
+          if (value && value !== "") {
+            params.set(key, String(value));
+          } else {
+            params.delete(key);
+          }
         });
 
-    const watchedValues = watch();
+        const newUrl = `${pathname}?${params.toString()}`;
+        router.replace(newUrl, { scroll: false });
+      }
+    }, 600);
 
-    useEffect(() => {
-        const handler = setTimeout(() => {
-            const params = new URLSearchParams(searchParams.toString());
-            let isChanged = false;
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [JSON.stringify(watchedValues), router, pathname, searchParams]);
 
-            Object.entries(watchedValues).forEach(([key, value]) => {
-                const urlValue = params.get(key) || "";
-                const formValue = String(value || "");
-                if (urlValue !== formValue) {
-                    isChanged = true;
-                }
-            });
-
-            if (isChanged) {
-                params.delete("page");
-                Object.entries(watchedValues).forEach(([key, value]) => {
-                    if (value && value !== "") {
-                        params.set(key, String(value));
-                    } else {
-                        params.delete(key);
-                    }
-                });
-
-                const newUrl = `${pathname}?${params.toString()}`;
-                router.replace(newUrl, { scroll: false });
-            }
-        }, 600);
-
-        return () => {
-            clearTimeout(handler);
-        };
-    }, [JSON.stringify(watchedValues), router, pathname, searchParams]);
-
-    const handleSelectChange =
-        (name: keyof FilterFormValues) => (value: string) => {
-            setValue(name, value);
-        };
-
-    const handleReset = () => {
-        reset({
-            search: "",
-            sort_order: "",
-            status: "",
-            branch_id: "",
-            category_id: "",
-            source: "",
-            shift: "",
-            user_id: "",
-            per_page: "15",
-            assignment_status: "",
-            course_id: "",
-        });
-        router.replace(pathname, { scroll: false });
+  const handleSelectChange =
+    (name: keyof FilterFormValues) => (value: string) => {
+      setValue(name, value);
     };
 
-    const currentSearch = searchParams.get("search") || "";
-    const currentSortOrder = searchParams.get("sort_order") || "";
-    const currentStatus = searchParams.get("status") || "";
-    const currentBranchId = searchParams.get("branch_id") || "";
-    const currentCategoryId = searchParams.get("category_id") || "";
-    const currentSource = searchParams.get("source") || "";
-    const currentShift = searchParams.get("shift") || "";
-    const currentUserId = searchParams.get("user_id") || "";
-    const currentPerPage = searchParams.get("per_page") || "15";
+  const handleReset = () => {
+    reset({
+      search: "",
+      sort_order: "",
+      status: "",
+      branch_id: "",
+      category_id: "",
+      source: "",
+      shift: "",
+      user_id: "",
+      per_page: "",
+      assignment_status: "",
+      course_id: "",
+    });
+    router.replace(pathname, { scroll: false });
+  };
 
-    const hasActiveFilters =
-        currentSearch !== "" ||
-        currentSortOrder !== "" ||
-        currentStatus !== "" ||
-        currentBranchId !== "" ||
-        currentCategoryId !== "" ||
-        currentSource !== "" ||
-        currentShift !== "" ||
-        currentUserId !== "" ||
-        currentPerPage !== "15" ||
-        searchParams.get("date_from") !== "" && searchParams.get("date_from") !== null ||
-        searchParams.get("date_to") !== "" && searchParams.get("date_to") !== null ||
-        searchParams.get("assignment_status") !== "" && searchParams.get("assignment_status") !== null ||
-        searchParams.get("course_id") !== "" && searchParams.get("course_id") !== null;
+  const currentSearch = searchParams.get("search") || "";
+  const currentSortOrder = searchParams.get("sort_order") || "";
+  const currentStatus = searchParams.get("status") || "";
+  const currentBranchId = searchParams.get("branch_id") || "";
+  const currentCategoryId = searchParams.get("category_id") || "";
+  const currentSource = searchParams.get("source") || "";
+  const currentShift = searchParams.get("shift") || "";
+  const currentUserId = searchParams.get("user_id") || "";
+  const currentPerPage = searchParams.get("per_page") || "";
 
+  const hasActiveFilters =
+    currentSearch !== "" ||
+    currentSortOrder !== "" ||
+    currentStatus !== "" ||
+    currentBranchId !== "" ||
+    currentCategoryId !== "" ||
+    currentSource !== "" ||
+    currentShift !== "" ||
+    currentUserId !== "" ||
+    currentPerPage !== "" ||
+    (searchParams.get("date_from") !== "" &&
+      searchParams.get("date_from") !== null) ||
+    (searchParams.get("date_to") !== "" &&
+      searchParams.get("date_to") !== null) ||
+    (searchParams.get("assignment_status") !== "" &&
+      searchParams.get("assignment_status") !== null) ||
+    (searchParams.get("course_id") !== "" &&
+      searchParams.get("course_id") !== null);
 
+  return (
+    <div className="p-6 mb-6 border rounded-xl bg-card shadow-sm">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-lg font-semibold text-foreground">Filters</h3>
 
-    return (
-        <div className="p-6 mb-6 border rounded-xl bg-card shadow-sm">
-            <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-foreground">Filters</h3>
+        {hasActiveFilters && (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={handleReset}
+            className="flex items-center gap-2"
+          >
+            <FilterX className="h-4 w-4" />
+            Clear Filters
+          </Button>
+        )}
+      </div>
 
-                {hasActiveFilters && (
-                    <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={handleReset}
-                        className="flex items-center gap-2"
-                    >
-                        <FilterX className="h-4 w-4" />
-                        Clear Filters
-                    </Button>
-                )}
-            </div>
-
-            <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
-                {/* Search */}
-                <div className="relative col-span-2">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input
-                        placeholder="Search by name, email, phone, referrer..."
-                        className="pl-10"
-                        {...register("search")}
-                    />
-                </div>
-                {/* Course */}
-                <div className="space-y-1 col-span-2">
-                    <Controller
-                        name="course_id"
-                        control={control}
-                        render={({ field }) => (
-                            <CourseMultipleSearchSelect
-                                value={field.value ? field.value.split(",") : []}
-                                onValueChange={(val) => {
-                                    const stringValue = val.join(",");
-                                    field.onChange(stringValue);
-                                    handleSelectChange("course_id")(stringValue);
-                                }}
-                                placeholder="Select course ..."
-                            />
-                        )}
-                    />
-                </div>
-
-                {/* Status */}
-                <Controller
-                    name="status"
-                    control={control}
-                    render={({ field }) => (
-                        <Select
-                            value={field.value || ""}
-                            onValueChange={(value) => {
-                                field.onChange(value);
-                                handleSelectChange("status")(value);
-                            }}
-                        >
-                            <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Status" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="1">New</SelectItem>
-                                <SelectItem value="2">Busy</SelectItem>
-                                <SelectItem value="3">Interested</SelectItem>
-                                <SelectItem value="4">Follow Up</SelectItem>
-                                <SelectItem value="5">Enrolled</SelectItem>
-                                <SelectItem value="6">Cancelled</SelectItem>
-                                <SelectItem value="7">Not Received</SelectItem>
-                                <SelectItem value="8">Call Rejected</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    )}
-                />
-
-                {/* Branch */}
-                <Controller
-                    name="branch_id"
-                    control={control}
-                    render={({ field }) => (
-                        <BranchSearchSelect
-                            value={field.value || ""}
-                            onValueChange={(value) => {
-                                field.onChange(value ?? "");
-                                handleSelectChange("branch_id")(value ?? "");
-                            }}
-                            placeholder="Branch"
-                        />
-                    )}
-                />
-
-                {/* Category */}
-                <Controller
-                    name="category_id"
-                    control={control}
-                    render={({ field }) => (
-                        <Select
-                            value={field.value || ""}
-                            onValueChange={(value) => {
-                                field.onChange(value);
-                                handleSelectChange("category_id")(value);
-                            }}
-                        >
-                            <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Lead Category" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {categories?.length ? (
-                                    categories.map((category) => (
-                                        <SelectItem key={category.id} value={String(category.id)}>
-                                            {category.name}
-                                        </SelectItem>
-                                    ))
-                                ) : (
-                                    <SelectItem value="none" disabled>
-                                        No category found
-                                    </SelectItem>
-                                )}
-                            </SelectContent>
-                        </Select>
-                    )}
-                />
-
-                {/* Source */}
-                <Controller
-                    name="source"
-                    control={control}
-                    render={({ field }) => (
-                        <Select
-                            value={field.value || ""}
-                            onValueChange={(value) => {
-                                field.onChange(value);
-                                handleSelectChange("source")(value);
-                            }}
-                        >
-                            <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Lead Source" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="1">Manual</SelectItem>
-                                <SelectItem value="2">Website</SelectItem>
-                                <SelectItem value="3">Facebook</SelectItem>
-                                <SelectItem value="4">API</SelectItem>
-                                <SelectItem value="5">WhatsApp</SelectItem>
-                                <SelectItem value="6">Phone</SelectItem>
-                                <SelectItem value="7">Referrer</SelectItem>
-                                <SelectItem value="8">Others</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    )}
-                />
-
-                {/* Shift */}
-                <Controller
-                    name="shift"
-                    control={control}
-                    render={({ field }) => (
-                        <Select
-                            value={field.value || ""}
-                            onValueChange={(value) => {
-                                field.onChange(value);
-                                handleSelectChange("shift")(value);
-                            }}
-                        >
-                            <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Shift" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="1">Morning</SelectItem>
-                                <SelectItem value="2">Evening</SelectItem>
-                                <SelectItem value="3">Night</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    )}
-                />
-
-                {/* User ID (Consultant) */}
-                <PermissionGuard requiredPermission="view-leads">
-                    <Controller
-                        name="user_id"
-                        control={control}
-                        render={({ field }) => (
-                            <ConsultantSearchSelect
-                                value={field.value || ""}
-                                onValueChange={(value) => {
-                                    field.onChange(value ?? "");
-                                    handleSelectChange("user_id")(value ?? "");
-                                }}
-                                placeholder="Select Counsellor"
-                            />
-                        )}
-                    />
-                </PermissionGuard>
-
-                {/* Assignment Status */}
-                <div className="space-y-1">
-                    <Controller
-                        name="assignment_status"
-                        control={control}
-                        render={({ field }) => (
-                            <Select
-                                value={field.value || ""}
-                                onValueChange={(value) => {
-                                    field.onChange(value);
-                                    handleSelectChange("assignment_status")(value);
-                                }}
-                            >
-                                <SelectTrigger className="w-full">
-                                    <SelectValue placeholder="Assigned Status" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="assigned">Assigned</SelectItem>
-                                    <SelectItem value="not_assigned">Unassigned</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        )}
-                    />
-                </div>
-
-
-                {/* Sort Order */}
-                <Controller
-                    name="sort_order"
-                    control={control}
-                    render={({ field }) => (
-                        <Select
-                            value={field.value}
-                            onValueChange={(value) => {
-                                field.onChange(value);
-                                handleSelectChange("sort_order")(value);
-                            }}
-                        >
-                            <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Sort Order" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="asc">ASC</SelectItem>
-                                <SelectItem value="desc">DESC</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    )}
-                />
-                {/* Date Range Picker */}
-                <div className="space-y-1">
-                    <DatePickerWithRange />
-                </div>
-                {/* Per Page Select */}
-                <div className="flex items-center justify-start">
-                    <PerPageSelect className="w-full" />
-                </div>
-            </div>
-
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+        {/* Search */}
+        <div className="relative col-span-2">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search by name, email, phone, referrer..."
+            className="pl-10"
+            {...register("search")}
+          />
         </div>
-    );
+        {/* Course */}
+        <div className="space-y-1 col-span-2">
+          <Controller
+            name="course_id"
+            control={control}
+            render={({ field }) => (
+              <CourseMultipleSearchSelect
+                value={field.value ? field.value.split(",") : []}
+                onValueChange={(val) => {
+                  const stringValue = val.join(",");
+                  field.onChange(stringValue);
+                  handleSelectChange("course_id")(stringValue);
+                }}
+                placeholder="Select course ..."
+              />
+            )}
+          />
+        </div>
+
+        {/* Status */}
+        <Controller
+          name="status"
+          control={control}
+          render={({ field }) => (
+            <Select
+              value={field.value || ""}
+              onValueChange={(value) => {
+                field.onChange(value);
+                handleSelectChange("status")(value);
+              }}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="1">New</SelectItem>
+                <SelectItem value="2">Busy</SelectItem>
+                <SelectItem value="3">Interested</SelectItem>
+                <SelectItem value="4">Follow Up</SelectItem>
+                <SelectItem value="5">Enrolled</SelectItem>
+                <SelectItem value="6">Cancelled</SelectItem>
+                <SelectItem value="7">Not Received</SelectItem>
+                <SelectItem value="8">Call Rejected</SelectItem>
+              </SelectContent>
+            </Select>
+          )}
+        />
+
+        {/* Branch */}
+        <Controller
+          name="branch_id"
+          control={control}
+          render={({ field }) => (
+            <BranchSearchSelect
+              value={field.value || ""}
+              onValueChange={(value) => {
+                field.onChange(value ?? "");
+                handleSelectChange("branch_id")(value ?? "");
+              }}
+              placeholder="Branch"
+            />
+          )}
+        />
+
+        {/* Category */}
+        <Controller
+          name="category_id"
+          control={control}
+          render={({ field }) => (
+            <Select
+              value={field.value || ""}
+              onValueChange={(value) => {
+                field.onChange(value);
+                handleSelectChange("category_id")(value);
+              }}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Lead Category" />
+              </SelectTrigger>
+              <SelectContent>
+                {categories?.length ? (
+                  categories.map((category) => (
+                    <SelectItem key={category.id} value={String(category.id)}>
+                      {category.name}
+                    </SelectItem>
+                  ))
+                ) : (
+                  <SelectItem value="none" disabled>
+                    No category found
+                  </SelectItem>
+                )}
+              </SelectContent>
+            </Select>
+          )}
+        />
+
+        {/* Source */}
+        <Controller
+          name="source"
+          control={control}
+          render={({ field }) => (
+            <Select
+              value={field.value || ""}
+              onValueChange={(value) => {
+                field.onChange(value);
+                handleSelectChange("source")(value);
+              }}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Lead Source" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="1">Manual</SelectItem>
+                <SelectItem value="2">Website</SelectItem>
+                <SelectItem value="3">Facebook</SelectItem>
+                <SelectItem value="4">API</SelectItem>
+                <SelectItem value="5">WhatsApp</SelectItem>
+                <SelectItem value="6">Phone</SelectItem>
+                <SelectItem value="7">Referrer</SelectItem>
+                <SelectItem value="8">Others</SelectItem>
+              </SelectContent>
+            </Select>
+          )}
+        />
+
+        {/* Shift */}
+        <Controller
+          name="shift"
+          control={control}
+          render={({ field }) => (
+            <Select
+              value={field.value || ""}
+              onValueChange={(value) => {
+                field.onChange(value);
+                handleSelectChange("shift")(value);
+              }}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Shift" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="1">Morning</SelectItem>
+                <SelectItem value="2">Evening</SelectItem>
+                <SelectItem value="3">Night</SelectItem>
+              </SelectContent>
+            </Select>
+          )}
+        />
+
+        {/* User ID (Consultant) */}
+        <PermissionGuard requiredPermission="view-leads">
+          <Controller
+            name="user_id"
+            control={control}
+            render={({ field }) => (
+              <ConsultantSearchSelect
+                value={field.value || ""}
+                onValueChange={(value) => {
+                  field.onChange(value ?? "");
+                  handleSelectChange("user_id")(value ?? "");
+                }}
+                placeholder="Select Counsellor"
+              />
+            )}
+          />
+        </PermissionGuard>
+
+        {/* Assignment Status */}
+        <div className="space-y-1">
+          <Controller
+            name="assignment_status"
+            control={control}
+            render={({ field }) => (
+              <Select
+                value={field.value || ""}
+                onValueChange={(value) => {
+                  field.onChange(value);
+                  handleSelectChange("assignment_status")(value);
+                }}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Assigned Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="assigned">Assigned</SelectItem>
+                  <SelectItem value="not_assigned">Unassigned</SelectItem>
+                </SelectContent>
+              </Select>
+            )}
+          />
+        </div>
+
+        {/* Sort Order */}
+        <Controller
+          name="sort_order"
+          control={control}
+          render={({ field }) => (
+            <Select
+              value={field.value}
+              onValueChange={(value) => {
+                field.onChange(value);
+                handleSelectChange("sort_order")(value);
+              }}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Sort Order" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="asc">ASC</SelectItem>
+                <SelectItem value="desc">DESC</SelectItem>
+              </SelectContent>
+            </Select>
+          )}
+        />
+        {/* Date Range Picker */}
+        <div className="space-y-1">
+          <DatePickerWithRange />
+        </div>
+        {/* Per Page Select */}
+        <div className="flex items-center justify-start">
+          <PerPageSelect
+            control={control}
+            name="per_page"
+            onValueChange={handleSelectChange("per_page")}
+            className="w-full"
+          />
+        </div>
+      </div>
+    </div>
+  );
 }

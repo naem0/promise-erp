@@ -48,7 +48,7 @@ export default function CRMLeadReportsFilter({
                 consultant_id: searchParams.get("consultant_id") || "",
                 branch_id: searchParams.get("branch_id") || "",
                 status: searchParams.get("status") || "",
-                per_page: searchParams.get("per_page") || "15",
+                per_page: searchParams.get("per_page") || "",
             },
         });
 
@@ -117,7 +117,7 @@ export default function CRMLeadReportsFilter({
             consultant_id: "",
             branch_id: "",
             status: "",
-            per_page: "15",
+            per_page: "",
         });
         setSelectedCourses([]);
         router.replace(pathname, { scroll: false });
@@ -230,7 +230,12 @@ export default function CRMLeadReportsFilter({
 
                 {/* Per Page Select */}
                 <div className="flex items-center justify-start">
-                    <PerPageSelect className="w-full" />
+                    <PerPageSelect
+                        control={control}
+                        name="per_page"
+                        onValueChange={handleSelectChange("per_page")}
+                        className="w-full"
+                    />
                 </div>
             </div>
         </div>
