@@ -39,7 +39,7 @@ export default function ConsultantsPerformanceFilter({
             defaultValues: {
                 search: searchParams.get("search") || "",
                 branch_id: searchParams.get("branch_id") || "",
-                per_page: searchParams.get("per_page") || "15",
+                per_page: searchParams.get("per_page") || "",
             },
         });
 
@@ -87,7 +87,7 @@ export default function ConsultantsPerformanceFilter({
         reset({
             search: "",
             branch_id: "",
-            per_page: "15",
+            per_page: "",
         });
         router.replace(pathname, { scroll: false });
     };
@@ -96,14 +96,14 @@ export default function ConsultantsPerformanceFilter({
     const currentBranchId = searchParams.get("branch_id") || "";
     const currentDateFrom = searchParams.get("date_from") || "";
     const currentDateTo = searchParams.get("date_to") || "";
-    const currentPerPage = searchParams.get("per_page") || "15";
+    const currentPerPage = searchParams.get("per_page") || "";
 
     const hasActiveFilters =
         currentSearch !== "" ||
         currentBranchId !== "" ||
         currentDateFrom !== "" ||
         currentDateTo !== "" ||
-        currentPerPage !== "15";
+        currentPerPage !== "";
 
 
 
@@ -176,7 +176,12 @@ export default function ConsultantsPerformanceFilter({
 
                 {/* Per Page Select */}
                 <div className="flex items-center justify-start">
-                    <PerPageSelect className="w-full" />
+                    <PerPageSelect
+                        control={control}
+                        name="per_page"
+                        onValueChange={handleSelectChange("per_page")}
+                        className="w-full"
+                    />
                 </div>
             </div>
         </div>

@@ -40,7 +40,7 @@ export default function ReferrersFilter({ branches = [] }: ReferrersFilterProps)
                 status: searchParams.get("status") || "",
                 sort_order: searchParams.get("sort_order") || "",
                 branch_name: searchParams.get("branch_name") || "",
-                per_page: searchParams.get("per_page") || "15",
+                per_page: searchParams.get("per_page") || "",
             },
         });
 
@@ -90,7 +90,7 @@ export default function ReferrersFilter({ branches = [] }: ReferrersFilterProps)
             status: "",
             sort_order: "",
             branch_name: "",
-            per_page: "15",
+            per_page: "",
         });
         router.replace(pathname, { scroll: false });
     };
@@ -99,14 +99,14 @@ export default function ReferrersFilter({ branches = [] }: ReferrersFilterProps)
     const currentStatus = searchParams.get("status") || "";
     const currentSortOrder = searchParams.get("sort_order") || "";
     const currentBranchName = searchParams.get("branch_name") || "";
-    const currentPerPage = searchParams.get("per_page") || "15";
+    const currentPerPage = searchParams.get("per_page") || "";
 
     const hasActiveFilters =
         currentSearch !== "" ||
         currentStatus !== "" ||
         currentSortOrder !== "" ||
         currentBranchName !== "" ||
-        currentPerPage !== "15" ||
+        currentPerPage !== "" ||
         !!searchParams.get("date_from") ||
         !!searchParams.get("date_to");
 
@@ -228,7 +228,12 @@ export default function ReferrersFilter({ branches = [] }: ReferrersFilterProps)
 
                 {/* Per Page Select */}
                 <div className="flex items-center justify-start">
-                    <PerPageSelect className="w-full" />
+                    <PerPageSelect
+                        control={control}
+                        name="per_page"
+                        onValueChange={handleSelectChange("per_page")}
+                        className="w-full"
+                    />
                 </div>
             </div>
         </div>

@@ -17,6 +17,7 @@ import PerPageSelect from "@/components/common/PerPageSelect";
 interface FilterFormValues {
     search?: string;
     type?: string;
+    per_page?: string;
 }
 
 export default function LeadStatusesFilter() {
@@ -29,6 +30,7 @@ export default function LeadStatusesFilter() {
             defaultValues: {
                 search: searchParams.get("search") || "",
                 type: searchParams.get("type") || "",
+                per_page: searchParams.get("per_page") || "15",
             },
         });
 
@@ -76,6 +78,7 @@ export default function LeadStatusesFilter() {
         reset({
             search: "",
             type: "",
+            per_page: "15",
         });
         router.replace(pathname, { scroll: false });
     };
@@ -144,7 +147,12 @@ export default function LeadStatusesFilter() {
 
                 {/* Per Page Select */}
                 <div className="flex items-center justify-start">
-                    <PerPageSelect className="w-full" />
+                    <PerPageSelect
+                        control={control}
+                        name="per_page"
+                        onValueChange={handleSelectChange("per_page")}
+                        className="w-full"
+                    />
                 </div>
             </div>
         </div>
