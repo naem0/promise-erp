@@ -288,7 +288,7 @@ export default function CourseToolsAddForm({
                         />
 
                         <Image
-                          src={tool.image || "/images/placeholder.png"}
+                          src={(tool.image && typeof tool.image === "string" && tool.image.trim() !== "") ? tool.image : "/images/placeholder.png"}
                           width={45}
                           height={45}
                           alt={tool.title || "Tool"}

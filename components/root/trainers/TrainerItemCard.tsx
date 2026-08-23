@@ -15,7 +15,7 @@ const TrainerItemCard = ({ trainer }: TrainerProps) => {
       <div onClick={() => setOpen(true)} className="flex flex-col items-center group cursor-pointer h-full">
         <div className="z-10 relative h-44 w-[70%] bg-white rounded-2xl overflow-hidden shadow-xl transition-transform duration-500 group-hover:scale-105">
           <Image
-            src={trainer?.profile_image || "/images/placeholder_img.jpg"}
+            src={(trainer?.profile_image && typeof trainer?.profile_image === "string" && trainer?.profile_image.trim() !== "") ? trainer?.profile_image : "/images/placeholder_img.jpg"}
             alt={trainer?.name || "teacher image"}
             fill
             className="border border-primary/10 object-contain object-top rounded-2xl transition-transform duration-700"

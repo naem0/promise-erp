@@ -35,7 +35,7 @@ const PaymentCard = async () => {
           <CardHeader className="flex flex-row items-center gap-4">
             <div className="w-14 h-14 rounded-md overflow-hidden bg-muted shrink-0">
               <Image
-                src={payment.course_image || "/images/placeholder_img.jpg"}
+                src={(payment.course_image && typeof payment.course_image === "string" && payment.course_image.trim() !== "") ? payment.course_image : "/images/placeholder_img.jpg"}
                 alt={payment.course_title}
                 width={100}
                 height={70}

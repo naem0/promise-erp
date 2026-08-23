@@ -13,7 +13,7 @@ const ContactInfoCardsSkeleton = () => {
               className="bg-secondary/10 border-none shadow-lg text-white animate-pulse"
             >
               <CardContent className="p-6 flex flex-col items-center text-center">
-                <div className="bg-white p-2 rounded-lg mb-4 shadow-xl border border-secondary/50">
+                <div className="bg-white p-2 rounded-lg mb-2 lg:mb-4 shadow-xl border border-secondary/50">
                   <Skeleton className="h-8 w-8 rounded bg-white/40" />
                 </div>
                 <Skeleton className="h-5 w-24 mb-2 rounded bg-white/40" />

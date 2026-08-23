@@ -41,6 +41,7 @@ interface FormValues {
     mrp_price: string;
     description: string;
     specification: string;
+    product_type: string;
     status: string;
     image: FileList | null;
 }
@@ -67,17 +68,18 @@ export default function ItemsForm({
         formState: { errors, isSubmitting },
     } = useForm<FormValues>({
         defaultValues: {
-            name: "",
-            barcode: "",
-            category_id: "",
-            brand_id: "",
-            unit_id: "",
-            model: "",
-            purchase_price: "",
-            mrp_price: "",
-            description: "",
-            specification: "",
-            status: "",
+            name: item?.name || "",
+            barcode: item?.barcode || "",
+            category_id: item?.category_id?.toString() || "",
+            brand_id: item?.brand_id?.toString() || "",
+            unit_id: item?.unit_id?.toString() || "",
+            model: item?.model || "",
+            purchase_price: item?.purchase_price !== undefined && item?.purchase_price !== null ? item.purchase_price.toString() : "",
+            mrp_price: item?.mrp_price !== undefined && item?.mrp_price !== null ? item.mrp_price.toString() : "",
+            description: item?.description || "",
+            specification: item?.specification || "",
+            product_type: item?.product_type?.toString() || "",
+            status: item?.status?.toString() || "1",
             image: null,
         },
     });
@@ -95,7 +97,8 @@ export default function ItemsForm({
                 mrp_price: item.mrp_price?.toString() || "",
                 description: item.description || "",
                 specification: item.specification || "",
-                status: item.status?.toString() || "",
+                product_type: item.product_type?.toString() || "",
+                status: item.status?.toString() || "1",
                 image: null,
             });
             if (item.image) {
@@ -143,9 +146,10 @@ export default function ItemsForm({
                 ? await updateProductItem(Number(item.id), formData)
                 : await createProductItem(formData);
 
-                console.log("res--->",res);
+                
 
             if (res.success) {
+                console.log("res--->ggggg..>",res);
                 reset();
                 setPreviewUrl(null);
                 setIsImageRemoved(false);
@@ -197,7 +201,7 @@ export default function ItemsForm({
                     <div className="relative">
                         <div className="w-32 h-32 relative overflow-hidden border-2 border-dashed flex items-center justify-center bg-gray-50">
                             <Image
-                                src={previewUrl || "/images/placeholder.png"}
+                                src={(previewUrl && typeof previewUrl === "string" && previewUrl.trim() !== "") ? previewUrl : "/images/placeholder.png"}
                                 alt="Product preview"
                                 fill
                                 className="object-cover"
@@ -243,6 +247,27 @@ export default function ItemsForm({
                         {errors.name && <p className="text-sm text-red-500 mt-1">{errors.name.message}</p>}
                     </div>
 
+                    {/* Item Type */}
+                    <div>
+                        <label className="block text-sm font-medium mb-1">Item Type</label>
+                        <Controller
+                            name="product_type"
+                            control={control}
+                            render={({ field }) => (
+                                <Select key={field.value} value={field.value} onValueChange={field.onChange}>
+                                    <SelectTrigger className="w-full">
+                                        <SelectValue placeholder="Select Item Type" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="1">Admin Item</SelectItem>
+                                        <SelectItem value="2">IT Item</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            )}
+                        />
+                        {errors.product_type && <p className="text-sm text-red-500 mt-1">{errors.product_type.message}</p>}
+                    </div>
+
                     {/* Barcode */}
                     <div>
                         <label className="block text-sm font-medium mb-1">Barcode</label>
@@ -258,6 +283,7 @@ export default function ItemsForm({
                             control={control}
                             render={({ field }) => (
                                 <InventoryCategorySearchSelect
+                                    categories={categories}
                                     value={field.value || ""}
                                     onValueChange={field.onChange}
                                     className="w-full"
@@ -275,6 +301,7 @@ export default function ItemsForm({
                             control={control}
                             render={({ field }) => (
                                 <BrandSearchSelect
+                                    brands={brands}
                                     value={field.value || ""}
                                     onValueChange={field.onChange}
                                     className="w-full"

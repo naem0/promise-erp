@@ -67,7 +67,7 @@ const BranchState = async () => {
   return (
     <section className="pt-8 md:pt-12">
       <div className="container mx-auto">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 px-4 w-full">
+        <div className="grid grid-cols-3 gap-2 md:gap-4 w-full">
           {statsItems?.map((item, index) => (
             <Card
               key={index}
@@ -80,7 +80,7 @@ const BranchState = async () => {
 
                 <h3 className="font-bold text-2xl">{item.count}</h3>
 
-                <p className="text-sm opacity-90">{item.title}</p>
+                <p className="text-[10px] sm:text-sm opacity-90">{item.title}</p>
               </CardContent>
             </Card>
           ))}

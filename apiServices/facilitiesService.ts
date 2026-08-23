@@ -1,8 +1,9 @@
 "use server";
+import { cacheTag, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { cacheTag, updateTag } from "next/cache";
 import { PaginationType } from "@/types/pagination";
 import { processApiResponse } from "@/lib/apiErrorHandler";
 
@@ -50,8 +51,7 @@ export async function getFacilitiesCached(
   params: Record<string, unknown> = {}
 ): Promise<FacilitiesResponse | null> {
   "use cache";
-  cacheTag("facilities-list");
-
+  cacheTag(CACHE_TAGS.FACILITIES);
   try {
   // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
     const urlParams = new URLSearchParams();
@@ -177,7 +177,7 @@ export async function createFacility(
     }
 
     if (res.ok && result?.success) {
-      updateTag("facilities-list");
+      updateTag(CACHE_TAGS.FACILITIES);
     }
     return {
       success: true,
@@ -233,7 +233,7 @@ export async function updateFacility(
     }
 
     if (res.ok && result?.success) {
-      updateTag("facilities-list");
+      updateTag(CACHE_TAGS.FACILITIES);
     }
     return {
       success: true,
@@ -284,7 +284,7 @@ export async function deleteFacility(
     }
 
     if (res.ok && result?.success) {
-      updateTag("facilities-list");
+      updateTag(CACHE_TAGS.FACILITIES);
     }
     return {
       success: true,

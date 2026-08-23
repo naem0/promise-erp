@@ -49,7 +49,7 @@ const StudentSuccessStories = ({ reviewsData }: StudentSuccessStoriesProps) => {
                 <div className="z-20 relative">
                   <div className="rounded-full w-[150px] h-[150px] overflow-hidden shadow-xl transition-transform duration-500 group-hover:scale-102">
                     <Image
-                      src={instructor.profile_image || "/images/placeholder_img.jpg"}
+                      src={(instructor.profile_image && typeof instructor.profile_image === "string" && instructor.profile_image.trim() !== "") ? instructor.profile_image : "/images/placeholder_img.jpg"}
                       alt={instructor.name}
                       fill
                       className=" object-cover rounded-full transition-transform duration-700 group-hover:scale-102"

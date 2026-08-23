@@ -1,8 +1,9 @@
 "use server";
+import { cacheTag, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { cacheTag, updateTag } from "next/cache";
 import { handleApiError, processApiResponse } from "@/lib/apiErrorHandler";
 import { PaginationType } from "@/types/pagination";
 
@@ -90,8 +91,7 @@ export async function getChaptersCached(
   params: Record<string, unknown> = {}
 ): Promise<ChaptersResponse | null> {
   "use cache";
-  cacheTag("chapters-list");
-
+  cacheTag(CACHE_TAGS.CHAPTERS);
   // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
   try {
     const urlParams = new URLSearchParams();
@@ -247,7 +247,7 @@ export async function createChapter(
     }
 
     if (res.ok && result?.success) {
-      updateTag("chapters-list");
+      updateTag(CACHE_TAGS.CHAPTERS);
     }
     return {
       success: true,
@@ -314,7 +314,7 @@ export async function updateChapter(
     }
 
     if (res.ok && result?.success) {
-      updateTag("chapters-list");
+      updateTag(CACHE_TAGS.CHAPTERS);
     }
     return {
       success: true,
@@ -367,7 +367,7 @@ export async function deleteChapter(id: number): Promise<SingleChapterResponse> 
     }
 
     if (res.ok && result?.success) {
-      updateTag("chapters-list");
+      updateTag(CACHE_TAGS.CHAPTERS);
     }
     return {
       success: true,

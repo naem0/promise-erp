@@ -1,8 +1,9 @@
 "use server";
+import { cacheTag, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { cacheTag, updateTag } from "next/cache";
 import { PaginationType } from "@/types/pagination";
 
 const API_BASE =
@@ -61,8 +62,7 @@ export async function getJobAppliesCached(
     params: Record<string, unknown> = {},
 ): Promise<JobAppliesResponse | null> {
     "use cache";
-    cacheTag("job-applies-list");
-
+    cacheTag(CACHE_TAGS.JOB_APPLIES);
     try {
   // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
         const urlParams = new URLSearchParams();
@@ -181,7 +181,7 @@ export async function createJobApply(
         const result = await res.json();
 
         if (res.ok && result?.success) {
-          updateTag("job-applies-list");
+          updateTag(CACHE_TAGS.JOB_APPLIES);
         }
         return result;
     } catch (error: unknown) {
@@ -219,7 +219,7 @@ export async function updateJobApply(
         const result = await res.json();
 
         if (res.ok && result?.success) {
-          updateTag("job-applies-list");
+          updateTag(CACHE_TAGS.JOB_APPLIES);
         }
         return result;
     } catch (error: unknown) {
@@ -258,7 +258,7 @@ export async function deleteJobApply(
         const result = await res.json();
 
         if (res.ok && result?.success) {
-          updateTag("job-applies-list");
+          updateTag(CACHE_TAGS.JOB_APPLIES);
         }
         return result;
     } catch (error: unknown) {

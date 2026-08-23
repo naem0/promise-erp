@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 const BranchesSkeleton = () => {
   return (
-    <section className="py-8 md:py-14 bg-secondary/5">
+    <section className="py-8 lg:py-14 bg-secondary/5">
       <div className="container mx-auto">
         <div className="flex flex-col items-center gap-3 mb-10">
           <Skeleton className="h-8 mb-2 min-w-52 bg-secondary/15" />

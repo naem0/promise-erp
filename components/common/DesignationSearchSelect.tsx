@@ -13,6 +13,7 @@ interface DesignationSearchSelectProps {
   placeholder?: string
   disabled?: boolean
   className?: string
+  initialLabel?: string
 }
 
 export default function DesignationSearchSelect({
@@ -21,6 +22,7 @@ export default function DesignationSearchSelect({
   placeholder = 'Select designation',
   disabled = false,
   className,
+  initialLabel,
 }: DesignationSearchSelectProps) {
   const [designations, setDesignations] = useState<SimpleDesignation[]>([])
   const [isPending, startTransition] = useTransition()
@@ -28,7 +30,7 @@ export default function DesignationSearchSelect({
   const [selectedOption, setSelectedOption] = useState<{
     value: string
     label: string
-  } | null>(null)
+  } | null>(() => (value && initialLabel ? { value: String(value), label: initialLabel } : null))
 
   useEffect(() => {
     const delayDebounce = setTimeout(() => {
@@ -60,17 +62,19 @@ export default function DesignationSearchSelect({
   // Retain the selected option so it doesn't disappear when user searches for something else
   useEffect(() => {
     if (value) {
-      const found = options?.find((o) => o.value === value)
+      const found = options?.find((o) => o?.value === value)
       if (found) {
         setSelectedOption(found)
+      } else if (initialLabel && (!selectedOption || selectedOption?.value !== value)) {
+        setSelectedOption({ value: String(value), label: initialLabel })
       }
     } else {
       setSelectedOption(null)
     }
-  }, [value, options])
+  }, [value, options, initialLabel])
 
   const finalOptions = useMemo(() => {
-    if (selectedOption && !options?.some((o) => o.value === selectedOption?.value)) {
+    if (selectedOption && !options?.some((o) => o?.value === selectedOption?.value)) {
       return [selectedOption, ...options]
     }
     return options
@@ -82,10 +86,10 @@ export default function DesignationSearchSelect({
       value={value || ''}
       onValueChange={onValueChange}
       onInputValueChange={(val) => setSearchTerm(val)}
-      placeholder={isPending ? 'Loading designations...' : placeholder}
+      placeholder={isPending && !finalOptions.length ? 'Loading designations...' : placeholder}
       searchPlaceholder="Search designation..."
       emptyMessage={isPending ? 'Loading...' : 'No designations found'}
-      disabled={disabled || isPending}
+      disabled={disabled}
       disableFilter={true}
       className={className}
     />

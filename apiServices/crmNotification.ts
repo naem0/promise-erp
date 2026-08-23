@@ -1,7 +1,8 @@
 "use server";
+import { cacheTag, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { cacheTag, updateTag } from "next/cache";
 import { PaginationType } from "@/types/pagination";
 
 const API_BASE =
@@ -56,8 +57,7 @@ export async function getCRMNotificationsCached(
   params: Record<string, unknown> = {}
 ): Promise<CRMNotificationsResponse | null> {
   "use cache: private";
-  cacheTag("crm-notifications-list");
-
+  cacheTag(CACHE_TAGS.CRM_NOTIFICATIONS);
   try {
     const urlParams = new URLSearchParams();
     for (const key in params) {
@@ -148,8 +148,7 @@ export async function getCRMNotificationCountCached(
   token: string
 ): Promise<CRMNotificationCountResponse | null> {
   "use cache: private";
-  cacheTag("crm-notifications-list");
-
+  cacheTag(CACHE_TAGS.CRM_NOTIFICATIONS);
   try {
     const res = await fetch(
       `${API_BASE}/consultant-notifications/count`,
@@ -262,7 +261,7 @@ export async function markCRMNotificationAsRead(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("crm-notifications-list");
+      updateTag(CACHE_TAGS.CRM_NOTIFICATIONS);
     }
 
     return result;

@@ -1,8 +1,9 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import SessionProviderWrapper from "../components/next-auth/SessionProviderWrapper";
 import { PermissionProvider } from "@/providers/PermissionProvider";
 import { Toaster } from "@/components/ui/sonner";
+import PwaRegister from "@/components/common/PwaRegister";
 
 import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -17,8 +18,14 @@ const inter = Inter({
   adjustFontFallback: true, // Prevent layout shift
 });
 
+export const viewport: Viewport = {
+  themeColor: "#16a34a",
+  width: "device-width",
+  initialScale: 1,
+};
+
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://promise-erp-xi.vercel.app'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://beta.e-laeltd.com'),
   title: {
     default: 'Promise IT Ltd - Leading IT Solutions & Training',
     template: '%s'
@@ -27,8 +34,15 @@ export const metadata: Metadata = {
   keywords: ['IT training', 'software development', 'ERP solutions', 'web development', 'programming courses'],
   authors: [{ name: 'Promise IT Ltd' }],
   creator: 'Promise IT Ltd',
+  manifest: "/manifest.json",
   icons: {
     icon: "/favicon.png",
+    apple: "/pwa-icons/apple-touch-icon.png",
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Promise IT Ltd",
   },
   openGraph: {
     type: 'website',
@@ -67,7 +81,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://i.ytimg.com" />
@@ -78,6 +92,7 @@ export default function RootLayout({
         suppressHydrationWarning={true}
       >
         <SessionProviderWrapper>
+          <PwaRegister />
           {/* <SessionWatcher /> */}
           <PermissionProvider>
             <TooltipProvider>

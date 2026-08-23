@@ -73,10 +73,16 @@ export const loginUser = async (data: LoginPayload) => {
       body: JSON.stringify(data),
     });
 
-    const responseData = await res.json();
+    const text = await res.text();
+    let responseData;
+    try {
+      responseData = JSON.parse(text);
+    } catch {
+      throw new Error(`Server response error (${res.status})`);
+    }
 
-    if (!responseData.success) {
-      throw new Error(responseData.message || "Login failed");
+    if (!res.ok || !responseData?.success) {
+      throw new Error(responseData?.message || "Login failed");
     }
 
     return responseData.data;

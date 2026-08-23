@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useTransition } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -61,38 +62,47 @@ const HeaderBranchDropdown = () => {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <span className="text-base header-branch-filter-btn h-8 px-4 flex items-center gap-2 text-secondary cursor-pointer">
+      <DropdownMenuTrigger asChild suppressHydrationWarning>
+        <button
+          type="button"
+          aria-label="Select Branch"
+          suppressHydrationWarning
+          className="text-base header-branch-filter-btn h-8 px-4 flex items-center gap-2 text-secondary cursor-pointer border-0 bg-transparent"
+        >
           <Funnel className="h-4 w-4" />{" "}
-          {isPending
-            ? "Loading..."
-            : branchList.find((b) => b.id === selectedBranch)?.name || "Branch"}
-        </span>
+          {isPending ? (
+            <Skeleton className="h-4 w-16 rounded" />
+          ) : (
+            branchList.find((b) => b.id === selectedBranch)?.name || "Branch"
+          )}
+        </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="grid grid-cols-4 gap-1 p-4 w-full">
         {isPending ? (
-          <DropdownMenuItem disabled>Loading Branch...</DropdownMenuItem>
+          <DropdownMenuItem disabled>
+            <Skeleton className="h-4 w-24 rounded" />
+          </DropdownMenuItem>
         ) : (
           <>
             <DropdownMenuItem
-              onClick={() => handleBranchSelect(49)} // ID 49 for "All Branches" (Dhaka Branch)
+              onClick={() => handleBranchSelect(49)} // ID 49 for Dhaka Branch
               className={
                 selectedBranch === 49 ? "cursor-pointer" : "cursor-pointer"
               }
             >
               All Branches
             </DropdownMenuItem>
-            {branchList.map((branch) => (
+            {branchList?.map((branch) => (
               <DropdownMenuItem
-                key={branch.id}
-                onClick={() => handleBranchSelect(branch.id)}
+                key={branch?.id}
+                onClick={() => handleBranchSelect(branch?.id)}
                 className={
-                  selectedBranch === branch.id
+                  selectedBranch === branch?.id
                     ? "bg-secondary text-white cursor-pointer"
                     : "cursor-pointer"
                 }
               >
-                {branch.name}
+                {branch?.name}
               </DropdownMenuItem>
             ))}
           </>

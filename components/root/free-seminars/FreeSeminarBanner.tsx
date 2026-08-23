@@ -93,7 +93,7 @@ const FreeSeminarBanner = ({ seminar }: { seminar: PublicFreeSeminar }) => {
                     <div className="relative w-full max-w-full aspect-4/3 lg:aspect-video rounded-xl overflow-hidden shadow-2xl border-4 border-white/50">
                       
                             <Image
-                                src={seminar.image || "/images/placeholder_img.jpg"}
+                                src={(seminar.image && typeof seminar.image === "string" && seminar.image.trim() !== "") ? seminar.image : "/images/placeholder_img.jpg"}
                                 alt={seminar.title}
                                 fill
                                 className="object-cover"

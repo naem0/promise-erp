@@ -39,7 +39,7 @@ const EnrollPaymentSummary = ({
                     <p className="text-secondary font-medium mb-3">Course Name</p>
                     <div className="flex items-center gap-4">
                         <Image
-                            src={image || "/images/course-img.png"}
+                            src={(image && typeof image === "string" && image.trim() !== "") ? image : "/images/course-img.png"}
                             alt={courseName || "Course image"}
                             width={148}
                             height={108}

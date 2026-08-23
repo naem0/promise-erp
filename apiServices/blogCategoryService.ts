@@ -1,7 +1,8 @@
 "use server";
+import { cacheTag, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { updateTag, cacheTag } from "next/cache";
 import { PaginationType } from "@/types/pagination";
 
 const API_BASE =
@@ -58,7 +59,7 @@ export async function createBlogCategory(
     });
     const result = await res.json();
     if (res.ok && result?.success) {
-      updateTag("blog-categories-list");
+      updateTag(CACHE_TAGS.BLOG_CATEGORIES);
     }
     return result;
   } catch (error: unknown) {
@@ -90,7 +91,7 @@ export async function updateBlogCategory(
 
     const result = await res.json();
     if (res.ok && result?.success) {
-      updateTag("blog-categories-list");
+      updateTag(CACHE_TAGS.BLOG_CATEGORIES);
     }
     return result;
   } catch (error: unknown) {
@@ -109,8 +110,7 @@ export async function getBlogCategoriesCached(
   params: Record<string, unknown> = {}
 ): Promise<BlogCategoryResponse | null> {
   "use cache";
-  cacheTag("blog-categories-list");
-
+  cacheTag(CACHE_TAGS.BLOG_CATEGORIES);
   // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
   try {
     const urlParams = new URLSearchParams();
@@ -208,7 +208,7 @@ export async function deleteBlogCategory(
 
     const result = await res.json();
     if (res.ok && result?.success) {
-      updateTag("blog-categories-list");
+      updateTag(CACHE_TAGS.BLOG_CATEGORIES);
     }
     return result;
   } catch (error) {

@@ -128,7 +128,7 @@ const BlogsData = async ({ searchParams }: SearchParamsProps) => {
               </TableCell>
               <TableCell className="font-medium flex items-center justify-center">
                 <Image
-                  src={blog.thumbnail || "/images/placeholder.png"}
+                  src={(blog.thumbnail && typeof blog.thumbnail === "string" && blog.thumbnail.trim() !== "") ? blog.thumbnail : "/images/placeholder.png"}
                   alt={blog?.title}
                   width={60}
                   height={40}

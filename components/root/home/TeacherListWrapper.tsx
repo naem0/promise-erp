@@ -3,10 +3,11 @@ import TeacherListSection from "./TeacherListSection";
 import { fetchAllPublicTeachers } from "@/apiServices/homePageService";
 import { cacheTag } from "next/cache";
 import ErrorComponent from "@/components/common/ErrorComponent";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 const TeacherListWrapper = async () => {
   "use cache";
-  cacheTag("public-teachers");
+  cacheTag(CACHE_TAGS.TEACHERS);
   let teacherData;
   try {
      teacherData = await fetchAllPublicTeachers();
@@ -24,7 +25,7 @@ const TeacherListWrapper = async () => {
   }
 
   return (
-    <section className="py-8 md:py-14 bg-secondary/5">
+    <section className="py-8 lg:py-14 bg-secondary/5">
       <div className="container mx-auto px-4">
         <SectionTitle
           title={teacherData?.data?.section_title}

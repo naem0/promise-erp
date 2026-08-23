@@ -1,7 +1,8 @@
-"use server"
+"use server";
+import { cacheTag, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 import { authOptions } from "@/lib/auth"
 import { getServerSession } from "next-auth"
-import { cacheTag, updateTag } from "next/cache"
 import { handleApiError, processApiResponse } from "@/lib/apiErrorHandler"
 import { PaginationType } from "@/types/pagination"
 
@@ -53,8 +54,7 @@ export async function getDivisionsCached(
   params: Record<string, unknown> = {}
 ): Promise<DivisionSuccessResponse> {
   "use cache"
-  cacheTag("divisions-list")
-
+  cacheTag(CACHE_TAGS.DIVISIONS);
   try {
     const urlParams = new URLSearchParams()
 
@@ -135,7 +135,7 @@ export async function addDivision(
     }
     
     if (res.ok && result?.success) {
-      updateTag("divisions-list");
+      updateTag(CACHE_TAGS.DIVISIONS);
     }
     return {
       success: true,
@@ -223,7 +223,7 @@ export async function updateDivision(
     }
     
     if (res.ok && result?.success) {
-      updateTag("divisions-list");
+      updateTag(CACHE_TAGS.DIVISIONS);
     }
     return {
       success: true,
@@ -264,7 +264,7 @@ export async function deleteDivision(id: number): Promise<{ success: boolean; me
 
     // If the response is OK, assume success and provide a default message
     if (res.ok) {
-      updateTag("divisions-list")
+      updateTag(CACHE_TAGS.DIVISIONS)
     }
     return { success: true, message: "Division deleted successfully." };
   } catch (error) {

@@ -20,6 +20,7 @@ import { Branch } from "@/apiServices/branchService";
 import { CRMSource } from "@/apiServices/crmSourceService";
 import { CRMReferrer } from "@/apiServices/crmReferrerService";
 import ReferrerSearchSelect from "@/components/common/ReferrerSearchSelect";
+import BranchSearchSelect from "@/components/common/BranchSearchSelect";
 
 
 interface CRMLeadsFormProps {
@@ -389,22 +390,14 @@ export default function CRMLeadsForm({
                             name="branch_id"
                             control={control}
                             render={({ field }) => (
-                                <Select value={field.value} onValueChange={field.onChange}>
-                                    <SelectTrigger className="w-full">
-                                        <SelectValue placeholder="Select Branch" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {branches?.length ? (
-                                            branches.map(b => (
-                                                <SelectItem key={b.id} value={b.id.toString()}>{b.name}</SelectItem>
-                                            ))
-                                        ) : (
-                                            <SelectItem value="none" disabled>
-                                                No branch found
-                                            </SelectItem>
-                                        )}
-                                    </SelectContent>
-                                </Select>
+                                <BranchSearchSelect
+                                    value={field.value}
+                                    onValueChange={(val) => field.onChange(val || "")}
+                                    branches={branches}
+                                    placeholder="Select Branch"
+                                    searchPlaceholder="Search branch..."
+                                    className="w-full"
+                                />
                             )}
                         />
                         {errors.branch_id && <p className="text-sm text-red-500 mt-1">{errors.branch_id.message}</p>}

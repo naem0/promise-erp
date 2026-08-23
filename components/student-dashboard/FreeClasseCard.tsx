@@ -21,7 +21,7 @@ const FreeClasseCard = ({ course }:FreeClasseCardProps ) => {
       <CardHeader className="p-0 overflow-hidden rounded-t-xl">
         <AspectRatio ratio={3 / 2} className="relative bg-muted">
           <Image
-            src={course?.image || "/images/placeholder_img.jpg"}
+            src={(course?.image && typeof course?.image === "string" && course?.image.trim() !== "") ? course?.image : "/images/placeholder_img.jpg"}
             alt={course.title}
             fill
             className="object-cover"

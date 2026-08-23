@@ -1,7 +1,8 @@
 "use server";
+import { cacheTag, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { cacheTag, updateTag } from "next/cache";
 import { handleApiError, processApiResponse } from "@/lib/apiErrorHandler";
 import { PaginationType } from "@/types/pagination";
 
@@ -63,8 +64,7 @@ export async function getDistrictsCached(
   params: Record<string, unknown> = {}
 ): Promise<DistrictResponse | null> {
   "use cache";
-  cacheTag("districts-list");
-
+  cacheTag(CACHE_TAGS.DISTRICTS);
   try {
   // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
     const urlParams = new URLSearchParams();
@@ -165,7 +165,7 @@ export async function addDistrict(
     }
 
     if (response.ok && result?.success) {
-      updateTag("districts-list");
+      updateTag(CACHE_TAGS.DISTRICTS);
     }
 
     return {
@@ -216,7 +216,7 @@ export async function deleteDistrict(
     }
     
     if (res.ok && result?.success) {
-      updateTag("districts-list");
+      updateTag(CACHE_TAGS.DISTRICTS);
     }
     return { success: true, message: result.message || "District deleted successfully", code: result.code };
   } catch (error) {
@@ -293,7 +293,7 @@ export async function updateDistrict(
     }
 
     if (res.ok && result?.success) {
-      updateTag("districts-list");
+      updateTag(CACHE_TAGS.DISTRICTS);
     }
     return {
       success: true,

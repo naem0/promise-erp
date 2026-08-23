@@ -27,9 +27,7 @@ const MyCourseCard = ({ course, isUpdatedCourse, setIsUpdatedCourse }: MyCourseC
       <CardHeader className="p-0 overflow-hidden rounded-t-xl">
         <AspectRatio ratio={3 / 2} className="relative bg-muted">
           <Image
-            src={
-              course?.course?.featured_image || "/images/placeholder_img.jpg"
-            }
+            src={(course?.course?.featured_image && typeof course?.course?.featured_image === "string" && course?.course?.featured_image.trim() !== "") ? course?.course?.featured_image : "/images/placeholder_img.jpg"}
             alt={course?.course?.title}
             fill
             className="object-cover"

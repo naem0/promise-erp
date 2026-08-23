@@ -17,7 +17,7 @@ export default function RootLayout({
           <div className="fixed left-0 top-1/2 -translate-y-1/2 z-30">
             <Link
               href="/free-seminars"
-              className="bg-primary text-white px-4 py-3 rounded-r-lg text-sm sm:text-base font-bold
+              className="bg-primary text-white px-4 py-1 rounded-r-lg text-sm font-bold
       writing-vertical shadow-lg hover:px-3 transition-all
       flex items-center gap-1"
             >
@@ -28,7 +28,7 @@ export default function RootLayout({
           <div className="fixed right-0 top-1/2 -translate-y-1/2 z-30">
             <Link
               href="/courses"
-              className="bg-primary text-white px-4 py-3 rounded-l-lg text-sm sm:text-base font-bold
+              className="bg-primary text-white px-4 py-1 rounded-l-lg text-sm font-bold
       writing-vertical shadow-lg hover:px-3 transition-all
       flex items-center gap-1"
             >

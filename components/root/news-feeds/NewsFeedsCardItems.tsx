@@ -22,7 +22,7 @@ const NewsFeedsCardItems = ({ item }: NewsFeedsCardItemsProps) => {
         >
           <div className="w-full h-[260px] lg:h-[330px] relative border border-primary/10 rounded-lg ">
             <Image
-              src={item?.image || "/images/placeholder_img.jpg"}
+              src={(item?.image && typeof item?.image === "string" && item?.image.trim() !== "") ? item?.image : "/images/placeholder_img.jpg"}
               alt={item?.news_link || "News Image"}
               fill
               className="object-cover rounded-lg"

@@ -1,7 +1,8 @@
 "use server";
+import { cacheTag, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { cacheTag, updateTag } from "next/cache";
 import { handleApiError, processApiResponse } from "@/lib/apiErrorHandler";
 import { PaginationType } from "@/types/pagination";
 
@@ -55,8 +56,7 @@ export async function getCourseCategoriesCached(
   params: Record<string, unknown> = {}
 ): Promise<CourseCategoriesResponse | null> {
   "use cache";
-  cacheTag("course-categories-list");
-
+  cacheTag(CACHE_TAGS.CATEGORIES);
   try {
     // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
     const urlParams = new URLSearchParams();
@@ -188,7 +188,7 @@ export async function createCourseCategory(categoryData: CreateCategoryRequest):
     }
 
     if (response.ok && result?.success) {
-      updateTag("course-categories-list");
+      updateTag(CACHE_TAGS.CATEGORIES);
     }
     return {
       success: true,
@@ -247,7 +247,7 @@ export async function updateCourseCategory(id: number, categoryData: UpdateCateg
     }
 
     if (response.ok && result?.success) {
-      updateTag("course-categories-list");
+      updateTag(CACHE_TAGS.CATEGORIES);
     }
     return {
       success: true,
@@ -303,7 +303,7 @@ export async function deleteCourseCategory(id: number): Promise<SingleCategoryRe
     }
 
     if (response.ok && result?.success) {
-      updateTag("course-categories-list");
+      updateTag(CACHE_TAGS.CATEGORIES);
     }
     return {
       success: true,
@@ -339,8 +339,7 @@ export async function getCourseCategoryStatsCached(
   token: string
 ): Promise<CourseCategoryStatsResponse | null> {
   "use cache";
-  cacheTag("course-categories-list");
-
+  cacheTag(CACHE_TAGS.CATEGORIES);
   try {
     const res = await fetch(`${API_BASE}/course-categories/list-overview`, {
       headers: {

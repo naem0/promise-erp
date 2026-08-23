@@ -298,7 +298,7 @@ export default function FreeSeminarForm({
 
           {/* ── Basic Info ── */}
           <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 xl:gap-5">
               <div>
                 <label className="text-sm font-semibold text-gray-600 mb-1 block">
                   Title <span className="text-red-500">*</span>
@@ -664,7 +664,7 @@ export default function FreeSeminarForm({
                               className="h-4 w-4 rounded border-gray-300 text-primary pointer-events-none"
                             />
                             <Image
-                              src={tool.image || "/images/placeholder.png"}
+                              src={(tool.image && typeof tool.image === "string" && tool.image.trim() !== "") ? tool.image : "/images/placeholder.png"}
                               width={32}
                               height={32}
                               alt={tool.title}
@@ -747,7 +747,7 @@ export default function FreeSeminarForm({
             <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide">
               SEO &amp; Meta
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 xl:gap-5">
               <div>
                 <label className="text-sm font-semibold text-gray-600 mb-1 block">
                   Meta Title

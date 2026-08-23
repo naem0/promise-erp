@@ -4,7 +4,7 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 export default function NewsfeedsArchiveSkeleton() {
   return (
-    <section className="py-8 md:py-14 bg-secondary/5">
+    <section className="py-8 lg:py-14 bg-secondary/5">
       <div className="container mx-auto px-4">
         {/* Title Section Skeleton */}
         <div className="flex flex-col items-center gap-3 mb-10">
@@ -13,7 +13,7 @@ export default function NewsfeedsArchiveSkeleton() {
         </div>
 
         {/* Grid Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 h-full">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 h-full">
           {/* Main Featured News Skeleton */}
           <Card className="border border-secondary/30 py-0 overflow-hidden">
             <AspectRatio ratio={1 / 1} className="w-full relative">

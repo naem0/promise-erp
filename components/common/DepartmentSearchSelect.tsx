@@ -13,6 +13,7 @@ interface DepartmentSearchSelectProps {
   placeholder?: string
   disabled?: boolean
   className?: string
+  initialLabel?: string
 }
 
 export default function DepartmentSearchSelect({
@@ -21,6 +22,7 @@ export default function DepartmentSearchSelect({
   placeholder = 'Select department',
   disabled = false,
   className,
+  initialLabel,
 }: DepartmentSearchSelectProps) {
   const [departments, setDepartments] = useState<SimpleDepartment[]>([])
   const [isPending, startTransition] = useTransition()
@@ -28,7 +30,7 @@ export default function DepartmentSearchSelect({
   const [selectedOption, setSelectedOption] = useState<{
     value: string
     label: string
-  } | null>(null)
+  } | null>(() => (value && initialLabel ? { value: String(value), label: initialLabel } : null))
 
   useEffect(() => {
     const delayDebounce = setTimeout(() => {
@@ -41,7 +43,10 @@ export default function DepartmentSearchSelect({
             setDepartments([])
           }
         } catch (error: unknown) {
-          console.error('Failed to fetch departments:', error)
+          if (error instanceof Error) {
+            console.error('Failed to fetch departments:', error.message)
+          }
+          console.error('An unexpected error occurred while fetching departments.')
           setDepartments([])
         }
       })
@@ -60,17 +65,19 @@ export default function DepartmentSearchSelect({
   // Retain the selected option so it doesn't disappear when user searches for something else
   useEffect(() => {
     if (value) {
-      const found = options?.find((o) => o.value === value)
+      const found = options?.find((o) => o?.value === value)
       if (found) {
         setSelectedOption(found)
+      } else if (initialLabel && (!selectedOption || selectedOption?.value !== value)) {
+        setSelectedOption({ value: String(value), label: initialLabel })
       }
     } else {
       setSelectedOption(null)
     }
-  }, [value, options])
+  }, [value, options, initialLabel])
 
   const finalOptions = useMemo(() => {
-    if (selectedOption && !options?.some((o) => o.value === selectedOption?.value)) {
+    if (selectedOption && !options?.some((o) => o?.value === selectedOption?.value)) {
       return [selectedOption, ...options]
     }
     return options
@@ -82,10 +89,10 @@ export default function DepartmentSearchSelect({
       value={value || ''}
       onValueChange={onValueChange}
       onInputValueChange={(val) => setSearchTerm(val)}
-      placeholder={isPending ? 'Loading departments...' : placeholder}
+      placeholder={isPending && !finalOptions.length ? 'Loading departments...' : placeholder}
       searchPlaceholder="Search department..."
       emptyMessage={isPending ? 'Loading...' : 'No departments found'}
-      disabled={disabled || isPending}
+      disabled={disabled}
       disableFilter={true}
       className={className}
     />

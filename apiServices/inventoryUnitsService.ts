@@ -1,8 +1,9 @@
 "use server";
+import { cacheTag, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { cacheTag, updateTag } from "next/cache";
 import { PaginationType } from "@/types/pagination";
 
 const API_BASE =
@@ -48,8 +49,7 @@ export async function getUnitsCached(
   params: Record<string, unknown> = {},
 ): Promise<UnitsResponse | null> {
   "use cache";
-  cacheTag("units-list");
-
+  cacheTag(CACHE_TAGS.INVENTORY_UNITS);
   try {
     const urlParams = new URLSearchParams();
     for (const key in params) {
@@ -188,7 +188,7 @@ export async function createUnit(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("units-list");
+      updateTag(CACHE_TAGS.INVENTORY_UNITS);
     }
     return result;
   } catch (error: unknown) {
@@ -231,7 +231,7 @@ export async function updateUnit(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("units-list");
+      updateTag(CACHE_TAGS.INVENTORY_UNITS);
     }
     return result;
   } catch (error: unknown) {
@@ -268,7 +268,7 @@ export async function deleteUnit(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("units-list");
+      updateTag(CACHE_TAGS.INVENTORY_UNITS);
     }
     return result;
   } catch (error: unknown) {

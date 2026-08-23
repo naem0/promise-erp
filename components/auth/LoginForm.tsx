@@ -89,7 +89,7 @@ const LoginForm = () => {
                   {...register("email_or_phone", {
                     required: "email or phone is required",
                   })}
-                  defaultValue={process.env.NEXT_PUBLIC_ADMIN_EMAIL}
+                  defaultValue={process.env.NEXT_PUBLIC_ADMIN_EMAIL || ""}
                   className={`border-primary/40 h-12 ${errors.email_or_phone ? "border-destructive" : ""}`}
                 />
                 {errors.email_or_phone && (
@@ -109,7 +109,7 @@ const LoginForm = () => {
                     {...register("password", {
                       required: "Password is required",
                     })}
-                    defaultValue={process.env.NEXT_PUBLIC_ADMIN_PASSWORD}
+                    defaultValue={process.env.NEXT_PUBLIC_ADMIN_PASSWORD || ""}
                     className={`border-primary/40 h-12 ${errors.password ? "border-destructive" : ""}`}
                   />
                   <span

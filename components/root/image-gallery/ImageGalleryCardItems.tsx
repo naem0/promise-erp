@@ -1,5 +1,5 @@
-
 "use client";
+
 
 import { ImageGallery } from "@/apiServices/imageGalleryService";
 import Image from "next/image";

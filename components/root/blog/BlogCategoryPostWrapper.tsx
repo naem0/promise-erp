@@ -31,7 +31,7 @@ const BlogCategoryPostWrapper = async ({
     }
   } catch (error: unknown) {
     return (
-      <div className="lg:col-span-8 xl:col-span-9 flex items-center justify-center h-full">
+      <div className="xl:col-span-9 w-full flex items-center justify-center h-full">
         <ErrorComponent
           message={
             error instanceof Error
@@ -48,7 +48,7 @@ const BlogCategoryPostWrapper = async ({
 
   if (blogInfoData.length === 0) {
     return (
-      <div className="lg:col-span-8 xl:col-span-9 flex items-center justify-center h-full">
+      <div className="xl:col-span-9 w-full flex items-center justify-center h-full">
         <NotFoundComponent message={blogInfo?.message || " No blogs found."} />
       </div>
     );
@@ -59,7 +59,7 @@ const BlogCategoryPostWrapper = async ({
   }
 
   return (
-    <div className="lg:col-span-8 xl:col-span-9 space-y-8">
+    <div className="xl:col-span-9 w-full space-y-8">
       <BlogFeaturedPost blogInfoData={blogInfoData} />
       <BlogPostCard blogInfoData={blogInfoData} />
 

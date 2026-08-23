@@ -1,7 +1,8 @@
 "use server";
+import { cacheTag, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { cacheTag } from "next/cache";
 
 const API_BASE =
   process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
@@ -144,7 +145,7 @@ export async function getCourseDetailBySlug(
   branchId?: number,
 ): Promise<ApiResponse | null> {
   "use cache";
-  cacheTag("course-detail");
+  cacheTag(CACHE_TAGS.COURSE_DETAIL);
 
   try {
     const urlParams = new URLSearchParams();

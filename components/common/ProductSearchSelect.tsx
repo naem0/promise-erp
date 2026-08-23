@@ -1,7 +1,6 @@
 'use client'
 
-import { useState, useMemo, useRef, useEffect, useTransition, useCallback } from 'react'
-import Image from 'next/image'
+import { useEffect, useState, useTransition, useRef } from 'react'
 import {
   ComboboxRoot,
   ComboboxContent,
@@ -9,97 +8,85 @@ import {
   ComboboxItem,
   ComboboxEmpty,
   ComboboxChipsInput,
+  ComboboxClear,
 } from '@/components/ui/combobox'
-import { ProductItem, getProductItems } from '@/apiServices/inventoryItemsService'
+import {
+  searchInventoryItems,
+  InventorySearchItem,
+} from '@/apiServices/inventoryItemsService'
 import { cn } from '@/lib/utils'
 import { ChevronDownIcon } from 'lucide-react'
+import Image from 'next/image'
+
+export interface ProductSearchItem extends InventorySearchItem {
+  model?: string | null;
+  stock?: number;
+  unit_name?: string;
+}
 
 interface ProductSearchSelectProps {
-  products?: ProductItem[]
+  products?: (ProductSearchItem | { id: number; name: string; barcode?: string | null; image?: string | null })[]
   value?: string | null
   onValueChange?: (value: string | null) => void
   placeholder?: string
+  searchPlaceholder?: string
   disabled?: boolean
   className?: string
   disabledProductIds?: string[]
 }
 
 export default function ProductSearchSelect({
-  products,
+  products: initialProducts,
   value,
   onValueChange,
-  placeholder = "Select product",
+  placeholder = "Select item",
   disabled = false,
   className,
   disabledProductIds = [],
 }: ProductSearchSelectProps) {
-  const [productsList, setProductsList] = useState<ProductItem[]>(products || [])
-  const [productsMap, setProductsMap] = useState<Record<string, ProductItem>>(() => {
-    const map: Record<string, ProductItem> = {}
-    products?.forEach((p) => {
-      map[String(p.id)] = p
-    })
-    return map
-  })
+  const [productsList, setProductsList] = useState<ProductSearchItem[]>((initialProducts as ProductSearchItem[]) || [])
+  const [productsMap, setProductsMap] = useState<Record<string, ProductSearchItem>>({})
   const [isPending, startTransition] = useTransition()
   const [inputValue, setInputValue] = useState("")
-  const [page, setPage] = useState(1)
-  const [hasMore, setHasMore] = useState(false)
-  const [isLoadingMore, setIsLoadingMore] = useState(false)
   const anchor = useRef<HTMLDivElement | null>(null)
 
-  // Initialize with prop values
+  // Initialize with passed initialProducts props safely
   useEffect(() => {
-    if (products && products.length > 0) {
-      setProductsList(products)
-      setProductsMap(prev => {
+    if (initialProducts && initialProducts.length > 0) {
+      setProductsList(initialProducts as ProductSearchItem[])
+      setProductsMap((prev) => {
         const newMap = { ...prev }
-        products.forEach(p => {
+        initialProducts.forEach((p) => {
           if (p?.id != null) {
-            newMap[String(p.id)] = p
+            newMap[String(p.id)] = p as ProductSearchItem
           }
         })
         return newMap
       })
     }
-  }, [products])
+  }, [initialProducts])
 
-  // Dynamic API search with 300ms debounce
+  // Search items with 300ms debounce (only depends on inputValue)
   useEffect(() => {
     const timer = setTimeout(() => {
       startTransition(async () => {
         try {
-          const params: Record<string, unknown> = { page: 1, status: "1" }
-          if (inputValue.trim()) {
-            params.search = inputValue.trim()
-          }
-          const res = await getProductItems(params)
-          if (res?.success) {
-            const fetched = res?.data?.products || []
-            const pagination = res?.data?.pagination
+          const res = await searchInventoryItems(inputValue.trim() || undefined)
+          if (res?.success && Array.isArray(res.data)) {
+            const fetched = res.data
             setProductsList(fetched)
-            setProductsMap(prev => {
+            setProductsMap((prev) => {
               const newMap = { ...prev }
-              fetched.forEach(p => {
+              fetched.forEach((p) => {
                 if (p?.id != null) {
                   newMap[String(p.id)] = p
                 }
               })
               return newMap
             })
-            setPage(1)
-            const morePages = Boolean(
-              pagination?.has_more_pages ||
-              (pagination?.current_page && pagination?.last_page && pagination.current_page < pagination.last_page)
-            )
-            setHasMore(morePages)
           }
         } catch (error: unknown) {
-          if (error instanceof Error) {
-            console.error("Failed to fetch products:", error.message)
-          } else {
-            console.error("An unknown error occurred while fetching products.")
-          }
+          console.error("Failed to search inventory items:", error)
         }
       })
     }, 300)
@@ -107,149 +94,128 @@ export default function ProductSearchSelect({
     return () => clearTimeout(timer)
   }, [inputValue])
 
-  // Load next page on scroll
-  const handleLoadMore = useCallback(async () => {
-    if (!hasMore || isPending || isLoadingMore) return
-    setIsLoadingMore(true)
-    try {
-      const nextPage = page + 1
-      const params: Record<string, unknown> = { page: nextPage, status: "1" }
-      if (inputValue.trim()) params.search = inputValue.trim()
+  const singleValue = value != null && value !== "" ? String(value) : ""
+  const selectedProduct = singleValue ? productsMap[singleValue] : null
 
-      const res = await getProductItems(params)
-      if (res?.success) {
-        const fetched = res?.data?.products || []
-        const pagination = res?.data?.pagination
-        setProductsList(prev => {
-          const existingIds = new Set(prev.map(p => p.id))
-          const uniqueNew = fetched.filter(p => !existingIds.has(p.id))
-          return [...prev, ...uniqueNew]
-        })
-        setProductsMap(prev => {
-          const newMap = { ...prev }
-          fetched.forEach(p => {
-            if (p?.id != null) {
-              newMap[String(p.id)] = p
-            }
-          })
-          return newMap
-        })
-        setPage(nextPage)
-        const morePages = Boolean(
-          pagination?.has_more_pages ||
-          (pagination?.current_page && pagination?.last_page && pagination.current_page < pagination.last_page)
-        )
-        setHasMore(morePages)
-      }
-    } catch (error) {
-      console.error("Failed to load more products:", error)
-    } finally {
-      setIsLoadingMore(false)
-    }
-  }, [hasMore, isPending, isLoadingMore, page, inputValue])
-
-  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
-    const { scrollTop, clientHeight, scrollHeight } = e.currentTarget
-    if (scrollHeight - scrollTop - clientHeight < 40) {
-      handleLoadMore()
-    }
+  const handleSelectChange = (val: string | null) => {
+    onValueChange?.(val)
   }
-
-  const selectedProduct = useMemo(() => {
-    if (!value) return null
-    return productsMap[String(value)] || null
-  }, [productsMap, value])
 
   return (
     <ComboboxRoot
       multiple={false}
-      value={value || ""}
-      onValueChange={(val) => {
-        onValueChange?.(val as string | null)
-        setInputValue("")
-      }}
+      value={singleValue}
+      onValueChange={handleSelectChange}
       onInputValueChange={setInputValue}
       disabled={disabled}
       itemToStringLabel={(val) => {
-        const prod = productsMap[String(val)]
-        return prod ? prod.name : ""
+        const p = productsMap[val]
+        if (!p) return val
+        return p.name
       }}
     >
       <div ref={anchor} className="relative w-full">
         <div
           className={cn(
-            "flex min-h-11 w-full items-center justify-between rounded-md border border-input bg-white px-3 py-1.5 text-sm shadow-xs transition-colors focus-within:border-ring focus-within:ring-1 focus-within:ring-ring",
-            disabled && "cursor-not-allowed opacity-50",
+            "relative flex min-h-9 w-full items-center justify-between rounded-md border border-input bg-white px-3 py-1 text-sm shadow-xs transition-colors focus-within:border-ring focus-within:ring-1 focus-within:ring-ring",
+            disabled && "cursor-not-allowed opacity-50 bg-muted/40",
             className
           )}
         >
-          <div className="flex items-center gap-2.5 flex-1 min-w-0">
-            {selectedProduct && !inputValue && (
-              <div className="relative w-7 h-7 rounded border overflow-hidden shrink-0 bg-slate-50 flex items-center justify-center">
+          <div className="flex items-center gap-2 flex-1 min-w-0">
+            {selectedProduct ? (
+              <div className="w-5 h-5 rounded border border-slate-200 overflow-hidden shrink-0 bg-slate-50 flex items-center justify-center">
                 <Image
-                  src={selectedProduct.image || "/images/placeholder.png"}
+                  src={(selectedProduct.image && typeof selectedProduct.image === "string" && selectedProduct.image.trim() !== "") ? selectedProduct.image : "/images/placeholder.png"}
                   alt={selectedProduct.name}
-                  fill
-                  className="object-cover"
+                  width={20}
+                  height={20}
+                  unoptimized
+                  className="w-full h-full object-cover"
                 />
               </div>
-            )}
+            ) : null}
+
             <div className="flex flex-col flex-1 min-w-0 justify-center">
+              {selectedProduct && !inputValue ? (
+                <div className="flex items-center gap-1.5 min-w-0">
+                  <span className="font-medium text-sm text-slate-900 truncate leading-tight">
+                    {selectedProduct.name}
+                  </span>
+                </div>
+              ) : null}
+
               <ComboboxChipsInput
-                placeholder={selectedProduct ? "" : placeholder}
-                className="w-full text-sm outline-none bg-transparent h-6 p-0 border-none focus:ring-0"
+                placeholder={selectedProduct ? "" : isPending && !productsList.length ? "Loading..." : placeholder}
+                className={cn(
+                  "w-full text-sm outline-none bg-transparent h-7 p-0 border-none focus:ring-0 placeholder:text-muted-foreground",
+                  selectedProduct && !inputValue && "hidden"
+                )}
               />
-              {selectedProduct && !inputValue && (
-                <span className="text-[11px] text-slate-400 leading-tight truncate">
-                  {selectedProduct.barcode || selectedProduct.model || `#${selectedProduct.id}`}
-                </span>
-              )}
             </div>
           </div>
-          <ChevronDownIcon className="size-4 shrink-0 text-muted-foreground ml-2 pointer-events-none" />
+
+          <div className="flex items-center gap-1 shrink-0 ml-1.5">
+            {(!!selectedProduct || !!inputValue) && (
+              <ComboboxClear
+                onClick={() => {
+                  setInputValue("")
+                  handleSelectChange(null)
+                }}
+                className="opacity-60 hover:opacity-100 cursor-pointer p-0.5 rounded hover:bg-slate-100 transition-colors"
+              />
+            )}
+            <ChevronDownIcon className="size-4 shrink-0 text-muted-foreground pointer-events-none" />
+          </div>
         </div>
       </div>
 
-      <ComboboxContent anchor={anchor} className="w-[--anchor-width] min-w-[300px]">
-        <ComboboxList className="max-h-[280px] overflow-y-auto p-1" onScroll={handleScroll}>
-          {productsList.map((product) => {
-            const isDisabled = disabledProductIds.includes(String(product.id))
-            return (
-              <ComboboxItem
-                key={product.id}
-                value={String(product.id)}
-                disabled={isDisabled}
-                className="py-2 px-2.5 cursor-pointer"
-              >
-                <div className="flex items-center gap-2.5 w-full min-w-0">
-                  <div className="relative w-8 h-8 rounded border overflow-hidden shrink-0 bg-slate-100 flex items-center justify-center">
-                    <Image
-                      src={product.image || "/images/placeholder.png"}
-                      alt={product.name}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                  <div className="flex flex-col text-left min-w-0 flex-1">
-                    <span className="text-sm font-medium text-slate-800 truncate leading-tight">
-                      {product.name}
-                    </span>
-                    {product.barcode && (
-                      <span className="text-xs text-slate-400 leading-tight mt-0.5">
-                        {product.barcode}
+      <ComboboxContent anchor={anchor} className="w-[--anchor-width] min-w-[320px] z-100 p-1.5 bg-popover border border-slate-200 rounded-xl shadow-lg">
+        <ComboboxList className="max-h-72 overflow-y-auto space-y-1 p-0.5">
+          {productsList
+            .filter((p) => !disabledProductIds.includes(String(p.id)))
+            .map((product) => {
+              const isSelected = singleValue === String(product.id)
+
+              return (
+                <ComboboxItem
+                  key={product.id}
+                  value={String(product.id)}
+                  className={cn(
+                    "p-2.5 rounded-lg cursor-pointer border border-slate-100/80 bg-card hover:bg-slate-50 hover:border-slate-200 transition-all shadow-2xs group [&_[data-slot=combobox-item-indicator]]:hidden",
+                    isSelected && "bg-blue-50/70 border-blue-200 ring-1 ring-blue-300/40"
+                  )}
+                >
+                  <div className="flex items-center gap-3 w-full min-w-0">
+                    <div className="w-10 h-10 rounded-lg border border-slate-200 bg-white flex items-center justify-center shrink-0 overflow-hidden shadow-2xs">
+                      <Image
+                        src={(product.image && typeof product.image === "string" && product.image.trim() !== "") ? product.image : "/images/placeholder.png"}
+                        alt={product.name}
+                        width={40}
+                        height={40}
+                        unoptimized
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+
+                    <div className="flex flex-col text-left min-w-0 flex-1">
+                      <span className="text-sm font-semibold text-slate-900 truncate leading-tight group-hover:text-blue-900 transition-colors">
+                        {product.name}
                       </span>
-                    )}
+                      {product.barcode && (
+                        <span className="text-xs text-slate-500 font-mono mt-0.5 truncate">
+                          Barcode: {product.barcode}
+                        </span>
+                      )}
+                    </div>
                   </div>
-                </div>
-              </ComboboxItem>
-            )
-          })}
-          {isLoadingMore && (
-            <div className="py-2 text-center text-xs text-slate-400">Loading more...</div>
-          )}
+                </ComboboxItem>
+              )
+            })}
+
           {productsList.length === 0 && (
-            <ComboboxEmpty>
-              {isPending ? "Loading..." : "No products found"}
+            <ComboboxEmpty className="py-5 text-center text-xs text-slate-400">
+              {isPending ? "Loading items..." : "No items found"}
             </ComboboxEmpty>
           )}
         </ComboboxList>

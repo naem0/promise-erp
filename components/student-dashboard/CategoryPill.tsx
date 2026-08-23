@@ -30,7 +30,7 @@ export default function CategoryPill({ category }: CategoryPillProps) {
     >
       <div className="bg-white text-primary shadow relative rounded-full w-12 h-12 flex items-center justify-center p-1">
         <Image
-          src={image || "/images/placeholder_img.jpg"}
+          src={(image && typeof image === "string" && image.trim() !== "") ? image : "/images/placeholder_img.jpg"}
           alt={name}
           fill
           className="object-scale-down rounded-full"

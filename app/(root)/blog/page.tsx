@@ -66,10 +66,10 @@ const BlogPage = ({ searchParams }: BlogPageProps) => {
       </Suspense>
       <section className="">
         <div className="container mx-auto px-4 py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
             {/* Sidebar */}
-            <aside className="lg:col-span-4 xl:col-span-3">
-              <div className="lg:sticky lg:top-24">
+            <aside className="xl:col-span-3">
+              <div className="xl:sticky xl:top-24">
                 <Suspense fallback={<BlogSidebarSkeleton />}>
                   <BlogCategorySidebar />
                 </Suspense>
@@ -79,7 +79,7 @@ const BlogPage = ({ searchParams }: BlogPageProps) => {
             {/* Main Content */}
             <Suspense
               fallback={
-                <div className="lg:col-span-8 xl:col-span-9 flex items-center justify-center h-full">
+                <div className="xl:col-span-9 flex items-center justify-center h-full">
                   <Loader2 className="h-8 w-8 animate-spin" />
                 </div>
               }

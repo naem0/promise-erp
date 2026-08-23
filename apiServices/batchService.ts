@@ -1,8 +1,9 @@
 "use server";
+import { cacheTag, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { cacheTag, updateTag } from "next/cache";
 import { ApiResponse } from "@/lib/apiErrorHandler";
 import { PaginationType } from "@/types/pagination";
 
@@ -120,7 +121,7 @@ export async function addBatch(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("batches-list");
+      updateTag(CACHE_TAGS.BATCHES);
     }
 
     return result;
@@ -141,7 +142,7 @@ export async function getBatches(
   params: Record<string, unknown> = {},
 ): Promise<BatchResponse> {
   "use cache: private";
-  cacheTag("batches-list");
+  cacheTag(CACHE_TAGS.BATCHES);
   try {
     const session = await getServerSession(authOptions);
     const token = session?.accessToken;
@@ -242,10 +243,7 @@ export async function updateBatch(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("batches-list");
-      if (res.ok && result?.success) {
-        updateTag(`batch-${id}`);
-      }
+      updateTag(CACHE_TAGS.BATCHES);
     }
 
     return result;
@@ -398,10 +396,7 @@ export async function deleteBatch(id: number): Promise<ApiResponse> {
 
     // Revalidate cache
     if (res.ok && result?.success) {
-      updateTag("batches-list");
-      if (res.ok && result?.success) {
-        updateTag(`batch-${id}`);
-      }
+      updateTag(CACHE_TAGS.BATCHES);
     }
 
     return result;
@@ -431,8 +426,7 @@ export async function getBatchStatsCached(
   token: string
 ): Promise<BatchStatsResponse | null> {
   "use cache";
-  cacheTag("batches-list");
-
+  cacheTag(CACHE_TAGS.BATCHES);
   try {
     const res = await fetch(`${API_BASE}/batches/list-overview`, {
       headers: {
@@ -501,7 +495,7 @@ export async function duplicateBatch(id: number): Promise<BatchResponseType> {
 
     // Revalidate cache
     if (res.ok && result?.success) {
-      updateTag("batches-list");
+      updateTag(CACHE_TAGS.BATCHES);
     }
 
     return result;

@@ -1,8 +1,9 @@
 "use server";
+import { cacheTag, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { cacheTag, updateTag } from "next/cache";
 import { PaginationType } from "@/types/pagination";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
@@ -49,8 +50,7 @@ export async function getDepartmentsCached(
   params: Record<string, unknown> = {},
 ): Promise<DepartmentsResponse | null> {
   "use cache";
-  cacheTag("departments-list");
-
+  cacheTag(CACHE_TAGS.DEPARTMENTS);
   try {
     const urlParams = new URLSearchParams();
     for (const key in params) {
@@ -186,7 +186,7 @@ export async function createDepartment(data: {
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("departments-list");
+      updateTag(CACHE_TAGS.DEPARTMENTS);
     }
     return result;
   } catch (error: unknown) {
@@ -225,7 +225,7 @@ export async function updateDepartment(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("departments-list");
+      updateTag(CACHE_TAGS.DEPARTMENTS);
     }
     return result;
   } catch (error: unknown) {
@@ -262,7 +262,7 @@ export async function toggleDepartmentStatus(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("departments-list");
+      updateTag(CACHE_TAGS.DEPARTMENTS);
     }
     return result;
   } catch (error: unknown) {
@@ -299,7 +299,7 @@ export async function deleteDepartment(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("departments-list");
+      updateTag(CACHE_TAGS.DEPARTMENTS);
     }
     return result;
   } catch (error: unknown) {

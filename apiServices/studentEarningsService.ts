@@ -1,8 +1,9 @@
 "use server";
+import { cacheTag, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { cacheTag, updateTag } from "next/cache";
 import { PaginationType } from "@/types/pagination";
 
 const API_BASE =
@@ -62,8 +63,7 @@ export async function getStudentEarningsCached(
   params: Record<string, unknown> = {},
 ): Promise<StudentEarningsResponse | null> {
   "use cache";
-  cacheTag("student-earnings-list");
-
+  cacheTag(CACHE_TAGS.STUDENT_EARNINGS);
   try {
     const urlParams = new URLSearchParams();
     for (const key in params) {
@@ -203,7 +203,7 @@ export async function createStudentEarning(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("student-earnings-list");
+      updateTag(CACHE_TAGS.STUDENT_EARNINGS);
     }
     return result;
   } catch (error: unknown) {
@@ -243,7 +243,7 @@ export async function updateStudentEarning(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("student-earnings-list");
+      updateTag(CACHE_TAGS.STUDENT_EARNINGS);
     }
     return result;
   } catch (error: unknown) {
@@ -279,7 +279,7 @@ export async function deleteStudentEarning(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("student-earnings-list");
+      updateTag(CACHE_TAGS.STUDENT_EARNINGS);
     }
     return result;
   } catch (error: unknown) {

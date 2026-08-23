@@ -212,9 +212,7 @@ const EmployeesData = async ({
                 <TableCell className="flex items-center gap-2.5">
                   <div className="relative w-11 h-11 shrink-0">
                     <Image
-                      src={
-                        employee?.profile_image || "/images/profile_avatar.png"
-                      }
+                      src={(employee?.profile_image && typeof employee?.profile_image === "string" && employee?.profile_image.trim() !== "") ? employee?.profile_image : "/images/profile_avatar.png"}
                       alt={employee?.name || "Employee"}
                       fill
                       className="object-cover object-top rounded-full border border-slate-200"

@@ -7,7 +7,7 @@ import dynamic from "next/dynamic";
 import { SuccessStoryItem } from "@/apiServices/homePageService";
 import NotFoundComponent from "@/components/common/NotFoundComponent";
 
-const ReactPlayer = dynamic(() => import("react-player"), { ssr: false });
+const ReactPlayer = dynamic(() => import("react-player").then((mod) => mod.default || mod), { ssr: false });
 
 interface VideostoriesProps {
   stories: SuccessStoryItem[];
@@ -76,7 +76,7 @@ const VideoStoriesCard = ({ stories }: VideostoriesProps) => {
 
   return (
     <>
-      <div ref={containerRef} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div ref={containerRef} className="grid grid-cols-1 md:grid-cols-2 gap-3 xl:gap-5">
         {stories?.map((video) => {
           const isActive = selectedVideo === video?.id && !isFloating;
 
@@ -87,7 +87,7 @@ const VideoStoriesCard = ({ stories }: VideostoriesProps) => {
             >
               {isActive ? (
                 <ReactPlayer
-                  src={video?.youtube_link}
+                  src={video?.youtube_link || undefined}
                   playing={true}
                   controls
                   width="100%"
@@ -108,7 +108,7 @@ const VideoStoriesCard = ({ stories }: VideostoriesProps) => {
               ) : (
                 <div className="relative w-full h-full">
                   <Image
-                    src={video?.thumbnail_image || "/images/placeholder_img.jpg"}
+                    src={(video?.thumbnail_image && typeof video?.thumbnail_image === "string" && video?.thumbnail_image.trim() !== "") ? video?.thumbnail_image : "/images/placeholder_img.jpg"}
                     alt="Success Story Video Thumbnail"
                     fill
                     className="object-cover"
@@ -145,7 +145,7 @@ const VideoStoriesCard = ({ stories }: VideostoriesProps) => {
             <X className="w-4 h-4" />
           </button>
           <ReactPlayer
-            src={activeVideo?.youtube_link}
+            src={activeVideo?.youtube_link || undefined}
             playing={true}
             controls
             width="100%"

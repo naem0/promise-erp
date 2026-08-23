@@ -19,7 +19,7 @@ const MyCourseLessonVideoPlayer = ({ videoUrl }: LessonVideoPlayerProps) => {
     <div className="rounded-2xl overflow-hidden border-2 border-white min-h-[425px] relative bg-black">
       <ReactPlayer
         className="aspect-video"
-        src={videoUrl}
+        src={videoUrl || undefined}
         playing={isPlaying}
         controls={true}
         width="100%"

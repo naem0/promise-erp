@@ -1,8 +1,9 @@
 "use server";
+import { cacheTag, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { cacheTag, updateTag } from "next/cache";
 import { PaginationType } from "@/types/pagination";
 
 const API_BASE =
@@ -58,8 +59,7 @@ export async function getContactPagesCached(
   params: Record<string, unknown> = {},
 ): Promise<ContactPagesResponse | null> {
   "use cache";
-  cacheTag("contact-pages-list");
-
+  cacheTag(CACHE_TAGS.CONTACT_PAGES);
   // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
   try {
     const urlParams = new URLSearchParams();
@@ -165,7 +165,7 @@ export async function createContactPage(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("contact-pages-list");
+      updateTag(CACHE_TAGS.CONTACT_PAGES);
     }
     return result;
   } catch (error: unknown) {
@@ -203,7 +203,7 @@ export async function updateContactPage(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("contact-pages-list");
+      updateTag(CACHE_TAGS.CONTACT_PAGES);
     }
     return result;
   } catch (error: unknown) {
@@ -242,7 +242,7 @@ export async function deleteContactPage(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("contact-pages-list");
+      updateTag(CACHE_TAGS.CONTACT_PAGES);
     }
     return result;
   } catch (error: unknown) {

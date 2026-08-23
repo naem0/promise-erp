@@ -52,7 +52,7 @@ const HomeMembersSection = async () => {
               <CardContent className="flex items-center justify-center py-2 px-3">
                 <div className="relative w-full h-22 rounded-lg">
                   <Image
-                    src={member?.image || "/images/placeholder.jpg"}
+                    src={(member?.image && typeof member?.image === "string" && member?.image.trim() !== "") ? member?.image : "/images/placeholder.jpg"}
                     alt={member?.title || "Logo"}
                     fill
                     className="object-cover h-20 rounded-lg"

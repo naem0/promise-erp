@@ -4,10 +4,11 @@ import Image from "next/image";
 import { fetchPublicCompanyServices } from "@/apiServices/homePageService";
 import { cacheTag } from "next/cache";
 import ErrorComponent from "@/components/common/ErrorComponent";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 const HomeServiceList = async () => {
   "use cache";
-  cacheTag("public-services");
+  cacheTag(CACHE_TAGS.SERVICES);
 
   let servicesData;
   try {
@@ -27,7 +28,7 @@ const HomeServiceList = async () => {
   }
 
   return (
-    <section className="py-8 md:py-14 bg-secondary/5">
+    <section className="py-8 lg:py-14 bg-secondary/5">
       <div className="container mx-auto px-4">
         <SectionTitle
           subtitle={servicesData?.data?.section_subtitle}
@@ -42,9 +43,7 @@ const HomeServiceList = async () => {
               <div className="flex items-start gap-2 lg:gap-4">
                 <div className="shrink-0 p-2 rounded-lg">
                   <Image
-                    src={
-                      services[0].logo_image || "/images/placeholder_img.jpg"
-                    }
+                    src={(services[0].logo_image && typeof services[0].logo_image === "string" && services[0].logo_image.trim() !== "") ? services[0].logo_image : "/images/placeholder_img.jpg"}
                     alt={services[0].title}
                     width={43}
                     height={43}
@@ -66,9 +65,7 @@ const HomeServiceList = async () => {
               <div className="flex items-start gap-2 lg:gap-4">
                 <div className="shrink-0 p-2 rounded-lg">
                   <Image
-                    src={
-                      services[1].logo_image || "/images/placeholder_img.jpg"
-                    }
+                    src={(services[1].logo_image && typeof services[1].logo_image === "string" && services[1].logo_image.trim() !== "") ? services[1].logo_image : "/images/placeholder_img.jpg"}
                     alt={services[1].title}
                     width={43}
                     height={43}
@@ -94,9 +91,7 @@ const HomeServiceList = async () => {
               <Card className="bg-secondary p-3 lg:p-6 group hover:bg-secondary/80 transition-all border-0 h-full relative">
                 <div className="flex items-start gap-2 lg:gap-4">
                   <Image
-                    src={
-                      services[2].logo_image || "/images/placeholder_img.jpg"
-                    }
+                    src={(services[2].logo_image && typeof services[2].logo_image === "string" && services[2].logo_image.trim() !== "") ? services[2].logo_image : "/images/placeholder_img.jpg"}
                     alt={services[2].title}
                     width={43}
                     height={43}
@@ -118,9 +113,7 @@ const HomeServiceList = async () => {
               <Card className="bg-primary p-3 lg:p-6 group hover:bg-primary/80 transition-all border-0">
                 <div className="flex items-start gap-2 lg:gap-4">
                   <Image
-                    src={
-                      services[3].logo_image || "/images/placeholder_img.jpg"
-                    }
+                    src={(services[3].logo_image && typeof services[3].logo_image === "string" && services[3].logo_image.trim() !== "") ? services[3].logo_image : "/images/placeholder_img.jpg"}
                     alt={services[3].title}
                     width={43}
                     height={43}
@@ -156,9 +149,7 @@ const HomeServiceList = async () => {
               <Card className="bg-secondary p-3 lg:p-6 group hover:bg-secondary/80 transition-all border-0 h-full relative">
                 <div className="flex items-start gap-2 lg:gap-4">
                   <Image
-                    src={
-                      services[4].logo_image || "/images/placeholder_img.jpg"
-                    }
+                    src={(services[4].logo_image && typeof services[4].logo_image === "string" && services[4].logo_image.trim() !== "") ? services[4].logo_image : "/images/placeholder_img.jpg"}
                     alt={services[4].title}
                     width={43}
                     height={43}
@@ -180,9 +171,7 @@ const HomeServiceList = async () => {
               <Card className="bg-primary p-3 lg:p-6 group hover:bg-primary/80 transition-all border-0">
                 <div className="flex items-start gap-2 lg:gap-4">
                   <Image
-                    src={
-                      services[5].logo_image || "/images/placeholder_img.jpg"
-                    }
+                    src={(services[5].logo_image && typeof services[5].logo_image === "string" && services[5].logo_image.trim() !== "") ? services[5].logo_image : "/images/placeholder_img.jpg"}
                     alt={services[5].title}
                     width={43}
                     height={43}
@@ -208,7 +197,7 @@ const HomeServiceList = async () => {
             <Card className="bg-secondary p-3 lg:p-6 group hover:bg-secondary/80 transition-all border-0 h-full relative">
               <div className="flex items-start gap-2 lg:gap-4">
                 <Image
-                  src={services[6].logo_image || "/images/placeholder_img.jpg"}
+                  src={(services[6].logo_image && typeof services[6].logo_image === "string" && services[6].logo_image.trim() !== "") ? services[6].logo_image : "/images/placeholder_img.jpg"}
                   alt={services[6].title}
                   width={43}
                   height={43}
@@ -228,7 +217,7 @@ const HomeServiceList = async () => {
             <Card className="bg-secondary p-3 lg:p-6 group hover:bg-secondary/80 transition-all border-0 h-full relative">
               <div className="flex items-start gap-2 lg:gap-4">
                 <Image
-                  src={services[7].logo_image || "/images/placeholder_img.jpg"}
+                  src={(services[7].logo_image && typeof services[7].logo_image === "string" && services[7].logo_image.trim() !== "") ? services[7].logo_image : "/images/placeholder_img.jpg"}
                   alt={services[7].title}
                   width={43}
                   height={43}

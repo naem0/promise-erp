@@ -1,8 +1,9 @@
 "use server";
+import { cacheTag, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { cacheTag, updateTag } from "next/cache";
 import { PaginationType } from "@/types/pagination";
 
 const API_BASE =
@@ -49,8 +50,7 @@ export async function getDeliveryTypesCached(
   params: Record<string, unknown> = {},
 ): Promise<DeliveryTypesResponse | null> {
   "use cache";
-  cacheTag("delivery-types-list");
-
+  cacheTag(CACHE_TAGS.INVENTORY_DELIVERY_TYPES);
   try {
     const urlParams = new URLSearchParams();
     for (const key in params) {
@@ -189,7 +189,7 @@ export async function createDeliveryType(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("delivery-types-list");
+      updateTag(CACHE_TAGS.INVENTORY_DELIVERY_TYPES);
     }
     return result;
   } catch (error: unknown) {
@@ -231,7 +231,7 @@ export async function updateDeliveryType(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("delivery-types-list");
+      updateTag(CACHE_TAGS.INVENTORY_DELIVERY_TYPES);
     }
     return result;
   } catch (error: unknown) {
@@ -267,7 +267,7 @@ export async function deleteDeliveryType(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("delivery-types-list");
+      updateTag(CACHE_TAGS.INVENTORY_DELIVERY_TYPES);
     }
     return result;
   } catch (error: unknown) {

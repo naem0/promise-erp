@@ -133,7 +133,7 @@ export default function CategoriesForm({
                     <div className="relative">
                         <div className="w-32 h-32 relative rounded-xl overflow-hidden border-2 border-dashed flex items-center justify-center">
                             <Image
-                                src={previewImage || "/images/placeholder.png"}
+                                src={(previewImage && typeof previewImage === "string" && previewImage.trim() !== "") ? previewImage : "/images/placeholder.png"}
                                 alt="Category preview"
                                 fill
                                 className="object-cover"

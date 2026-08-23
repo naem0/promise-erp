@@ -11,7 +11,7 @@ export function InvoiceStudentCard({ student, invoiceId }: InvoiceStudentCardPro
     <div className="bg-white rounded-xl border p-5 flex items-center gap-4 print-card">
       <div className="w-14 h-14 relative">
         <Image
-          src={student?.profile_image || "/images/profile_avatar.png"}
+          src={(student?.profile_image && typeof student?.profile_image === "string" && student?.profile_image.trim() !== "") ? student?.profile_image : "/images/profile_avatar.png"}
           alt={student?.name || "Student"}
           fill
           className="rounded-full object-cover object-center"

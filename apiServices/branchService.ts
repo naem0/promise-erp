@@ -1,8 +1,9 @@
 "use server";
+import { cacheTag, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { cacheTag, updateTag } from "next/cache";
 import { PaginationType } from "@/types/pagination";
 
 const API_BASE =
@@ -97,7 +98,7 @@ export async function createBranch(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("branches-list");
+      updateTag(CACHE_TAGS.BRANCHES);
     }
 
     return result;
@@ -121,7 +122,7 @@ export async function getBranchesCached(
   params: Record<string, unknown> = {},
 ): Promise<BranchResponse> {
   "use cache: private";
-  cacheTag("branches-list");
+  cacheTag(CACHE_TAGS.BRANCHES);
   const urlParams = new URLSearchParams();
 
   for (const key in params) {
@@ -268,7 +269,7 @@ export async function updateBranch(
 
     const result = await res.json();
     if (res.ok && result?.success) {
-      updateTag("branches-list");
+      updateTag(CACHE_TAGS.BRANCHES);
     }
     return result;
   } catch (error: unknown) {
@@ -307,7 +308,7 @@ export async function deleteBranch(
 
     const result = await res.json();
     if (res.ok && result?.success) {
-      updateTag("branches-list");
+      updateTag(CACHE_TAGS.BRANCHES);
     }
     return result;
   } catch (error: unknown) {
@@ -352,7 +353,7 @@ export async function getPublicWebBranches(
   params: Record<string, unknown> = {},
 ): Promise<WebBranchApiResponse | null> {
   "use cache: remote";
-  cacheTag("branches-list");
+  cacheTag(CACHE_TAGS.BRANCHES);
   try {
     const urlParams = new URLSearchParams();
 

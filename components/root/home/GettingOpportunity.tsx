@@ -8,10 +8,11 @@ import { cacheTag } from "next/cache";
 import Image from "next/image";
 import { cacheLife } from "next/cache";
 import ErrorComponent from "@/components/common/ErrorComponent";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 const GettingOpportunity = async () => {
   "use cache";
-  cacheTag("public-opportunity");
+  cacheTag(CACHE_TAGS.OPPORTUNITIES);
   cacheLife("seconds");
 
   let opportunitiesData;
@@ -42,10 +43,7 @@ const GettingOpportunity = async () => {
           <div className="">
             <AspectRatio ratio={20 / 13} className="w-full relative">
               <Image
-                src={
-                  opportunitiesData?.data?.section_image ||
-                  "/images/placeholder_img.jpg"
-                }
+                src={(opportunitiesData?.data?.section_image && typeof opportunitiesData?.data?.section_image === "string" && opportunitiesData?.data?.section_image.trim() !== "") ? opportunitiesData?.data?.section_image : "/images/placeholder_img.jpg"}
                 alt={opportunitiesData?.data?.section_title || ""}
                 fill
                 // width={600}
@@ -73,9 +71,7 @@ const GettingOpportunity = async () => {
                   <CardContent className="flex items-center gap-3 px-0 py-1">
                     <div className="shrink-0">
                       <Image
-                        src={
-                          opportunity?.image || "/images/placeholder_img.jpg"
-                        }
+                        src={(opportunity?.image && typeof opportunity?.image === "string" && opportunity?.image.trim() !== "") ? opportunity?.image : "/images/placeholder_img.jpg"}
                         alt={opportunity?.title}
                         width={50}
                         height={50}

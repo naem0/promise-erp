@@ -1,8 +1,9 @@
 "use server";
+import { cacheTag, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 import { PaginationType } from "@/types/pagination";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { cacheTag } from "next/cache";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
 
@@ -33,8 +34,7 @@ export async function getCourseSalesSummaryCached(
   token: string
 ): Promise<CourseSalesSummaryApiResponse | null> {
   "use cache";
-  cacheTag("course-sales-summary");
-
+  cacheTag(CACHE_TAGS.ENROLLMENTS);
   try {
     const res = await fetch(`${API_BASE}/dashboard/course-sales-summary`, {
       headers: {
@@ -122,8 +122,7 @@ export async function getCourseSalesReportListCached(
   params: Record<string, unknown> = {}
 ): Promise<CourseSalesReportApiResponse | null> {
   "use cache";
-  cacheTag("course-sales-report-list");
-
+  cacheTag(CACHE_TAGS.ENROLLMENTS);
   try {
     const urlParams = new URLSearchParams();
     for (const key in params) {

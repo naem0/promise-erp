@@ -44,7 +44,7 @@ export default function StudentsPage({
         <StudentFilterData />
       </Suspense>
 
-      <Suspense fallback={<TableSkeleton columns={8} rows={10} />}>
+      <Suspense fallback={<TableSkeleton columns={9} rows={10} />}>
         <StudentsData searchParams={searchParams} />
       </Suspense>
     </div>

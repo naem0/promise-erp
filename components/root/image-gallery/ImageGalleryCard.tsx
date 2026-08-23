@@ -38,7 +38,7 @@ const totalPage: PaginationType | null = eventsData?.data?.pagination || null;
   return (
     <section className="py-8 md:py-14">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-3 xl:gap-4">
           {events.length > 0 ? (
             events.map((event) => (
               <ImageGalleryCardItems key={event?.id} event={event} />

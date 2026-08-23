@@ -16,7 +16,7 @@ const AffiliatesClientsTab = ({ items }: PartnerItemProps) => {
           <CardContent className="flex flex-col items-center px-4">
             <div className="relative mb-3 shadow-none">
               <Image
-                src={item?.image || "/images/placeholder_img.jpg"}
+                src={(item?.image && typeof item?.image === "string" && item?.image.trim() !== "") ? item?.image : "/images/placeholder_img.jpg"}
                 alt={item?.title}
                 height={80}
                 width={160}

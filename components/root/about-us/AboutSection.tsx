@@ -64,7 +64,7 @@ const AboutSection = async () => {
             <div className="border-primary/40 border p-2 rounded-xl">
               <div className="relative w-full h-[300px] md:h-[500px] rounded-xl overflow-hidden border ">
                 <Image
-                  src={banner.image || "/images/placeholder_img.jpg"}
+                  src={(banner.image && typeof banner.image === "string" && banner.image.trim() !== "") ? banner.image : "/images/placeholder_img.jpg"}
                   alt={banner.title || "about"}
                   fill
                   className="object-cover rounded-2xl"

@@ -23,9 +23,7 @@ const FreeClasseInstructors = ({ seminarData }: FreeClasseInstructorsProps) => {
               >
                 <Avatar className="h-24 w-24">
                   <Image
-                    src={
-                      instructor?.profile_image || "/images/placeholder_img.jpg"
-                    }
+                    src={(instructor?.profile_image && typeof instructor?.profile_image === "string" && instructor?.profile_image.trim() !== "") ? instructor?.profile_image : "/images/placeholder_img.jpg"}
                     alt={instructor?.name}
                     width={100}
                     height={100}
@@ -55,7 +53,7 @@ const FreeClasseInstructors = ({ seminarData }: FreeClasseInstructorsProps) => {
                         className="flex h-10 w-10 items-center justify-center rounded-full bg-primary"
                       >
                         <Image
-                          src={tool?.image || "/images/placeholder_img.jpg"}
+                          src={(tool?.image && typeof tool?.image === "string" && tool?.image.trim() !== "") ? tool?.image : "/images/placeholder_img.jpg"}
                           alt={tool?.image || "image"}
                           width={30}
                           height={30}

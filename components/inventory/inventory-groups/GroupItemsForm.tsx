@@ -39,7 +39,7 @@ interface SelectedProductState {
     name: string;
     quantity: number;
     details?: string;
-    category_name?: string;
+    category_name?: string ;
     image?: string | null;
     model?: string;
 }
@@ -385,7 +385,7 @@ export default function GroupItemsForm({
                                                             ? "bg-primary border-primary text-white scale-100 shadow-sm" 
                                                             : "border-slate-300 bg-white"
                                                     }`}>
-                                                        {isAdded && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+                                                        {isAdded && <Check className="w-3.5 h-3.5 stroke-3" />}
                                                     </div>
 
                                                     {/* Product Image Thumbnail */}
@@ -446,7 +446,7 @@ export default function GroupItemsForm({
                                 {selectedProducts.map((prod) => (
                                     <div 
                                         key={prod.id} 
-                                        className="flex flex-col sm:flex-row sm:items-center gap-4 p-4 hover:bg-slate-50/50 transition duration-150 animate-in fade-in zoom-in-95 duration-100"
+                                        className="flex flex-col sm:flex-row sm:items-center gap-4 p-4 hover:bg-slate-50/50 transition duration-100 animate-in fade-in zoom-in-95"
                                     >
                                         {/* Product Image Thumbnail */}
                                         <div className="w-12 h-12 relative rounded-xl border border-slate-100 overflow-hidden bg-slate-50 shrink-0 flex items-center justify-center shadow-inner">

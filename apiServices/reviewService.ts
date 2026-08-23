@@ -1,8 +1,9 @@
 "use server";
+import { cacheTag, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { cacheTag, updateTag } from "next/cache";
 import { PaginationType } from "@/types/pagination";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
@@ -58,8 +59,7 @@ export async function getReviewsCached(
   params: Record<string, unknown> = {}
 ): Promise<ReviewsResponse | null> {
   "use cache";
-  cacheTag("reviews-list");
-
+  cacheTag(CACHE_TAGS.REVIEWS);
   try {
   // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
     const urlParams = new URLSearchParams();
@@ -173,7 +173,7 @@ export async function createReview(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("reviews-list");
+      updateTag(CACHE_TAGS.REVIEWS);
     }
     return result;
   } catch (error: unknown) {
@@ -213,7 +213,7 @@ export async function updateReview(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("reviews-list");
+      updateTag(CACHE_TAGS.REVIEWS);
     }
     return result;
   } catch (error: unknown) {
@@ -252,7 +252,7 @@ export async function approveReview(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("reviews-list");
+      updateTag(CACHE_TAGS.REVIEWS);
     }
     return result;
   } catch (error: unknown) {
@@ -289,7 +289,7 @@ export async function deleteReview(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("reviews-list");
+      updateTag(CACHE_TAGS.REVIEWS);
     }
     return result;
   } catch (error: unknown) {

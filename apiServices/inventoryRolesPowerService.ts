@@ -1,8 +1,9 @@
 "use server";
+import { cacheTag, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { cacheTag, updateTag } from "next/cache";
 import { PaginationType } from "@/types/pagination";
 
 const API_BASE =
@@ -69,8 +70,7 @@ export async function getRolesPowerCached(
   params: Record<string, unknown> = {},
 ): Promise<RolesPowerListResponse | null> {
   "use cache";
-  cacheTag("inventory-roles-power-list");
-
+  cacheTag(CACHE_TAGS.INVENTORY_ROLES_POWER);
   try {
     const urlParams = new URLSearchParams();
     for (const key in params) {
@@ -150,8 +150,7 @@ export async function getRolesPowerStepByIdCached(
   id: number,
 ): Promise<SingleRolesPowerResponse | null> {
   "use cache";
-  cacheTag(`inventory-roles-power-${id}`);
-
+  cacheTag(CACHE_TAGS.INVENTORY_ROLES_POWER);
   try {
     const res = await fetch(`${API_BASE}/inventory/roles-power/${id}`, {
       headers: {
@@ -235,7 +234,7 @@ export async function createRolesPowerStep(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("inventory-roles-power-list");
+      updateTag(CACHE_TAGS.INVENTORY_ROLES_POWER);
     }
     return result;
   } catch (error: unknown) {
@@ -274,10 +273,7 @@ export async function updateRolesPowerStep(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("inventory-roles-power-list");
-      if (res.ok && result?.success) {
-        updateTag(`inventory-roles-power-${id}`);
-      }
+      updateTag(CACHE_TAGS.INVENTORY_ROLES_POWER);
     }
     return result;
   } catch (error: unknown) {
@@ -315,7 +311,7 @@ export async function reorderRolesPowerSteps(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("inventory-roles-power-list");
+      updateTag(CACHE_TAGS.INVENTORY_ROLES_POWER);
     }
     return result;
   } catch (error: unknown) {

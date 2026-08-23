@@ -30,7 +30,7 @@ const StoriesCardItems = ({ item }: StoriesCardItemsProps) => {
         <div className="shrink-0">
           <div className="relative rounded-lg overflow-hidden w-30 h-30">
             <Image
-              src={profile_image || "/images/placeholder-avatar.png"}
+              src={(profile_image && typeof profile_image === "string" && profile_image.trim() !== "") ? profile_image : "/images/placeholder-avatar.png"}
               alt={name || " profile picture"}
               fill
               className="rounded-lg object-cover"

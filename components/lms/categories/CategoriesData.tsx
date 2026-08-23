@@ -120,7 +120,7 @@ const CategoriesData = async ({
                 </TableCell>
                 <TableCell className="font-medium">
                   <Image
-                    src={category.image || "/images/placeholder.png"}
+                    src={(category.image && typeof category.image === "string" && category.image.trim() !== "") ? category.image : "/images/placeholder.png"}
                     alt={category?.name}
                     width={40}
                     height={40}

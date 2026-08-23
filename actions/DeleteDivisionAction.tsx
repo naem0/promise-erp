@@ -1,5 +1,5 @@
-
 "use server";
+
 
 import { deleteDivision } from "@/apiServices/divisionService";
 

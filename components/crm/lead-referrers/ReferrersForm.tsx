@@ -165,7 +165,7 @@ export default function ReferrersForm({
                     <div className="relative">
                         <div className="w-32 h-32 relative rounded-xl overflow-hidden border-2 border-dashed flex items-center justify-center bg-slate-50">
                             <Image
-                                src={previewImage || "/images/placeholder.png"}
+                                src={(previewImage && typeof previewImage === "string" && previewImage.trim() !== "") ? previewImage : "/images/placeholder.png"}
                                 alt="Profile photo preview"
                                 fill
                                 className="object-cover"

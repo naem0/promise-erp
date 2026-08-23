@@ -27,9 +27,7 @@ export const PaymentHistoryCard = async () => {
             {/* Header */}
             <div className="flex items-center gap-3 mb-0">
               <Image
-                src={
-                  payment.payment_details.image || "/images/placeholder_img.jpg"
-                }
+                src={(payment.payment_details.image && typeof payment.payment_details.image === "string" && payment.payment_details.image.trim() !== "") ? payment.payment_details.image : "/images/placeholder_img.jpg"}
                 alt={payment.payment_details.title || "Course Image"}
                 width={150}
                 height={70}

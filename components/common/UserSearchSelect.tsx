@@ -19,6 +19,7 @@ import { useSession } from 'next-auth/react'
 interface UserSearchSelectProps {
   value?: number | string | null
   onValueChange?: (value: number | null) => void
+  onUserChange?: (user: UserList | null) => void
   placeholder?: string
   disabled?: boolean
   className?: string
@@ -27,6 +28,7 @@ interface UserSearchSelectProps {
 export default function UserSearchSelect({
   value,
   onValueChange,
+  onUserChange,
   placeholder = "Select user",
   disabled = false,
   className,
@@ -101,7 +103,14 @@ export default function UserSearchSelect({
   return (
     <Select
       value={singleValue}
-      onValueChange={(val) => onValueChange?.(val ? Number(val) : null)}
+      onValueChange={(val) => {
+        const numVal = val ? Number(val) : null
+        onValueChange?.(numVal)
+        if (onUserChange) {
+          const selectedUser = val ? usersMap[val] || null : null
+          onUserChange(selectedUser)
+        }
+      }}
       disabled={disabled || isPending}
     >
       <SelectTrigger className={className || "w-full"}>

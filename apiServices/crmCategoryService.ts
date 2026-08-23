@@ -1,8 +1,9 @@
 "use server";
+import { cacheTag, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { cacheTag, updateTag } from "next/cache";
 import { PaginationType } from "@/types/pagination";
 
 const API_BASE =
@@ -51,8 +52,7 @@ export async function getCRMCategoriesCached(
   params: Record<string, unknown> = {},
 ): Promise<CRMCategoriesResponse> {
   "use cache: remote";
-  cacheTag("crm-categories-list");
-
+  cacheTag(CACHE_TAGS.CRM_CATEGORIES);
   try {
     const urlParams = new URLSearchParams();
     for (const key in params) {
@@ -167,7 +167,7 @@ export async function createCRMCategory(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("crm-categories-list");
+      updateTag(CACHE_TAGS.CRM_CATEGORIES);
     }
     return result;
   } catch (error: unknown) {
@@ -209,7 +209,7 @@ export async function updateCRMCategory(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("crm-categories-list");
+      updateTag(CACHE_TAGS.CRM_CATEGORIES);
     }
     return result;
   } catch (error: unknown) {
@@ -248,7 +248,7 @@ export async function deleteCRMCategory(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("crm-categories-list");
+      updateTag(CACHE_TAGS.CRM_CATEGORIES);
     }
     return result;
   } catch (error: unknown) {

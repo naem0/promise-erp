@@ -1,8 +1,9 @@
 "use server";
+import { cacheTag, updateTag, revalidatePath } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { cacheTag, updateTag } from "next/cache";
 import { PaginationType } from "@/types/pagination";
 
 const API_BASE =
@@ -28,9 +29,12 @@ export interface ProductItem {
   mrp_price?: number;
   model?: string;
   stock?: number;
-  image?: string | null;
+  room_id?: number;
+  image?: string ;
   status: number;
   status_text?: string;
+  product_type?: number;
+  product_type_text?: string;
 }
 
 export interface ProductItemsResponse {
@@ -62,8 +66,7 @@ export async function getProductItemsCached(
   params: Record<string, unknown> = {},
 ): Promise<ProductItemsResponse | null> {
   "use cache";
-  cacheTag("product-items-list");
-
+  cacheTag(CACHE_TAGS.INVENTORY_ITEMS);
   try {
     const urlParams = new URLSearchParams();
     for (const key in params) {
@@ -202,7 +205,9 @@ export async function createProductItem(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("product-items-list");
+      updateTag(CACHE_TAGS.INVENTORY_ITEMS);
+      revalidatePath("/inventory/inventory-items");
+      revalidatePath("/inventory/inventory-items/[id]/edit", "page");
     }
     return result;
   } catch (error: unknown) {
@@ -239,7 +244,9 @@ export async function updateProductItem(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("product-items-list");
+      updateTag(CACHE_TAGS.INVENTORY_ITEMS);
+      revalidatePath("/inventory/inventory-items");
+      revalidatePath("/inventory/inventory-items/[id]/edit", "page");
     }
     return result;
   } catch (error: unknown) {
@@ -275,7 +282,9 @@ export async function deleteProductItem(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("product-items-list");
+      updateTag(CACHE_TAGS.INVENTORY_ITEMS);
+      revalidatePath("/inventory/inventory-items");
+      revalidatePath("/inventory/inventory-items/[id]/edit", "page");
     }
     return result;
   } catch (error: unknown) {
@@ -331,7 +340,9 @@ export async function updateProductStock(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("product-items-list");
+      updateTag(CACHE_TAGS.INVENTORY_ITEMS);
+      revalidatePath("/inventory/inventory-items");
+      revalidatePath("/inventory/inventory-items/stock-update");
     }
 
     return result;
@@ -869,3 +880,120 @@ export async function getInventoryRequisitionStats(): Promise<InventoryMiniStats
 //     throw new Error("Failed to fetch inventory delivery dashboard stats");
 //   }
 // }
+
+// =======================
+// SEARCH INVENTORY ITEMS
+// =======================
+
+export interface InventorySearchItem {
+  id: number;
+  type?: string;
+  name: string;
+  barcode?: string;
+  price?: number;
+  details?: string;
+  image?: string;
+  model?: string | null;
+  stock?: number;
+  unit_name?: string;
+}
+
+export interface InventorySearchItemsResponse {
+  success: boolean;
+  message: string;
+  code: number;
+  data: InventorySearchItem[];
+  errors?: Record<string, string[]>;
+}
+
+export async function searchInventoryItems(
+  query?: string,
+): Promise<InventorySearchItemsResponse | null> {
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+  if (!token) throw new Error("No valid session/token");
+
+  try {
+    const urlParams = new URLSearchParams();
+    if (query?.trim()) {
+      urlParams.append("q", query.trim());
+    }
+
+    const queryString = urlParams.toString();
+    const url = `${API_BASE}/inventory/search-items${queryString ? `?${queryString}` : ""}`;
+
+    const res = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (res.status === 404) {
+      console.warn("No items found (404). Returning empty list.");
+      return null;
+    }
+
+    if (res.status === 401 || res.status === 403) {
+      console.warn("Unauthorized: Access token not found.");
+      return null;
+    }
+
+    if (!res.ok) {
+      throw new Error(`Status: ${res.status} ${res.statusText}`);
+    }
+
+    return await res.json();
+  } catch (error: unknown) {
+    console.error("searchInventoryItems error:", error);
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error("Failed to search inventory items");
+  }
+}
+
+// =======================
+// BULK IMPORT PRODUCTS
+// =======================
+
+export interface ServerRowError {
+  row: number;
+  errors: string[];
+}
+
+export interface BulkImportResponse {
+  success: boolean;
+  message: string;
+  code: number;
+  data: unknown;
+  errors?: ServerRowError[] | Record<string, string[] | string> | string;
+}
+
+export async function importProducts(formData: FormData): Promise<BulkImportResponse> {
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+  if (!token) throw new Error("No valid session/token");
+
+  try {
+    const res = await fetch(`${API_BASE}/inventory/products/import`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
+
+    const result = await res.json();
+    if (res.ok && result?.success) {
+      updateTag("product-items-list");
+      revalidatePath("/inventory/inventory-items");
+    }
+    return result;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error("Failed to import products");
+  }
+}

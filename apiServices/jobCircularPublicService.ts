@@ -1,7 +1,6 @@
-// "use server";
-
-// import { authOptions } from "@/lib/auth";
-// import { getServerSession } from "next-auth";
+"use server";
+import { cacheTag, updateTag, cacheLife } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 import { PaginationType } from "@/types/pagination";
 
 const API_BASE =
@@ -52,6 +51,9 @@ export interface JobCircularApiResponse {
 export async function getPublicJobCircular(
   params: Record<string, unknown> = {},
 ): Promise<JobCircularApiResponse | null> {
+  "use cache";
+  cacheTag(CACHE_TAGS.CAREERS);
+  cacheLife("days");
   try {
     const urlParams = new URLSearchParams();
 
@@ -130,6 +132,9 @@ export interface JobCircularDetailsApiResponse {
 export async function getPublicJobCircularBySlug(
   slug: string,
 ): Promise<JobCircularDetailsApiResponse | null> {
+  "use cache";
+  cacheTag(CACHE_TAGS.CAREERS);
+  cacheLife("days");
   try {
     const res = await fetch(`${API_BASE}/public/careers/${slug}`);
 

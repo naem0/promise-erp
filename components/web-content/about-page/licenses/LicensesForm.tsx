@@ -161,7 +161,7 @@ export default function LicensesForm({
                     <div className="relative">
                         <div className="w-32 h-32 relative overflow-hidden border-2 border-dashed flex items-center justify-center bg-gray-50">
                             <Image
-                                src={previewUrl || "/images/placeholder.png"}
+                                src={(previewUrl && typeof previewUrl === "string" && previewUrl.trim() !== "") ? previewUrl : "/images/placeholder.png"}
                                 alt="License image preview"
                                 fill
                                 className="object-cover"

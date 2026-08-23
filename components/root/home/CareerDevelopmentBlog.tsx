@@ -9,10 +9,11 @@ import { cacheTag } from "next/cache";
 import Link from "next/link";
 import BlogCardItems from "./BlogCardItems";
 import ErrorComponent from "@/components/common/ErrorComponent";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 const CareerDevelopmentBlog = async () => {
   "use cache";
-  cacheTag("public-blog");
+  cacheTag(CACHE_TAGS.BLOGS);
 
   let blogData: BlogApiResponse | null;
   try {
@@ -46,7 +47,7 @@ const CareerDevelopmentBlog = async () => {
           subtitle={blogData?.data?.section_subtitle}
           iswhite={false}
         />
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-3 xl:gap-4">
           {blogPosts && blogPosts.length > 0 ? (
             blogPosts.map((post) => (
               <BlogCardItems key={post?.id} post={post} />

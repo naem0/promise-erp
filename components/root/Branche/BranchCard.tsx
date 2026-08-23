@@ -34,6 +34,7 @@ const BranchCard = ({ branchInfo }: BranchCardProps) => {
           <iframe
             src={`https://www.google.com/maps/embed?pb=${google_map}`}
             className="w-full h-full border-0"
+            title={`${name} Location Map`}
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
           />

@@ -23,13 +23,6 @@ import {
     DialogFooter,
     DialogDescription,
 } from "@/components/ui/dialog";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -42,7 +35,8 @@ import DeleteCRMLeadButton from "./DeleteCRMLeadButton";
 import CRMLeadsExportButton from "./CRMLeadsExportButton";
 import { truncate } from "@/lib/utils";
 import PermissionGuard from "@/components/auth/PermissionGuard";
-import Image from "next/image";
+import BranchSearchSelect from "@/components/common/BranchSearchSelect";
+import ConsultantSearchSelect from "@/components/common/ConsultantSearchSelect";
 
 
 /* ── Helper Functions for Badge Colors ── */
@@ -115,10 +109,6 @@ export default function CRMLeadsClientTable({
     const [selectedUserId, setSelectedUserId] = useState<string>("");
     const [isPending, startTransition] = useTransition();
 
-    // /* ── Filter Helpers ── */
-    const filteredConsultants = !selectedBranchId
-        ? []
-        : consultants.filter(c => c.branches?.some(b => String(b.id) === selectedBranchId));
     /* ── Selection helpers ── */
     const allSelected =
         leads.length > 0 && leads.every((l) => selectedIds.has(l.id));
@@ -437,7 +427,7 @@ export default function CRMLeadsClientTable({
                     }
                 }}
             >
-                <DialogContent className="w-full max-w-3xl">
+                <DialogContent className="w-full max-w-lg">
                     <DialogHeader>
                         <DialogTitle className="flex items-center gap-2">
                             <UserCheck className="h-5 w-5 text-indigo-600" />
@@ -450,82 +440,39 @@ export default function CRMLeadsClientTable({
                         </DialogDescription>
                     </DialogHeader>
 
-                    <div className="py-2">
-                        {branches.length > 0 && (
-                            <div className="mb-4">
-                                <label className="block text-sm font-medium text-foreground mb-2">
-                                    Select Branch
-                                </label>
-                                <Select
-                                    value={selectedBranchId}
-                                    onValueChange={(val) => {
-                                        setSelectedBranchId(val);
-                                        setSelectedUserId("");
-                                    }}
-                                >
-                                    <SelectTrigger className="w-full">
-                                        <SelectValue placeholder="Select a Branch" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {
-                                            branches.length > 0 ? (
-                                                branches?.map(branch => (
-                                                    <SelectItem key={branch.id} value={String(branch.id)}>
-                                                        {branch.name}
-                                                    </SelectItem>
-                                                ))) : (
-                                                <SelectItem value="no-branches" disabled>
-                                                    No branches available
-                                                </SelectItem>
-                                            )
-                                        }
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                        )}
+                    <div className="py-2 space-y-4">
+                        <div>
+                            <label className="block text-sm font-medium text-foreground mb-2">
+                                Select Branch
+                            </label>
+                            <BranchSearchSelect
+                                value={selectedBranchId}
+                                onValueChange={(val) => {
+                                    setSelectedBranchId(val || "");
+                                    setSelectedUserId("");
+                                }}
+                                branches={branches}
+                                placeholder="Select a Branch"
+                                searchPlaceholder="Search branch..."
+                                className="w-full"
+                            />
+                        </div>
 
-                        <label className="block text-sm font-medium text-foreground mb-2">
-                            Select Counsellor
-                        </label>
-                        <Select
-                            value={selectedUserId}
-                            onValueChange={setSelectedUserId}
-                            disabled={!selectedBranchId}
-                        >
-                            <SelectTrigger className="w-full py-6">
-                                <SelectValue className="h-10" placeholder="Choose a Counsellor..." />
-                            </SelectTrigger>
-                            <SelectContent className="w-full overflow-y-auto py-10">
-                                {filteredConsultants?.length > 0 ? (
-                                    filteredConsultants?.map((consultant) => (
-                                        <SelectItem className="py-2" key={consultant.id} value={String(consultant.id)}>
-                                            <div className="flex justify-start gap-2">
-                                                <div>
-                                                    <Image
-                                                        width={40}
-                                                        height={40}
-                                                        className="rounded-full"
-                                                        src={consultant?.profile_image || "/default-profile.png"}
-                                                        alt={consultant?.name}
-                                                    />
-                                                </div>
-                                                <div className="">
-                                                    <p className="font-medium text-start">{consultant.name}</p>
-                                                    <span className="text-xs text-start text-muted-foreground">
-                                                        {consultant.designation_name}
-                                                    </span>
-                                                </div>
-
-                                            </div>
-                                        </SelectItem>
-                                    ))
-                                ) : (
-                                    <div className="p-4 text-center text-sm text-muted-foreground">
-                                        No counsellors found for this branch.
-                                    </div>
-                                )}
-                            </SelectContent>
-                        </Select>
+                        <div>
+                            <label className="block text-sm font-medium text-foreground mb-2">
+                                Select Counsellor
+                            </label>
+                            <ConsultantSearchSelect
+                                value={selectedUserId}
+                                onValueChange={(val) => setSelectedUserId(val || "")}
+                                consultants={consultants}
+                                branchId={selectedBranchId}
+                                disabled={!selectedBranchId}
+                                placeholder={!selectedBranchId ? "Select a branch first..." : "Choose a Counsellor..."}
+                                searchPlaceholder="Search counsellor by name or designation..."
+                                className="w-full"
+                            />
+                        </div>
                     </div>
 
                     <DialogFooter className="gap-2">

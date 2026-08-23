@@ -142,6 +142,7 @@ export default function GroupItemsFilter({ categories = [] }: GroupItemsFilterPr
                     control={control}
                     render={({ field }) => (
                         <InventoryCategorySearchSelect
+                            categories={categories}
                             value={field.value || ""}
                             onValueChange={(value) => {
                                 field.onChange(value);

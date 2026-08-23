@@ -5,7 +5,7 @@ const ImagCardSkeleton = () => {
   return (
     <section className="py-8 md:py-14">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-3 xl:gap-4">
           {Array.from({ length: 8 }).map((_, i) => (
             <Card className="py-0 gap-2 bg-secondary/10" key={i}>
               <CardContent className="p-3 pb-0">

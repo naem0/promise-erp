@@ -120,7 +120,7 @@ const BlogCategoriesData = async ({
               <TableCell>{blog_category.title}</TableCell>
               <TableCell>
                 <Image
-                  src={blog_category?.image || "/images/placeholder.png"}
+                  src={(blog_category?.image && typeof blog_category?.image === "string" && blog_category?.image.trim() !== "") ? blog_category?.image : "/images/placeholder.png"}
                   alt={blog_category?.title}
                   width={40}
                   height={40}

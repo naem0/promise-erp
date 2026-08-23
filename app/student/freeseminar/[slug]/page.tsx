@@ -1,5 +1,5 @@
-
 "use client";
+
 // import FreeClassBySlugWrapper from "@/components/student-dashboard/FreeClassBySlugWrapper";
 import dynamic from 'next/dynamic';
 const FreeClassBySlugWrapper = dynamic(() => import("@/components/student-dashboard/FreeClassBySlugWrapper"), {

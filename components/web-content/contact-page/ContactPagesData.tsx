@@ -113,7 +113,7 @@ const ContactPagesData = async ({
                                 </TableCell>
                                 <TableCell className="font-medium flex items-center justify-center">
                                     <Image
-                                        src={pageItem.page_banner || "/images/placeholder.png"}
+                                        src={(pageItem.page_banner && typeof pageItem.page_banner === "string" && pageItem.page_banner.trim() !== "") ? pageItem.page_banner : "/images/placeholder.png"}
                                         alt={pageItem.page_title}
                                         width={40}
                                         height={40}

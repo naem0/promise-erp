@@ -2,7 +2,7 @@ import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 export default function ServicesSkeleton() {
   return (
-    <section className="py-8 md:py-14 bg-secondary/5">
+    <section className="py-8 lg:py-14 bg-secondary/5">
       <div className="container mx-auto px-4">
         
         {/* Section Title Skeleton */}

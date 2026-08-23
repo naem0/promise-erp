@@ -167,7 +167,7 @@ const ReferrersData = async ({
                                 <TableCell className="flex items-center gap-2">
                                     <div className="relative w-12 h-12">
                                         <Image
-                                            src={referrer.profile_photo || "/images/profile_avatar.png"}
+                                            src={(referrer.profile_photo && typeof referrer.profile_photo === "string" && referrer.profile_photo.trim() !== "") ? referrer.profile_photo : "/images/profile_avatar.png"}
                                             alt={referrer?.name}
                                             fill
                                             className="object-cover object-top rounded-full"

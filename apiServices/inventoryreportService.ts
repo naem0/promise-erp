@@ -1,8 +1,10 @@
 "use server";
+import { cacheTag, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { cacheTag } from "next/cache";
+
 import { PaginationType } from "@/types/pagination";
 
 const API_BASE =
@@ -86,8 +88,7 @@ export async function getInventoryBranchesCached(
   params: Record<string, unknown> = {},
 ): Promise<InventoryBranchesResponse | null> {
   "use cache: private";
-  cacheTag("branches-list");
-
+  cacheTag(CACHE_TAGS.BRANCHES);
   const urlParams = new URLSearchParams();
   for (const key in params) {
     if (

@@ -52,7 +52,7 @@ const OurBranches = ({ branchesData }: BranchesDataProps) => {
         {branches?.map((branche) => (
           <CarouselItem
             key={branche?.id}
-            className="basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4 flex"
+            className="basis-full sm:basis-1/2 lg:basis-1/2 xl:basis-1/4 flex"
           >
             <Card className="group flex flex-col w-full bg-white hover:bg-primary shadow-lg py-0 border border-secondary/30 rounded-2xl hover:-translate-y-2 hover:shadow-xl transition-all duration-300">
               <CardContent className="flex flex-col flex-1 items-center gap-2 p-4 text-center">
@@ -110,6 +110,7 @@ const OurBranches = ({ branchesData }: BranchesDataProps) => {
                     src={`https://www.google.com/maps/embed?pb=${branche?.google_map}`}
                     width="100%"
                     height="100"
+                    title={`${branche?.name || "Branch"} Location Map`}
                     className="rounded-xl border border-secondary p-0"
                     style={{ border: 0 }}
                     allowFullScreen={true}
@@ -123,8 +124,8 @@ const OurBranches = ({ branchesData }: BranchesDataProps) => {
       </CarouselContent>
 
       {/* Arrows */}
-      <CarouselPrevious className="absolute cursor-pointer left-0 md:-left-4 top-1/2 -translate-y-1/2 bg-primary hover:bg-primary/80 text-white group-hover:text-white rounded-full border-none shadow-md" />
-      <CarouselNext className="absolute cursor-pointer right-0 md:-right-4 top-1/2 -translate-y-1/2 bg-primary hover:bg-primary/80 text-white group-hover:text-white rounded-full border-none shadow-md" />
+      <CarouselPrevious className="absolute cursor-pointer left-0 md:-left-4 top-1/2 -translate-y-1/2 bg-transparent hover:bg-primary/80 text-primary group-hover:text-white rounded-full border-primary shadow-md" />
+      <CarouselNext className="absolute cursor-pointer right-0 md:-right-4 top-1/2 -translate-y-1/2 bg-transparent hover:bg-primary/80 text-primary group-hover:text-white rounded-full border-primary shadow-md" />
     </Carousel>
   );
 };

@@ -12,7 +12,7 @@ import {
   ComboboxChip,
   ComboboxChipsInput,
 } from '@/components/ui/combobox'
-import { getRooms, Room } from '@/apiServices/inventoryRoomsService'
+import { getRooms, getRoomById, Room } from '@/apiServices/inventoryRoomsService'
 import { cn } from '@/lib/utils'
 import { ChevronDownIcon } from 'lucide-react'
 
@@ -56,9 +56,14 @@ export default function RoomSearchSelect({
   const [isLoadingMore, setIsLoadingMore] = useState(false)
   const anchor = useRef<HTMLDivElement | null>(null)
 
+  // Initialize and sync initialRooms
   useEffect(() => {
     if (initialRooms && initialRooms.length > 0) {
-      setRoomsList(initialRooms)
+      setRoomsList(prev => {
+        const existingIds = new Set(initialRooms.map(r => r.id))
+        const rest = prev.filter(r => !existingIds.has(r.id))
+        return [...initialRooms, ...rest]
+      })
       setRoomsMap(prev => {
         const newMap = { ...prev }
         initialRooms.forEach(room => {
@@ -70,6 +75,27 @@ export default function RoomSearchSelect({
       })
     }
   }, [initialRooms])
+
+  // If value is provided (e.g. on edit mode) but not yet in roomsMap, fetch by ID
+  useEffect(() => {
+    const singleVal = typeof value === 'string' && value ? value : null
+    if (singleVal && !roomsMap[singleVal]) {
+      const roomId = Number(singleVal)
+      if (!isNaN(roomId) && roomId > 0) {
+        getRoomById(roomId)
+          .then(res => {
+            if (res?.data) {
+              setRoomsMap(prev => ({ ...prev, [String(res.data.id)]: res.data }))
+              setRoomsList(prev => {
+                if (prev.some(r => r.id === res.data.id)) return prev
+                return [res.data, ...prev]
+              })
+            }
+          })
+          .catch(() => {})
+      }
+    }
+  }, [value])
 
   // Fetch page 1 when search input or branchId changes
   useEffect(() => {
@@ -87,7 +113,17 @@ export default function RoomSearchSelect({
           if (res?.success) {
             const fetched = res?.data?.rooms || []
             const pagination = res?.data?.pagination
-            setRoomsList(fetched)
+            
+            setRoomsList(prev => {
+              const currentVal = typeof value === 'string' ? value : null
+              const preserved = (initialRooms || []).concat(
+                currentVal && roomsMap[currentVal] ? [roomsMap[currentVal]] : []
+              )
+              const fetchedIds = new Set(fetched.map(r => r.id))
+              const uniquePreserved = preserved.filter(r => !fetchedIds.has(r.id))
+              return [...uniquePreserved, ...fetched]
+            })
+
             setRoomsMap(prev => {
               const newMap = { ...prev }
               fetched.forEach(room => {
@@ -169,23 +205,44 @@ export default function RoomSearchSelect({
   const filteredRooms = useMemo(() => {
     const list = Array.isArray(roomsList) ? roomsList : []
     if (!branchId) return list
-    return list.filter((r) => !r.branch?.id || r.branch?.id?.toString() === branchId)
+    const filtered = list.filter((r) => {
+      if (!r.branch || !r.branch.id) return true
+      return r.branch.id.toString() === branchId.toString()
+    })
+    return filtered.length > 0 ? filtered : list
   }, [roomsList, branchId])
 
-  const options = useMemo(() => (Array.isArray(filteredRooms) ? filteredRooms : []).map(room => ({
-    value: String(room.id),
-    label: `${room.name}${room.room_no ? ` (${room.room_no})` : ''}`
-  })), [filteredRooms])
+  const options = useMemo(() => {
+    const list = Array.isArray(filteredRooms) ? [...filteredRooms] : []
+    const valStr = typeof value === 'string' && value ? value : null
+    if (valStr && !list.some(r => String(r.id) === valStr)) {
+      const found = roomsMap[valStr] || initialRooms?.find(r => String(r.id) === valStr)
+      if (found) {
+        list.unshift(found)
+      }
+    }
+    return list.map(room => ({
+      value: String(room.id),
+      label: `${room.name}${room.room_no ? ` (${room.room_no})` : ''}`
+    }))
+  }, [filteredRooms, value, roomsMap, initialRooms])
 
   const allOptionsMap = useMemo(() => {
     const map: Record<string, string> = {}
+    if (initialRooms) {
+      initialRooms.forEach(room => {
+        if (room?.id != null) {
+          map[String(room.id)] = `${room.name}${room.room_no ? ` (${room.room_no})` : ''}`
+        }
+      })
+    }
     Object.values(roomsMap).forEach(room => {
       if (room?.id != null) {
         map[String(room.id)] = `${room.name}${room.room_no ? ` (${room.room_no})` : ''}`
       }
     })
     return map
-  }, [roomsMap])
+  }, [roomsMap, initialRooms])
 
   if (multiple) {
     const multiValue = (value as string[]) || []

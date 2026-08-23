@@ -1,8 +1,9 @@
 "use server";
+import { cacheTag, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { cacheTag, updateTag } from "next/cache";
 import { PaginationType } from "@/types/pagination";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
@@ -47,8 +48,7 @@ export async function getDesignationsCached(
   params: Record<string, unknown> = {},
 ): Promise<DesignationsResponse | null> {
   "use cache";
-  cacheTag("designations-list");
-
+  cacheTag(CACHE_TAGS.DESIGNATIONS);
   try {
   // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
     const urlParams = new URLSearchParams();
@@ -163,7 +163,7 @@ export async function createDesignation(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("designations-list");
+      updateTag(CACHE_TAGS.DESIGNATIONS);
     }
     return result;
   } catch (error: unknown) {
@@ -202,7 +202,7 @@ export async function updateDesignation(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("designations-list");
+      updateTag(CACHE_TAGS.DESIGNATIONS);
     }
     return result;
   } catch (error: unknown) {
@@ -239,7 +239,7 @@ export async function toggleDesignationStatus(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("designations-list");
+      updateTag(CACHE_TAGS.DESIGNATIONS);
     }
     return result;
   } catch (error: unknown) {
@@ -276,7 +276,7 @@ export async function deleteDesignation(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("designations-list");
+      updateTag(CACHE_TAGS.DESIGNATIONS);
     }
     return result;
   } catch (error: unknown) {

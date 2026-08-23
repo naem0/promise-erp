@@ -42,16 +42,14 @@ const TeacherListSection = ({ teacherData }: TeacherListSectionProps) => {
           {instructors.map((instructor) => (
             <CarouselItem
               key={instructor?.id}
-              className="basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4 h-full"
+              className="basis-full sm:basis-1/2 lg:basis-1/2 xl:basis-1/4 h-full"
             >
               <div className="flex flex-col items-center group relative h-full">
                 {/* Image Wrapper */}
 
                 <div className=" z-20 relative h-44 w-[70%] bg-white rounded-2xl overflow-hidden shadow-xl transition-transform duration-500 group-hover:scale-102">
                   <Image
-                    src={
-                      instructor?.profile_image || "/images/placeholder_img.jpg"
-                    }
+                    src={(instructor?.profile_image && typeof instructor?.profile_image === "string" && instructor?.profile_image.trim() !== "") ? instructor?.profile_image : "/images/placeholder_img.jpg"}
                     alt={instructor?.name || "teacher image"}
                     fill
                     className="object-contain object-top rounded-2xl transition-transform duration-300 group-hover:scale-102"
@@ -88,8 +86,8 @@ const TeacherListSection = ({ teacherData }: TeacherListSectionProps) => {
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious className=" absolute cursor-pointer left-0 md:-left-2 top-1/2 -translate-y-1/2 bg-primary hover:bg-primary/80 text-white hover:text-white rounded-full border-none " />
-        <CarouselNext className="absolute cursor-pointer right-0 md:right-0 top-1/2 -translate-y-1/2 bg-primary hover:bg-primary/80 text-white hover:text-white rounded-full border-none" />
+        <CarouselPrevious className=" absolute cursor-pointer left-0 md:-left-2 top-1/2 -translate-y-1/2 bg-transparent hover:bg-primary/80 text-primary hover:text-white rounded-full border-primary " />
+        <CarouselNext className="absolute cursor-pointer right-0 md:right-0 top-1/2 -translate-y-1/2 bg-transparent hover:bg-primary/80 text-primary hover:text-white rounded-full border-primary" />
       </Carousel>
       <div className="flex justify-center mt-8">
         <Button asChild className="cursor-pointer flex items-center gap-2">

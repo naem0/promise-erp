@@ -216,13 +216,16 @@ export const sidebarData = {
             //   url: "#",
             //   permissions: ["view-subscriptions"],
             // },
-            // Student Earnings
             {
               title: "Student Earnings",
               url: "/lms/student-earnings",
               permissions: ["view-student-earnings"],
             },
-            
+            {
+              title: "Earning Sites",
+              url: "/lms/earning-sites",
+              permissions: ["view-earning-sites"],
+            },
             {
               title: "Enrollment Reports",
               url: "/lms/enrollment-reports",
@@ -260,6 +263,26 @@ export const sidebarData = {
         //     },
         //   ],
         // },
+        {
+          title: "DYD Management",
+          url: "#",
+          icon: GraduationCap,
+          items: [
+            {
+              title: "Applications",
+              url: "/lms/dyd/applications",
+              permissions: ["view-dyd-applications"],
+            },
+            {
+              title: "Question Categories",
+              url: "/lms/dyd/question-categories",
+              permissions: ["view-dyd-question-categories"],
+            },
+           
+
+
+          ],
+        },
         {
           title: "Contents Management",
           url: "#",
@@ -519,7 +542,7 @@ export const sidebarData = {
               url: "/crm/lead-referrers",
               permissions: ["view-crm-referrers"],
             },
-           {
+            {
               title: "Lead Status",
               url: "/crm/lead-statuses",
               permissions: ["view-crm-statuses"],
@@ -614,6 +637,16 @@ export const sidebarData = {
               title: "Inventory Reports",
               url: "/inventory/inventory-reports",
               permissions: ["view-inventory-reports", "view-products"],
+            },
+            {
+              title: "Stock Management",
+              url: "/inventory/item-users",
+              permissions: ["view-product-users"],
+            },
+            {
+              title: "My Assigned Items",
+              url: "/inventory/my-assigned-items",
+              permissions: ["view-my-product-users"],
             },
           ],
         },

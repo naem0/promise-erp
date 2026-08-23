@@ -72,7 +72,7 @@ const NotificationsPanel = () => {
   return (
     <div className=" ">
       <div className="mb-6 flex items-center gap-3">
-        <button className="rounded-lg p-2 text-secondary transition-colors">
+        <button aria-label="Go back" className="rounded-lg p-2 text-secondary transition-colors">
           <ChevronLeft className="h-7 w-7" />
         </button>
         <h1 className="text-2xl font-semibold tracking-tight text-secondary">

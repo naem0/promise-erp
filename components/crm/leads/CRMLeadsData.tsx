@@ -18,6 +18,33 @@ const CRMLeadsData = async ({
             ? Number(resolvedSearchParams.page)
             : 1;
     const per_page = typeof resolvedSearchParams.per_page === "string" ? Number(resolvedSearchParams.per_page) : 15;
+    
+    const statusParam =
+        typeof resolvedSearchParams.status_id === "string"
+            ? resolvedSearchParams.status_id
+            : typeof resolvedSearchParams.status === "string"
+            ? resolvedSearchParams.status
+            : undefined;
+
+    const sourceParam =
+        typeof resolvedSearchParams.source_id === "string"
+            ? resolvedSearchParams.source_id
+            : typeof resolvedSearchParams.source === "string"
+            ? resolvedSearchParams.source
+            : undefined;
+
+    const shiftParam =
+        typeof resolvedSearchParams.shift === "string"
+            ? resolvedSearchParams.shift
+            : typeof resolvedSearchParams.shift_id === "string"
+            ? resolvedSearchParams.shift_id
+            : undefined;
+
+    const categoryParam =
+        typeof resolvedSearchParams.category_id === "string"
+            ? resolvedSearchParams.category_id
+            : undefined;
+
     const params = {
         page,
         per_page,
@@ -29,29 +56,13 @@ const CRMLeadsData = async ({
             typeof resolvedSearchParams.sort_order === "string"
                 ? resolvedSearchParams.sort_order
                 : undefined,
-        status:
-            typeof resolvedSearchParams.status === "string"
-                ? resolvedSearchParams.status
-                : undefined,
-        source:
-            typeof resolvedSearchParams.source === "string"
-                ? resolvedSearchParams.source
-                : undefined,
-        course_type:
-            typeof resolvedSearchParams.course_type === "string"
-                ? resolvedSearchParams.course_type
-                : undefined,
+        status_id: statusParam,
+        source_id: sourceParam,
+        category_id: categoryParam,
+        shift: shiftParam,
         branch_id:
             typeof resolvedSearchParams.branch_id === "string"
                 ? resolvedSearchParams.branch_id
-                : undefined,
-        category_id:
-            typeof resolvedSearchParams.category_id === "string"
-                ? resolvedSearchParams.category_id
-                : undefined,
-        shift:
-            typeof resolvedSearchParams.shift === "string"
-                ? resolvedSearchParams.shift
                 : undefined,
         course_id:
             typeof resolvedSearchParams.course_id === "string"

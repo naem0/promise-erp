@@ -8,7 +8,7 @@ import Image from "next/image";
 import dynamic from "next/dynamic";
 import { HeroSectionResponse } from "@/apiServices/homePageService";
 
-const ReactPlayer = dynamic(() => import("react-player"), { ssr: false });
+const ReactPlayer = dynamic(() => import("react-player").then((mod) => mod.default || mod), { ssr: false });
 
 interface HeroVideoData {
   heroBannerData: HeroSectionResponse;
@@ -74,7 +74,7 @@ const HomeHeroSection = ({ heroBannerData }: HeroVideoData) => {
   };
 
   return (
-    <section className="bg-secondary/5 relative">
+    <section className="bg-secondary/5 relative min-h-[420px] md:min-h-[500px]">
       {/* Hero Background Image - Optimized for LCP */}
       <div className="absolute inset-0 -z-10">
         <Image
@@ -90,13 +90,13 @@ const HomeHeroSection = ({ heroBannerData }: HeroVideoData) => {
       </div>
 
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-0">
           {/* LEFT CONTENT */}
-          <div className="flex flex-col justify-center pe-0 lg:pe-4 py-8 lg:py-18">
-            <h1 className="text-secondary capitalize font-bold text-2xl md:text-4xl xl:text-6xl leading-normal">
+          <div className="flex flex-col justify-center pe-0 lg:pe-4 py-8 xl:py-18">
+            <h1 className="text-secondary capitalize font-bold text-2xl md:text-3xl xl:text-4xl 2xl:text-5xl leading-tight mb-2">
               {sliderData?.title}
             </h1>
-            <p className="md:text-2xl text-xl font-medium text-black/75">
+            <p className="xl:text-xl text-lg text-black/75">
               {sliderData?.subtitle}
             </p>
 
@@ -130,11 +130,11 @@ const HomeHeroSection = ({ heroBannerData }: HeroVideoData) => {
               backgroundRepeat: "no-repeat",
             }}
           >
-            <div className="rounded-2xl overflow-hidden border-6 min-h-[425px] border-white relative bg-black/5">
+            <div className="rounded-2xl overflow-hidden border-6 min-h-[250px] sm:min-h-[325px] lg:min-h-[425px] border-white relative bg-black/5">
               {isPlaying && !isFloating ? (
                 <ReactPlayer
                   className="absolute inset-0"
-                  src={videoUrl}
+                  src={videoUrl || undefined}
                   playing={true}
                   controls={true}
                   width="100%"
@@ -155,8 +155,10 @@ const HomeHeroSection = ({ heroBannerData }: HeroVideoData) => {
                       src={featureImage}
                       alt="Feature"
                       fill
+                      priority
+                      fetchPriority="high"
                       sizes="(max-width: 1024px) 100vw, 50vw"
-                      className="object-cover"
+                      className="sm:object-cover object-fill"
                     />
                     <div className="flex items-center justify-center h-full">
                       <button
@@ -187,7 +189,7 @@ const HomeHeroSection = ({ heroBannerData }: HeroVideoData) => {
             <X className="w-4 h-4" />
           </button>
           <ReactPlayer
-            src={videoUrl}
+            src={videoUrl || undefined}
             playing={true}
             controls
             width="100%"

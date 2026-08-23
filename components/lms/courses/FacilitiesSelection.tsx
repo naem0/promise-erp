@@ -319,7 +319,7 @@ export default function FacilitiesSelection({
                         />
 
                         <Image
-                          src={facility.image || "/images/placeholder.png"}
+                          src={(facility.image && typeof facility.image === "string" && facility.image.trim() !== "") ? facility.image : "/images/placeholder.png"}
                           width={45}
                           height={45}
                           alt={facility.title || "Facility"}

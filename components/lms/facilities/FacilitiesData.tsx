@@ -117,7 +117,7 @@ const FacilitiesData = async ({
                 </TableCell>
                 <TableCell className="font-medium flex items-center justify-center">
                   <Image
-                    src={facility.image || "/images/placeholder.png"}
+                    src={(facility.image && typeof facility.image === "string" && facility.image.trim() !== "") ? facility.image : "/images/placeholder.png"}
                     alt={facility?.title}
                     width={40}
                     height={40}

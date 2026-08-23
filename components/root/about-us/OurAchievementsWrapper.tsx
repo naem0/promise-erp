@@ -6,10 +6,11 @@ import { cacheTag } from "next/cache";
 import { getLatestCountDown } from "@/apiServices/homePageService";
 import ErrorComponent from "@/components/common/ErrorComponent";
 import NotFoundComponent from "@/components/common/NotFoundComponent";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 const OurAchievementsWrapper = async () => {
   "use cache";
-  cacheTag("stats-list");
+  cacheTag(CACHE_TAGS.STATS);
   let stats;
   let countDownData;
   try {

@@ -67,7 +67,7 @@ const NewsletterSection = () => {
     <section className="relative py-8 md:py-14 w-full h-[400px] flex items-center justify-center overflow-hidden">
       <div className="absolute inset-0 z-0">
         <Image
-          src={subscriptionData?.data?.image || "/images/placeholder_img.jpg"}
+          src={(subscriptionData?.data?.image && typeof subscriptionData?.data?.image === "string" && subscriptionData?.data?.image.trim() !== "") ? subscriptionData?.data?.image : "/images/placeholder_img.jpg"}
           alt="Computer Lab Background"
           fill
           className="object-cover"

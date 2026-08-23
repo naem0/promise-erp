@@ -1,4 +1,6 @@
 "use server";
+import { cacheTag, updateTag, cacheLife } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 const API_BASE =
   process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
 import { authOptions } from "@/lib/auth";
@@ -49,6 +51,9 @@ export async function getPublicBlogInfo({
 }: {
   params?: Record<string, unknown>;
 }): Promise<BlogInfoApiResponse | null> {
+  "use cache";
+  cacheTag(CACHE_TAGS.BLOGS);
+  cacheLife("days");
   try {
     const urlParams = new URLSearchParams();
 
@@ -114,6 +119,9 @@ export interface BlogCategoryApiResponse {
 }
 
 export async function getPublicBlogCategories(): Promise<BlogCategoryApiResponse | null> {
+  "use cache";
+  cacheTag(CACHE_TAGS.BLOG_CATEGORIES);
+  cacheLife("days");
   try {
     const res = await fetch(`${API_BASE}/public/blog-categories`);
 
@@ -205,6 +213,9 @@ export async function getPublicBlogsByCategorySlug({
   slug: string;
   params?: Record<string, unknown>;
 }): Promise<BlogInfoApiResponse | null> {
+  "use cache";
+  cacheTag(CACHE_TAGS.BLOGS);
+  cacheLife("days");
   try {
     const urlParams = new URLSearchParams();
 

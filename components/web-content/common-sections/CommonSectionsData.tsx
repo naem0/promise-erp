@@ -249,7 +249,7 @@ const CommonSectionsData = async ({
                 <TableCell>
                   <div className="relative w-12 h-12 rounded-md overflow-hidden border border-slate-100 flex-shrink-0">
                     <Image
-                      src={item.image || "/images/placeholder.png"}
+                      src={(item.image && typeof item.image === "string" && item.image.trim() !== "") ? item.image : "/images/placeholder.png"}
                       alt={item.title || `Section ${item.id}`}
                       fill
                       className="object-cover"

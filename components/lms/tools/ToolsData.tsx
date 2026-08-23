@@ -126,7 +126,7 @@ const ToolsData = async ({
                                 </TableCell>
                                 <TableCell className="font-medium flex items-center justify-center">
                                     <Image
-                                        src={tool.image || "/images/placeholder.png"}
+                                        src={(tool.image && typeof tool.image === "string" && tool.image.trim() !== "") ? tool.image : "/images/placeholder.png"}
                                         alt={tool?.title}
                                         width={40}
                                         height={40}

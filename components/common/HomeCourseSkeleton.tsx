@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function HomeCourseSkeleton() {
   return (
-    <div className="w-full py-8 md:py-14 bg-secondary/5">
+    <div className="w-full py-8 lg:py-14 bg-secondary/5">
       {/* Title Section Skeleton */}
       <div className="container mx-auto">
         <div className="flex flex-col items-center gap-3 mb-10">

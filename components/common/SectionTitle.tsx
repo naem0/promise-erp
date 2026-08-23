@@ -10,9 +10,9 @@ const SectionTitle = ({
   iswhite = false,
 }: SectionTitleProps) => {
   return (
-    <div className="text-center mb-10 animate-fade-in-up">
+    <div className="text-center xl:mb-10 mb-4 animate-fade-in-up">
       <h2
-        className={`text-2xl md:text-4xl lg:text-5xl font-bold mb-4 capitalize ${
+        className={`text-2xl lg:text-3xl xl:text-5xl font-bold mb-4 capitalize ${
           iswhite ? "text-white" : "text-secondary"
         }`}
       >
@@ -21,7 +21,7 @@ const SectionTitle = ({
 
       {/* {subtitle && ( */}
         <p
-          className={`text-lg max-w-5xl mx-auto ${
+          className={` text-base lg:text-lg max-w-5xl mx-auto ${
             iswhite ? "text-white" : "text-black/75"
           }`}
         >

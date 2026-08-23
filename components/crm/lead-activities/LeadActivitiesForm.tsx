@@ -1,5 +1,5 @@
-
 "use client";
+
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -183,6 +183,7 @@ const LeadActivityForm = ({ leadId, lastLeadActivityStatus }: LeadActivityFormPr
         const fromPage = searchParams.get("from_page") || "/crm/lead-activities";
         const backParams = new URLSearchParams(searchParams.toString());
         backParams.delete("from_page");
+        router.refresh();
         router.push(`${fromPage}${backParams.toString() ? `?${backParams.toString()}` : ""}`);
         router.refresh();
       } else {

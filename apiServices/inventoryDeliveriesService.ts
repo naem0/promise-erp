@@ -1,8 +1,9 @@
 "use server";
+import { cacheTag, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { cacheTag, updateTag } from "next/cache";
 
 const API_BASE =
   process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
@@ -174,7 +175,7 @@ export async function receiveDelivery(
 
     const result = await res.json();
     if (res.ok) {
-      updateTag("deliveries");
+      updateTag(CACHE_TAGS.INVENTORY_DELIVERIES);
     }
     return result;
   } catch (error: unknown) {

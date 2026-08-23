@@ -1,8 +1,9 @@
 "use server";
+import { cacheTag, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { cacheTag, updateTag } from "next/cache";
 import { PaginationType } from "@/types/pagination";
 
 const API_BASE =
@@ -70,8 +71,7 @@ export async function getProductCategoriesCached(
   params: Record<string, unknown> = {},
 ): Promise<ProductCategoriesResponse | null> {
   "use cache";
-  cacheTag("product-categories-list");
-
+  cacheTag(CACHE_TAGS.INVENTORY_CATEGORIES);
   try {
     const urlParams = new URLSearchParams();
     for (const key in params) {
@@ -150,8 +150,7 @@ export async function getProductCategoriesSimpleListCached(
   search?: string,
 ): Promise<SimpleCategoriesResponse | null> {
   "use cache";
-  cacheTag("product-categories-simple-list");
-
+  cacheTag(CACHE_TAGS.INVENTORY_CATEGORIES);
   try {
     const urlParams = new URLSearchParams();
     if (search) {
@@ -206,7 +205,8 @@ export async function getProductCategoriesSimpleList(
   const search = typeof params.search === "string" ? params.search : undefined;
   const _cachedResult = await getProductCategoriesSimpleListCached(token, search);
 
-  if (!_cachedResult) throw new Error("Failed to fetch simple categories list from cache.");
+  if (!_cachedResult)
+    throw new Error("Failed to fetch simple categories list from cache.");
 
   return _cachedResult;
 }
@@ -220,8 +220,7 @@ export async function getProductCategoriesParentListCached(
   search?: string,
 ): Promise<SimpleCategoriesResponse | null> {
   "use cache";
-  cacheTag("product-categories-parent-list");
-
+  cacheTag(CACHE_TAGS.INVENTORY_CATEGORIES);
   try {
     const urlParams = new URLSearchParams();
     if (search) {
@@ -276,7 +275,8 @@ export async function getProductCategoriesParentList(
   const search = typeof params.search === "string" ? params.search : undefined;
   const _cachedResult = await getProductCategoriesParentListCached(token, search);
 
-  if (!_cachedResult) throw new Error("Failed to fetch parent categories list from cache.");
+  if (!_cachedResult)
+    throw new Error("Failed to fetch parent categories list from cache.");
 
   return _cachedResult;
 }
@@ -354,7 +354,7 @@ export async function createProductCategory(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("product-categories-list");
+      updateTag(CACHE_TAGS.INVENTORY_CATEGORIES);
     }
     return result;
   } catch (error: unknown) {
@@ -396,7 +396,7 @@ export async function updateProductCategory(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("product-categories-list");
+      updateTag(CACHE_TAGS.INVENTORY_CATEGORIES);
     }
     return result;
   } catch (error: unknown) {
@@ -433,7 +433,7 @@ export async function deleteProductCategory(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("product-categories-list");
+      updateTag(CACHE_TAGS.INVENTORY_CATEGORIES);
     }
     return result;
   } catch (error: unknown) {

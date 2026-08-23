@@ -1,8 +1,9 @@
 "use server";
+import { cacheTag, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { cacheTag, updateTag } from "next/cache";
 import { PaginationType } from "@/types/pagination";
 
 const API_BASE =
@@ -51,8 +52,7 @@ export async function getAchievementsCached(
   params: Record<string, unknown> = {},
 ): Promise<AchievementsResponse | null> {
   "use cache";
-  cacheTag("achievements-list");
-
+  cacheTag(CACHE_TAGS.ACHIEVEMENTS);
   try {
     const urlParams = new URLSearchParams();
     for (const key in params) {
@@ -191,7 +191,7 @@ export async function createAchievement(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("achievements-list");
+      updateTag(CACHE_TAGS.ACHIEVEMENTS);
     }
     return result;
   } catch (error: unknown) {
@@ -228,7 +228,7 @@ export async function updateAchievement(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("achievements-list");
+      updateTag(CACHE_TAGS.ACHIEVEMENTS);
     }
     return result;
   } catch (error: unknown) {
@@ -264,7 +264,7 @@ export async function deleteAchievement(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("achievements-list");
+      updateTag(CACHE_TAGS.ACHIEVEMENTS);
     }
     return result;
   } catch (error: unknown) {

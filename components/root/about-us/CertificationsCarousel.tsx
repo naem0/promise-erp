@@ -39,7 +39,7 @@ const CertificationsSection = async () => {
   }
 
   return (
-    <div className="w-full py-10 lg:py-20">
+    <div className="w-full py-8 lg:py-20">
       <div className="text-center">
         <h3 className="text-3xl mb-3 font-semibold text-secondary">
           Certified for Excellence & Trust
@@ -54,8 +54,8 @@ const CertificationsSection = async () => {
         </p>
       </div>
 
-      <div className="space-y-12 pt-10 lg:pt-20">
-        <div className="grid grid-cols-1 items-center gap-6">
+      <div className="space-y-12 pt-6 lg:pt-20">
+        <div className="grid grid-cols-1 items-center gap-4 lg:gap-6">
           {certificates?.length > 0 ? (
             certificates?.map((cert, index) => {
               const isEven = index % 2 === 0;
@@ -71,13 +71,13 @@ const CertificationsSection = async () => {
                       isEven ? "lg:order-2" : "lg:order-1"
                     }`}
                   >
-                    <CardContent className="flex justify-start pt-0">
+                    <CardContent className="px-0 lg:px-4 flex justify-start pt-0">
                       <div className="relative w-full h-[280px] md:h-[380px]">
                         <Image
-                          src={cert.image || "/images/placeholder_img.jpg"}
+                          src={(cert.image && typeof cert.image === "string" && cert.image.trim() !== "") ? cert.image : "/images/placeholder_img.jpg"}
                           alt={cert.title || "image"}
                           fill
-                          className="object-contain px-4"
+                          className="object-contain px-0 lg:px-4"
                         />
                       </div>
                     </CardContent>
@@ -85,7 +85,7 @@ const CertificationsSection = async () => {
 
                   {/* Text */}
                   <div
-                    className={`px-4 py-4 ${
+                    className={`px-0 lg:px-4 py-4 ${
                       isEven ? "lg:order-1" : "lg:order-2"
                     }`}
                   >

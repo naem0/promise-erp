@@ -30,7 +30,7 @@ export default function LeadStatusesFilter() {
             defaultValues: {
                 search: searchParams.get("search") || "",
                 type: searchParams.get("type") || "",
-                per_page: searchParams.get("per_page") || "15",
+                per_page: searchParams.get("per_page") || "",
             },
         });
 
@@ -78,7 +78,7 @@ export default function LeadStatusesFilter() {
         reset({
             search: "",
             type: "",
-            per_page: "15",
+            per_page: "",
         });
         router.replace(pathname, { scroll: false });
     };

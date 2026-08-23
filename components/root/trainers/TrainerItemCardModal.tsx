@@ -30,7 +30,7 @@ const TrainerItemCardModal = ({ member, open, onOpenChange }: Props) => {
             <div className="flex flex-col md:flex-row items-center md:items-end gap-6">
               <div className="shrink-0 rounded-full bg-white relative w-32 h-32 md:w-40 md:h-40 overflow-hidden border-4 border-secondary shadow-xl">
                 <Image
-                  src={member.profile_image || "/images/placeholder_img.jpg"}
+                  src={(member.profile_image && typeof member.profile_image === "string" && member.profile_image.trim() !== "") ? member.profile_image : "/images/placeholder_img.jpg"}
                   alt={member.name || "Trainer"}
                   fill
                   className="object-cover object-top"

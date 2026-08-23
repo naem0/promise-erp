@@ -13,7 +13,7 @@ const WelcomeBanner = async () => {
       <div className="relative overflow-hidden border rounded-xl bg-primary/5 p-2 shadow-lg ">
         <div className="relative z-10 flex items-center gap-4">
           <Avatar className="h-20 w-20 border-2 border-primary/20">
-            <AvatarImage src={session?.user?.image || "/images/profile_avatar.png"} alt={session?.user?.name ?? "User"} />
+            <AvatarImage src={(session?.user?.image && typeof session?.user?.image === "string" && session?.user?.image.trim() !== "") ? session?.user?.image : "/images/profile_avatar.png"} alt={session?.user?.name ?? "User"} />
             <AvatarFallback className="bg-primary font-semibold">
               {session?.user?.name?.charAt(0)?.toUpperCase() ?? "U"}
             </AvatarFallback>

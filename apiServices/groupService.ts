@@ -1,7 +1,8 @@
 "use server";
+import { cacheTag, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { cacheTag, updateTag } from "next/cache";
 import { handleApiError, processApiResponse } from "@/lib/apiErrorHandler";
 import { PaginationType } from "@/types/pagination";
 
@@ -58,8 +59,7 @@ export async function getGroupsCached(
   params: Record<string, unknown> = {}
 ): Promise<GroupResponse | null> {
   "use cache";
-  cacheTag("groups-list");
-
+  cacheTag(CACHE_TAGS.GROUPS);
   try {
   // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
     const urlParams = new URLSearchParams();
@@ -171,7 +171,7 @@ export async function addGroup(
     }
 
     if (response.ok && result?.success) {
-      updateTag("groups-list");
+      updateTag(CACHE_TAGS.GROUPS);
     }
 
     return {
@@ -266,7 +266,7 @@ export async function updateGroup(
     }
 
     if (res.ok && result?.success) {
-      updateTag("groups-list");
+      updateTag(CACHE_TAGS.GROUPS);
     }
     return {
       success: true,
@@ -316,7 +316,7 @@ export async function deleteGroup(
     }
     
     if (res.ok && result?.success) {
-      updateTag("groups-list");
+      updateTag(CACHE_TAGS.GROUPS);
     }
     return { success: true, message: result.message || "Group deleted successfully", code: result.code };
   } catch (error) {

@@ -34,10 +34,11 @@ const FooterWidget = () => {
             <div className="pb-4">
               <Link href="/">
                 <Image
-                  src="/images/footer-logo.svg"
+                  src="/images/el-footer.jpeg"
                   alt="Logo"
                   width={213}
                   height={36}
+                  className="rounded-xl "
                 />
               </Link>
             </div>

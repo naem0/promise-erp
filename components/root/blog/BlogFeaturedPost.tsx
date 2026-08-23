@@ -17,7 +17,7 @@ const BlogFeaturedPost = ({ blogInfoData }: BlogFeaturedPostProps) => {
         <div className="grid grid-cols-1 xl:grid-cols-2">
           <AspectRatio ratio={14 / 9} className="rounded-lg">
             <Image
-              src={blogInfoData[0]?.thumbnail || "/images/placeholder_img.jpg"}
+              src={(blogInfoData[0]?.thumbnail && typeof blogInfoData[0]?.thumbnail === "string" && blogInfoData[0]?.thumbnail.trim() !== "") ? blogInfoData[0]?.thumbnail : "/images/placeholder_img.jpg"}
               alt={blogInfoData[0]?.title}
               fill
               className="rounded-tl-lg rounded-bl-lg"
@@ -30,7 +30,7 @@ const BlogFeaturedPost = ({ blogInfoData }: BlogFeaturedPostProps) => {
               {blogInfoData[0]?.category?.title}
             </Badge>
 
-            <h2 className="text-xl lg:text-3xl font-bold text-secondary mb-3 leading-normal">
+            <h2 className="text-lg xl:text-2xl font-bold text-secondary mb-3 leading-normal">
               {blogInfoData[0]?.title}
             </h2>
 

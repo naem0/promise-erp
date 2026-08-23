@@ -1,8 +1,9 @@
-"use server"
+"use server";
+import { cacheTag, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { cacheTag, updateTag } from "next/cache";
 import { PaginationType } from "@/types/pagination";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
@@ -277,7 +278,7 @@ export async function updateEnrollmentPaymentStatus(
     }
 
     if (res.ok && result?.success) {
-      updateTag("enrollments-list");
+      updateTag(CACHE_TAGS.ENROLLMENTS);
     }
     return result;
   } catch (error) {
@@ -319,7 +320,7 @@ export async function approveEnrollment(
     }
 
     if (res.ok && result?.success) {
-      updateTag("enrollments-list");
+      updateTag(CACHE_TAGS.ENROLLMENTS);
     }
     return result;
   } catch (error) {
@@ -358,7 +359,7 @@ export async function createEnrollment(
     }
 
     if (res.ok && result?.success) {
-      updateTag("enrollments-list");
+      updateTag(CACHE_TAGS.ENROLLMENTS);
     }
     return result;
   } catch (error: unknown) {
@@ -418,7 +419,7 @@ export async function bulkTransferEnrollments(
     }
 
     if (res.ok && result?.success) {
-      updateTag("enrollments-list");
+      updateTag(CACHE_TAGS.ENROLLMENTS);
     }
     return result;
   } catch (error) {
@@ -444,8 +445,7 @@ export async function getEnrollmentStatsCached(
   token: string
 ): Promise<EnrollmentStatsResponse | null> {
   "use cache";
-  cacheTag("enrollments-list");
-
+  cacheTag(CACHE_TAGS.ENROLLMENTS);
   try {
     const res = await fetch(`${API_BASE}/enrollments/list-overview`, {
       headers: {

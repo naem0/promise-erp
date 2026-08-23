@@ -1,8 +1,12 @@
 "use client";
+
 import { useEffect } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
+import { Search, FilterX } from "lucide-react";
+
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -10,24 +14,30 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { Search, FilterX } from "lucide-react";
+
 import BranchSearchSelect from "@/components/common/BranchSearchSelect";
+import CourseMultipleSearchSelect from "@/components/common/CourseMultipleSearchSelect";
+import ConsultantSearchSelect from "@/components/common/ConsultantSearchSelect";
+import { DatePickerWithRange } from "@/components/common/DatePickerWithRange";
+import PerPageSelect from "@/components/common/PerPageSelect";
+import PermissionGuard from "@/components/auth/PermissionGuard";
+
 import { CRMCategory } from "@/apiServices/crmCategoryService";
 import { Course } from "@/apiServices/courseService";
-import PermissionGuard from "@/components/auth/PermissionGuard";
-import CourseMultipleSearchSelect from "@/components/common/CourseMultipleSearchSelect";
-import { DatePickerWithRange } from "@/components/common/DatePickerWithRange";
-import ConsultantSearchSelect from "@/components/common/ConsultantSearchSelect";
-import PerPageSelect from "@/components/common/PerPageSelect";
+import { CRMSource } from "@/apiServices/crmSourceService";
+import { CrmStatus } from "@/apiServices/crmStatusesService";
+
+// ==========================================
+// Types & Interfaces
+// ==========================================
 
 interface FilterFormValues {
   search?: string;
   sort_order?: string;
-  status?: string;
+  status_id?: string;
   branch_id?: string;
   category_id?: string;
-  source?: string;
+  source_id?: string;
   shift?: string;
   user_id?: string;
   per_page?: string;
@@ -38,23 +48,33 @@ interface FilterFormValues {
 interface CRMLeadsFilterProps {
   categories?: CRMCategory[];
   courses?: Course[];
+  sources?: CRMSource[];
+  statuses?: CrmStatus[];
 }
 
-export default function CRMLeadsFilter({ categories }: CRMLeadsFilterProps) {
+export default function CRMLeadsFilter({
+  categories = [],
+  sources = [],
+  statuses = [],
+}: CRMLeadsFilterProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+
+  // ==========================================
+  // Form Setup
+  // ==========================================
 
   const { register, control, reset, watch, setValue } =
     useForm<FilterFormValues>({
       defaultValues: {
         search: searchParams.get("search") || "",
         sort_order: searchParams.get("sort_order") || "",
-        status: searchParams.get("status") || "",
+        status_id: searchParams.get("status_id") || "",
         branch_id: searchParams.get("branch_id") || "",
         category_id: searchParams.get("category_id") || "",
-        source: searchParams.get("source") || "",
-        shift: searchParams.get("shift") || "",
+        source_id: searchParams.get("source_id") || "",
+        shift: searchParams.get("shift_id") || "",
         user_id: searchParams.get("user_id") || "",
         per_page: searchParams.get("per_page") || "",
         assignment_status: searchParams.get("assignment_status") || "",
@@ -63,6 +83,10 @@ export default function CRMLeadsFilter({ categories }: CRMLeadsFilterProps) {
     });
 
   const watchedValues = watch();
+
+  // ==========================================
+  // URL Synchronization (Debounced)
+  // ==========================================
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -97,6 +121,10 @@ export default function CRMLeadsFilter({ categories }: CRMLeadsFilterProps) {
     };
   }, [JSON.stringify(watchedValues), router, pathname, searchParams]);
 
+  // ==========================================
+  // Handlers
+  // ==========================================
+
   const handleSelectChange =
     (name: keyof FilterFormValues) => (value: string) => {
       setValue(name, value);
@@ -106,10 +134,10 @@ export default function CRMLeadsFilter({ categories }: CRMLeadsFilterProps) {
     reset({
       search: "",
       sort_order: "",
-      status: "",
+      status_id: "",
       branch_id: "",
       category_id: "",
-      source: "",
+      source_id: "",
       shift: "",
       user_id: "",
       per_page: "",
@@ -119,37 +147,42 @@ export default function CRMLeadsFilter({ categories }: CRMLeadsFilterProps) {
     router.replace(pathname, { scroll: false });
   };
 
+  // ==========================================
+  // Active Filter Detection
+  // ==========================================
+
   const currentSearch = searchParams.get("search") || "";
   const currentSortOrder = searchParams.get("sort_order") || "";
-  const currentStatus = searchParams.get("status") || "";
+  const currentStatusId = searchParams.get("status_id") || searchParams.get("status") || "";
   const currentBranchId = searchParams.get("branch_id") || "";
   const currentCategoryId = searchParams.get("category_id") || "";
-  const currentSource = searchParams.get("source") || "";
-  const currentShift = searchParams.get("shift") || "";
+  const currentSourceId = searchParams.get("source_id") || searchParams.get("source") || "";
+  const currentShift = searchParams.get("shift") || searchParams.get("shift_id") || "";
   const currentUserId = searchParams.get("user_id") || "";
   const currentPerPage = searchParams.get("per_page") || "";
 
   const hasActiveFilters =
     currentSearch !== "" ||
     currentSortOrder !== "" ||
-    currentStatus !== "" ||
+    currentStatusId !== "" ||
     currentBranchId !== "" ||
     currentCategoryId !== "" ||
-    currentSource !== "" ||
+    currentSourceId !== "" ||
     currentShift !== "" ||
     currentUserId !== "" ||
-    currentPerPage !== "" ||
-    (searchParams.get("date_from") !== "" &&
-      searchParams.get("date_from") !== null) ||
-    (searchParams.get("date_to") !== "" &&
-      searchParams.get("date_to") !== null) ||
-    (searchParams.get("assignment_status") !== "" &&
-      searchParams.get("assignment_status") !== null) ||
-    (searchParams.get("course_id") !== "" &&
-      searchParams.get("course_id") !== null);
+    (currentPerPage !== "" && currentPerPage !== "15") ||
+    Boolean(searchParams.get("date_from")) ||
+    Boolean(searchParams.get("date_to")) ||
+    Boolean(searchParams.get("assignment_status")) ||
+    Boolean(searchParams.get("course_id"));
+
+  // ==========================================
+  // Render
+  // ==========================================
 
   return (
     <div className="p-6 mb-6 border rounded-xl bg-card shadow-sm">
+      {/* Filter Header */}
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-foreground">Filters</h3>
 
@@ -167,8 +200,10 @@ export default function CRMLeadsFilter({ categories }: CRMLeadsFilterProps) {
         )}
       </div>
 
+      {/* Filter Fields Grid */}
       <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
-        {/* Search */}
+        
+        {/* Search Input */}
         <div className="relative col-span-2">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
@@ -177,7 +212,8 @@ export default function CRMLeadsFilter({ categories }: CRMLeadsFilterProps) {
             {...register("search")}
           />
         </div>
-        {/* Course */}
+
+        {/* Courses Multi-select */}
         <div className="space-y-1 col-span-2">
           <Controller
             name="course_id"
@@ -185,10 +221,10 @@ export default function CRMLeadsFilter({ categories }: CRMLeadsFilterProps) {
             render={({ field }) => (
               <CourseMultipleSearchSelect
                 value={field.value ? field.value.split(",") : []}
-                onValueChange={(val) => {
-                  const stringValue = val.join(",");
-                  field.onChange(stringValue);
-                  handleSelectChange("course_id")(stringValue);
+                onValueChange={(selectedCourses) => {
+                  const serializedValue = selectedCourses.join(",");
+                  field.onChange(serializedValue);
+                  handleSelectChange("course_id")(serializedValue);
                 }}
                 placeholder="Select course ..."
               />
@@ -196,30 +232,33 @@ export default function CRMLeadsFilter({ categories }: CRMLeadsFilterProps) {
           />
         </div>
 
-        {/* Status */}
+        {/* Lead Status */}
         <Controller
-          name="status"
+          name="status_id"
           control={control}
           render={({ field }) => (
             <Select
               value={field.value || ""}
               onValueChange={(value) => {
                 field.onChange(value);
-                handleSelectChange("status")(value);
+                handleSelectChange("status_id")(value);
               }}
             >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="1">New</SelectItem>
-                <SelectItem value="2">Busy</SelectItem>
-                <SelectItem value="3">Interested</SelectItem>
-                <SelectItem value="4">Follow Up</SelectItem>
-                <SelectItem value="5">Enrolled</SelectItem>
-                <SelectItem value="6">Cancelled</SelectItem>
-                <SelectItem value="7">Not Received</SelectItem>
-                <SelectItem value="8">Call Rejected</SelectItem>
+                {statuses.length > 0 ? (
+                  statuses.map((statusItem) => (
+                    <SelectItem key={statusItem.id} value={String(statusItem.id)}>
+                      {statusItem.status}
+                    </SelectItem>
+                  ))
+                ) : (
+                  <SelectItem value="none" disabled>
+                    No status found
+                  </SelectItem>
+                )}
               </SelectContent>
             </Select>
           )}
@@ -241,7 +280,7 @@ export default function CRMLeadsFilter({ categories }: CRMLeadsFilterProps) {
           )}
         />
 
-        {/* Category */}
+        {/* Lead Category */}
         <Controller
           name="category_id"
           control={control}
@@ -257,7 +296,7 @@ export default function CRMLeadsFilter({ categories }: CRMLeadsFilterProps) {
                 <SelectValue placeholder="Lead Category" />
               </SelectTrigger>
               <SelectContent>
-                {categories?.length ? (
+                {categories.length > 0 ? (
                   categories.map((category) => (
                     <SelectItem key={category.id} value={String(category.id)}>
                       {category.name}
@@ -273,30 +312,33 @@ export default function CRMLeadsFilter({ categories }: CRMLeadsFilterProps) {
           )}
         />
 
-        {/* Source */}
+        {/* Lead Source */}
         <Controller
-          name="source"
+          name="source_id"
           control={control}
           render={({ field }) => (
             <Select
               value={field.value || ""}
               onValueChange={(value) => {
                 field.onChange(value);
-                handleSelectChange("source")(value);
+                handleSelectChange("source_id")(value);
               }}
             >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Lead Source" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="1">Manual</SelectItem>
-                <SelectItem value="2">Website</SelectItem>
-                <SelectItem value="3">Facebook</SelectItem>
-                <SelectItem value="4">API</SelectItem>
-                <SelectItem value="5">WhatsApp</SelectItem>
-                <SelectItem value="6">Phone</SelectItem>
-                <SelectItem value="7">Referrer</SelectItem>
-                <SelectItem value="8">Others</SelectItem>
+                {sources.length > 0 ? (
+                  sources.map((source) => (
+                    <SelectItem key={source.id} value={String(source.id)}>
+                      {source.name}
+                    </SelectItem>
+                  ))
+                ) : (
+                  <SelectItem value="none" disabled>
+                    No source found
+                  </SelectItem>
+                )}
               </SelectContent>
             </Select>
           )}
@@ -326,7 +368,7 @@ export default function CRMLeadsFilter({ categories }: CRMLeadsFilterProps) {
           )}
         />
 
-        {/* User ID (Consultant) */}
+        {/* Counsellor (Permission Guarded) */}
         <PermissionGuard requiredPermission="view-leads">
           <Controller
             name="user_id"
@@ -391,10 +433,12 @@ export default function CRMLeadsFilter({ categories }: CRMLeadsFilterProps) {
             </Select>
           )}
         />
+
         {/* Date Range Picker */}
         <div className="space-y-1">
           <DatePickerWithRange />
         </div>
+
         {/* Per Page Select */}
         <div className="flex items-center justify-start">
           <PerPageSelect
@@ -404,6 +448,7 @@ export default function CRMLeadsFilter({ categories }: CRMLeadsFilterProps) {
             className="w-full"
           />
         </div>
+
       </div>
     </div>
   );

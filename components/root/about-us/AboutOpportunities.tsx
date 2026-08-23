@@ -7,6 +7,7 @@ import { cacheTag } from "next/cache";
 import { getLatestCountDown } from "@/apiServices/homePageService";
 import ErrorComponent from "@/components/common/ErrorComponent";
 import NotFoundComponent from "@/components/common/NotFoundComponent";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 const imageUrls = {
   img1: "/images/oppurtunity__0001.jpeg",
@@ -22,7 +23,7 @@ export interface InfoItem {
 
 const AboutOpportunities = async () => {
   "use cache";
-  cacheTag("stats-list");
+  cacheTag(CACHE_TAGS.STATS);
   let stats;
   let countDownData;
   try {
@@ -70,7 +71,7 @@ const AboutOpportunities = async () => {
         <div className="py-3 px-2 bg-white shadow rounded-2xl lg:col-span-2 ">
           <div className="relative h-[260px] lg:h-[360px] w-full rounded-2xl ">
             <Image
-              src={imageUrls.img1 || "/images/placeholder_img.jpg"}
+              src={(imageUrls.img1 && typeof imageUrls.img1 === "string" && imageUrls.img1.trim() !== "") ? imageUrls.img1 : "/images/placeholder_img.jpg"}
               fill
               alt="Group of professionals in a collaborative discussion"
               className="rounded-2xl object-cover h-full object-center"
@@ -109,7 +110,7 @@ const AboutOpportunities = async () => {
         <div className="py-3 px-2 bg-white shadow rounded-2xl lg:col-span-1">
           <div className="relative h-[260px] lg:h-[360px] w-full rounded-2xl ">
             <Image
-              src={imageUrls.img3 || "/images/placeholder_img.jpg"}
+              src={(imageUrls.img3 && typeof imageUrls.img3 === "string" && imageUrls.img3.trim() !== "") ? imageUrls.img3 : "/images/placeholder_img.jpg"}
               fill
               alt="Group of professionals in a collaborative discussion"
               className="rounded-2xl object-cover"
@@ -120,7 +121,7 @@ const AboutOpportunities = async () => {
         <div className="py-3 px-2 bg-white shadow rounded-2xl lg:col-span-2">
           <div className="relative h-[260px] lg:h-[360px] w-full rounded-2xl ">
             <Image
-              src={imageUrls.img4 || "/images/placeholder_img.jpg"}
+              src={(imageUrls.img4 && typeof imageUrls.img4 === "string" && imageUrls.img4.trim() !== "") ? imageUrls.img4 : "/images/placeholder_img.jpg"}
               fill
               alt="Group of professionals in a collaborative discussion"
               className="rounded-2xl object-cover"

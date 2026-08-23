@@ -1,8 +1,9 @@
 "use server";
+import { cacheTag, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { cacheTag, updateTag } from "next/cache";
 import { PaginationType } from "@/types/pagination";
 
 const API_BASE =
@@ -72,8 +73,7 @@ export async function getBlogsCached(
     params: Record<string, unknown> = {}
 ): Promise<BlogsResponse | null> {
     "use cache";
-    cacheTag("blogs-list");
-
+    cacheTag(CACHE_TAGS.BLOGS);
     // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
     try {
         const urlParams = new URLSearchParams();
@@ -176,7 +176,7 @@ export async function createBlog(
         const result = await res.json();
 
         if (res.ok && result?.success) {
-          updateTag("blogs-list");
+          updateTag(CACHE_TAGS.BLOGS);
         }
         return result;
     } catch (error: unknown) {
@@ -215,7 +215,7 @@ export async function updateBlog(
         const result = await res.json();
 
         if (res.ok && result?.success) {
-          updateTag("blogs-list");
+          updateTag(CACHE_TAGS.BLOGS);
         }
         return result;
     } catch (error: unknown) {
@@ -253,7 +253,7 @@ export async function deleteBlog(id: number): Promise<SingleBlogResponse> {
         const result = await res.json();
 
         if (res.ok && result?.success) {
-          updateTag("blogs-list");
+          updateTag(CACHE_TAGS.BLOGS);
         }
         return result;
     } catch (error: unknown) {

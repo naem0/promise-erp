@@ -1,8 +1,9 @@
 "use server";
+import { cacheTag, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { cacheTag, updateTag } from "next/cache";
 import { handleApiError, processApiResponse } from "@/lib/apiErrorHandler";
 import { PaginationType } from "@/types/pagination";
 
@@ -81,8 +82,7 @@ export async function getCouponsCached(
   params: Record<string, unknown> = {}
 ): Promise<CouponResponse | null> {
   "use cache";
-  cacheTag("coupons-list");
-
+  cacheTag(CACHE_TAGS.COUPONS);
   try {
   // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
     const urlParams = new URLSearchParams();
@@ -217,7 +217,7 @@ export async function createCoupon(couponData: CreateCouponRequest): Promise<Sin
     }
 
     if (res.ok && result?.success) {
-      updateTag("coupons-list");
+      updateTag(CACHE_TAGS.COUPONS);
     }
 
     return {
@@ -281,7 +281,7 @@ export async function updateCoupon(id: number, couponData: UpdateCouponRequest):
     }
 
     if (res.ok && result?.success) {
-      updateTag("coupons-list");
+      updateTag(CACHE_TAGS.COUPONS);
     }
 
     return {
@@ -339,7 +339,7 @@ export async function deleteCoupon(id: number): Promise<SingleCouponResponse> {
     }
 
     if (res.ok && result?.success) {
-      updateTag("coupons-list");
+      updateTag(CACHE_TAGS.COUPONS);
     }
 
     return {

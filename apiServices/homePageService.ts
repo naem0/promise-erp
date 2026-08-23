@@ -1,4 +1,6 @@
 "use server";
+import { cacheTag, updateTag, cacheLife } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 const API_BASE =
   process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
@@ -395,6 +397,10 @@ export interface CourseSearchResponse {
 
 // Home Hero section get API
 export async function getLatestHeroSection(): Promise<HeroSectionResponse | null> {
+  "use cache";
+  cacheTag(CACHE_TAGS.HERO_SECTIONS);
+  cacheLife("days");
+
   try {
     const res = await fetch(`${API_BASE}/public/hero-section/latest`);
 
@@ -425,6 +431,10 @@ export async function getLatestHeroSection(): Promise<HeroSectionResponse | null
 export async function getLatestCountDown(
   params: Record<string, unknown> = {},
 ): Promise<CountDownResponse | null> {
+  "use cache";
+  cacheTag(CACHE_TAGS.STATS);
+  cacheLife("days");
+
   try {
     const urlParams = new URLSearchParams();
 
@@ -466,6 +476,10 @@ export async function getLatestCountDown(
 }
 // Home page Branches get API
 export async function fetchAllBranches(): Promise<BranchApiResponse | null> {
+  "use cache";
+  cacheTag(CACHE_TAGS.BRANCHES);
+  cacheLife("days");
+
   try {
     const res = await fetch(`${API_BASE}/public/branch-list`);
 
@@ -489,6 +503,10 @@ export async function fetchAllBranches(): Promise<BranchApiResponse | null> {
 //Start Home page Branches get API --
 
 export async function getHomePageAllBranches(): Promise<BranchApiResponse | null> {
+  "use cache";
+  cacheTag(CACHE_TAGS.BRANCHES);
+  cacheLife("days");
+
   try {
     const res = await fetch(`${API_BASE}/public/our-branches`);
 
@@ -514,6 +532,10 @@ export async function getHomePageAllBranches(): Promise<BranchApiResponse | null
   }
 }
 export async function getPublicBranchList(): Promise<HeaderBranchListResponse | null> {
+  "use cache";
+  cacheTag(CACHE_TAGS.BRANCHES);
+  cacheLife("days");
+
   try {
     const res = await fetch(`${API_BASE}/public/branch-list`);
 
@@ -541,6 +563,10 @@ export async function getPublicBranchList(): Promise<HeaderBranchListResponse | 
 //End Home page Branches get API --
 
 export async function fetchAllPublicTeachers(): Promise<TeacherApiResponse | null> {
+  "use cache";
+  cacheTag(CACHE_TAGS.TEACHERS);
+  cacheLife("days");
+
   try {
     const res = await fetch(`${API_BASE}/public/teachers-list`);
 
@@ -570,6 +596,10 @@ export async function fetchAllPublicTeachers(): Promise<TeacherApiResponse | nul
 export async function fetchPublicFeaturedReviews(
   params: Record<string, unknown> = {},
 ): Promise<ReviewApiResponse | null> {
+  "use cache";
+  cacheTag(CACHE_TAGS.REVIEWS);
+  cacheLife("days");
+
   try {
     const urlParams = new URLSearchParams();
 
@@ -636,6 +666,10 @@ export async function SubscribeToNewsletter(
 
 // Home page affiliate Partner section get API --
 export async function fetchHomeAffiliatePartners(): Promise<PartnersApiResponse | null> {
+  "use cache";
+  cacheTag(CACHE_TAGS.AFFILIATES_CLIENTS);
+  cacheLife("days");
+
   try {
     const res = await fetch(`${API_BASE}/public/partners`);
     if (res.status === 404) {
@@ -660,6 +694,10 @@ export async function fetchHomeAffiliatePartners(): Promise<PartnersApiResponse 
 
 // Home page Services section get API
 export async function fetchPublicCompanyServices(): Promise<ServicesApiResponse | null> {
+  "use cache";
+  cacheTag(CACHE_TAGS.SERVICES);
+  cacheLife("days");
+
   try {
     const res = await fetch(`${API_BASE}/public/company-services`);
 
@@ -689,6 +727,10 @@ export async function fetchPublicCompanyServices(): Promise<ServicesApiResponse 
 //       }
 // Home page Video Galleries section get API
 export async function fetchPublicVideoGalleries(): Promise<SuccessStoryApiResponse | null> {
+  "use cache";
+  cacheTag(CACHE_TAGS.VIDEO_GALLERIES);
+  cacheLife("days");
+
   try {
     const res = await fetch(`${API_BASE}/public/video-galleries`);
 
@@ -722,6 +764,10 @@ export async function fetchPublicVideoGalleriesPage({
 }: {
   params?: Record<string, unknown>;
 }): Promise<SuccessStoryApiResponse | null> {
+  "use cache";
+  cacheTag(CACHE_TAGS.VIDEO_GALLERIES);
+  cacheLife("days");
+
   try {
     const urlParams = new URLSearchParams();
 
@@ -759,6 +805,10 @@ export async function fetchPublicVideoGalleriesPage({
 export async function fetchPublicNewsFeeds(
   params: Record<string, unknown> = {},
 ): Promise<NewsFeedApiResponse | null> {
+  "use cache";
+  cacheTag(CACHE_TAGS.NEWS_FEEDS);
+  cacheLife("days");
+
   try {
     const urlParams = new URLSearchParams();
 
@@ -795,6 +845,10 @@ export async function fetchPublicNewsFeeds(
 
 // Home page opportunity section get API
 export async function fetchPublicOpportunities(): Promise<OpportunityApiResponse | null> {
+  "use cache";
+  cacheTag(CACHE_TAGS.OPPORTUNITIES);
+  cacheLife("days");
+
   try {
     const res = await fetch(`${API_BASE}/public/public-opportunities`);
 
@@ -821,6 +875,10 @@ export async function fetchPublicOpportunities(): Promise<OpportunityApiResponse
 }
 // home page featured course section get API
 export async function fetchPublicHomeBlog(): Promise<BlogApiResponse | null> {
+  "use cache";
+  cacheTag(CACHE_TAGS.BLOGS);
+  cacheLife("days");
+
   try {
     const res = await fetch(`${API_BASE}/public/blogs`);
     if (!res.ok) {
@@ -842,6 +900,10 @@ export async function fetchPublicHomeBlog(): Promise<BlogApiResponse | null> {
 
 // Home Govt Course Section get API
 export async function getPublicGovtCourseSection(): Promise<GovtCourseResponse | null> {
+  "use cache";
+  cacheTag(CACHE_TAGS.GOVT_COURSES);
+  cacheLife("days");
+
   try {
     const res = await fetch(`${API_BASE}/public/govt-course-section`);
 
@@ -870,6 +932,10 @@ export async function getPublicGovtCourseSection(): Promise<GovtCourseResponse |
 }
 // Home Get Newsletter Section --
 export async function getPublicNewsletterSection(): Promise<getNewsletterItemResponse | null> {
+  "use cache";
+  cacheTag(CACHE_TAGS.PUBLIC_NEWSLETTER);
+  cacheLife("days");
+
   try {
     const res = await fetch(`${API_BASE}/public/newsletter-section`);
 
@@ -958,6 +1024,10 @@ export interface MemberApiResponse {
 export async function getMembersByType(
   typeId: number,
 ): Promise<MemberApiResponse | null> {
+  "use cache";
+  cacheTag(CACHE_TAGS.PUBLIC_MEMBERS);
+  cacheLife("days");
+
   try {
     const res = await fetch(`${API_BASE}/public/partners/type/${typeId}`);
 

@@ -24,6 +24,7 @@ import InventoryCategorySearchSelect from "@/components/common/InventoryCategory
 interface FilterFormValues {
     search?: string;
     status?: string;
+    product_type?: string;
     sort_order?: string;
     category_id?: string;
     brand_id?: string;
@@ -47,6 +48,7 @@ export default function ItemsFilter({ categories = [], brands = [], rooms = [] }
             defaultValues: {
                 search: searchParams.get("search") || "",
                 status: searchParams.get("status") || "",
+                product_type: searchParams.get("product_type") || "",
                 sort_order: searchParams.get("sort_order") || "",
                 category_id: searchParams.get("category_id") || "",
                 brand_id: searchParams.get("brand_id") || "",
@@ -99,6 +101,7 @@ export default function ItemsFilter({ categories = [], brands = [], rooms = [] }
         reset({
             search: "",
             status: "",
+            product_type: "",
             sort_order: "",
             category_id: "",
             brand_id: "",
@@ -110,6 +113,7 @@ export default function ItemsFilter({ categories = [], brands = [], rooms = [] }
 
     const currentSearch = searchParams.get("search") || "";
     const currentStatus = searchParams.get("status") || "";
+    const currentProductType = searchParams.get("product_type") || "";
     const currentSortOrder = searchParams.get("sort_order") || "";
     const currentCategoryId = searchParams.get("category_id") || "";
     const currentBrandId = searchParams.get("brand_id") || "";
@@ -120,6 +124,7 @@ export default function ItemsFilter({ categories = [], brands = [], rooms = [] }
     const hasActiveFilters =
         currentSearch !== "" ||
         currentStatus !== "" ||
+        currentProductType !== "" ||
         currentSortOrder !== "" ||
         currentCategoryId !== "" ||
         currentBrandId !== "" ||
@@ -146,9 +151,9 @@ export default function ItemsFilter({ categories = [], brands = [], rooms = [] }
                 )}
             </div>
 
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-8">
                 {/* Search */}
-                <div className="relative md:col-span-2">
+                <div className="relative sm:col-span-2 lg:col-span-2 xl:col-span-2">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                         placeholder="Search by name, barcode, model..."
@@ -156,6 +161,29 @@ export default function ItemsFilter({ categories = [], brands = [], rooms = [] }
                         {...register("search")}
                     />
                 </div>
+
+                {/* Product Type */}
+                <Controller
+                    name="product_type"
+                    control={control}
+                    render={({ field }) => (
+                        <Select
+                            value={field.value}
+                            onValueChange={(value) => {
+                                field.onChange(value);
+                                handleSelectChange("product_type")(value);
+                            }}
+                        >
+                            <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Item Type" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="1">Admin Item</SelectItem>
+                                <SelectItem value="2">IT Item</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    )}
+                />
 
                 {/* Branch */}
                 <Controller
@@ -179,6 +207,7 @@ export default function ItemsFilter({ categories = [], brands = [], rooms = [] }
                     control={control}
                     render={({ field }) => (
                         <InventoryCategorySearchSelect
+                            categories={categories}
                             value={field.value || ""}
                             onValueChange={(value) => {
                                 field.onChange(value);
@@ -195,6 +224,7 @@ export default function ItemsFilter({ categories = [], brands = [], rooms = [] }
                     control={control}
                     render={({ field }) => (
                         <BrandSearchSelect
+                            brands={brands}
                             value={field.value || ""}
                             onValueChange={(value) => {
                                 field.onChange(value);
@@ -249,7 +279,7 @@ export default function ItemsFilter({ categories = [], brands = [], rooms = [] }
                 />
 
                 {/* Per Page Select */}
-                <div className="flex items-center justify-start md:col-span-1">
+                <div className="flex items-center justify-start sm:col-span-2 md:col-span-1">
                     <PerPageSelect className="w-full" />
                 </div>
             </div>

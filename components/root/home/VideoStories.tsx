@@ -8,10 +8,11 @@ import VideoStoriesCard from "./VideoStoriesCard";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import ErrorComponent from "@/components/common/ErrorComponent";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 const VideoStories = async () => {
   "use cache";
-  cacheTag("public-video-galleries");
+  cacheTag(CACHE_TAGS.VIDEO_GALLERIES);
   let storyData;
   try {
     storyData = await fetchPublicVideoGalleries();
@@ -40,7 +41,7 @@ const VideoStories = async () => {
   }
 
   return (
-    <section className="bg-white py-8 md:py-14">
+    <section className="bg-white py-8 lg:py-14">
       <div className="container mx-auto px-4">
         <SectionTitle
           title={storyData?.data?.section_title}

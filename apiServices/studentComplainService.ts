@@ -1,8 +1,9 @@
 "use server";
+import { cacheTag, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { cacheTag, updateTag } from "next/cache";
 import { PaginationType } from "@/types/pagination";
 
 const API_BASE =
@@ -49,8 +50,7 @@ export async function getStudentComplainsCached(
   params: Record<string, unknown> = {}
 ): Promise<StudentComplainsApiResponse | null> {
   "use cache";
-  cacheTag("student-complains-list");
-
+  cacheTag(CACHE_TAGS.STUDENT_COMPLAINS);
   try {
     const urlParams = new URLSearchParams();
     Object.entries(params).forEach(([key, value]) => {
@@ -135,7 +135,7 @@ export async function createStudentComplain(
     const data: CreateComplainApiResponse = await res.json();
 
     if (res.ok && data?.success) {
-      updateTag("student-complains-list");
+      updateTag(CACHE_TAGS.STUDENT_COMPLAINS);
     }
 
     return data;

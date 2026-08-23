@@ -25,7 +25,8 @@ const OurAchievementCart = ({ achievements }: OurAchievementCartProps) => {
 
   const plugin = React.useRef(
     Autoplay({
-      delay: 3000,
+      delay: 5000,
+      stopOnMouseEnter: true,
       stopOnInteraction: false,
     }),
   );
@@ -42,7 +43,7 @@ const OurAchievementCart = ({ achievements }: OurAchievementCartProps) => {
 
   return (
     <section className="pt-8 md:pt-14">
-      <div className="text-center mb-10">
+      <div className="text-center mb-6 lg:mb-10">
         <h2 className="text-2xl lg:text-4xl font-bold text-secondary">
          Where Skills Become Success
         </h2>
@@ -59,15 +60,15 @@ const OurAchievementCart = ({ achievements }: OurAchievementCartProps) => {
       >
         <CarouselContent>
           {achievements.map((item) => (
-            <CarouselItem key={item.id}>
-              <Card className="py-0">
-                <CardContent className="p-0">
-                  <div className="grid grid-cols-1 lg:grid-cols-2 items-center gap-4 lg:gap-8">
+            <CarouselItem key={item.id} className="h-full">
+              <Card className="py-0 h-full">
+                <CardContent className="p-0 h-full">
+                  <div className="grid grid-cols-1 lg:grid-cols-2  gap-4 lg:gap-8 h-full">
                     {/* Image */}
-                    <div className="">
+                    <div className="py-4 flex justify-center px-2 h-full">
                       <div className="w-full h-[300px] md:h-[400px] relative">
                         <Image
-                          src={item.image || "/images/placeholder_img.jpg"}
+                          src={(item.image && typeof item.image === "string" && item.image.trim() !== "") ? item.image : "/images/placeholder_img.jpg"}
                           alt={item.title || "image"}
                           fill
                           className="object-cover rounded-xl object-top"
@@ -76,7 +77,7 @@ const OurAchievementCart = ({ achievements }: OurAchievementCartProps) => {
                     </div>
 
                     {/* Content */}
-                    <div className="flex flex-col justify-center px-4 py-4 md:py-6">
+                    <div className="flex flex-col justify-center px-6 lg:px-0 lg:pe-6 py-4 md:py-6">
                       <h3 className="text-2xl md:text-3xl font-bold text-secondary mb-4">
                         {item.title || "Dummy Title"}
                       </h3>
@@ -101,8 +102,8 @@ const OurAchievementCart = ({ achievements }: OurAchievementCartProps) => {
         {/* Conditional Arrows */}
         {showControls && (
           <>
-            <CarouselPrevious className="absolute left-0 top-1/2 -translate-y-1/2 bg-primary/90 hover:bg-primary text-white w-10 h-10 rounded-full shadow-lg border-0" />
-            <CarouselNext className="absolute right-0 top-1/2 -translate-y-1/2 bg-primary/90 hover:bg-primary text-white w-10 h-10 rounded-full shadow-lg border-0" />
+            <CarouselPrevious className="absolute -left-3 top-1/2 -translate-y-1/2 bg-primary/90 hover:bg-primary text-white w-8 sm:w-10 h-8 sm:h-10 rounded-full shadow-lg border-0" />
+            <CarouselNext className="absolute -right-3 top-1/2 -translate-y-1/2 bg-primary/90 hover:bg-primary text-white w-8 sm:w-10 h-8 sm:h-10 rounded-full shadow-lg border-0" />
           </>
         )}
       </Carousel>

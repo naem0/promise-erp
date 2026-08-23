@@ -1,8 +1,9 @@
 "use server";
+import { cacheTag, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { cacheTag, updateTag } from "next/cache";
 import { PaginationType } from "@/types/pagination";
 
 const API_BASE =
@@ -92,9 +93,8 @@ export async function getGroupItemsCached(
   token: string,
   params: Record<string, unknown> = {},
 ): Promise<GroupItemsResponse | null> {
-  "use cache";
-  cacheTag("group-items-list");
-
+  "use cache: private";
+  cacheTag(CACHE_TAGS.INVENTORY_GROUP_ITEMS);
   try {
     const urlParams = new URLSearchParams();
     for (const key in params) {
@@ -114,12 +114,12 @@ export async function getGroupItemsCached(
     );
 
     if (res.status === 404) {
-      console.warn("No group items found (404). Returning empty list.");
+      console.warn("No items found (404). Returning empty list.");
       return null;
     }
 
     if (res.status === 401 || res.status === 403) {
-      console.warn("Unauthorized: Access token error.");
+      console.warn("Unauthorized: Access token not found.");
       return null;
     }
 
@@ -179,11 +179,11 @@ export async function getGroupItemById(
       },
     });
     if (res.status === 404) {
-      console.warn("No group item found (404).");
+      console.warn("No items found (404). Returning empty list.");
       return null;
     }
     if (res.status === 401 || res.status === 403) {
-      console.warn("Unauthorized: Access token error.");
+      console.warn("Unauthorized: Access token not found.");
       return null;
     }
     if (!res.ok) {
@@ -240,7 +240,7 @@ export async function createGroupItem(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("group-items-list");
+      updateTag(CACHE_TAGS.INVENTORY_GROUP_ITEMS);
     }
     return result;
   } catch (error: unknown) {
@@ -279,7 +279,7 @@ export async function updateGroupItem(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("group-items-list");
+      updateTag(CACHE_TAGS.INVENTORY_GROUP_ITEMS);
     }
     return result;
   } catch (error: unknown) {
@@ -316,7 +316,7 @@ export async function deleteGroupItem(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("group-items-list");
+      updateTag(CACHE_TAGS.INVENTORY_GROUP_ITEMS);
     }
     return result;
   } catch (error: unknown) {
@@ -328,3 +328,81 @@ export async function deleteGroupItem(
     }
   }
 }
+
+// =======================
+// SEARCH GROUP ITEMS
+// =======================
+
+export interface GroupItemSearchDetail {
+  product_id: number;
+  product_name: string;
+  quantity?: number;
+  unit_price?: string;
+}
+
+export interface InventorySearchGroupItem {
+  id: number;
+  type?: string;
+  name: string;
+  barcode?: string ;
+  price?: number;
+  details?: GroupItemSearchDetail[];
+  image?: string | null;
+}
+
+export interface InventorySearchGroupItemsResponse {
+  success: boolean;
+  message: string;
+  code: number;
+  data: InventorySearchGroupItem[];
+  errors?: Record<string, string[]>;
+}
+
+export async function searchInventoryGroupItems(
+  query?: string,
+): Promise<InventorySearchGroupItemsResponse | null> {
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+
+  if (!token) throw new Error("No valid session/token");
+
+  try {
+    const urlParams = new URLSearchParams();
+    if (query?.trim()) {
+      urlParams.append("q", query.trim());
+    }
+
+    const queryString = urlParams.toString();
+    const url = `${API_BASE}/inventory/search-group-items${queryString ? `?${queryString}` : ""}`;
+
+    const res = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (res.status === 404) {
+      console.warn("No items found (404). Returning empty list.");
+      return null;
+    }
+
+    if (res.status === 401 || res.status === 403) {
+      console.warn("Unauthorized: Access token not found.");
+      return null;
+    }
+
+    if (!res.ok) {
+      throw new Error(`Status: ${res.status} ${res.statusText}`);
+    }
+
+    return await res.json();
+  } catch (error: unknown) {
+    console.error("searchInventoryGroupItems error:", error);
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error("Failed to search inventory group items");
+  }
+}
+

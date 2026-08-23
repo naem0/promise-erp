@@ -38,9 +38,7 @@ const CourseCard = ({
             className="bg-muted rounded-t-lg relative overflow-hidden"
           >
             <Image
-              src={
-                course?.featured_image || "/images/hero-banner/courselist.png"
-              }
+              src={(course?.featured_image && typeof course?.featured_image === "string" && course?.featured_image.trim() !== "") ? course?.featured_image : "/images/hero-banner/courselist.png"}
               alt={course.title}
               height={400}
               width={600}
@@ -56,7 +54,7 @@ const CourseCard = ({
         </CardHeader>
 
         <CardContent className="px-4 py-2 space-y-2">
-          <h3 className="font-semibold text-secondary text-lg tracking-tight capitalize">
+          <h3 className="font-semibold text-secondary text-sm xl:text-base tracking-tight capitalize">
             {course?.title}
           </h3>
           <div className="flex items-center gap-1 pb-1">
@@ -84,17 +82,17 @@ const CourseCard = ({
           </div>
         </CardContent>
 
-        <CardFooter className="p-4 pt-0 justify-between gap-2">
+        <CardFooter className="p-4 pt-0 grid xl:grid-cols-1 2xl:grid-cols-2 gap-2">
           {/* <Button className="cursor-pointer">View Details</Button> */}
           <div className="flex items-center gap-2">
             {course?.batch?.after_discount &&
             course?.batch?.after_discount > 0 ? (
-              <span className="text-sm text-muted-foreground line-through">
+              <span className="text-[12px] text-muted-foreground line-through">
                 ৳ {course.batch.price}
               </span>
             ) : null}
 
-            <span className="text-lg font-bold text-primary">
+            <span className="text-sm font-medium text-primary">
               ৳{" "}
               {course?.batch?.after_discount || course?.batch?.price || "Free"}
             </span>

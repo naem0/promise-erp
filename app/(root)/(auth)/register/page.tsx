@@ -13,7 +13,7 @@ const RegisterPage = () => {
               "inset -4px -4px 16px rgba(21, 158, 66, 0.2), inset 4px 4px 16px rgba(21, 158, 66, 0.2)",
           }}
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 justify-between items-center">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 xl:gap-5 justify-between items-center">
             <AuthLeftImage />
             <RegisterForm />
           </div>

@@ -1,8 +1,10 @@
 "use server";
+import { cacheTag, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { cacheTag } from "next/cache";
+
 import { PaginationType } from "@/types/pagination";
 
 const API_BASE =
@@ -214,7 +216,7 @@ export async function getCRMLeadReportsCached(
   params: Record<string, unknown> = {},
 ): Promise<CRMLeadReportsResponse | null> {
   "use cache: private";
-  cacheTag("crm-lead-reports");
+  cacheTag(CACHE_TAGS.CRM_REPORTS);
   try {
     const urlParams = new URLSearchParams();
     for (const key in params) {
@@ -329,7 +331,7 @@ export async function getCRMOldLeadReportsCached(
   params: Record<string, unknown> = {},
 ): Promise<CRMOldLeadReportsResponse | null> {
   "use cache: private";
-  cacheTag("crm-old-lead-reports");
+  cacheTag(CACHE_TAGS.CRM_REPORTS);
   try {
     const urlParams = new URLSearchParams();
     for (const key in params) {
@@ -390,7 +392,7 @@ export async function getCRMNewLeadReportsCached(
   params: Record<string, unknown> = {},
 ): Promise<CRMNewLeadReportsResponse | null> {
   "use cache: private";
-  cacheTag("crm-new-lead-reports");
+  cacheTag(CACHE_TAGS.CRM_REPORTS);
   try {
     const urlParams = new URLSearchParams();
     for (const key in params) {

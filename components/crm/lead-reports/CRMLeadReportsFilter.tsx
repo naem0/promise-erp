@@ -128,7 +128,7 @@ export default function CRMLeadReportsFilter({
         searchParams.get("branch_id") ||
         searchParams.get("course_id") ||
         searchParams.get("status") ||
-        (searchParams.get("per_page") !== "15" && searchParams.get("per_page") !== null) ||
+        (searchParams.get("per_page") && searchParams.get("per_page") !== "15") ||
         searchParams.get("date_from") ||
         searchParams.get("date_to");
 

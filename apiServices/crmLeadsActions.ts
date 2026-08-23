@@ -1,9 +1,10 @@
 "use server";
+import { cacheTag, updateTag, revalidatePath } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import { PaginationType } from "@/types/pagination";
-import { updateTag } from "next/cache";
 
 const API_BASE =
   process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
@@ -113,16 +114,14 @@ export async function assignLeadsToUser(
       }),
     });
 
-
     const result = await res.json();
 
-    if (res.ok && result?.success) {
-      updateTag("crm-leads-list");
-      if (res.ok && result?.success) {
-        updateTag("leads-activity-list");
-        updateTag("today-follow-up-leads");
-      }
-    }
+    updateTag(CACHE_TAGS.CRM_LEADS);
+    updateTag(CACHE_TAGS.CRM_ACTIVITIES);
+    updateTag(CACHE_TAGS.CRM_TODAY_FOLLOWUPS);
+    updateTag(CACHE_TAGS.CRM_NOTIFICATIONS);
+    revalidatePath("/crm/today-follow-ups");
+    revalidatePath("/crm/lead-activities");
 
     return result;
   } catch (error: unknown) {

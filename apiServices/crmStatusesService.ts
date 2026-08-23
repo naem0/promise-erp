@@ -1,8 +1,9 @@
 "use server";
+import { cacheTag, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { cacheTag, updateTag } from "next/cache";
 import { PaginationType } from "@/types/pagination";
 
 const API_BASE =
@@ -47,8 +48,7 @@ export async function getCrmStatusesCached(
   params: Record<string, unknown> = {},
 ): Promise<CrmStatusesResponse | null> {
   "use cache";
-  cacheTag("crm-statuses-list");
-
+  cacheTag(CACHE_TAGS.CRM_STATUSES);
   try {
     const urlParams = new URLSearchParams();
     for (const key in params) {
@@ -206,7 +206,7 @@ export async function createCrmStatus(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("crm-statuses-list");
+      updateTag(CACHE_TAGS.CRM_STATUSES);
     }
     return result;
   } catch (error: unknown) {
@@ -250,7 +250,7 @@ export async function updateCrmStatus(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("crm-statuses-list");
+      updateTag(CACHE_TAGS.CRM_STATUSES);
     }
     return result;
   } catch (error: unknown) {
@@ -292,7 +292,7 @@ export async function deleteCrmStatus(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("crm-statuses-list");
+      updateTag(CACHE_TAGS.CRM_STATUSES);
     }
     return result;
   } catch (error: unknown) {

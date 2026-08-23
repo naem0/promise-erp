@@ -9,10 +9,11 @@ import {
 } from "@/apiServices/homePageService";
 import { cacheTag } from "next/cache";
 import ErrorComponent from "@/components/common/ErrorComponent";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 export default async function HomeGovtCourse() {
   "use cache";
-  cacheTag("public-govt-course");
+  cacheTag(CACHE_TAGS.GOVT_COURSES);
 
   let govtCourseData: GovtCourseResponse | null = null;
   try {
@@ -33,12 +34,12 @@ export default async function HomeGovtCourse() {
   }
 
   return (
-    <section className="py-8 md:py-14 bg-secondary/5">
+    <section className="py-8 lg:py-14 bg-secondary/5">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-12 items-center ">
           <AspectRatio ratio={20 / 18} className="w-full relative">
             <Image
-              src={govtCourseInfo?.image || "/images/placeholder_img.jpg"}
+              src={(govtCourseInfo?.image && typeof govtCourseInfo?.image === "string" && govtCourseInfo?.image.trim() !== "") ? govtCourseInfo?.image : "/images/placeholder_img.jpg"}
               alt={govtCourseInfo?.title || ""}
               fill
               className="object-cover rounded-lg"

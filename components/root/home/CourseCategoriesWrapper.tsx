@@ -6,10 +6,11 @@ import CourseCategoriesSection from "./CourseCategoriesSection";
 import SectionTitle from "@/components/common/SectionTitle";
 import { cacheTag } from "next/cache";
 import ErrorComponent from "@/components/common/ErrorComponent";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 const CourseCategoriesWrapper = async () => {
   "use cache";
-  cacheTag("categories-list");
+  cacheTag(CACHE_TAGS.CATEGORIES);
 
   let categoriesData: CategoriesResponse | null = null;
   try {

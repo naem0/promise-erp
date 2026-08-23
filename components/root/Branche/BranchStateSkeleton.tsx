@@ -5,7 +5,7 @@ const BranchStateSkeleton = () => {
   return (
     <section className="pt-8 md:pt-12">
       <div className="container mx-auto">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 px-4 w-full">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-2 xl:gap-4 px-4 w-full">
           {[...Array(3)].map((_, index) => (
             <Card key={index} className="py-3 gap-2 border-none shadow-lg bg-secondary/20 text-white">
               <CardContent className="p-0 flex flex-col items-center text-center space-y-3">

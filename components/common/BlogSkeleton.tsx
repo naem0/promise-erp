@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 const BlogSkeleton = () => {
   return (
-    <div className="w-full py-8 md:py-14 bg-secondary/5">
+    <div className="w-full py-8 lg:py-14 bg-secondary/5">
       {/* Title Section Skeleton */}
       <div className="container mx-auto">
         <div className="flex flex-col items-center gap-3 mb-10">
@@ -12,7 +12,7 @@ const BlogSkeleton = () => {
         </div>
 
         {/* Responsive Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-3 xl:gap-4">
           <SkeletonCard />
           <SkeletonCard />
           <SkeletonCard />

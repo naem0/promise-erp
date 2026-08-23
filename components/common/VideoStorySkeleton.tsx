@@ -8,7 +8,7 @@ const VideoStorySkeleton = () => {
           <Skeleton className="h-8 mb-2 min-w-3xs bg-secondary/15" />
           <Skeleton className="h-5 min-w-3xs bg-secondary/15" />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 xl:gap-5">
           <div className="relative w-full aspect-video rounded-xl overflow-hidden">
             <Skeleton className="absolute inset-0 w-full h-full rounded-xl bg-secondary/15" />
             <Skeleton className="absolute w-16 h-16 bg-secondary/30 rounded-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />

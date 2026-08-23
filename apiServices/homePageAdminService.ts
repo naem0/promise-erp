@@ -1,8 +1,9 @@
 "use server";
+import { cacheTag, updateTag, revalidatePath } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { cacheTag, updateTag, revalidatePath } from "next/cache";
 import { PaginationType } from "@/types/pagination";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
@@ -59,8 +60,7 @@ export async function getHeroSectionsCached(
   params: Record<string, unknown> = {}
 ): Promise<HeroSectionsResponse | null> {
   "use cache";
-  cacheTag("hero-sections-list");
-
+  cacheTag(CACHE_TAGS.HERO_SECTIONS);
   try {
   // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
     const urlParams = new URLSearchParams();
@@ -177,7 +177,7 @@ export async function createHeroSection(
 
     const result = await response.json();
     if (response.ok && result?.success) {
-      updateTag("hero-sections-list");
+      updateTag(CACHE_TAGS.HERO_SECTIONS);
     }
 
     return result;
@@ -221,7 +221,7 @@ export async function updateHeroSection(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("hero-sections-list");
+      updateTag(CACHE_TAGS.HERO_SECTIONS);
     }
 
     return result;
@@ -257,7 +257,7 @@ export async function deleteHeroSection(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("hero-sections-list");
+      updateTag(CACHE_TAGS.HERO_SECTIONS);
     }
 
     return result;
@@ -311,8 +311,7 @@ export async function getVideoGalleriesCached(
   params: Record<string, unknown> = {}
 ): Promise<VideoGalleriesResponse | null> {
   "use cache";
-  cacheTag("public-reviews");
-
+  cacheTag(CACHE_TAGS.HERO_SECTIONS);
   try {
   // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
     const urlParams = new URLSearchParams();
@@ -417,7 +416,7 @@ export async function createVideoGallery(formData: FormData): Promise<SingleVide
     const result = await response.json();
 
     if (response.ok && result?.success) {
-      updateTag("public-reviews");
+      updateTag(CACHE_TAGS.REVIEWS);
     }
     return result;
   } catch (error: unknown) {
@@ -453,7 +452,7 @@ export async function updateVideoGallery(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("public-reviews");
+      updateTag(CACHE_TAGS.REVIEWS);
     }
 
     return result;
@@ -489,7 +488,7 @@ export async function deleteVideoGallery(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("public-reviews");
+      updateTag(CACHE_TAGS.REVIEWS);
     }
     return result;
   } catch (error: unknown) {
@@ -554,8 +553,7 @@ export async function getCommonSectionsCached(
   params: Record<string, unknown> = {}
 ): Promise<CommonSectionsResponse | null> {
   "use cache";
-  cacheTag("common-sections-list");
-
+  cacheTag(CACHE_TAGS.HERO_SECTIONS);
   try {
   // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
     const urlParams = new URLSearchParams();
@@ -676,19 +674,19 @@ export async function createCommonSection(
     const result = await response.json();
 
     if (response.ok && result?.success) {
-      updateTag("common-sections-list");
+      updateTag(CACHE_TAGS.COMMON_SECTIONS);
       if (response.ok && result?.success) {
-        updateTag("categories-list");
-        updateTag("public-services");
-        updateTag("public-govt-course");
-        updateTag("public-opportunity");
-        updateTag("public-teachers");
-        updateTag("public-video-galleries");
-        updateTag("public-blog");
-        updateTag("public-reviews");
-        updateTag("public-news-feeds");
-        updateTag("affiliates-clients");
-        updateTag("public-branches");
+        updateTag(CACHE_TAGS.CATEGORIES);
+        updateTag(CACHE_TAGS.SERVICES);
+        updateTag(CACHE_TAGS.GOVT_COURSES);
+        updateTag(CACHE_TAGS.OPPORTUNITIES);
+        updateTag(CACHE_TAGS.TEACHERS);
+        updateTag(CACHE_TAGS.VIDEO_GALLERIES);
+        updateTag(CACHE_TAGS.BLOGS);
+        updateTag(CACHE_TAGS.REVIEWS);
+        updateTag(CACHE_TAGS.NEWS_FEEDS);
+        updateTag(CACHE_TAGS.AFFILIATES_CLIENTS);
+        updateTag(CACHE_TAGS.BRANCHES);
       }
     }
 
@@ -732,20 +730,18 @@ export async function updateCommonSection(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("common-sections-list");
-      if (res.ok && result?.success) {
-        updateTag("categories-list");
-        updateTag("public-services");
-        updateTag("public-govt-course");
-        updateTag("public-opportunity");
-        updateTag("public-teachers");
-        updateTag("public-video-galleries");
-        updateTag("public-blog");
-        updateTag("public-reviews");
-        updateTag("public-news-feeds");
-        updateTag("affiliates-clients");
-        updateTag("public-branches");
-      }
+      updateTag(CACHE_TAGS.COMMON_SECTIONS);
+        updateTag(CACHE_TAGS.CATEGORIES);
+        updateTag(CACHE_TAGS.SERVICES);
+        updateTag(CACHE_TAGS.GOVT_COURSES);
+        updateTag(CACHE_TAGS.OPPORTUNITIES);
+        updateTag(CACHE_TAGS.TEACHERS);
+        updateTag(CACHE_TAGS.VIDEO_GALLERIES);
+        updateTag(CACHE_TAGS.BLOGS);
+        updateTag(CACHE_TAGS.REVIEWS);
+        updateTag(CACHE_TAGS.NEWS_FEEDS);
+        updateTag(CACHE_TAGS.AFFILIATES_CLIENTS);
+        updateTag(CACHE_TAGS.BRANCHES);
     }
 
     revalidatePath("/web-content/common-sections");
@@ -787,20 +783,18 @@ export async function deleteCommonSection(
 
 
     if (res.ok && result?.success) {
-      updateTag("common-sections-list");
-      if (res.ok && result?.success) {
-        updateTag("categories-list");
-        updateTag("public-services");
-        updateTag("public-govt-course");
-        updateTag("public-opportunity");
-        updateTag("public-teachers");
-        updateTag("public-video-galleries");
-        updateTag("public-blog");
-        updateTag("public-reviews");
-        updateTag("public-news-feeds");
-        updateTag("affiliates-clients");
-        updateTag("public-branches");
-      }
+      updateTag(CACHE_TAGS.COMMON_SECTIONS);
+        updateTag(CACHE_TAGS.CATEGORIES);
+        updateTag(CACHE_TAGS.SERVICES);
+        updateTag(CACHE_TAGS.GOVT_COURSES);
+        updateTag(CACHE_TAGS.OPPORTUNITIES);
+        updateTag(CACHE_TAGS.TEACHERS);
+        updateTag(CACHE_TAGS.VIDEO_GALLERIES);
+        updateTag(CACHE_TAGS.BLOGS);
+        updateTag(CACHE_TAGS.REVIEWS);
+        updateTag(CACHE_TAGS.NEWS_FEEDS);
+        updateTag(CACHE_TAGS.AFFILIATES_CLIENTS);
+        updateTag(CACHE_TAGS.BRANCHES);
     }
 
     revalidatePath("/web-content/common-sections");
@@ -862,8 +856,7 @@ export async function getOpportunitiesCached(
   params: Record<string, unknown> = {}
 ): Promise<OpportunitiesResponse | null> {
   "use cache";
-  cacheTag("opportunities-list");
-
+  cacheTag(CACHE_TAGS.HERO_SECTIONS);
   try {
   // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
     const urlParams = new URLSearchParams();
@@ -985,9 +978,9 @@ export async function createOpportunity(
     const result = await response.json();
 
     if (response.ok && result?.success) {
-      updateTag("opportunities-list");
+      updateTag(CACHE_TAGS.OPPORTUNITIES);
       if (response.ok && result?.success) {
-        updateTag("public-opportunity");
+        updateTag(CACHE_TAGS.OPPORTUNITIES);
       }
     }
 
@@ -1028,10 +1021,8 @@ export async function updateOpportunity(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("opportunities-list");
-      if (res.ok && result?.success) {
-        updateTag("public-opportunity");
-      }
+      updateTag(CACHE_TAGS.OPPORTUNITIES);
+      updateTag(CACHE_TAGS.OPPORTUNITIES);
     }
 
     return result;
@@ -1068,10 +1059,8 @@ export async function deleteOpportunity(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("opportunities-list");
-      if (res.ok && result?.success) {
-        updateTag("public-opportunity");
-      }
+      updateTag(CACHE_TAGS.OPPORTUNITIES);
+      updateTag(CACHE_TAGS.OPPORTUNITIES);
     }
 
     return result;
@@ -1126,8 +1115,7 @@ export async function getPartnersCached(
   params: Record<string, unknown> = {}
 ): Promise<PartnersResponse | null> {
   "use cache";
-  cacheTag("partners-list");
-
+  cacheTag(CACHE_TAGS.HERO_SECTIONS);
   try {
   // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
     const urlParams = new URLSearchParams();
@@ -1249,7 +1237,7 @@ export async function createPartner(
     const result = await response.json();
 
     if (response.ok && result?.success) {
-      updateTag("partners-list");
+      updateTag(CACHE_TAGS.PARTNERS);
     }
 
     return result;
@@ -1289,7 +1277,7 @@ export async function updatePartner(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("partners-list");
+      updateTag(CACHE_TAGS.PARTNERS);
     }
 
     return result;
@@ -1326,7 +1314,7 @@ export async function deletePartner(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("partners-list");
+      updateTag(CACHE_TAGS.PARTNERS);
     }
 
     return result;
@@ -1387,8 +1375,7 @@ export async function getNewsFeedsCached(
   params: Record<string, unknown> = {}
 ): Promise<NewsFeedsResponse | null> {
   "use cache";
-  cacheTag("news-feeds-list");
-
+  cacheTag(CACHE_TAGS.HERO_SECTIONS);
   try {
   // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
     const urlParams = new URLSearchParams();
@@ -1509,10 +1496,7 @@ export async function createNewsFeed(
     const result = await response.json();
 
     if (response.ok && result?.success) {
-      updateTag("news-feeds-list");
-      if (response.ok && result?.success) {
-        updateTag("public-news-feeds");
-      }
+      updateTag(CACHE_TAGS.NEWS_FEEDS);
     }
     return result;
   } catch (error: unknown) {
@@ -1551,10 +1535,7 @@ export async function updateNewsFeed(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("news-feeds-list");
-      if (res.ok && result?.success) {
-        updateTag("public-news-feeds");
-      }
+      updateTag(CACHE_TAGS.NEWS_FEEDS);
     }
 
     return result;
@@ -1591,10 +1572,7 @@ export async function deleteNewsFeed(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("news-feeds-list");
-      if (res.ok && result?.success) {
-        updateTag("public-news-feeds");
-      }
+      updateTag(CACHE_TAGS.NEWS_FEEDS);
     }
 
     return result;
@@ -1650,8 +1628,7 @@ export async function getImageGalleriesCached(
   params: Record<string, unknown> = {}
 ): Promise<ImageGalleriesResponse | null> {
   "use cache";
-  cacheTag("image-galleries-list");
-
+  cacheTag(CACHE_TAGS.IMAGE_GALLERIES);
   try {
   // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
     const urlParams = new URLSearchParams();
@@ -1759,7 +1736,7 @@ export async function createImageGallery(formData: FormData): Promise<SingleImag
     const result = await response.json();
 
     if (response.ok && result?.success) {
-      updateTag("image-galleries-list");
+      updateTag(CACHE_TAGS.IMAGE_GALLERIES);
     }
     return result;
   } catch (error: unknown) {
@@ -1796,7 +1773,7 @@ export async function updateImageGallery(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("image-galleries-list");
+      updateTag(CACHE_TAGS.IMAGE_GALLERIES);
     }
 
     return result;
@@ -1832,7 +1809,7 @@ export async function deleteImageGallery(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("image-galleries-list");
+      updateTag(CACHE_TAGS.IMAGE_GALLERIES);
     }
     return result;
   } catch (error: unknown) {

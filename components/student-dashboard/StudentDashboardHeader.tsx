@@ -5,7 +5,7 @@ import { Suspense } from 'react';
 const StudentDashboardHeader = () => {
     const navLinks: NavLink[] = [
         { name: "Home", href: "/" },
-        { name: "Courses", href: "/course", hasDropdown: true },
+        { name: "Courses", href: "/courses", hasDropdown: true },
         { name: "Instructors", href: "/instructors" },
         { name: "Branch", href: "/branch" },
         { name: "Blog", href: "/blog" },

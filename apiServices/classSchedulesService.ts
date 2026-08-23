@@ -1,8 +1,9 @@
 "use server";
+import { cacheTag, updateTag } from "next/cache";
 
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { cacheTag, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 import { PaginationType } from "@/types/pagination";
 
 const API_BASE =
@@ -58,7 +59,7 @@ export async function getClassSchedulesCached(
   params: Record<string, unknown> = {},
 ): Promise<ClassSchedulesResponse | null> {
   "use cache";
-  cacheTag("class-schedules-list");
+  cacheTag(CACHE_TAGS.CLASS_SCHEDULES);
 
   try {
     const urlParams = new URLSearchParams();

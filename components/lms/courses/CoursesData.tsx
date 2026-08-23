@@ -171,9 +171,7 @@ export default async function CoursesData({
                   <div className="flex items-center gap-3">
                     <div className="relative w-10 h-10 overflow-hidden rounded-md border text-center">
                       <Image
-                        src={
-                          course.featured_image || "/images/placeholder_img.jpg"
-                        }
+                        src={(course.featured_image && typeof course.featured_image === "string" && course.featured_image.trim() !== "") ? course.featured_image : "/images/placeholder_img.jpg"}
                         alt={course.title}
                         width={40}
                         height={40}

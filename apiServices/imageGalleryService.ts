@@ -1,4 +1,6 @@
 "use server";
+import { cacheTag, updateTag, cacheLife } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 import { PaginationType } from "@/types/pagination";
 
 const API_BASE =
@@ -31,6 +33,9 @@ export interface ImageGalleryResponse {
 export async function getPublicImageGallery(
   params: Record<string, unknown> = {},
 ): Promise<ImageGalleryResponse | null> {
+  "use cache";
+  cacheTag(CACHE_TAGS.IMAGE_GALLERIES);
+  cacheLife("days");
   try {
     const urlParams = new URLSearchParams();
 

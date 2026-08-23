@@ -1,8 +1,9 @@
 "use server";
+import { cacheTag, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { cacheTag, updateTag } from "next/cache";
 import { PaginationType } from "@/types/pagination";
 
 const API_BASE =
@@ -27,24 +28,40 @@ export interface Student {
   father_name: string;
   father_occupation: string;
   father_phone: string;
-  profile_image: string | null;
-  status: string | null;
+  profile_image?: string | null;
+  status?: string;
   is_govt: number;
-  gender?: string | null;
-  total_courses: number;
+  is_paid?: number;
+  is_blocked?: number;
+  gender?: string;
+  total_courses?: number;
   courses:
     | {
         title: string;
         batch: string;
       }[]
     | null;
-  branches: string | null;
-  districts: string | null;
-  divisions: string | null;
-  branch_id?: number | null;
+  branches?: string;
+  districts?: string;
+  divisions?: string;
+  branch_id?: number;
   roles?: string;
   enrollment_status?: string;
   created_at?: string;
+}
+
+export interface ToggleStudentStatusResponse {
+  success: boolean;
+  message: string;
+  code: number;
+  data: {
+    id: number;
+    name?: string;
+    email?: string;
+    phone?: string;
+    is_blocked: number;
+  };
+  errors?: Record<string, string[]>;
 }
 
 export interface StudentResponse {
@@ -75,8 +92,7 @@ export async function getStudentsCached(
   params: Record<string, unknown> = {},
 ): Promise<StudentResponse | null> {
   "use cache";
-  cacheTag("students-list");
-
+  cacheTag(CACHE_TAGS.STUDENTS);
   try {
     // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
     const urlParams = new URLSearchParams();
@@ -224,7 +240,7 @@ export async function createStudent(
     const result: CreateStudentResponse = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("students-list");
+      updateTag(CACHE_TAGS.STUDENTS);
     }
     return result;
   } catch (error: unknown) {
@@ -265,7 +281,7 @@ export async function updateStudent(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("students-list");
+      updateTag(CACHE_TAGS.STUDENTS);
     }
     return result;
   } catch (error: unknown) {
@@ -304,7 +320,7 @@ export async function deleteStudent(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("students-list");
+      updateTag(CACHE_TAGS.STUDENTS);
     }
     return result;
   } catch (error: unknown) {
@@ -334,8 +350,7 @@ export async function getStudentStatsCached(
   token: string,
 ): Promise<StudentStatsResponse | null> {
   "use cache";
-  cacheTag("students-list");
-
+  cacheTag(CACHE_TAGS.STUDENTS);
   try {
     const res = await fetch(`${API_BASE}/students/list-overview`, {
       headers: {
@@ -452,3 +467,43 @@ export async function getStudentsSimpleList(
     return null;
   }
 }
+
+// =======================
+// TOGGLE STUDENT STATUS
+// =======================
+
+export async function toggleStudentStatus(
+  id: number,
+  isBlocked: number,
+): Promise<ToggleStudentStatusResponse> {
+  try {
+    const session = await getServerSession(authOptions);
+    const token = session?.accessToken;
+
+    if (!token) throw new Error("No valid session/token");
+
+    const res = await fetch(`${API_BASE}/students/${id}/status`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ is_blocked: isBlocked }),
+    });
+
+    const result = await res.json();
+
+    if (res.ok && result?.success) {
+      updateTag(CACHE_TAGS.STUDENTS);
+    }
+    return result;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error in toggleStudentStatus:", error);
+      throw new Error(error.message || "Failed to toggle student status");
+    } else {
+      throw new Error("Failed to toggle student status");
+    }
+  }
+}
+

@@ -12,10 +12,11 @@ import { Card } from "@/components/ui/card";
 import { cacheTag } from "next/cache";
 import Image from "next/image";
 import Link from "next/link";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 const NewsfeedsArchive = async () => {
   "use cache";
-  cacheTag("public-news-feeds");
+  cacheTag(CACHE_TAGS.NEWS_FEEDS);
   let newsData;
   try {
     newsData = await fetchPublicNewsFeeds();
@@ -39,7 +40,7 @@ const NewsfeedsArchive = async () => {
   }
   
   return (
-    <section className="py-8 md:py-14 bg-secondary/5">
+    <section className="py-8 lg:py-14 bg-secondary/5">
       <div className="container mx-auto px-4">
         <SectionTitle
           title={newsData?.data?.section_title}
@@ -47,7 +48,7 @@ const NewsfeedsArchive = async () => {
           iswhite={false}
         />
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 h-full">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-3 lg:gap-4 h-full">
           <Card className="p-3 py-6 h-full relative">
             {/* Main Featured News */}
             <h3 className="text-center text-secondary text-lg lg:text-2xl font-semibold">
@@ -64,7 +65,7 @@ const NewsfeedsArchive = async () => {
                 className="w-full relative overflow-hidden"
               >
                 <Image
-                  src={newsItems[0].image || "/images/placeholder_img.jpg"}
+                  src={(newsItems[0].image && typeof newsItems[0].image === "string" && newsItems[0].image.trim() !== "") ? newsItems[0].image : "/images/placeholder_img.jpg"}
                   alt={newsItems[0].title || "Featured News"}
                   fill
                   className="object-cover transition-transform duration-500 group-hover:scale-105 border border-secondary/20 rounded-lg"
@@ -76,7 +77,7 @@ const NewsfeedsArchive = async () => {
           </Card>
 
           {/* Other News Items */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 h-full relative">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 lg:gap-3 h-full relative">
             {newsItems.slice(1).map((item) => (
               <Link
                 key={item.id}
@@ -94,7 +95,7 @@ const NewsfeedsArchive = async () => {
                     className="w-full relative overflow-hidden"
                   >
                     <Image
-                      src={item.image || "/images/placeholder_img.jpg"}
+                      src={(item.image && typeof item.image === "string" && item.image.trim() !== "") ? item.image : "/images/placeholder_img.jpg"}
                       alt={item.title || "News"}
                       fill
                       className="object-cover transition-transform duration-500 group-hover:scale-105 border border-secondary/20 rounded-lg"

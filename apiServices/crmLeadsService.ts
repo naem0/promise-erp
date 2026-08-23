@@ -1,8 +1,9 @@
 "use server";
+import { cacheTag, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { cacheLife, cacheTag, updateTag } from "next/cache";
 import { PaginationType } from "@/types/pagination";
 import { GrowthStats } from "./crmLeadActivitiesService";
 
@@ -120,7 +121,7 @@ export async function getCRMLeadsCached(
   params: Record<string, unknown> = {},
 ): Promise<CRMLeadsResponse> {
   "use cache: private";
-  cacheTag("crm-leads-list");
+  cacheTag(CACHE_TAGS.CRM_LEADS);
   try {
     const urlParams = new URLSearchParams();
     for (const key in params) {
@@ -233,7 +234,7 @@ export async function createCRMLead(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("crm-leads-list");
+      updateTag(CACHE_TAGS.CRM_LEADS);
     }
     return result;
   } catch (error: unknown) {
@@ -271,7 +272,7 @@ export async function updateCRMLead(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("crm-leads-list");
+      updateTag(CACHE_TAGS.CRM_LEADS);
     }
     return result;
   } catch (error: unknown) {
@@ -311,7 +312,7 @@ export async function deleteCRMLead(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("crm-leads-list");
+      updateTag(CACHE_TAGS.CRM_LEADS);
     }
     return result;
   } catch (error: unknown) {
@@ -355,7 +356,7 @@ export async function importCRMLeads(formData: FormData): Promise<CRMLeadsImport
 
     // Invalidate the cache to show the new imported leads
     if (res.ok && result?.success) {
-      updateTag("crm-leads-list");
+      updateTag(CACHE_TAGS.CRM_LEADS);
     }
     return result;
   } catch (error: unknown) {

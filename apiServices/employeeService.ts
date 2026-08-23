@@ -1,8 +1,9 @@
 "use server";
+import { cacheTag, updateTag, cacheLife } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { cacheTag, updateTag } from "next/cache";
 import { PaginationType } from "@/types/pagination";
 
 const API_BASE =
@@ -15,6 +16,7 @@ const API_BASE =
 export interface EmployeeRole {
   id: number;
   name: string;
+  display_name?: string;
 }
 
 export interface EmployeeBranch {
@@ -132,6 +134,16 @@ export interface SalaryScalesResponse {
   };
 }
 
+export interface NextDisplayOrderResponse {
+  success: boolean;
+  message: string;
+  code: number;
+  data: {
+    next_display_order: number;
+  };
+  errors?: Record<string, string[] | string>;
+}
+
 // =======================
 // GET EMPLOYEES (CACHED)
 // =======================
@@ -141,8 +153,7 @@ export async function getEmployeesCached(
   params: Record<string, unknown> = {},
 ): Promise<EmployeesResponse | null> {
   "use cache";
-  cacheTag("employees-list");
-
+  cacheTag(CACHE_TAGS.EMPLOYEES);
   try {
     // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
     const urlParams = new URLSearchParams();
@@ -256,7 +267,7 @@ export async function createEmployee(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("employees-list");
+      updateTag(CACHE_TAGS.EMPLOYEES);
     }
     return result;
   } catch (error: unknown) {
@@ -310,7 +321,7 @@ export async function updateEmployee(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("employees-list");
+      updateTag(CACHE_TAGS.EMPLOYEES);
     }
     return result;
   } catch (error: unknown) {
@@ -441,6 +452,45 @@ export async function getSalaryScales(
   }
 }
 
+export async function getNextEmployeeDisplayOrder(
+  departmentId: number | string,
+): Promise<NextDisplayOrderResponse | null> {
+  const session = await getServerSession(authOptions);
+  const token = session?.accessToken;
+  if (!token) throw new Error("No valid session/token");
+  try {
+    const res = await fetch(
+      `${API_BASE}/employees/next-display-order?department_id=${departmentId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      },
+    );
+    if (401 === res.status || 403 === res.status) {
+      console.warn("Unauthorized: Access token error.");
+      return null;
+    }
+    if (404 === res.status) {
+      console.warn("No next display order found (404). Returning empty response.");
+      return null;
+    }
+    if (!res.ok) {
+      throw new Error(`Status: ${res.status} ${res.statusText}`);
+    }
+    const result = await res.json();
+    return result;
+  } catch (error: unknown) {
+    console.error("Error in getNextEmployeeDisplayOrder:", error);
+    if (error instanceof Error) {
+      throw new Error(error.message || "Failed to fetch next display order");
+    } else {
+      throw new Error("Failed to fetch next display order");
+    }
+  }
+}
+
 // =======================
 // DELETE EMPLOYEE
 // =======================
@@ -467,7 +517,7 @@ export async function deleteEmployee(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("employees-list");
+      updateTag(CACHE_TAGS.EMPLOYEES);
     }
     return result;
   } catch (error: unknown) {
@@ -504,7 +554,7 @@ export async function toggleEmployeeStatus(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("employees-list");
+      updateTag(CACHE_TAGS.EMPLOYEES);
     }
     return result;
   } catch (error: unknown) {
@@ -545,6 +595,9 @@ export interface AllOfficeEmployeesApiResponse {
 }
 
 export async function getPublicAllEmployees(): Promise<AllOfficeEmployeesApiResponse | null> {
+  "use cache";
+  cacheTag(CACHE_TAGS.EMPLOYEES);
+  cacheLife("days");
   try {
     const url = `${API_BASE}/public/employees`;
     const res = await fetch(url);
@@ -603,6 +656,9 @@ export interface ChairmanMessageResponse {
   errors?: Record<string, string[]>;
 }
 export async function getPublicAllExecutives(): Promise<ChairmanMessageResponse | null> {
+  "use cache";
+  cacheTag(CACHE_TAGS.EMPLOYEES);
+  cacheLife("days");
   try {
     const url = `${API_BASE}/public/chairman-message`;
     const res = await fetch(url);
@@ -663,8 +719,7 @@ export async function getEmployeeStatsCached(
   token: string,
 ): Promise<EmployeeStatsResponse | null> {
   "use cache: private";
-  cacheTag("employees-list");
-
+  cacheTag(CACHE_TAGS.EMPLOYEES);
   try {
     const res = await fetch(`${API_BASE}/employees/list-overview`, {
       headers: {

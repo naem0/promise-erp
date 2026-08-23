@@ -1,5 +1,5 @@
-
 "use client";
+
 
 import { addTeacher } from "@/apiServices/teacherService";
 import { useRouter } from "next/navigation";

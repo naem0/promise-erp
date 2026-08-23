@@ -1,7 +1,8 @@
 "use server";
+import { cacheTag, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { cacheTag, updateTag } from "next/cache";
 import { PaginationType } from "@/types/pagination";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
@@ -61,8 +62,7 @@ export async function getCourseProjectCached(
   params: Record<string, unknown> = {}
 ): Promise<CourseProjectsResponse | null> {
   "use cache";
-  cacheTag("course-projects-list");
-
+  cacheTag(CACHE_TAGS.COURSE_PROJECTS);
   try {
   // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
     const urlParams = new URLSearchParams();
@@ -171,7 +171,7 @@ export async function createCourseProject(categoryData:FormData): Promise<Single
         return { success: false, message: data.message || "Failed to create course project", errors: data.errors, code: response.status };
       }
       if (response.ok && data?.success) {
-        updateTag("course-projects-list");
+        updateTag(CACHE_TAGS.COURSE_PROJECTS);
       }
       return data;
     } catch (error) {
@@ -204,7 +204,7 @@ export async function createCourseProject(categoryData:FormData): Promise<Single
         return { success: false, message: data.message || "Failed to update course project", errors: data.errors, code: response.status };
       }
       if (response.ok && data?.success) {
-        updateTag("course-projects-list");
+        updateTag(CACHE_TAGS.COURSE_PROJECTS);
       }
       return data;
     } catch (error) {
@@ -236,7 +236,7 @@ export async function createCourseProject(categoryData:FormData): Promise<Single
         return { success: false, message: data.message || "Failed to delete course project", code: response.status };
       }
       if (response.ok && data?.success) {
-        updateTag("course-projects-list");
+        updateTag(CACHE_TAGS.COURSE_PROJECTS);
       }
       return data;
     } catch (error) {

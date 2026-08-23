@@ -14,7 +14,7 @@ export default function StudentSuccessSkeleton() {
         </div>
 
         {/* Carousel Skeleton */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 xl:gap-5">
           {[1, 2].map((i) => (
             <StudentSkeletonCard key={i} />
           ))}

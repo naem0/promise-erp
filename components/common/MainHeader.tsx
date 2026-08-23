@@ -1,3 +1,4 @@
+import { Skeleton } from "@/components/ui/skeleton";
 import HeaderNavLink from "./HeaderNavLink";
 import HeaderContent, { NavLink } from "./HeaderContent";
 import { Suspense } from "react";
@@ -5,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 const navLinks: NavLink[] = [
-  { name: "Courses", href: "/course", hasDropdown: true },
+  { name: "Courses", href: "/courses", hasDropdown: true },
   { name: "Branch", href: "/branch" },
   { name: "About", href: "/about", hasDropdown: true },
   { name: "Blog", href: "/blog" },
@@ -24,7 +25,7 @@ const MainHeader = () => {
             <div className="flex items-center gap-2 shrink-0">
               <Link href="/">
                 <Image
-                  src="/images/logo.svg"
+                  src="/images/elogo.png"
                   alt="Logo"
                   width={213}
                   height={36}
@@ -38,7 +39,17 @@ const MainHeader = () => {
         </div>
         <div className="border-t bg-muted/30">
           <div className="container mx-auto px-4">
-            <Suspense fallback={<div className=" text-center">Loading...</div>}>
+            <Suspense
+              fallback={
+                <div className="hidden lg:flex items-center justify-center gap-6 my-3 px-4 w-full">
+                  <Skeleton className="h-5 w-20 rounded" />
+                  <Skeleton className="h-5 w-20 rounded" />
+                  <Skeleton className="h-5 w-20 rounded" />
+                  <Skeleton className="h-5 w-20 rounded" />
+                  <Skeleton className="h-5 w-20 rounded" />
+                </div>
+              }
+            >
               <HeaderNavLink navLinks={navLinks} />
             </Suspense>
           </div>

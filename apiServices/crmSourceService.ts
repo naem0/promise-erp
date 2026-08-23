@@ -1,8 +1,9 @@
 "use server";
+import { cacheTag, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { cacheTag, updateTag } from "next/cache";
 import { PaginationType } from "@/types/pagination";
 
 const API_BASE =
@@ -51,8 +52,7 @@ export async function getCRMSourcesCached(
   params: Record<string, unknown> = {},
 ): Promise<CRMSourcesResponse | null> {
   "use cache: remote";
-  cacheTag("crm-sources-list");
-
+  cacheTag(CACHE_TAGS.CRM_SOURCES);
   try {
     const urlParams = new URLSearchParams();
     for (const key in params) {
@@ -190,7 +190,7 @@ export async function createCRMSource(
 
     const result = await res.json();
     if (res.ok && result?.success) {
-      updateTag("crm-sources-list");
+      updateTag(CACHE_TAGS.CRM_SOURCES);
     }
     return result;
   } catch (error: unknown) {
@@ -231,7 +231,7 @@ export async function updateCRMSource(
 
     const result = await res.json();
     if (res.ok && result?.success) {
-      updateTag("crm-sources-list");
+      updateTag(CACHE_TAGS.CRM_SOURCES);
     }
     return result;
   } catch (error: unknown) {
@@ -267,7 +267,7 @@ export async function deleteCRMSource(
 
     const result = await res.json();
     if (res.ok && result?.success) {
-      updateTag("crm-sources-list");
+      updateTag(CACHE_TAGS.CRM_SOURCES);
     }
     return result;
   } catch (error: unknown) {

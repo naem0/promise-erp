@@ -391,7 +391,7 @@ export default function CreateEnrollmentForm({
             }}
             className="space-y-6"
           >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 xl:gap-5">
               {/* Student Selection with Combobox */}
               <div className="space-y-2">
                 <Label htmlFor="user_id">

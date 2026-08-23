@@ -96,7 +96,7 @@ export default function CRMSourcesFilter() {
         currentSearch !== "" ||
         currentStatus !== "" ||
         currentSortOrder !== "" ||
-        currentPerPage !== "15";
+        (currentPerPage !== "" && currentPerPage !== "15");
 
     return (
         <div className="p-6 mb-6 border rounded-xl bg-card shadow-sm">

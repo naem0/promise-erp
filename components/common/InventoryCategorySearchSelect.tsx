@@ -1,184 +1,92 @@
 'use client'
 
-import { useEffect, useState, useTransition, useMemo, useRef } from 'react'
+import { useEffect, useState, useTransition, useMemo } from 'react'
+import { Combobox } from '@/components/ui/combobox'
 import {
-  Combobox,
-  ComboboxRoot,
-  ComboboxContent,
-  ComboboxList,
-  ComboboxItem,
-  ComboboxEmpty,
-  ComboboxChips,
-  ComboboxChip,
-  ComboboxChipsInput,
-} from '@/components/ui/combobox'
-import { getProductCategoriesSimpleList, SimpleCategory } from '@/apiServices/inventoryCategoriesService'
-import { cn } from '@/lib/utils'
-import { ChevronDownIcon } from 'lucide-react'
+  getProductCategoriesSimpleList,
+  SimpleCategory,
+  ProductCategory,
+} from '@/apiServices/inventoryCategoriesService'
 
-interface SingleSelectProps {
-  multiple?: false
+type CategoryItem = SimpleCategory | ProductCategory | {
+  id: number
+  name: string
+  status?: number
+}
+
+interface InventoryCategorySearchSelectProps {
   value?: string | null
   onValueChange?: (value: string | null) => void
-}
-
-interface MultiSelectProps {
-  multiple: true
-  value: string[]
-  onValueChange: (value: string[]) => void
-}
-
-type InventoryCategorySearchSelectProps = (SingleSelectProps | MultiSelectProps) & {
   placeholder?: string
+  searchPlaceholder?: string
   disabled?: boolean
   className?: string
-  defaultValue?: string
+  categories?: CategoryItem[]
 }
 
 export default function InventoryCategorySearchSelect({
-  multiple = false,
-  value,
+  value = "",
   onValueChange,
-  placeholder,
+  placeholder = "Select category",
+  searchPlaceholder = "Search category...",
   disabled = false,
   className,
+  categories: initialCategories,
 }: InventoryCategorySearchSelectProps) {
-  const [categoriesMap, setCategoriesMap] = useState<Record<string, SimpleCategory>>({})
-  const [categoriesList, setCategoriesList] = useState<SimpleCategory[]>([])
+  const [categories, setCategories] = useState<CategoryItem[]>(initialCategories || [])
   const [isPending, startTransition] = useTransition()
-  const [inputValue, setInputValue] = useState("")
-  const anchor = useRef<HTMLDivElement | null>(null)
 
-  // Dynamic API search with 300ms debounce
   useEffect(() => {
-    const timer = setTimeout(() => {
-      startTransition(async () => {
-        const params = {
-          search: inputValue.trim() ? inputValue.trim() : undefined,
-        }
-        try {
-          const res = await getProductCategoriesSimpleList(params)
-          if (res?.success) {
-            const rawData = res?.data
-            const fetchedList: SimpleCategory[] = Array.isArray(rawData)
-              ? rawData
-              : Array.isArray((rawData as { categories?: SimpleCategory[] })?.categories)
-              ? (rawData as { categories: SimpleCategory[] }).categories
-              : []
-
-            setCategoriesList(fetchedList)
-            setCategoriesMap(prev => {
-              const newMap = { ...prev }
-              fetchedList.forEach(cat => {
-                if (cat?.id != null) {
-                  newMap[String(cat.id)] = cat
-                }
-              })
-              return newMap
-            })
-          }
-        } catch (error: unknown) {
-          if (error instanceof Error) {
-            console.error("Failed to fetch categories:", error.message)
-          } else {
-            console.error("An unknown error occurred while fetching categories.")
-          }
-        }
+    if (initialCategories && initialCategories.length > 0) {
+      setCategories(prev => {
+        const map = new Map<string, CategoryItem>()
+        initialCategories.forEach(c => map.set(String(c.id), c))
+        prev.forEach(c => map.set(String(c.id), c))
+        return Array.from(map.values())
       })
-    }, 300)
+    }
+  }, [initialCategories])
 
-    return () => clearTimeout(timer)
-  }, [inputValue])
+  useEffect(() => {
+    startTransition(async () => {
+      try {
+        const res = await getProductCategoriesSimpleList()
+        if (res?.success) {
+          const data = res.data
+          const fetchedList: SimpleCategory[] = Array.isArray(data)
+            ? data
+            : Array.isArray((data as { categories?: SimpleCategory[] })?.categories)
+            ? (data as { categories: SimpleCategory[] }).categories
+            : []
 
-  const options = useMemo(() => (Array.isArray(categoriesList) ? categoriesList : []).map(category => ({
-    value: String(category?.id),
-    label: category?.name
-  })), [categoriesList])
-
-  const allOptionsMap = useMemo(() => {
-    const map: Record<string, string> = {}
-    Object.values(categoriesMap).forEach(cat => {
-      if (cat?.id != null) {
-        map[String(cat.id)] = cat.name
+          setCategories(prev => {
+            const map = new Map<string, CategoryItem>()
+            prev.forEach(c => map.set(String(c.id), c))
+            fetchedList.forEach(c => map.set(String(c.id), c))
+            return Array.from(map.values())
+          })
+        }
+      } catch (error) {
+        console.error("Failed to fetch categories:", error)
       }
     })
-    return map
-  }, [categoriesMap])
+  }, [])
 
-  if (multiple) {
-    const multiValue = (value as string[]) || []
-    const multiOnValueChange = onValueChange as (value: string[]) => void
-
-    return (
-      <ComboboxRoot
-        multiple={true}
-        value={multiValue}
-        onValueChange={(val) => multiOnValueChange(val as string[])}
-        onInputValueChange={setInputValue}
-        disabled={disabled}
-        itemToStringLabel={(val) => allOptionsMap[val] || val}
-      >
-        <div ref={anchor} className="relative">
-          <ComboboxChips
-            className={cn(
-              "min-h-10 w-full cursor-text rounded-md border border-input bg-background text-sm",
-              className
-            )}
-          >
-            {multiValue?.map((v) => {
-              const label = allOptionsMap[v] || v
-              return (
-                <ComboboxChip key={v}>
-                  {label}
-                </ComboboxChip>
-              )
-            })}
-            <ComboboxChipsInput
-              placeholder={
-                multiValue?.length === 0
-                  ? isPending ? "Loading..." : (placeholder || "Select category(s)")
-                  : ""
-              }
-              className="min-w-[100px] text-sm outline-none bg-transparent"
-            />
-            <ChevronDownIcon className="ml-auto mr-1 size-4 shrink-0 text-muted-foreground self-center pointer-events-none" />
-          </ComboboxChips>
-        </div>
-
-        <ComboboxContent anchor={anchor} className="w-[--anchor-width] min-w-[280px]">
-          <ComboboxList className="max-h-[280px] overflow-y-auto p-1">
-            {options?.map((option) => (
-              <ComboboxItem key={option.value} value={option.value}>
-                {option.label}
-              </ComboboxItem>
-            ))}
-            {options.length === 0 && (
-              <ComboboxEmpty>
-                {isPending ? "Loading..." : "No categories found"}
-              </ComboboxEmpty>
-            )}
-          </ComboboxList>
-        </ComboboxContent>
-      </ComboboxRoot>
-    )
-  }
-
-  // Single select mode
-  const singleValue = (value as string | null) || ""
-  const singleOnValueChange = onValueChange as (value: string | null) => void
+  const options = useMemo(() => (categories || []).map(cat => ({
+    value: String(cat.id),
+    label: cat.name
+  })), [categories])
 
   return (
     <Combobox
       options={options}
-      value={singleValue}
-      onValueChange={singleOnValueChange}
-      onInputValueChange={setInputValue}
-      placeholder={isPending && !options.length ? "Loading categories..." : (placeholder || "Select category")}
-      searchPlaceholder="Search category..."
+      value={value || ""}
+      onValueChange={onValueChange}
+      placeholder={isPending && !options.length ? "Loading categories..." : placeholder}
+      searchPlaceholder={searchPlaceholder}
       emptyMessage={isPending ? "Loading..." : "No categories found"}
       disabled={disabled}
       className={className}
-      disableFilter={true}
     />
   )
 }

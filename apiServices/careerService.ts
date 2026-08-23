@@ -1,8 +1,9 @@
 "use server";
+import { cacheTag, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { cacheTag, updateTag } from "next/cache";
 import { PaginationType } from "@/types/pagination";
 
 const API_BASE =
@@ -91,8 +92,7 @@ export async function getCareersCached(
     params: Record<string, unknown> = {}
 ): Promise<CareersResponse | null> {
     "use cache";
-    cacheTag("careers-list");
-
+    cacheTag(CACHE_TAGS.CAREERS);
     // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
     try {
         const urlParams = new URLSearchParams();
@@ -195,7 +195,7 @@ export async function createCareer(
         const result = await res.json();
 
         if (res.ok && result?.success) {
-          updateTag("careers-list");
+          updateTag(CACHE_TAGS.CAREERS);
         }
         return result;
     } catch (error: unknown) {
@@ -237,7 +237,7 @@ export async function updateCareer(
         const result = await res.json();
 
         if (res.ok && result?.success) {
-          updateTag("careers-list");
+          updateTag(CACHE_TAGS.CAREERS);
         }
         return result;
     } catch (error: unknown) {
@@ -275,7 +275,7 @@ export async function deleteCareer(id: number): Promise<SingleCareerResponse> {
         const result = await res.json();
 
         if (res.ok && result?.success) {
-          updateTag("careers-list");
+          updateTag(CACHE_TAGS.CAREERS);
         }
         return result;
     } catch (error: unknown) {
@@ -297,8 +297,7 @@ export async function getCareerCategoriesCached(
     params: Record<string, unknown> = {}
 ): Promise<CareerCategoriesResponse | null> {
     "use cache";
-    cacheTag("career-categories-list");
-
+    cacheTag(CACHE_TAGS.CAREERS);
     // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
     try {
         const urlParams = new URLSearchParams();

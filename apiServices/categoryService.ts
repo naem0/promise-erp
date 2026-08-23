@@ -1,8 +1,9 @@
-// apiServices/categoryService.ts
 "use server";
+import { cacheTag, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
+// apiServices/categoryService.ts
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { cacheTag, updateTag, revalidatePath } from "next/cache";
 import { PaginationType } from "@/types/pagination";
 
 const API_BASE =
@@ -72,8 +73,7 @@ export async function getCategoriesCached(
   params: Record<string, unknown> = {},
 ): Promise<CategoriesResponse | null> {
   "use cache: private";
-  cacheTag("categories-list");
-
+  cacheTag(CACHE_TAGS.CATEGORIES);
   try {
     const urlParams = new URLSearchParams();
     for (const key in params) {
@@ -206,7 +206,7 @@ export async function createCategory(
     const result = await response.json();
 
     if (response.ok && result?.success) {
-      updateTag("categories-list");
+      updateTag(CACHE_TAGS.CATEGORIES);
     }
     return result;
   } catch (error: unknown) {
@@ -250,7 +250,7 @@ export async function updateCategory(
     const result = await response.json();
 
     if (response.ok && result?.success) {
-      updateTag("categories-list");
+      updateTag(CACHE_TAGS.CATEGORIES);
     }
     return result;
   } catch (error: unknown) {
@@ -292,7 +292,7 @@ export async function deleteCategory(
     const result = await response.json();
 
     if (response.ok && result?.success) {
-      updateTag("categories-list");
+      updateTag(CACHE_TAGS.CATEGORIES);
     }
     return result;
   } catch (error: unknown) {
@@ -309,8 +309,7 @@ export async function deleteCategory(
 
 export async function getHomeCourseCategories(): Promise<CategoriesResponse | null> {
   "use cache";
-  cacheTag("categories-list");
-
+  cacheTag(CACHE_TAGS.CATEGORIES);
   try {
     const res = await fetch(`${API_BASE}/public/course-categories/with-count`);
 

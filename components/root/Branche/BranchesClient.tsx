@@ -68,7 +68,7 @@ const BranchesClient = async ({ searchParams }: BranchesPageProps) => {
       <div className="mx-auto container px-4">
         {/* Pass server-side division data */}
         <BranchHeader divisions={divisionList} />
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-4 sm:grid-cols-2">
           {branches?.length === 0 ? (
             <div className="col-span-full flex justify-center items-center w-full">
               <NotFoundComponent

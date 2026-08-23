@@ -20,6 +20,25 @@ const nextConfig: NextConfig = {
   },
 
   experimental: {
+    optimizePackageImports: [
+      "lucide-react",
+      "date-fns",
+      "framer-motion",
+      "recharts",
+      "@radix-ui/react-accordion",
+      "@radix-ui/react-alert-dialog",
+      "@radix-ui/react-avatar",
+      "@radix-ui/react-checkbox",
+      "@radix-ui/react-collapsible",
+      "@radix-ui/react-dialog",
+      "@radix-ui/react-dropdown-menu",
+      "@radix-ui/react-label",
+      "@radix-ui/react-popover",
+      "@radix-ui/react-progress",
+      "@radix-ui/react-select",
+      "@radix-ui/react-tabs",
+      "@radix-ui/react-tooltip",
+    ],
     serverActions: {
       bodySizeLimit: "5mb",
       allowedOrigins: ["localhost:3000"],
@@ -135,6 +154,14 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "beta.e-laeltd.com",
+      },
+      {
+        protocol: "https",
+        hostname: "jubo64.e-laeltd.com",
+      },
+      {
+        protocol: "https",
+        hostname: "jubo64-new.e-laeltd.com",
       },
     ],
   },

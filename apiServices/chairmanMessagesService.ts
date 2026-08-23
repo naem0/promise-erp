@@ -1,8 +1,9 @@
 "use server";
+import { cacheTag, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { cacheTag, updateTag } from "next/cache";
 import { PaginationType } from "@/types/pagination";
 
 const API_BASE =
@@ -52,8 +53,7 @@ export async function getChairmanMessagesCached(
   params: Record<string, unknown> = {},
 ): Promise<ChairmanMessagesResponse | null> {
   "use cache";
-  cacheTag("chairman-messages-list");
-
+  cacheTag(CACHE_TAGS.CHAIRMAN_MESSAGES);
   try {
     const urlParams = new URLSearchParams();
     for (const key in params) {
@@ -192,7 +192,7 @@ export async function createChairmanMessage(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("chairman-messages-list");
+      updateTag(CACHE_TAGS.CHAIRMAN_MESSAGES);
     }
     return result;
   } catch (error: unknown) {
@@ -229,7 +229,7 @@ export async function updateChairmanMessage(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("chairman-messages-list");
+      updateTag(CACHE_TAGS.CHAIRMAN_MESSAGES);
     }
     return result;
   } catch (error: unknown) {
@@ -265,7 +265,7 @@ export async function deleteChairmanMessage(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("chairman-messages-list");
+      updateTag(CACHE_TAGS.CHAIRMAN_MESSAGES);
     }
     return result;
   } catch (error: unknown) {

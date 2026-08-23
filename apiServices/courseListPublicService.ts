@@ -1,8 +1,9 @@
-
 "use server";
+import { cacheTag, updateTag, cacheLife } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
+
 
 import { PaginationType } from "@/types/pagination";
-import { cacheTag } from "next/cache";
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
 
 // --- Interfaces ---
@@ -93,8 +94,9 @@ export interface GetPublicCoursesParams {
 export async function getPublicCoursesList(
   params: Record<string, unknown> = {},
 ): Promise<ApiResponse | null> {
-  "use cache: remote";
-  cacheTag("courses-list");
+  "use cache";
+  cacheTag(CACHE_TAGS.COURSES);
+  cacheLife("days");
   const urlParams = new URLSearchParams();
   Object.entries(params).forEach(([key, value]) => {
     if (value !== undefined && value !== null) {
@@ -103,6 +105,7 @@ export async function getPublicCoursesList(
   });
 
   const queryString = urlParams.toString();
+
   try {
     const res = await fetch(`${API_BASE}/public/courses?${queryString}`, {
       headers: { "Content-Type": "application/json" },

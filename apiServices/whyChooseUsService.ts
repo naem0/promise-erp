@@ -1,8 +1,9 @@
 "use server";
+import { cacheTag, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { cacheTag, updateTag } from "next/cache";
 import { PaginationType } from "@/types/pagination";
 
 const API_BASE =
@@ -50,8 +51,7 @@ export async function getWhyChooseUsCached(
   params: Record<string, unknown> = {},
 ): Promise<WhyChooseUsResponse | null> {
   "use cache";
-  cacheTag("why-choose-us-list");
-
+  cacheTag(CACHE_TAGS.WHY_CHOOSE_US);
   try {
     const urlParams = new URLSearchParams();
     for (const key in params) {
@@ -193,7 +193,7 @@ export async function createWhyChooseUs(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("why-choose-us-list");
+      updateTag(CACHE_TAGS.WHY_CHOOSE_US);
     }
     return result;
   } catch (error: unknown) {
@@ -231,7 +231,7 @@ export async function updateWhyChooseUs(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("why-choose-us-list");
+      updateTag(CACHE_TAGS.WHY_CHOOSE_US);
     }
     return result;
   } catch (error: unknown) {
@@ -268,7 +268,7 @@ export async function deleteWhyChooseUs(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("why-choose-us-list");
+      updateTag(CACHE_TAGS.WHY_CHOOSE_US);
     }
     return result;
   } catch (error: unknown) {

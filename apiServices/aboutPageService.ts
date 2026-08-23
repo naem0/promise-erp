@@ -1,4 +1,6 @@
 "use server";
+import { cacheTag, updateTag, cacheLife } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 import { PaginationType } from "@/types/pagination";
 
@@ -140,6 +142,10 @@ export interface PublicAchievementApiResponse {
 }
 
 export async function getPublicAchievements(): Promise<PublicAchievementApiResponse | null> {
+  "use cache";
+  cacheTag(CACHE_TAGS.ACHIEVEMENTS);
+  cacheLife("days");
+
   try {
     const res = await fetch(`${API_BASE}/public/achievements`);
 

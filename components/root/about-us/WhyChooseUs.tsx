@@ -101,7 +101,7 @@ const WhyChooseUs = async () => {
                     <CardContent className="p-4">
                       <div className="shrink-0 relative w-[60px] h-[60px] mb-2 shadow-2xl rounded-full">
                         <Image
-                          src={item.image || "/images/why-choose1.svg"}
+                          src={(item.image && typeof item.image === "string" && item.image.trim() !== "") ? item.image : "/images/why-choose1.svg"}
                           alt={item.title || "why choose us"}
                           fill
                           className="object-scal-down shadow-2xl rounded-full border border-primary"

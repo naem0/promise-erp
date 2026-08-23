@@ -62,8 +62,8 @@ const BlogDetailWrapper = async ({ slug }: BlogDetailWrapperProps) => {
           >
             <ChevronLeft className="h-4 w-4" /> Back
           </Link>
-          <h1 className="text-2xl lg:text-5xl text-secondary capitalize font-bold">
-            {blogData.title}
+          <h1 className="text-2xl xl:text-4xl text-secondary capitalize font-bold">
+            {blogData?.title}
           </h1>
         </div>
         <div className="w-full px-6 py-2 flex md:flex-row flex-col gap-4 md:items-start items-center justify-between mb-4">
@@ -71,7 +71,7 @@ const BlogDetailWrapper = async ({ slug }: BlogDetailWrapperProps) => {
           <div className="flex  items-center gap-4">
             <div className="relative w-14 h-14 border-2 border-primary rounded-full">
               <Image
-                src={blogData?.author?.image || "/images/placeholder_img.jpg"}
+                src={(blogData?.author?.image && typeof blogData?.author?.image === "string" && blogData?.author?.image.trim() !== "") ? blogData?.author?.image : "/images/placeholder_img.jpg"}
                 alt={blogData?.author?.name || "Author Image"}
                 fill
                 className="rounded-full object-scale-down"
@@ -128,7 +128,7 @@ const BlogDetailWrapper = async ({ slug }: BlogDetailWrapperProps) => {
 
         <div className="pb-9">
           <Image
-            src={blogData.thumbnail || "/images/placeholder_img.jpg"}
+            src={(blogData.thumbnail && typeof blogData.thumbnail === "string" && blogData.thumbnail.trim() !== "") ? blogData.thumbnail : "/images/placeholder_img.jpg"}
             alt={blogData.title}
             width={1536}
             height={630}

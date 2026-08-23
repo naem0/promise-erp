@@ -84,7 +84,7 @@ const ConsultantsPerformanceData = async ({
                                 </TableCell>
                                 <TableCell className="font-medium flex items-center justify-center">
                                     <Image
-                                        src={consultant?.profile_image || "/images/profile_avatar.png"}
+                                        src={(consultant?.profile_image && typeof consultant?.profile_image === "string" && consultant?.profile_image.trim() !== "") ? consultant?.profile_image : "/images/profile_avatar.png"}
                                         alt={consultant?.name || "Consultant"}
                                         width={40}
                                         height={40}

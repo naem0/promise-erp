@@ -1,8 +1,9 @@
 "use server";
+import { cacheTag, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { cacheTag, updateTag } from "next/cache";
 import { PaginationType } from "@/types/pagination";
 
 const API_BASE =
@@ -49,8 +50,7 @@ export async function getLicensesCached(
   params: Record<string, unknown> = {},
 ): Promise<LicensesResponse | null> {
   "use cache";
-  cacheTag("licenses-list");
-
+  cacheTag(CACHE_TAGS.LICENSES);
   try {
     const urlParams = new URLSearchParams();
     for (const key in params) {
@@ -186,7 +186,7 @@ export async function createLicense(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("licenses-list");
+      updateTag(CACHE_TAGS.LICENSES);
     }
     return result;
   } catch (error: unknown) {
@@ -223,7 +223,7 @@ export async function updateLicense(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("licenses-list");
+      updateTag(CACHE_TAGS.LICENSES);
     }
     return result;
   } catch (error: unknown) {
@@ -259,7 +259,7 @@ export async function deleteLicense(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("licenses-list");
+      updateTag(CACHE_TAGS.LICENSES);
     }
     return result;
   } catch (error: unknown) {

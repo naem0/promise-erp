@@ -1,8 +1,9 @@
 "use server";
+import { cacheTag, updateTag, revalidatePath } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { cacheTag, updateTag } from "next/cache";
 import { PaginationType } from "@/types/pagination";
 
 const API_BASE =
@@ -173,9 +174,8 @@ export async function getLeadsActivityCached(
   token: string,
   params: Record<string, unknown> = {},
 ): Promise<LeadsActivityResponse | null> {
-  "use cache";
-  cacheTag("leads-activity-list");
-
+  "use cache: private";
+  cacheTag(CACHE_TAGS.CRM_ACTIVITIES);
   try {
     // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
     const urlParams = new URLSearchParams();
@@ -239,9 +239,8 @@ export async function getTodayFollowUpLeadsCached(
   token: string,
   params: Record<string, unknown> = {},
 ): Promise<LeadsActivityResponse | null> {
-  "use cache";
-  cacheTag("today-follow-up-leads");
-
+  "use cache: private";
+  cacheTag(CACHE_TAGS.CRM_ACTIVITIES);
   try {
     const urlParams = new URLSearchParams();
     for (const key in params) {
@@ -362,12 +361,14 @@ export async function createLeadActivity(payload: {
     });
 
     const result = await res.json();
+    
+    updateTag(CACHE_TAGS.CRM_LEADS);
+    updateTag(CACHE_TAGS.CRM_ACTIVITIES);
+    updateTag(CACHE_TAGS.CRM_TODAY_FOLLOWUPS);
+    updateTag(CACHE_TAGS.CRM_NOTIFICATIONS);
+    revalidatePath("/crm/today-follow-ups");
+    revalidatePath("/crm/lead-activities");
 
-    if (res.ok && result?.success) {
-      updateTag("leads-activity-list");
-      updateTag("today-follow-up-leads");
-      updateTag("crm-notifications-list");
-    }
     return result;
   } catch (error: unknown) {
     if (error instanceof Error) {

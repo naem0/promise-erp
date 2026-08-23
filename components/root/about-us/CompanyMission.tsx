@@ -67,7 +67,7 @@ const CompanyMission = async () => {
               <CardContent className="p-4">
                 <div className="flex justify-center mb-2">
                   <Image
-                    src={item.image || "/images/vission-mission1.svg"}
+                    src={(item.image && typeof item.image === "string" && item.image.trim() !== "") ? item.image : "/images/vission-mission1.svg"}
                     alt={item.type}
                     width={50}
                     height={50}

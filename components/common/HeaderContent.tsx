@@ -1,8 +1,10 @@
 "use client";
 
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Menu, Loader2, ChevronDown, Phone } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Search, Menu, Loader2, ChevronDown } from "lucide-react";
 import { Suspense, useEffect, useState, useTransition } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import {
@@ -88,15 +90,24 @@ const getProfileUrl = (role: string | string[] | null | undefined) => {
 export const AuthButtons = ({
   role,
 }: AuthButtonsProps) => {
-  // Self-contained: reads session + Redux directly so it stays reactive
-  // even when rendered from a Server Component parent (HeaderNavLink)
+  const [mounted, setMounted] = useState(false);
   const { data: session, status } = useSession();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const isAuthenticated = !!session?.accessToken;
   const userName = session?.user?.name;
   const profileImage = session?.user?.image ?? null;
 
-  if (status === "loading") {
-    return <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />;
+  if (!mounted || status === "loading") {
+    return (
+      <div className="flex items-center gap-2">
+        <Skeleton className="h-8 w-16 rounded-md" />
+        <Skeleton className="h-8 w-20 rounded-md" />
+      </div>
+    );
   }
 
   if (isAuthenticated) {
@@ -111,11 +122,11 @@ export const AuthButtons = ({
 
     return (
       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <button className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 hover:bg-accent transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+        <DropdownMenuTrigger asChild suppressHydrationWarning>
+          <button suppressHydrationWarning className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 hover:bg-accent transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
             <Avatar className="h-8 w-8 border-2 border-primary/20">
               <AvatarImage
-                src={profileImage || "/images/profile_avatar.png"}
+                src={(profileImage && typeof profileImage === "string" && profileImage.trim() !== "") ? profileImage : "/images/profile_avatar.png"}
                 alt={userName || "User"}
               />
               <AvatarFallback className="bg-primary/10 text-primary font-semibold">
@@ -136,7 +147,7 @@ export const AuthButtons = ({
             <div className="flex items-center gap-3 px-2 py-2">
               <Avatar className="h-10 w-10 border-2 border-primary/20">
                 <AvatarImage
-                  src={profileImage || "/images/profile_avatar.png"}
+                  src={(profileImage && typeof profileImage === "string" && profileImage.trim() !== "") ? profileImage : "/images/profile_avatar.png"}
                   alt={userName || "User"}
                 />
                 <AvatarFallback className="bg-primary/10 text-primary font-semibold">
@@ -185,7 +196,7 @@ export const AuthButtons = ({
 
   return (
     <div className="flex items-center gap-2">
-      <Button asChild variant="ghost" size="sm">
+      <Button asChild variant="outline" size="sm">
         <Link href="/login">Login</Link>
       </Button>
       <Button asChild size="sm">
@@ -224,7 +235,7 @@ const HeaderContent = ({ navLinks }: HeaderContentProps) => {
     const fetchCategories = async () => {
       try {
         const res = await getHomeCourseCategories();
-        if (res?.success && res.data?.categories) {
+        if (res?.success && res?.data?.categories) {
           setCategories(res.data.categories);
         }
       } catch (error) {
@@ -290,7 +301,7 @@ const HeaderContent = ({ navLinks }: HeaderContentProps) => {
     <>
       {/* Search & Branch Filter */}
       <div className="hidden lg:flex items-center flex-1 max-w-3xl mx-2 border border-secondary rounded-md">
-          <Suspense fallback={<div>Loading...</div>}>
+          <Suspense fallback={<div className="h-8 px-4 flex items-center gap-2"><Skeleton className="h-4 w-20 rounded" /></div>}>
             <HeaderBranchDropdown />
           </Suspense>
 
@@ -416,7 +427,7 @@ const HeaderContent = ({ navLinks }: HeaderContentProps) => {
                           <div className="flex items-center gap-3">
                             <Avatar className="h-10 w-10 border-2 border-primary/20">
                               <AvatarImage
-                                src={session?.user?.image || "/images/profile_avatar.png"}
+                                src={(session?.user?.image && typeof session?.user?.image === "string" && session?.user?.image.trim() !== "") ? session?.user?.image : "/images/profile_avatar.png"}
                                 alt={session?.user?.name || "User"}
                               />
                               <AvatarFallback className="bg-primary/10 text-primary font-semibold">
@@ -544,7 +555,7 @@ const HeaderContent = ({ navLinks }: HeaderContentProps) => {
                       >
                         <div className="flex items-center gap-2">
                           <Image
-                            src={item.image || "/images/placeholder_img.jpg"}
+                            src={(item.image && typeof item.image === "string" && item.image.trim() !== "") ? item.image : "/images/placeholder_img.jpg"}
                             alt={item.title}
                             width={50}
                             height={50}

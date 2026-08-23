@@ -2,7 +2,7 @@ import ItemsData from "@/components/inventory/inventory-items/ItemsData";
 import ItemsFilterData from "@/components/inventory/inventory-items/ItemsFilterData";
 import TableSkeleton from "@/components/TableSkeleton";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, PackagePlus } from "lucide-react";
+import { PlusCircle, FileSpreadsheet } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
 import PermissionGuard from "@/components/auth/PermissionGuard";
@@ -20,15 +20,12 @@ export default function InventoryItemsPage({
         </h1>
 
         <div className="flex items-center gap-2">
-          <PermissionGuard requiredPermission="stock-update">
-            <Button asChild variant="outline">
-              <Link href="/inventory/inventory-items/stock-update">
-                <PackagePlus className="w-4 h-4 mr-2" />Stock Update
+          <PermissionGuard requiredPermission="create-products">
+            <Button asChild variant="outline" className="border-primary text-primary hover:bg-primary/10 shadow-2xs">
+              <Link href="/inventory/inventory-items/bulk-upload">
+                <FileSpreadsheet className="w-4 h-4 mr-2" />Bulk Import
               </Link>
             </Button>
-          </PermissionGuard>
-
-          <PermissionGuard requiredPermission="create-products">
             <Button asChild>
               <Link href="/inventory/inventory-items/add">
                 <PlusCircle className="w-4 h-4 mr-2" />Add Item

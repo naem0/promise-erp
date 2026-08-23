@@ -54,7 +54,7 @@ const HomeCoursesWrapper = () => {
   }
 
   return (
-    <section className="bg-white py-8 md:py-14">
+    <section className="bg-white py-8 lg:py-14">
       <div className="container mx-auto px-4">
         <SectionTitle
           title={coursesData?.data?.section_title}

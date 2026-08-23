@@ -75,7 +75,7 @@ export default function CouponForm({
 
       </div>
       <form onSubmit={handleSubmit(submitHandler)} className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 xl:gap-5">
           {/* Title */}
           <div className="md:col-span-2 space-y-2">
             <Label htmlFor="title">Coupon Title</Label>

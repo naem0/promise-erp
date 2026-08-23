@@ -125,9 +125,7 @@ const HeroSectionData = async ({
                   </TableCell>
                   <TableCell>
                     <Image
-                      src={
-                        item.background_image || "/images/placeholder_img.jpg"
-                      }
+                      src={(item.background_image && typeof item.background_image === "string" && item.background_image.trim() !== "") ? item.background_image : "/images/placeholder_img.jpg"}
                       alt={item.title}
                       width={80}
                       height={45}

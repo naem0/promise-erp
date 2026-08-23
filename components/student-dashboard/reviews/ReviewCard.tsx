@@ -17,7 +17,7 @@ export default function ReviewCard({ review }: ReviewCardProps) {
           <div className="flex items-center gap-4">
             <div className="relative w-[100px] h-[100px] rounded-full border border-primary shadow-lg ">
               <Image
-                src={review?.user?.profile_image || "/images/placeholder-avatar.jpg"}
+                src={(review?.user?.profile_image && typeof review?.user?.profile_image === "string" && review?.user?.profile_image.trim() !== "") ? review?.user?.profile_image : "/images/placeholder-avatar.jpg"}
                 alt={review?.user?.name}
                 fill
                 className="rounded-full object-cover"

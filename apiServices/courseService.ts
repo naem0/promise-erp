@@ -1,8 +1,9 @@
 "use server";
+import { cacheTag, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { cacheTag, updateTag } from "next/cache";
 import { CourseProject } from "./courseProjectsService";
 import { Facility } from "./facilitiesService";
 import { JoinType } from "./joinService";
@@ -214,7 +215,7 @@ async function getCoursesCached(
   params: Record<string, unknown> = {},
 ): Promise<CourseResponse | null> {
   "use cache: private";
-  cacheTag("courses-list");
+  cacheTag(CACHE_TAGS.COURSES);
   try {
     const urlParams = new URLSearchParams();
     Object.entries(params).forEach(([key, value]) => {
@@ -314,7 +315,7 @@ export async function createCourse(
     }
 
     if (res.ok && result?.success) {
-      updateTag("courses-list");
+      updateTag(CACHE_TAGS.COURSES);
     }
     return result;
   } catch (error: unknown) {
@@ -393,7 +394,7 @@ export async function updateCourse(
     }
 
     if (res.ok && result?.success) {
-      updateTag("courses-list");
+      updateTag(CACHE_TAGS.COURSES);
     }
     return result;
   } catch (error: unknown) {
@@ -431,7 +432,7 @@ export async function DeleteCourse(id: number): Promise<CourseSingleResponse> {
     }
 
     if (res.ok && result?.success) {
-      updateTag("courses-list");
+      updateTag(CACHE_TAGS.COURSES);
     }
     return result;
   } catch (error: unknown) {
@@ -474,7 +475,7 @@ export async function assignBranchesToCourse(
     }
 
     if (res.ok && result?.success) {
-      updateTag("courses-list");
+      updateTag(CACHE_TAGS.COURSES);
     }
     return result;
   } catch (error: unknown) {
@@ -586,7 +587,7 @@ export async function assignFaqsToCourse(
     }
 
     if (response.ok && result?.success) {
-      updateTag("courses-list");
+      updateTag(CACHE_TAGS.COURSES);
     }
     return result;
   } catch (error: unknown) {
@@ -630,7 +631,7 @@ export async function assignFacilitiesToCourse(
     }
 
     if (response.ok && result?.success) {
-      updateTag("courses-list");
+      updateTag(CACHE_TAGS.COURSES);
     }
     return result;
   } catch (error: unknown) {
@@ -921,7 +922,7 @@ export async function assignJoinsToCourse(
     }
 
     if (response.ok && result?.success) {
-      updateTag("courses-list");
+      updateTag(CACHE_TAGS.COURSES);
     }
     return result;
   } catch (error: unknown) {
@@ -1003,7 +1004,7 @@ export async function assignToolsToCourse(
     }
 
     if (response.ok && result?.success) {
-      updateTag("courses-list");
+      updateTag(CACHE_TAGS.COURSES);
     }
     return result;
   } catch (error: unknown) {

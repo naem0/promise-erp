@@ -20,11 +20,11 @@ const WrapperHeroBanner = async () => {
   const branchBanner = bannerData?.data?.sections;
   return (
     <CommonHeroBanner
-      title={branchBanner[0]?.title}
-      subtitle={branchBanner[0]?.sub_title}
-      bgImage={branchBanner[0]?.image}
+      title={branchBanner?.[0]?.title}
+      subtitle={branchBanner?.[0]?.sub_title}
+      bgImage={branchBanner?.[0]?.image}
     />
-  )
-}
+  );
+};
 
 export default WrapperHeroBanner;

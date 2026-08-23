@@ -1,3 +1,4 @@
+"use client";
 // import React from 'react'
 
 // const DeleteButton = () => {
@@ -11,7 +12,6 @@
 // export default DeleteButton
 
 
-"use client";
 
 import { useTransition } from "react";
 import { Trash2, Loader2 } from "lucide-react";

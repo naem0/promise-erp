@@ -104,6 +104,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tag } from "lucide-react";
 import Link from "next/link";
+import BlogMobileCategoryFilter from "./BlogMobileCategoryFilter";
 
 const BlogCategorySidebar = async () => {
   let blogCategories;
@@ -142,70 +143,76 @@ const BlogCategorySidebar = async () => {
   const uniqueTags = [...new Set(allTags)];
 
   return (
-    <div className="space-y-6">
-      {/* Categories Card */}
-      <Card className="shadow-sm gap-2">
-        <CardHeader className="pb-0">
-          <CardTitle className="text-xl font-semibold text-secondary">
-            Categories
-          </CardTitle>
-        </CardHeader>
+    <>
+      {/* Mobile Category Filter Bar & Modal Trigger */}
+      <BlogMobileCategoryFilter categories={categories} uniqueTags={uniqueTags} />
 
-        <CardContent className="pt-0">
-          <ScrollArea className="h-[300px] pr-3">
-            <ul className="space-y-2">
-              {categories.map((category) => (
-                <li
-                  key={category.id}
-                  className="group cursor-pointer capitalize bg-secondary/5 hover:bg-primary px-3 py-2 rounded-lg text-secondary hover:text-white transition-all duration-200"
-                >
-                  <Link
-                    href={`/blog/category/${category.slug}`}
-                    className="w-full flex items-center justify-between"
+      {/* Desktop Sidebar Cards */}
+      <div className="hidden xl:block space-y-6">
+        {/* Categories Card */}
+        <Card className="shadow-sm gap-2">
+          <CardHeader className="pb-0">
+            <CardTitle className="text-xl font-semibold text-secondary">
+              Categories
+            </CardTitle>
+          </CardHeader>
+
+          <CardContent className="pt-0">
+            <ScrollArea className="h-[300px] pr-3">
+              <ul className="space-y-2">
+                {categories.map((category) => (
+                  <li
+                    key={category.id}
+                    className="group cursor-pointer capitalize bg-secondary/5 hover:bg-primary px-3 py-2 rounded-lg text-secondary hover:text-white transition-all duration-200"
                   >
-                    <span className="font-bold text-base">
-                      {category.title}
-                    </span>
+                    <Link
+                      href={`/blog/category/${category.slug}`}
+                      className="w-full flex items-center justify-between"
+                    >
+                      <span className="font-bold text-base">
+                        {category.title}
+                      </span>
 
-                    <span className="bg-secondary/20 text-secondary px-2 py-1 rounded-md group-hover:bg-white group-hover:text-secondary">
-                      {Number(category.blog_count)}
-                    </span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </ScrollArea>
-        </CardContent>
-      </Card>
+                      <span className="bg-secondary/20 text-secondary px-2 py-1 rounded-md group-hover:bg-white group-hover:text-secondary">
+                        {Number(category.blog_count)}
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </ScrollArea>
+          </CardContent>
+        </Card>
 
-      {/* Popular Tags Card */}
-      <Card className="shadow-sm gap-2">
-        <CardHeader className="pb-0">
-          <CardTitle className="text-xl font-semibold text-secondary flex items-center gap-2">
-            <Tag className="h-5 w-5 text-secondary" />
-            Popular Tags
-          </CardTitle>
-        </CardHeader>
+        {/* Popular Tags Card */}
+        <Card className="shadow-sm gap-2">
+          <CardHeader className="pb-0">
+            <CardTitle className="text-xl font-semibold text-secondary flex items-center gap-2">
+              <Tag className="h-5 w-5 text-secondary" />
+              Popular Tags
+            </CardTitle>
+          </CardHeader>
 
-        <CardContent className="pt-0">
-          <ScrollArea className="h-[200px] pr-3">
-            <div className="flex flex-wrap gap-2">
-              {uniqueTags.map((tag, index) => (
-                <button
-                  key={tag}
-                  className={`px-3 py-1.5 cursor-pointer rounded-full text-sm font-medium transition-all duration-200 ${index === 0
-                      ? "bg-primary text-white"
-                      : "border border-secondary text-secondary hover:bg-primary hover:text-white"
-                    }`}
-                >
-                  #{tag}
-                </button>
-              ))}
-            </div>
-          </ScrollArea>
-        </CardContent>
-      </Card>
-    </div>
+          <CardContent className="pt-0">
+            <ScrollArea className="h-[200px] pr-3">
+              <div className="flex flex-wrap gap-2">
+                {uniqueTags.map((tag, index) => (
+                  <button
+                    key={tag}
+                    className={`px-3 py-1.5 cursor-pointer rounded-full text-sm font-medium transition-all duration-200 ${index === 0
+                        ? "bg-primary text-white"
+                        : "border border-secondary text-secondary hover:bg-primary hover:text-white"
+                      }`}
+                  >
+                    #{tag}
+                  </button>
+                ))}
+              </div>
+            </ScrollArea>
+          </CardContent>
+        </Card>
+      </div>
+    </>
   );
 };
 

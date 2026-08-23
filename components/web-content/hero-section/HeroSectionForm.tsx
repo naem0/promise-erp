@@ -133,7 +133,7 @@ export default function HeroSectionForm({ title, onSubmit, heroSection }: HeroSe
         <h2 className="text-2xl font-semibold mb-8 text-center">{title}</h2>
 
         <form onSubmit={handleSubmit(submitHandler)} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 xl:gap-5">
             {/* Status */}
             <div className="space-y-2">
               <label className="text-sm font-medium">Status</label>
@@ -182,7 +182,7 @@ export default function HeroSectionForm({ title, onSubmit, heroSection }: HeroSe
             {errors.description && <p className="text-xs text-red-500">{String(errors.description.message)}</p>}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 xl:gap-5">
             {/* Button 1 */}
             <div className="space-y-4 border p-4 rounded-xl bg-muted/30">
               <h3 className="font-medium text-sm border-b pb-2">Primary Button</h3>
@@ -214,7 +214,7 @@ export default function HeroSectionForm({ title, onSubmit, heroSection }: HeroSe
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 xl:gap-5">
             {/* Video URL */}
             <div className="space-y-2">
               <label className="text-sm font-medium">Video URL (YouTube)</label>

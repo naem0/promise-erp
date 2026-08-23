@@ -78,7 +78,6 @@ const HomePage = () => {
       <Suspense fallback={<NewsletterSkeleton />}>
         <NewsletterSection />
       </Suspense>
-      
     </>
   );
 };

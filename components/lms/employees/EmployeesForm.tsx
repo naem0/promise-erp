@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useEffect, useState } from "react";
-import { createEmployee, updateEmployee, Employee, EmployeeBranch, EmployeeSalaryScale } from "@/apiServices/employeeService";
+import { createEmployee, updateEmployee, getNextEmployeeDisplayOrder, Employee, EmployeeBranch, EmployeeSalaryScale } from "@/apiServices/employeeService";
 import { Tool } from "@/apiServices/toolsService";
 import { Camera, X } from "lucide-react";
 import Image from "next/image";
@@ -68,6 +68,36 @@ export default function EmployeesForm({
     const [branchSearch, setBranchSearch] = useState("");
     const router = useRouter();
 
+    const initialRole = employee
+        ? typeof employee?.role === "string"
+            ? employee?.role
+            : employee?.role?.name || ""
+        : "";
+
+    const initialRoleLabel = employee
+        ? typeof employee?.role === "string"
+            ? employee?.role
+            : employee?.role?.display_name || employee?.role?.name || ""
+        : "";
+
+    const initialDeptId = employee
+        ? employee?.department?.id?.toString() ||
+        (typeof employee?.department === "number" || typeof employee?.department === "string"
+            ? String(employee?.department)
+            : "")
+        : "";
+
+    const initialDeptName = employee?.department?.name || "";
+
+    const initialDesigId = employee
+        ? employee?.designation?.id?.toString() ||
+        (typeof employee?.designation === "number" || typeof employee?.designation === "string"
+            ? String(employee?.designation)
+            : "")
+        : "";
+
+    const initialDesigName = employee?.designation?.name || "";
+
     const {
         register,
         handleSubmit,
@@ -79,58 +109,75 @@ export default function EmployeesForm({
         formState: { errors, isSubmitting },
     } = useForm<FormValues>({
         defaultValues: {
-            name: "",
-            email: "",
-            phone: "",
-            nid_no: "",
-            employee_id: "",
-            address: "",
-            role: "",
-            blood_group: "",
-            designation_id: "",
-            department_id: "",
-            branch_ids: [],
-            main_branch_id: "",
-            join_date: "",
-            experience: "",
-            display_order: 1,
-            employment_type: "1",
-            probation_period: "6",
-            salary_scale_id: "",
-            release_date: "",
-            note: "",
-            tool_ids: [],
+            name: employee?.name || "",
+            email: employee?.email || "",
+            phone: employee?.phone || "",
+            nid_no: employee?.nid_no || "",
+            employee_id: employee?.employee_id || "",
+            address: employee?.address || "",
+            role: initialRole,
+            blood_group: employee?.blood_group || "",
+            designation_id: initialDesigId,
+            department_id: initialDeptId,
+            branch_ids: employee?.branches?.map((b) => b?.id.toString()) || [],
+            main_branch_id: employee?.main_branch_id?.toString() || "",
+            join_date: employee?.joining_date || "",
+            experience: employee?.experience || "",
+            display_order: employee?.display_order ?? 1,
+            employment_type: (employee?.employment_type !== undefined && employee?.employment_type !== null) ? employee?.employment_type.toString() : "1",
+            probation_period: employee?.probation_period?.toString() || "6",
+            salary_scale_id: employee?.salary_scale?.id?.toString() || "",
+            release_date: employee?.release_date || "",
+            note: employee?.note || "",
+            tool_ids: employee?.tools?.map((t) => t?.id.toString()) || [],
             profile_image: undefined,
         },
     });
 
     useEffect(() => {
         if (employee) {
+            const roleVal =
+                typeof employee?.role === "string"
+                    ? employee?.role
+                    : employee?.role?.name || "";
+
+            const deptId =
+                employee?.department?.id?.toString() ||
+                (typeof employee?.department === "number" || typeof employee?.department === "string"
+                    ? String(employee?.department)
+                    : "");
+
+            const desigId =
+                employee?.designation?.id?.toString() ||
+                (typeof employee?.designation === "number" || typeof employee?.designation === "string"
+                    ? String(employee?.designation)
+                    : "");
+
             reset({
-                name: employee.name || "",
-                email: employee.email || "",
-                phone: employee.phone || "",
-                nid_no: employee.nid_no || "",
-                employee_id: employee.employee_id || "",
-                address: employee.address || "",
-                role: employee.role?.name || "",
-                blood_group: employee.blood_group || "",
-                designation_id: employee.designation?.id?.toString() || "",
-                department_id: employee.department?.id?.toString() || "",
-                branch_ids: employee.branches?.map((b) => b.id.toString()) || [],
-                main_branch_id: employee.main_branch_id?.toString() || "",
-                join_date: employee.joining_date || "",
-                experience: employee.experience || "",
-                display_order: employee.display_order ?? 1,
-                employment_type: (employee.employment_type !== undefined && employee.employment_type !== null) ? employee.employment_type.toString() : "",
-                probation_period: employee.probation_period?.toString() || "",
-                salary_scale_id: employee.salary_scale?.id?.toString() || "",
-                release_date: employee.release_date || "",
-                note: employee.note || "",
-                tool_ids: employee.tools?.map((t) => t.id.toString()) || [],
+                name: employee?.name || "",
+                email: employee?.email || "",
+                phone: employee?.phone || "",
+                nid_no: employee?.nid_no || "",
+                employee_id: employee?.employee_id || "",
+                address: employee?.address || "",
+                role: roleVal,
+                blood_group: employee?.blood_group || "",
+                designation_id: desigId,
+                department_id: deptId,
+                branch_ids: employee?.branches?.map((b) => b?.id.toString()) || [],
+                main_branch_id: employee?.main_branch_id?.toString() || "",
+                join_date: employee?.joining_date || "",
+                experience: employee?.experience || "",
+                display_order: employee?.display_order ?? 1,
+                employment_type: (employee?.employment_type !== undefined && employee?.employment_type !== null) ? employee?.employment_type.toString() : "",
+                probation_period: employee?.probation_period?.toString() || "",
+                salary_scale_id: employee?.salary_scale?.id?.toString() || "",
+                release_date: employee?.release_date || "",
+                note: employee?.note || "",
+                tool_ids: employee?.tools?.map((t) => t?.id.toString()) || [],
                 profile_image: undefined,
             });
-            setPreviewImage(employee.profile_image || null);
+            setPreviewImage(employee?.profile_image || null);
         }
     }, [employee, reset, setPreviewImage, branches, salaryScales, allTools]);
 
@@ -166,6 +213,34 @@ export default function EmployeesForm({
         }
     }, [imageFile]);
 
+    const selectedDepartmentId = watch("department_id");
+
+    useEffect(() => {
+        if (!selectedDepartmentId) return;
+
+        if (employee && employee.department?.id?.toString() === selectedDepartmentId && employee.display_order !== undefined) {
+            return;
+        }
+
+        let isMounted = true;
+        const fetchNextDisplayOrder = async () => {
+            try {
+                const res = await getNextEmployeeDisplayOrder(selectedDepartmentId);
+                if (isMounted && res?.success && res?.data?.next_display_order !== undefined) {
+                    setValue("display_order", res.data.next_display_order);
+                }
+            } catch (error) {
+                console.error("Failed to fetch next display order:", error);
+            }
+        };
+
+        fetchNextDisplayOrder();
+
+        return () => {
+            isMounted = false;
+        };
+    }, [selectedDepartmentId, employee, setValue]);
+
     const submitHandler = async (values: FormValues) => {
         const formData = new FormData();
         Object.entries(values).forEach(([key, value]) => {
@@ -188,7 +263,7 @@ export default function EmployeesForm({
 
         try {
             const res = employee
-                ? await updateEmployee(Number(employee.id), formData)
+                ? await updateEmployee(Number(employee?.id), formData)
                 : await createEmployee(formData);
             if (res.success) {
                 reset();
@@ -241,7 +316,7 @@ export default function EmployeesForm({
                     <div className="relative">
                         <div className="w-32 h-32 relative  rounded-full overflow-hidden  border-2 border-dashed flex items-center justify-center">
                             <Image
-                                src={previewImage || "/images/profile_avatar.png"}
+                                src={(previewImage && typeof previewImage === "string" && previewImage.trim() !== "") ? previewImage : "/images/profile_avatar.png"}
                                 alt="Profile preview"
                                 fill
                                 className="object-scale-down"
@@ -281,38 +356,59 @@ export default function EmployeesForm({
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
-                    {/* Name */}
+                    {/* Row 1: Name & Phone Number */}
                     <div>
                         <label className="block text-sm font-medium mb-1">Name<span className="text-red-500">*</span></label>
                         <Input placeholder="Enter full name" {...register("name")} />
                         {errors.name && <p className="text-sm text-red-500 mt-1">{errors.name.message}</p>}
                     </div>
-
-                    {/* Phone & Email */}
                     <div>
                         <label className="block text-sm font-medium mb-1">Phone Number<span className="text-red-500">*</span></label>
                         <Input placeholder="Enter phone number" {...register("phone")} />
                         {errors.phone && <p className="text-sm text-red-500 mt-1">{errors.phone.message}</p>}
                     </div>
+
+                    {/* Row 2: Email Address & Address */}
                     <div>
                         <label className="block text-sm font-medium mb-1">Email Address</label>
                         <Input type="email" placeholder="Enter email address" {...register("email")} />
                         {errors.email && <p className="text-sm text-red-500 mt-1">{errors.email.message}</p>}
                     </div>
-
-                    {/* NID & Employee ID */}
                     <div>
-                        <label className="block text-sm font-medium mb-1">NID</label>
-                        <Input placeholder="Enter NID number" {...register("nid_no")} />
-                        {errors.nid_no && <p className="text-sm text-red-500 mt-1">{errors.nid_no.message}</p>}
+                        <label className="block text-sm font-medium mb-1">Address</label>
+                        <Input placeholder="Enter full address" {...register("address")} />
+                        {errors.address && <p className="text-sm text-red-500 mt-1">{errors.address.message}</p>}
                     </div>
+
+                    {/* Row 3: Employee ID & NID */}
                     <div>
                         <label className="block text-sm font-medium mb-1">Employee ID<span className="text-red-500">*</span></label>
                         <Input placeholder="Enter employee ID" {...register("employee_id")} />
                         {errors.employee_id && <p className="text-sm text-red-500 mt-1">{errors.employee_id.message}</p>}
                     </div>
+                    <div>
+                        <label className="block text-sm font-medium mb-1">NID</label>
+                        <Input placeholder="Enter NID number" {...register("nid_no")} />
+                        {errors.nid_no && <p className="text-sm text-red-500 mt-1">{errors.nid_no.message}</p>}
+                    </div>
 
-                    {/* Display Order */}
+                    {/* Row 4: Department & Display Order */}
+                    <div>
+                        <label className="block text-sm font-medium mb-1">Department</label>
+                        <Controller
+                            name="department_id"
+                            control={control}
+                            render={({ field }) => (
+                                <DepartmentSearchSelect
+                                    value={field.value || ""}
+                                    initialLabel={initialDeptName}
+                                    onValueChange={(value) => field.onChange(value ?? "")}
+                                    placeholder="Select Department"
+                                />
+                            )}
+                        />
+                        {errors.department_id && <p className="text-sm text-red-500 mt-1">{errors.department_id.message}</p>}
+                    </div>
                     <div>
                         <label className="block text-sm font-medium mb-1">Display Order</label>
                         <Input
@@ -324,14 +420,23 @@ export default function EmployeesForm({
                         {errors.display_order && <p className="text-sm text-red-500 mt-1">{errors.display_order.message}</p>}
                     </div>
 
-                    {/* Address */}
-                    <div >
-                        <label className="block text-sm font-medium mb-1">Address</label>
-                        <Input placeholder="Enter full address" {...register("address")} />
-                        {errors.address && <p className="text-sm text-red-500 mt-1">{errors.address.message}</p>}
+                    {/* Row 5: Designation & Role */}
+                    <div>
+                        <label className="block text-sm font-medium mb-1">Designation</label>
+                        <Controller
+                            name="designation_id"
+                            control={control}
+                            render={({ field }) => (
+                                <DesignationSearchSelect
+                                    value={field.value || ""}
+                                    initialLabel={initialDesigName}
+                                    onValueChange={(value) => field.onChange(value ?? "")}
+                                    placeholder="Select Designation"
+                                />
+                            )}
+                        />
+                        {errors.designation_id && <p className="text-sm text-red-500 mt-1">{errors.designation_id.message}</p>}
                     </div>
-
-                    {/* Role & Blood Group */}
                     <div>
                         <label className="block text-sm font-medium mb-1">Role <span><span className="text-red-500">*</span></span> </label>
                         <Controller
@@ -340,6 +445,7 @@ export default function EmployeesForm({
                             render={({ field }) => (
                                 <RoleSearchSelect
                                     value={field.value || ""}
+                                    initialLabel={initialRoleLabel}
                                     onValueChange={(value) => field.onChange(value ?? "")}
                                     placeholder="Select Role"
                                     useNameAsValue={true}
@@ -348,6 +454,8 @@ export default function EmployeesForm({
                         />
                         {errors.role && <p className="text-sm text-red-500 mt-1">{errors.role.message}</p>}
                     </div>
+
+                    {/* Row 6: Blood Group */}
                     <div>
                         <label className="block text-sm font-medium mb-1">Blood Group</label>
                         <Controller
@@ -367,38 +475,6 @@ export default function EmployeesForm({
                             )}
                         />
                         {errors.blood_group && <p className="text-sm text-red-500 mt-1">{errors.blood_group.message}</p>}
-                    </div>
-
-                    {/* Designation & Department */}
-                    <div>
-                        <label className="block text-sm font-medium mb-1">Designation</label>
-                        <Controller
-                            name="designation_id"
-                            control={control}
-                            render={({ field }) => (
-                                <DesignationSearchSelect
-                                    value={field.value || ""}
-                                    onValueChange={(value) => field.onChange(value ?? "")}
-                                    placeholder="Select Designation"
-                                />
-                            )}
-                        />
-                        {errors.designation_id && <p className="text-sm text-red-500 mt-1">{errors.designation_id.message}</p>}
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium mb-1">Department</label>
-                        <Controller
-                            name="department_id"
-                            control={control}
-                            render={({ field }) => (
-                                <DepartmentSearchSelect
-                                    value={field.value || ""}
-                                    onValueChange={(value) => field.onChange(value ?? "")}
-                                    placeholder="Select Department"
-                                />
-                            )}
-                        />
-                        {errors.department_id && <p className="text-sm text-red-500 mt-1">{errors.department_id.message}</p>}
                     </div>
 
                     {/* Branch & Joining Date */}
@@ -440,53 +516,53 @@ export default function EmployeesForm({
                                 )}
                             </div>
                         </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-2 max-h-60 overflow-y-auto pr-2">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-3 xl:gap-4 mt-2 max-h-60 overflow-y-auto pr-2">
                             {branches
                                 ?.filter((branch) =>
                                     branch.name.toLowerCase().includes(branchSearch.toLowerCase())
                                 )
                                 .map((branch) => (
-                                <Controller
-                                    key={branch.id}
-                                    name="branch_ids"
-                                    control={control}
-                                    render={({ field }) => {
-                                        const isChecked = field.value?.includes(branch.id.toString());
-                                        return (
-                                            <div
-                                                onClick={() => {
-                                                    const current = field.value || [];
-                                                    const updated = isChecked
-                                                        ? current.filter((id) => id !== branch.id.toString())
-                                                        : [...current, branch.id.toString()];
-                                                    field.onChange(updated);
-                                                }}
-                                                className={`
+                                    <Controller
+                                        key={branch.id}
+                                        name="branch_ids"
+                                        control={control}
+                                        render={({ field }) => {
+                                            const isChecked = field.value?.includes(branch.id.toString());
+                                            return (
+                                                <div
+                                                    onClick={() => {
+                                                        const current = field.value || [];
+                                                        const updated = isChecked
+                                                            ? current.filter((id) => id !== branch.id.toString())
+                                                            : [...current, branch.id.toString()];
+                                                        field.onChange(updated);
+                                                    }}
+                                                    className={`
                                                     group relative flex items-center p-3 border rounded-xl cursor-pointer transition-all duration-200
                                                     ${isChecked
-                                                        ? "border-green-500 bg-green-50/40"
-                                                        : "border-gray-200 hover:border-gray-300 bg-white"
-                                                    }
+                                                            ? "border-green-500 bg-green-50/40"
+                                                            : "border-gray-200 hover:border-gray-300 bg-white"
+                                                        }
                                                 `}
-                                            >
-                                                <div className={`
+                                                >
+                                                    <div className={`
                                                     w-4 h-4 rounded border flex items-center justify-center transition-colors mr-3
                                                     ${isChecked ? "bg-green-600 border-green-600" : "bg-white border-gray-300 group-hover:border-gray-400"}
                                                 `}>
-                                                    {isChecked && (
-                                                        <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={4} d="M5 13l4 4L19 7" />
-                                                        </svg>
-                                                    )}
+                                                        {isChecked && (
+                                                            <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={4} d="M5 13l4 4L19 7" />
+                                                            </svg>
+                                                        )}
+                                                    </div>
+                                                    <span className={`text-sm font-medium truncate ${isChecked ? "text-green-900" : "text-gray-700"}`}>
+                                                        {branch.name}
+                                                    </span>
                                                 </div>
-                                                <span className={`text-sm font-medium truncate ${isChecked ? "text-green-900" : "text-gray-700"}`}>
-                                                    {branch.name}
-                                                </span>
-                                            </div>
-                                        );
-                                    }}
-                                />
-                            ))}
+                                            );
+                                        }}
+                                    />
+                                ))}
                         </div>
                         {errors.branch_ids && <p className="text-sm text-red-500 mt-1">{errors.branch_ids.message}</p>}
                     </div>
@@ -624,7 +700,7 @@ export default function EmployeesForm({
                                 )}
                             </div>
 
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 max-h-60 overflow-y-auto pr-2">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-3 xl:gap-4 max-h-60 overflow-y-auto pr-2">
                                 {allTools?.map((tool) => (
                                     <Controller
                                         key={tool.id}
@@ -695,7 +771,7 @@ export default function EmployeesForm({
                 </div>
 
                 <div className="flex justify-end gap-3 pt-4">
-                    <Button  type="button" variant="outline" onClick={() => router.back()} className="rounded-lg border-green-600 text-green-600 cursor-pointer">
+                    <Button type="button" variant="outline" onClick={() => router.back()} className="rounded-lg border-green-600 text-green-600 cursor-pointer">
                         Cancel
                     </Button>
                     <Button type="submit" disabled={isSubmitting} className="bg-green-600 hover:bg-green-700 text-white px-8 rounded-lg cursor-pointer">

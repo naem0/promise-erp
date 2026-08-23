@@ -40,16 +40,16 @@ const CourseCategoriesSection = ({ categoriesData }: CategoriesData) => {
       className="w-full max-w-full relative"
     >
       <CarouselContent className="py-4">
-        {categories.map((course) => (
+        {categories?.map((course) => (
           <CarouselItem
             key={course.id}
-            className="basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4"
+            className="basis-full sm:basis-1/2 lg:basis-1/2 xl:basis-1/4"
           >
             <Card className="group h-full bg-secondary-light transition-all duration-300 hover:shadow-xl hover:-translate-y-2 border-0 text-center">
               <CardContent className="flex flex-col items-center justify-between gap-0 lg:gap-6 px-8">
                 <div className="bg-white mt-4 rounded-full w-25 h-25 flex items-center justify-center p-3">
                   <Image
-                    src={course.image || "/images/placeholder_img.jpg"}
+                    src={(course.image && typeof course.image === "string" && course.image.trim() !== "") ? course.image : "/images/placeholder_img.jpg"}
                     alt={course.name}
                     width={80}
                     height={80}
@@ -84,8 +84,8 @@ const CourseCategoriesSection = ({ categoriesData }: CategoriesData) => {
       </CarouselContent>
 
       {/* Arrows inside container */}
-      <CarouselPrevious className=" absolute cursor-pointer left-0 md:-left-2 top-1/2 -translate-y-1/2 bg-primary hover:bg-primary/80 text-white hover:text-white rounded-full border-none " />
-      <CarouselNext className="absolute cursor-pointer right-0 md:-right-2 top-1/2 -translate-y-1/2 bg-primary hover:bg-primary/80 text-white hover:text-white rounded-full border-none" />
+      <CarouselPrevious className=" absolute cursor-pointer left-0 md:-left-2 top-1/2 -translate-y-1/2 bg-transparent hover:bg-primary/80 text-white hover:text-white rounded-full" />
+      <CarouselNext className="absolute cursor-pointer right-0 md:-right-2 top-1/2 -translate-y-1/2 bg-transparent hover:bg-primary/80 text-white hover:text-white rounded-full" />
     </Carousel>
   );
 };

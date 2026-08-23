@@ -4,10 +4,11 @@ import { fetchPublicFeaturedReviews } from "@/apiServices/homePageService";
 import Image from "next/image";
 import { cacheTag } from "next/cache";
 import ErrorComponent from "@/components/common/ErrorComponent";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 const StudentSuccessWrapper = async () => {
   "use cache";
-  cacheTag("public-reviews");
+  cacheTag(CACHE_TAGS.REVIEWS);
   let reviewsData;
   try {
     reviewsData = await fetchPublicFeaturedReviews();

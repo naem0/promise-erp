@@ -92,6 +92,13 @@
     { "path": "/lms/student-earnings", "permissions": ["view-student-earnings"] },
     { "path": "/lms/student-earnings/add", "permissions": ["create-student-earnings"] },
     { "path": "/lms/student-earnings/edit", "permissions": ["edit-student-earnings"], "isDynamic": true },
+
+    { "path": "/lms/earning-sites", "permissions": ["view-earning-sites"] },
+    { "path": "/lms/earning-sites/add", "permissions": ["create-earning-sites"] },
+    { "path": "/lms/earning-sites/edit", "permissions": ["edit-earning-sites"], "isDynamic": true },
+
+    { "path": "/lms/dyd/applications", "permissions": ["view-dyd-applications"] },
+    { "path": "/lms/dyd/applications/view", "permissions": ["view-dyd-applications"], "isDynamic": true },
     
     { "path": "/districts", "permissions": ["view-districts"] },
     { "path": "/districts/add", "permissions": ["create-districts"] },
@@ -244,6 +251,11 @@
     { "path": "/inventory/requisition-flows/add", "permissions": ["create-requisition-flows"] },
     { "path": "/inventory/requisition-flows/edit", "permissions": ["edit-requisition-flows"], "isDynamic": true },
     { "path": "/inventory/inventory-reports", "permissions": ["view-inventory-reports", "view-products"] },
+    { "path": "/inventory/item-users", "permissions": ["view-product-users"] },
+    { "path": "/inventory/item-users/add", "permissions": ["create-product-users"] },
+    { "path": "/inventory/item-users/edit", "permissions": ["edit-product-users"], "isDynamic": true },
+    { "path": "/inventory/item-users/user", "permissions": ["view-product-users"], "isDynamic": true },
+    { "path": "/inventory/my-assigned-items", "permissions": ["view-my-product-users"] },
 
     { "path": "/settings/users", "permissions": ["view-users"] },
     { "path": "/settings/users/add", "permissions": ["create-users"] },

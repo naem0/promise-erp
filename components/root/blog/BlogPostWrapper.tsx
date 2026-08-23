@@ -25,13 +25,13 @@ const BlogPostWrapper = async ({ searchParams }: BlogPagePropsParams) => {
   } catch (error: unknown) {
     if (error instanceof Error) {
       return (
-        <div className="lg:col-span-8 xl:col-span-9 flex items-center justify-center h-full">
+        <div className="xl:col-span-9 w-full flex items-center justify-center h-full">
           <ErrorComponent message={error.message} />
         </div>
       );
     } else {
       return (
-        <div className="lg:col-span-8 xl:col-span-9 flex items-center justify-center h-full">
+        <div className="xl:col-span-9 w-full flex items-center justify-center h-full">
           <ErrorComponent message="An unexpected error occurred." />
         </div>
       );
@@ -41,7 +41,7 @@ const BlogPostWrapper = async ({ searchParams }: BlogPagePropsParams) => {
   const pagination = blogInfo?.data?.pagination ?? null;
   if (blogInfoData?.length === 0) {
     return (
-      <div className="lg:col-span-8 xl:col-span-9 flex items-center justify-center h-full">
+      <div className="xl:col-span-9 w-full flex items-center justify-center h-full">
         <NotFoundComponent message={blogInfo?.message ?? "No data found"} />
       </div>
     );
@@ -50,7 +50,7 @@ const BlogPostWrapper = async ({ searchParams }: BlogPagePropsParams) => {
     return null;
   }
   return (
-    <div className="lg:col-span-8 xl:col-span-9 space-y-8">
+    <div className="xl:col-span-9 w-full space-y-8">
       {/* Featured Posts Section */}
       <BlogFeaturedPost blogInfoData={blogInfoData} />
       {/* Recent Posts Section */}

@@ -4,10 +4,11 @@ import Image from "next/image";
 import ErrorComponent from "@/components/common/ErrorComponent";
 import { cacheTag } from "next/cache";
 import NotFoundComponent from "@/components/common/NotFoundComponent";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 const HighlightsSection = async () => {
   "use cache";
-  cacheTag("stats-list");
+  cacheTag(CACHE_TAGS.STATS);
   let stats;
   let countDownData;
   try {
@@ -40,29 +41,31 @@ const HighlightsSection = async () => {
   return (
     <section className="py-8 md:py-14 ">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-3 xl:gap-5">
           {stats?.map((stat, index) => (
             <Card
               key={stat?.id}
               className=" py-0 relative overflow-hidden bg-linear-to-r to-[#009F41] from-0% via-[#1C833E] via-40% from-[#0B5B28] to-100% transition-all duration-300 border-0 shadow-lg hover:shadow-xl hover:-translate-y-2 group animate-scale-in"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
-              <div className="px-4 py-4 text-center relative z-10">
-                <div className="mb-4 inline-flex items-center justify-center shadow-2xl w-20 h-20 rounded-full bg-white">
-                  <Image
-                    src={stat?.image || "/images/placeholder_img.jpg"}
-                    alt={stat?.title}
-                    width={60}
-                    height={60}
-                    className=" rounded-full object-cover"
-                  />
+              <div className="px-2 md:px-4 py-3 md:py-4 text-center relative z-10">
+                <div className="mb-2 lg:mb-4 inline-flex items-center justify-center shadow-2xl w-16 lg:w-18 h-16 lg:h-18  rounded-full bg-white">
+                  <div className="relative w-12 lg:w-14 h-12 lg:h-14 rounded-full overflow-hidden">
+                    <Image
+                      src={(stat?.image && typeof stat?.image === "string" && stat?.image.trim() !== "") ? stat?.image : "/images/placeholder_img.jpg"}
+                      alt={stat?.title}
+                      fill
+                      className=" rounded-full object-cover"
+                    />
+                  </div>
                 </div>
-                <div className="text-xl md:text-2xl font-bold text-primary-foreground mb-2">
+
+                <div className="text-base md:text-2xl font-bold text-primary-foreground mb-2">
                   <span className="flex items-center justify-center">
-                    {stat?.count} {""} +
+                    {stat?.count} {""}
                   </span>
                 </div>
-                <div className="text-lg text-primary-foreground/90 font-medium">
+                <div className="text-sm md:text-lg text-primary-foreground/90 font-medium">
                   {stat?.title}
                 </div>
               </div>

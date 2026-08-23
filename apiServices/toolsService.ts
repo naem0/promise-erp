@@ -1,8 +1,9 @@
 "use server";
+import { cacheTag, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { cacheTag, updateTag } from "next/cache";
 import { PaginationType } from "@/types/pagination";
 
 const API_BASE =
@@ -49,8 +50,7 @@ export async function getToolsCached(
     params: Record<string, unknown> = {}
 ): Promise<ToolsResponse | null> {
     "use cache";
-    cacheTag("tools-list");
-
+    cacheTag(CACHE_TAGS.TOOLS);
     try {
   // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
         const urlParams = new URLSearchParams();
@@ -165,7 +165,7 @@ export async function createTool(
         const result = await res.json();
 
         if (res.ok && result?.success) {
-          updateTag("tools-list");
+          updateTag(CACHE_TAGS.TOOLS);
         }
         return result;
     } catch (error: unknown) {
@@ -206,7 +206,7 @@ export async function updateTool(
         const result = await res.json();
 
         if (res.ok && result?.success) {
-          updateTag("tools-list");
+          updateTag(CACHE_TAGS.TOOLS);
         }
         return result;
     } catch (error: unknown) {
@@ -243,7 +243,7 @@ export async function deleteTool(id: number): Promise<SingleToolResponse> {
         const result = await res.json();
 
         if (res.ok && result?.success) {
-          updateTag("tools-list");
+          updateTag(CACHE_TAGS.TOOLS);
         }
         return result;
     } catch (error: unknown) {

@@ -1,8 +1,9 @@
 "use server";
+import { cacheTag, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { cacheTag, updateTag } from "next/cache";
 import { PaginationType } from "@/types/pagination";
 
 const API_BASE =
@@ -55,8 +56,7 @@ export async function getCRMReferrersCached(
   params: Record<string, unknown> = {},
 ): Promise<CRMReferrersResponse | null> {
   "use cache: remote";
-  cacheTag("crm-referrers-list");
-
+  cacheTag(CACHE_TAGS.CRM_REFERRERS);
   try {
     const urlParams = new URLSearchParams();
     for (const key in params) {
@@ -199,7 +199,7 @@ export async function createCRMReferrer(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("crm-referrers-list");
+      updateTag(CACHE_TAGS.CRM_REFERRERS);
     }
     return result;
   } catch (error: unknown) {
@@ -241,7 +241,7 @@ export async function updateCRMReferrer(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("crm-referrers-list");
+      updateTag(CACHE_TAGS.CRM_REFERRERS);
     }
     return result;
   } catch (error: unknown) {
@@ -280,7 +280,7 @@ export async function deleteCRMReferrer(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("crm-referrers-list");
+      updateTag(CACHE_TAGS.CRM_REFERRERS);
     }
     return result;
   } catch (error: unknown) {

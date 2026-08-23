@@ -32,6 +32,7 @@ const BackToTop = () => {
   return (
     <Button
       onClick={scrollToTop}
+      aria-label="Scroll back to top"
       className="fixed cursor-pointer bottom-2 right-4 z-50 rounded-full p-6 shadow-lg"
     >
       <ArrowUp size={20} />

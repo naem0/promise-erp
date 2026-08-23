@@ -1,5 +1,8 @@
-
 "use server";
+import { cacheTag, updateTag, cacheLife } from "next/cache";
+
+import { CACHE_TAGS } from "@/constants/cacheTags";
+
 const API_BASE =
   process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
 
@@ -25,12 +28,31 @@ export interface ContactPageInfoApiResponse {
   errors?: Record<string, string[]>;
 }
 export async function getPublicContactPageInfo(): Promise<ContactPageInfoApiResponse | null> {
+  "use cache";
+  cacheTag(CACHE_TAGS.CONTACT_PAGES);
+  cacheLife("days");
   try {
     const res = await fetch(`${API_BASE}/public/contact-page`);
 
     if (res.status === 404) {
       console.warn("No contact page info found.");
-      return null;  
+      return null;
+    }
+    if (res.status === 401) {
+      console.error("Error fetching contact page info:", res.statusText);
+      return null;
+    }
+    if (res.status === 402) {
+      console.error("Error fetching contact page info:", res.statusText);
+      return null;
+    }
+    if (res.status === 403) {
+      console.error("Error fetching contact page info:", res.statusText);
+      return null;
+    }
+    if (res.status === 405) {
+      console.error("Error fetching contact page info:", res.statusText);
+      return null;
     }
 
     if (!res.ok) {

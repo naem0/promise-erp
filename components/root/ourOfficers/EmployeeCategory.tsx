@@ -53,7 +53,7 @@ const EmployeeCategory = () => {
       </div>
 
       {/* Employee Category Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-4 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-4 lg:grid-cols-3 gap-2 lg:gap-4">
         {categories.map((category, index) => (
           <Card
             key={index}
@@ -66,10 +66,10 @@ const EmployeeCategory = () => {
               </div>
 
               {/* Employee Count */}
-              <h3 className="text-4xl font-bold mb-2">{category.count}</h3>
+              <h3 className=" text-xl lg:text-4xl font-bold mb-2">{category.count}</h3>
 
               {/* Title */}
-              <h4 className="text-lg font-semibold mb-2">{category.title}</h4>
+              <h4 className="text-sm lg:text-lg font-semibold mb-2">{category.title}</h4>
 
               {/* Description */}
               <p className="text-sm text-emerald-100 leading-relaxed">

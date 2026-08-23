@@ -24,7 +24,7 @@ import PermissionGuard from "@/components/auth/PermissionGuard";
 import { truncate } from "@/lib/utils";
 import Image from "next/image";
 
-const getCategoryBadge = (categoryName: string | undefined) => {
+const getCategoryBadge = (categoryName: string | null | undefined) => {
   if (!categoryName) return <span className="text-slate-400">—</span>;
   
   switch (categoryName.toLowerCase()) {
@@ -39,7 +39,7 @@ const getCategoryBadge = (categoryName: string | undefined) => {
   }
 };
 
-const getBrandBadge = (brandName: string | undefined) => {
+const getBrandBadge = (brandName: string | null | undefined) => {
   if (!brandName) return <span className="text-slate-400">—</span>;
   
   switch (brandName.toLowerCase()) {
@@ -54,27 +54,42 @@ const getBrandBadge = (brandName: string | undefined) => {
   }
 };
 
-const getStatusBadge = (status: number | string | undefined) => {
+const getStatusBadge = (status: number | string | undefined, statusText?: string) => {
   switch (Number(status)) {
     case 1:
       return (
         <Badge className="bg-green-50 text-green-700 border-green-100 hover:bg-green-50 font-medium">
-          Active
+          {statusText || "Active"}
         </Badge>
       );
     case 0:
       return (
         <Badge className="bg-red-50 text-red-700 border-red-100 hover:bg-red-50 font-medium">
-          Inactive
+          {statusText || "Inactive"}
         </Badge>
       );
     default:
       return (
         <Badge className="bg-slate-50 text-slate-700 border-slate-100 hover:bg-slate-50 font-medium">
-          Unknown
+          {statusText || "Unknown"}
         </Badge>
       );
   }
+};
+
+const getProductTypeBadge = (productType: number | undefined, productTypeText: string | undefined) => {
+  if (productType === 2 || productTypeText?.toLowerCase() === "it") {
+    return (
+      <Badge variant="secondary" className="bg-indigo-50 text-indigo-700 border-indigo-100 font-medium">
+        {productTypeText || "IT"}
+      </Badge>
+    );
+  }
+  return (
+    <Badge variant="secondary" className="bg-sky-50 text-sky-700 border-sky-100 font-medium">
+      {productTypeText || "Admin"}
+    </Badge>
+  );
 };
 
 const ItemsData = async ({
@@ -101,6 +116,10 @@ const ItemsData = async ({
     status:
       typeof resolvedSearchParams.status === "string"
         ? resolvedSearchParams.status
+        : undefined,
+    product_type:
+      typeof resolvedSearchParams.product_type === "string"
+        ? resolvedSearchParams.product_type
         : undefined,
     sort_order:
       typeof resolvedSearchParams.sort_order === "string"
@@ -157,6 +176,7 @@ const ItemsData = async ({
               <TableHead className="text-center font-semibold w-[60px]">Sl</TableHead>
               <TableHead className="text-center font-semibold w-[100px]">Action</TableHead>
               <TableHead className="font-semibold min-w-[300px]">Product</TableHead>
+              <TableHead className="font-semibold min-w-[110px]">Stock</TableHead>
               <TableHead className="font-semibold min-w-[100px]">Barcode</TableHead>
               <TableHead className="font-semibold min-w-[120px]">Category</TableHead>
               <TableHead className="font-semibold min-w-[120px]">Brand</TableHead>
@@ -206,12 +226,12 @@ const ItemsData = async ({
                   </DropdownMenu>
                 </TableCell>
 
-                {/* Product: Image + Name + Buy/MRP Price + Stock/Unit */}
+                {/* Product: Image + Name + Buy/MRP Price + Type */}
                 <TableCell>
                   <div className="flex items-center gap-3">
-                    <div className="relative w-12 h-12 rounded-md overflow-hidden border border-slate-100 flex-shrink-0">
+                    <div className="relative w-12 h-12 rounded-md overflow-hidden border border-slate-100 shrink-0">
                       <Image
-                        src={item.image || "/images/placeholder.png"}
+                        src={(item.image && typeof item.image === "string" && item.image.trim() !== "") ? item.image : "/images/placeholder.png"}
                         alt={item.name}
                         className="object-cover"
                         fill
@@ -236,14 +256,24 @@ const ItemsData = async ({
                             : "—"}
                         </span>
                       </div>
-                      <div className="flex items-center gap-1">
-                        <span className="text-xs text-slate-400">Stock:</span>
-                        <span className="text-xs font-semibold text-slate-700">{item?.stock ?? 0}</span>
-                        {item?.unit_name && (
-                          <span className="text-xs text-slate-400">{item.unit_name}</span>
-                        )}
+                      <div className="flex items-center gap-1.5 mt-0.5">
+                        <span className="text-xs text-slate-400">Type:</span>
+                        {getProductTypeBadge(item?.product_type, item?.product_type_text)}
                       </div>
                     </div>
+                  </div>
+                </TableCell>
+
+                <TableCell>
+                  <div className="flex items-center gap-1">
+                    <span className="font-semibold text-slate-800">
+                      {item?.stock ?? 0}
+                    </span>
+                    {item?.unit_name && (
+                      <span className="text-xs text-slate-500">
+                        {item.unit_name}
+                      </span>
+                    )}
                   </div>
                 </TableCell>
 
@@ -264,7 +294,7 @@ const ItemsData = async ({
                 </TableCell>
 
                 <TableCell className="text-center">
-                  {getStatusBadge(item?.status)}
+                  {getStatusBadge(item?.status, item?.status_text)}
                 </TableCell>
               </TableRow>
             ))}

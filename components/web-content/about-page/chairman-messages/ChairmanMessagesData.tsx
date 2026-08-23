@@ -181,7 +181,7 @@ const ChairmanMessagesData = async ({
                   <div className="flex items-center gap-3">
                     <div className="relative w-12 h-12 rounded-md overflow-hidden border border-slate-100 flex-shrink-0">
                       <Image
-                        src={item.chairman_image || "/images/placeholder.png"}
+                        src={(item.chairman_image && typeof item.chairman_image === "string" && item.chairman_image.trim() !== "") ? item.chairman_image : "/images/placeholder.png"}
                         alt={item.name}
                         className="object-cover"
                         fill

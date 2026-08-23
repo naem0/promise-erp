@@ -1,8 +1,9 @@
 "use server";
+import { cacheTag, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { cacheTag, updateTag } from "next/cache";
 import { PaginationType } from "@/types/pagination";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
@@ -55,8 +56,7 @@ export async function getStatsCached(
   params: Record<string, unknown> = {},
 ): Promise<StatsResponse | null> {
   "use cache";
-  cacheTag("stats-list");
-
+  cacheTag(CACHE_TAGS.STATS);
   try {
     const urlParams = new URLSearchParams();
     for (const key in params) {
@@ -196,7 +196,7 @@ export async function createStat(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("stats-list");
+      updateTag(CACHE_TAGS.STATS);
     }
     return result;
   } catch (error: unknown) {
@@ -234,7 +234,7 @@ export async function updateStat(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("stats-list");
+      updateTag(CACHE_TAGS.STATS);
     }
     return result;
   } catch (error: unknown) {
@@ -271,7 +271,7 @@ export async function deleteStat(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("stats-list");
+      updateTag(CACHE_TAGS.STATS);
     }
     return result;
   } catch (error: unknown) {

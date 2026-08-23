@@ -18,7 +18,7 @@ const BlogCardItems = ({ post }: BlogCardItemsProps) => {
         {/* Image Wrapper */}
         <AspectRatio ratio={11 / 6} className="w-full overflow-hidden">
           <Image
-            src={post?.thumbnail || "/images/placeholder_img.jpg"}
+            src={(post?.thumbnail && typeof post?.thumbnail === "string" && post?.thumbnail.trim() !== "") ? post?.thumbnail : "/images/placeholder_img.jpg"}
             alt={post.title || ""}
             fill
             className="object-contain transition-transform duration-500 group-hover:scale-105"
@@ -31,7 +31,7 @@ const BlogCardItems = ({ post }: BlogCardItemsProps) => {
             {post?.category?.title}
           </Badge>
 
-          <h3 className="text-base md:text-xl font-bold text-secondary leading-tight">
+          <h3 className="text-base xl:text-lg font-bold text-secondary leading-tight">
             {post.title}
           </h3>
 

@@ -1,8 +1,10 @@
 "use server";
+import { cacheTag, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { cacheTag } from "next/cache";
+
 import { PaginationType } from "@/types/pagination";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
@@ -38,8 +40,7 @@ export async function getConsultantPerformanceCached(
   params: Record<string, unknown> = {}
 ): Promise<ConsultantPerformanceResponse | null> {
   "use cache";
-  cacheTag("consultant-performance-list");
-
+  cacheTag(CACHE_TAGS.CRM_CONSULTANT_PERFORMANCE);
   try {
   // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
     const urlParams = new URLSearchParams();
@@ -136,8 +137,7 @@ export async function getConsultantPerformanceSummaryCached(
   params: Record<string, unknown> = {}
 ): Promise<PerformanceSummaryResponse | null> {
   "use cache";
-  cacheTag("consultant-performance-summary");
-
+  cacheTag(CACHE_TAGS.CRM_CONSULTANT_PERFORMANCE);
   try {
   // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
     const urlParams = new URLSearchParams();
@@ -194,8 +194,7 @@ export async function getConsultantAveragePerformanceCached(
   params: Record<string, unknown> = {}
 ): Promise<AveragePerformanceResponse | null> {
   "use cache";
-  cacheTag("consultant-average-performance");
-
+  cacheTag(CACHE_TAGS.CRM_CONSULTANT_PERFORMANCE);
   try {
   // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
     const urlParams = new URLSearchParams();

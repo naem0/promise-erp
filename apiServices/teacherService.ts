@@ -1,7 +1,8 @@
-"use server"
+"use server";
+import { cacheTag, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 import { authOptions } from "@/lib/auth"
 import { getServerSession } from "next-auth"
-import { cacheTag, updateTag } from 'next/cache'
 import { handleApiError, processApiResponse } from "@/lib/apiErrorHandler"
 import { PaginationType } from "@/types/pagination"
 
@@ -89,7 +90,7 @@ export async function addTeacher(
     }
 
     if (res.ok && result?.success) {
-      updateTag("teachers-list");
+      updateTag(CACHE_TAGS.TEACHERS);
     }
     return {
       success: true,
@@ -111,8 +112,7 @@ async function getTeachersCached(
   params: Record<string, unknown> = {}
 ): Promise<TeacherResponse> {
   "use cache"
-  cacheTag("teachers-list")
-
+  cacheTag(CACHE_TAGS.TEACHERS);
   const url = new URL(`${API_BASE}/teachers`)
   Object.entries(params).forEach(([key, value]) => {
     if (value !== undefined && value !== null) {
@@ -210,7 +210,7 @@ export async function updateTeacher(
     }
 
     if (res.ok && result?.success) {
-      updateTag("teachers-list");
+      updateTag(CACHE_TAGS.TEACHERS);
     }
     return {
       success: true,
@@ -250,7 +250,7 @@ export async function deleteTeacher(id: number): Promise<{ success: boolean; mes
     }
     
     if (res.ok && result?.success) {
-      updateTag("teachers-list");
+      updateTag(CACHE_TAGS.TEACHERS);
     }
     return { success: true, message: result.message || "Teacher deleted successfully", code: result.code };
   } catch (error) {

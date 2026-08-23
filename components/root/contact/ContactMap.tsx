@@ -1,10 +1,23 @@
 import { getPublicContactPageInfo } from "@/apiServices/contactPageWeb";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MapPin } from "lucide-react";
-import { use } from "react";
 
-const ContactMap = () => {
-  const contactInfo = use(getPublicContactPageInfo());
+const ContactMap = async () => {
+  let contactInfo = null;
+  try {
+    contactInfo = await getPublicContactPageInfo();
+  } catch (error: unknown) {
+    if (typeof error === "object" && error !== null && "digest" in error) throw error;
+    if (error instanceof Error && error.name === "AbortError") {
+      console.error("Error fetching contact map info:", error.message);
+      return null;
+    }
+    if (error instanceof Error) {
+      console.error("Error fetching contact map info:", error.message);
+      throw new Error(error.message);
+    }
+    throw new Error("Unknown error occurred while fetching contact map info.");
+  }
 
   const address =
     contactInfo?.data?.address ??
@@ -12,7 +25,7 @@ const ContactMap = () => {
   const mapEmbedUrl =
     contactInfo?.data?.google_map ??
     "https://maps.app.goo.gl/gMaS3uUo2YVFA3eU7";
-  console.log("mapEmbedUrl===>", mapEmbedUrl);
+
   return (
     <Card className="h-full py-0">
       <CardHeader className="pt-4">

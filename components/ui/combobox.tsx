@@ -6,6 +6,7 @@ import { CheckIcon, ChevronDownIcon, XIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
+import { useDialogContext } from "@/components/ui/dialog"
 import {
   InputGroup,
   InputGroupAddon,
@@ -50,21 +51,37 @@ function Combobox({
 }: ComboboxProps) {
   const [inputValue, setInputValue] = React.useState("")
 
+  const selectedLabel = React.useMemo(() => {
+    return options.find((o) => o.value === value)?.label || ""
+  }, [options, value])
+
+  React.useEffect(() => {
+    if (!value) {
+      setInputValue("")
+    }
+  }, [value])
+
   const filteredOptions = React.useMemo(() => {
-    if (disableFilter || !inputValue) return options
+    if (disableFilter || !inputValue || inputValue === selectedLabel) return options
     const lowerInput = inputValue.toLowerCase()
     return options.filter((option) =>
       option.label.toLowerCase().includes(lowerInput)
     )
-  }, [options, inputValue, disableFilter])
+  }, [options, inputValue, selectedLabel, disableFilter])
+
+  const hasContent = Boolean(value || (inputValue && inputValue.trim().length > 0))
 
   return (
     <ComboboxRoot 
       data-slot="combobox-root" 
+      key={value ? `${value}-${selectedLabel}` : "empty"}
       disabled={disabled} 
       multiple={false} 
       value={value || ""}
-      onValueChange={(val) => onValueChange?.(val)} 
+      onValueChange={(val) => {
+        if (!val) setInputValue("")
+        onValueChange?.(val)
+      }} 
       onInputValueChange={(val, event) => {
         setInputValue(val)
         onInputValueChange?.(val, event)
@@ -74,7 +91,7 @@ function Combobox({
     >
       <ComboboxInput
         placeholder={searchPlaceholder || placeholder}
-        showClear={showClear && (!!value || !!inputValue)}
+        showClear={showClear && hasContent}
         showTrigger={true}
         className={className}
       />
@@ -181,8 +198,10 @@ function ComboboxContent({
     ComboboxPrimitive.Positioner.Props,
     "side" | "align" | "sideOffset" | "alignOffset" | "anchor"
   >) {
+  const { container: dialogContainer } = useDialogContext()
+
   return (
-    <ComboboxPrimitive.Portal>
+    <ComboboxPrimitive.Portal container={dialogContainer || undefined}>
       <ComboboxPrimitive.Positioner
         side={side}
         sideOffset={sideOffset}

@@ -1,5 +1,5 @@
-
 "use server";
+
 
 import { deleteCoupon, SingleCouponResponse } from "@/apiServices/couponsService";
 const DeleteCouponAction = async (id: number): Promise<SingleCouponResponse> => {

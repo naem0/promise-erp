@@ -6,11 +6,12 @@ import {
   PartnersApiResponse,
 } from "@/apiServices/homePageService";
 import { cacheTag } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 export default async function AffiliatesClientsPage() {
 
   "use cache";
-  cacheTag("affiliates-clients");
+  cacheTag(CACHE_TAGS.AFFILIATES_CLIENTS);
 
   let affiliatesData: PartnersApiResponse | null = null;
   try {
@@ -42,7 +43,7 @@ export default async function AffiliatesClientsPage() {
   }
 
   return (
-    <section className="py-8 md:py-14 bg-secondary/5">
+    <section className="py-8 lg:py-14 bg-secondary/5">
       <div className="container mx-auto px-4">
         <SectionTitle
           title={affiliatesData?.data?.section_title}

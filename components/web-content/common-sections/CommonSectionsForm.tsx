@@ -228,7 +228,7 @@ export default function CommonSectionForm({
           <div className="relative">
             <div className="w-32 h-32 relative overflow-hidden border-2 border-dashed rounded-md flex items-center justify-center bg-gray-50">
               <Image
-                src={previewImage || "/images/placeholder.png"}
+                src={(previewImage && typeof previewImage === "string" && previewImage.trim() !== "") ? previewImage : "/images/placeholder.png"}
                 alt="Section image preview"
                 fill
                 className="object-cover"

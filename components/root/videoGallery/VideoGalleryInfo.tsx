@@ -33,7 +33,7 @@ const VideoGalleryInfo = ({ stories, totalPages }: VideostoriesProps) => {
         <div className="relative overflow-hidden rounded-2xl group">
           {activeVideo === firstVideo.id ? (
             <ReactPlayer
-              src={firstVideo.youtube_link}
+              src={firstVideo.youtube_link || undefined}
               playing
               controls
               width="100%"
@@ -67,7 +67,7 @@ const VideoGalleryInfo = ({ stories, totalPages }: VideostoriesProps) => {
 
       {/* ================= GRID SECTION ================= */}
       <section className="pt-8 md:pt-14">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-3 xl:gap-4">
           {otherVideos.map((video) => (
             <div
               key={video.id}
@@ -75,7 +75,7 @@ const VideoGalleryInfo = ({ stories, totalPages }: VideostoriesProps) => {
             >
               {activeVideo === video.id ? (
                 <ReactPlayer
-                  src={video.youtube_link}
+                  src={video.youtube_link || undefined}
                   playing
                   controls
                   width="100%"

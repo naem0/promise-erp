@@ -1,8 +1,9 @@
 "use server";
+import { cacheTag, updateTag } from "next/cache";
+import { CACHE_TAGS } from "@/constants/cacheTags";
 
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { cacheTag, updateTag } from "next/cache";
 import { PaginationType } from "@/types/pagination";
 
 const API_BASE =
@@ -49,8 +50,7 @@ export async function getFaqsCached(
   params: Record<string, unknown> = {}
 ): Promise<FaqsResponse | null> {
   "use cache";
-  cacheTag("faqs-list");
-
+  cacheTag(CACHE_TAGS.FAQS);
   try {
   // NOTE: Do NOT throw inside "use cache" — errors become {} in console.
     const urlParams = new URLSearchParams();
@@ -170,7 +170,7 @@ export async function createFaq(
     const result = await res.json();
 
     if (res.ok && result?.success) {
-      updateTag("faqs-list");
+      updateTag(CACHE_TAGS.FAQS);
     }
     return result;
   } catch (error: unknown) {
@@ -217,7 +217,7 @@ export async function updateFaq(
 
 
     if (res.ok && result?.success) {
-      updateTag("faqs-list");
+      updateTag(CACHE_TAGS.FAQS);
     }
     return result;
   } catch (error: unknown) {
@@ -254,7 +254,7 @@ export async function deleteFaq(id: number): Promise<SingleFaqResponse> {
     const result = await res.json()
 
     if (res.ok && result?.success) {
-      updateTag("faqs-list");
+      updateTag(CACHE_TAGS.FAQS);
     }
     return result;
   } catch (error: unknown) {

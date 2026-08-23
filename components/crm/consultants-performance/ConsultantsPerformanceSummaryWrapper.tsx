@@ -122,7 +122,7 @@ const ConsultantsPerformanceSummaryWrapper = async ({
               <div key={performer.id} className="flex items-center justify-between pb-4 border-b last:border-0 last:pb-0">
                 <div className="flex items-center gap-3">
                   <Image
-                    src={performer.profile_image || "/images/profile_avatar.png"}
+                    src={(performer.profile_image && typeof performer.profile_image === "string" && performer.profile_image.trim() !== "") ? performer.profile_image : "/images/profile_avatar.png"}
                     alt={performer.name}
                     width={48}
                     height={48}

@@ -156,7 +156,7 @@ const CareersData = async ({ searchParams }: CareersDataProps) => {
                 </TableCell>
                 <TableCell className="font-medium flex items-center justify-center">
                   <Image
-                    src={career.image || "/images/placeholder.png"}
+                    src={(career.image && typeof career.image === "string" && career.image.trim() !== "") ? career.image : "/images/placeholder.png"}
                     alt={career?.title}
                     width={40}
                     height={40}
